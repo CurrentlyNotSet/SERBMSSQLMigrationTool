@@ -9,7 +9,7 @@ package com.model;
  *
  * @author Andrew
  */
-public class oldULPDataTableModel {
+public class oldULPDataModel {
 
     private int Active;
     private String CaseNumber;

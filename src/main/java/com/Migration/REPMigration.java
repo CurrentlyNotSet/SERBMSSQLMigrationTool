@@ -7,7 +7,7 @@ package com.Migration;
 
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
-import com.model.oldREPDataTableModel;
+import com.model.oldREPDataModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
@@ -39,12 +39,12 @@ public class REPMigration {
         int totalRecordCount = 0;
         int currentRecord = 0;
         System.out.println("Start Time " + new Date());
-        List<oldREPDataTableModel> oldREPDataList = sqlREPData.getCases();
+        List<oldREPDataModel> oldREPDataList = sqlREPData.getCases();
         totalRecordCount = oldREPDataList.size();
         System.out.println("Record Count: " + totalRecordCount);
         System.out.println("End Time " + new Date());
 
-        for (oldREPDataTableModel item : oldREPDataList) {
+        for (oldREPDataModel item : oldREPDataList) {
             migrateCase(item);
             currentRecord++;
             System.out.println("Current Record Number:  " + currentRecord);
@@ -55,7 +55,7 @@ public class REPMigration {
         sqlMigrationStatus.updateTimeCompleted("MigrateREPCases");
     }
 
-    private static void migrateCase(oldREPDataTableModel item) {
+    private static void migrateCase(oldREPDataModel item) {
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
         migratePetitioner(item, caseNumber);
         migratePetitionerRep(item, caseNumber);
@@ -77,7 +77,7 @@ public class REPMigration {
         migrateConversionSchoolRep(item, caseNumber);
     }
 
-    private static void migratePetitioner(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber) {
 
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
@@ -118,7 +118,7 @@ public class REPMigration {
         }
     }
 
-    private static void migratePetitionerRep(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migratePetitionerRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -158,7 +158,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateEmployer(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateEmployer(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -198,7 +198,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateEmployerRep(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateEmployerRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -238,7 +238,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateEmployeeOrg(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -278,7 +278,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateEmployeeOrgRep(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateEmployeeOrgRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -318,7 +318,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateRivalEmployeeOrg(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateRivalEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -358,7 +358,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateRivalEmployeeOrgRep(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateRivalEmployeeOrgRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -398,7 +398,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateRivalEmployeeOrg2(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateRivalEmployeeOrg2(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -438,7 +438,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateRivalEmployeeOrg2Rep(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateRivalEmployeeOrg2Rep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -478,7 +478,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateRivalEmployeeOrg3(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateRivalEmployeeOrg3(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -518,7 +518,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateRivalEmployeeOrg3Rep(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateRivalEmployeeOrg3Rep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -558,7 +558,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateIncumbentEmployeeOrg(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateIncumbentEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -598,7 +598,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateIncumbentEmployeeOrgRep(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateIncumbentEmployeeOrgRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -638,7 +638,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateIntervener(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateIntervener(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -678,7 +678,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateIntervenerRep(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateIntervenerRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -717,7 +717,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateConversionSchool(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateConversionSchool(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -757,7 +757,7 @@ public class REPMigration {
         }
     }
 
-    private static void migrateConversionSchoolRep(oldREPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateConversionSchoolRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());

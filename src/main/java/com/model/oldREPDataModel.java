@@ -9,7 +9,7 @@ package com.model;
  *
  * @author Andrew
  */
-public class oldREPDataTableModel {
+public class oldREPDataModel {
 
     private int Active;
     private String CaseActive;

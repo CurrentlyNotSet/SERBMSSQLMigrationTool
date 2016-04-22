@@ -5,7 +5,8 @@
  */
 package com.sql;
 
-import com.model.oldULPDataTableModel;
+import com.model.ULPCaseModel;
+import com.model.oldULPDataModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,8 +22,8 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlULPData {
     
-    public static List<oldULPDataTableModel> getCases() {
-        List<oldULPDataTableModel> list = new ArrayList();
+    public static List<oldULPDataModel> getCases() {
+        List<oldULPDataModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -32,7 +33,7 @@ public class sqlULPData {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                oldULPDataTableModel item = new oldULPDataTableModel();
+                oldULPDataModel item = new oldULPDataModel();
                 item.setActive(rs.getInt("Active"));
                 item.setCaseNumber(rs.getString("CaseNumber"));
                 item.setCPName(rs.getString("CPName"));
@@ -116,4 +117,114 @@ public class sqlULPData {
         return list;
     }
     
+    
+    public static void importOldULPCase(ULPCaseModel item){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "INSERT INTO ULPcase ("
+                    + "caseYear, "          //01
+                    + "caseType, "          //02
+                    + "caseMonth, "         //03
+                    + "caseNumber, "        //04
+                    + "employerIDNumber, "  //05
+                    + "deptInState, "       //06
+                    + "barginingUnitNo, "   //07
+                    + "EONumber, "          //08
+                    + "allegation, "        //09
+                    + "currentStatus, "     //10
+                    + "priority, "          //11
+                    + "assignedDate, "      //12
+                    + "turnInDate, "        //13
+                    + "reportDueDate, "     //14
+                    + "dismissalDate, "     //15
+                    + "deferredDate, "      //16
+                    + "fileDate, "          //17
+                    + "probableCause, "     //18
+                    + "appealDateReceived, "//19
+                    + "appealDateSent, "    //20
+                    + "courtName, "         //21
+                    + "courtCaseNumber, "   //22
+                    + "SERBCaseNumber, "    //23
+                    + "finalDispositionStatus, "//24
+                    + "investigatorID, "    //25
+                    + "mediatorAssignedID, "//26
+                    + "aljID, "             //27
+                    + "statement, "         //28
+                    + "recommendation, "    //29
+                    + "investigationReveals, "//30
+                    + "note "//31
+                    + ") VALUES ("
+                    + "?, " //01 
+                    + "?, " //02 
+                    + "?, " //03 
+                    + "?, " //04 
+                    + "?, " //05
+                    + "?, " //06 
+                    + "?, " //07 
+                    + "?, " //08 
+                    + "?, " //09 
+                    + "?, " //10 
+                    + "?, " //11 
+                    + "?, " //12 
+                    + "?, " //13 
+                    + "?, " //14 
+                    + "?, " //15 
+                    + "?, " //16 
+                    + "?, " //17 
+                    + "?, " //18 
+                    + "?, " //19 
+                    + "?, " //20 
+                    + "?, " //21 
+                    + "?, " //22 
+                    + "?, " //23 
+                    + "?, " //24 
+                    + "?, " //25 
+                    + "?, " //26 
+                    + "?, " //27 
+                    + "?, " //28 
+                    + "?, " //29 
+                    + "?, " //30 
+                    + "?)"; //31 
+            ps = conn.prepareStatement(sql);
+            ps.setString   ( 1, item.getCaseYear());
+            ps.setString   ( 2, item.getCaseType());
+            ps.setString   ( 3, item.getCaseMonth());
+            ps.setString   ( 4, item.getCaseNumber());
+            ps.setString   ( 5, item.getEmployerIDNumber());
+            ps.setString   ( 6, item.getDeptInState());
+            ps.setString   ( 7, item.getBarginingUnitNo());
+            ps.setString   ( 8, item.getEONumber());
+            ps.setString   ( 9, item.getAllegation());
+            ps.setString   (10, item.getCurrentStatus());
+            ps.setBoolean  (11, item.isPriority());
+            ps.setTimestamp(12, item.getAssignedDate());
+            ps.setTimestamp(13, item.getTurnInDate());
+            ps.setTimestamp(14, item.getReportDueDate());
+            ps.setTimestamp(15, item.getDismissalDate());
+            ps.setTimestamp(16, item.getDeferredDate());
+            ps.setTimestamp(17, item.getFileDate());
+            ps.setBoolean  (18, item.isProbableCause());
+            ps.setTimestamp(19, item.getAppealDateReceived());
+            ps.setTimestamp(20, item.getAppealDateSent());
+            ps.setString   (21, item.getCourtName());
+            ps.setString   (22, item.getCourtCaseNumber());
+            ps.setString   (23, item.getSERBCaseNumber());
+            ps.setString   (24, item.getFinalDispositionStatus());
+            ps.setInt      (25, item.getInvestigatorID());
+            ps.setInt      (26, item.getMediatorAssignedID());
+            ps.setInt      (27, item.getAljID());
+            ps.setString   (28, item.getStatement());
+            ps.setString   (29, item.getRecommendation());
+            ps.setString   (30, item.getInvestigationReveals());
+            ps.setString   (31, item.getNote());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
 }

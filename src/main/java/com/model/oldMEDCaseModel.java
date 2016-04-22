@@ -9,7 +9,7 @@ package com.model;
  *
  * @author Andrew
  */
-public class oldMEDCaseTableModel {
+public class oldMEDCaseModel {
 
     private int Active;
     private String CaseNumber;

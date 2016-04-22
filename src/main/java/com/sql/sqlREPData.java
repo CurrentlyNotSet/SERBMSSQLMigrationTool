@@ -5,7 +5,7 @@
  */
 package com.sql;
 
-import com.model.oldREPDataTableModel;
+import com.model.oldREPDataModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,8 +21,8 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlREPData {
 
-    public static List<oldREPDataTableModel> getCases() {
-        List<oldREPDataTableModel> list = new ArrayList();
+    public static List<oldREPDataModel> getCases() {
+        List<oldREPDataModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -32,7 +32,7 @@ public class sqlREPData {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                oldREPDataTableModel item = new oldREPDataTableModel();
+                oldREPDataModel item = new oldREPDataModel();
                 item.setActive(rs.getByte("Active"));
                 item.setCaseActive(rs.getString("CaseActive"));
                 item.setCaseNumber(rs.getString("CaseNumber"));

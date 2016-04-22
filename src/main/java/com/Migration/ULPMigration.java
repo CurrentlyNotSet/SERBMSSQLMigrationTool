@@ -5,10 +5,13 @@
  */
 package com.Migration;
 
+import com.model.ULPCaseModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
-import com.model.oldULPDataTableModel;
+import com.model.oldBlobFileModel;
+import com.model.oldULPDataModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlBlobFile;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlULPData;
@@ -39,12 +42,12 @@ public class ULPMigration {
         int totalRecordCount = 0;
         int currentRecord = 0;
         System.out.println("Start Time " + new Date());
-        List<oldULPDataTableModel> oldULPDataList = sqlULPData.getCases();
+        List<oldULPDataModel> oldULPDataList = sqlULPData.getCases();
         totalRecordCount = oldULPDataList.size();
         System.out.println("Record Count: " + totalRecordCount);
         System.out.println("End Time " + new Date());
         
-        for (oldULPDataTableModel item : oldULPDataList){
+        for (oldULPDataModel item : oldULPDataList){
             migrateCase(item);
             currentRecord++;
             System.out.println("Current Record Number:  " + currentRecord);
@@ -54,7 +57,7 @@ public class ULPMigration {
         sqlMigrationStatus.updateTimeCompleted("MigrateULPCases");
     }
         
-    private static void migrateCase(oldULPDataTableModel item){
+    private static void migrateCase(oldULPDataModel item){
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
         ULPMigration.migrateChargingParty(item, caseNumber);
         ULPMigration.migrateChargingPartyRep(item, caseNumber);
@@ -63,7 +66,7 @@ public class ULPMigration {
         ULPMigration.migrateCaseData(item, caseNumber);
     }
     
-    private static void migrateChargingParty(oldULPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateChargingParty(oldULPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -94,7 +97,7 @@ public class ULPMigration {
         }
     }
     
-    private static void migrateChargingPartyRep(oldULPDataTableModel item, caseNumberModel caseNumber) {        
+    private static void migrateChargingPartyRep(oldULPDataModel item, caseNumberModel caseNumber) {        
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -125,7 +128,7 @@ public class ULPMigration {
         }
     }
     
-    private static void migrateChargedParty(oldULPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateChargedParty(oldULPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -156,7 +159,7 @@ public class ULPMigration {
         }
     }
     
-    private static void migrateChargedPartyRep(oldULPDataTableModel item, caseNumberModel caseNumber) {
+    private static void migrateChargedPartyRep(oldULPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -187,7 +190,66 @@ public class ULPMigration {
         }
     }
     
-    private static void migrateCaseData(oldULPDataTableModel item, caseNumberModel caseNumber) {
-        //TODO
+    private static void migrateCaseData(oldULPDataModel item, caseNumberModel caseNumber) {
+        List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(caseNumber);
+        
+        ULPCaseModel ulpcase = new ULPCaseModel();
+        
+        ulpcase.setCaseYear(caseNumber.getCaseYear());
+        ulpcase.setCaseType(caseNumber.getCaseType());
+        ulpcase.setCaseMonth(caseNumber.getCaseMonth());
+        ulpcase.setCaseNumber(caseNumber.getCaseNumber());
+        ulpcase.setEmployerIDNumber((item.getEmployerNum()== null) ? "" : item.getEmployerNum().trim());
+        ulpcase.setDeptInState((item.getDeptInState() == null) ? "" : item.getDeptInState().trim());
+        ulpcase.setBarginingUnitNo((item.getBarginingUnitNumber() == null) ? "" : item.getBarginingUnitNumber().trim());
+        ulpcase.setEONumber((item.getEmployeeOrgNumber() == null) ? "" : item.getEmployeeOrgNumber().trim());
+        ulpcase.setAllegation((item.getAllegation() == null) ? "" : item.getAllegation().trim());
+        ulpcase.setCurrentStatus((item.getStatus() == null) ? "" : item.getStatus().trim());
+        ulpcase.setPriority(("Yes".equals(item.getPriority()) || "1".equals(item.getPriority())));
+//        ulpcase.setAssignedDate();
+//        ulpcase.setTurnInDate();
+//        ulpcase.setReportDueDate();
+//        ulpcase.setDismissalDate();
+//        ulpcase.setDeferredDate();
+//        ulpcase.setFileDate();
+//        ulpcase.setProbableCause();
+//        ulpcase.setAppealDateReceived();
+//        ulpcase.setAppealDateSent();
+        ulpcase.setCourtName((item.getCourt() == null) ? "" : item.getCourt().trim());
+        ulpcase.setCourtCaseNumber((item.getCourtCaseNumber() == null) ? "" : item.getCourtCaseNumber().trim());
+        ulpcase.setSERBCaseNumber((item.getSERBCourtCaseNumber() == null) ? "" : item.getSERBCourtCaseNumber().trim());
+        ulpcase.setFinalDispositionStatus((item.getFinalDispostion() == null) ? "" : item.getFinalDispostion().trim());
+//        ulpcase.setInvestigatorID();
+//        ulpcase.setMediatorAssignedID();
+//        ulpcase.setAljID();
+        ulpcase.setNote("");
+        ulpcase.setInvestigationReveals("");
+        ulpcase.setStatement("");
+        ulpcase.setRecommendation("");
+
+        for (oldBlobFileModel blob : oldBlobFileList) {
+            if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
+                case "Notes":
+                    ulpcase.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "Invest":
+                    ulpcase.setInvestigationReveals(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "Statement":
+                    ulpcase.setStatement(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "Recommendation":
+                    ulpcase.setRecommendation(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        sqlULPData.importOldULPCase(ulpcase);
+
+
+
     }
+
 }
