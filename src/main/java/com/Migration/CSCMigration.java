@@ -7,6 +7,7 @@ package com.Migration;
 
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlMigrationStatus;
+import com.util.StringUtilities;
 
 /**
  *
@@ -27,11 +28,15 @@ public class CSCMigration {
     }
     
     private static void cscThread(MainWindowSceneController control){
+        long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("CSC Case Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
         
-        control.setProgressBarDisable();
+        long lEndTime = System.currentTimeMillis();
+        String finishedText = "Finished Migrating CSC Cases: " 
+                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+        control.setProgressBarDisable(finishedText);
         sqlMigrationStatus.updateTimeCompleted("MigrateCSCCases");
     }
 }

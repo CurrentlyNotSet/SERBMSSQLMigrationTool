@@ -13,10 +13,16 @@ import java.text.SimpleDateFormat;
  */
 public class Global {
     
+    private static final boolean debug = true;
+    
     private static final SimpleDateFormat mmddyyyyhhmmssa = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 
     public static SimpleDateFormat getMmddyyyyhhmmssa() {
         return mmddyyyyhhmmssa;
+    }
+
+    public static boolean isDebug() {
+        return debug;
     }
     
 }

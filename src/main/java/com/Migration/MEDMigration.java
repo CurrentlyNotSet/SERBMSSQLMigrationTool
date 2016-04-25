@@ -7,6 +7,7 @@ package com.Migration;
 
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlMigrationStatus;
+import com.util.StringUtilities;
 
 /**
  *
@@ -27,11 +28,15 @@ public class MEDMigration {
     }
     
     private static void medThread(MainWindowSceneController control){
+        long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("MED Case Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
         
-        control.setProgressBarDisable();
+        long lEndTime = System.currentTimeMillis();
+        String finishedText = "Finished Migrating MED Cases: " 
+                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+        control.setProgressBarDisable(finishedText);
         sqlMigrationStatus.updateTimeCompleted("MigrateMEDCases");
     }
 }

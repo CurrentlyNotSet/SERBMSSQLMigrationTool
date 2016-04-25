@@ -12,8 +12,8 @@ import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlREPData;
+import com.util.Global;
 import com.util.StringUtilities;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,23 +35,25 @@ public class REPMigration {
     }
 
     private static void repThread(MainWindowSceneController control) {
+        long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("REP Case Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
-        System.out.println("Start Time " + new Date());
         List<oldREPDataModel> oldREPDataList = sqlREPData.getCases();
         totalRecordCount = oldREPDataList.size();
-        System.out.println("Record Count: " + totalRecordCount);
-        System.out.println("End Time " + new Date());
 
         for (oldREPDataModel item : oldREPDataList) {
             migrateCase(item);
             currentRecord++;
-            System.out.println("Current Record Number:  " + currentRecord);
+            if (Global.isDebug()){
+                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getCaseNumber().trim() + ")");
+            }
             control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
         }
-
-        control.setProgressBarDisable();
+        long lEndTime = System.currentTimeMillis();
+        String finishedText = "Finished Migrating REP Cases: " 
+                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+        control.setProgressBarDisable(finishedText);
         sqlMigrationStatus.updateTimeCompleted("MigrateREPCases");
     }
 

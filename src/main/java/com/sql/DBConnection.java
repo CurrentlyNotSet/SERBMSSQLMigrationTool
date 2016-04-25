@@ -27,7 +27,7 @@ public class DBConnection {
                 break;
             } catch (ClassNotFoundException | SQLException e) {
                 nbAttempts++;
-                System.out.println();
+                System.out.println(e.getMessage());
                 if (nbAttempts == 2) {
                     AlertDialog.StaticAlert(3, "Warning", "Database Connection Error",
                             "Unable to connect to server. Please verify network connection "
