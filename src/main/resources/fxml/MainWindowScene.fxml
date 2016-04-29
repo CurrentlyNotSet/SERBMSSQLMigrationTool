@@ -67,12 +67,12 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </BorderPane.margin>
                             <children>
-                                <Button fx:id="MigrateULPCaseButton" mnemonicParsing="false" onAction="#migrateULPButton" prefHeight="33.0" prefWidth="203.0" text="Migrate ULP Cases" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                <Button fx:id="MigrateULPCaseButton" disable="true" mnemonicParsing="false" onAction="#migrateULPButton" prefHeight="33.0" prefWidth="203.0" text="Migrate ULP Cases" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                                     <GridPane.margin>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </GridPane.margin>
                                 </Button>
-                                <TextField fx:id="MigrateULPCaseTextField" alignment="CENTER" disable="true" editable="false" maxHeight="1.7976931348623157E308" promptText="Not Completed" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                <TextField fx:id="MigrateULPCaseTextField" alignment="CENTER" disable="true" editable="false" maxHeight="1.7976931348623157E308" promptText="Not Completed" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                                     <GridPane.margin>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </GridPane.margin>
@@ -82,12 +82,12 @@
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </GridPane.margin>
                                 </Label>
-                                <Button fx:id="MigrateMEDCaseButton" disable="true" mnemonicParsing="false" onAction="#migrateMEDButton" prefHeight="33.0" prefWidth="285.0" text="Migrate MED Cases" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                                <Button fx:id="MigrateMEDCaseButton" disable="true" mnemonicParsing="false" onAction="#migrateMEDButton" prefHeight="33.0" prefWidth="285.0" text="Migrate MED Cases" GridPane.columnSpan="2" GridPane.rowIndex="1">
                                     <GridPane.margin>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </GridPane.margin>
                                 </Button>
-                                <TextField fx:id="MigrateMEDCaseTextField" alignment="CENTER" disable="true" editable="false" maxHeight="1.7976931348623157E308" promptText="Not Completed" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                                <TextField fx:id="MigrateMEDCaseTextField" alignment="CENTER" disable="true" editable="false" maxHeight="1.7976931348623157E308" promptText="Not Completed" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
                                     <GridPane.margin>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </GridPane.margin>
@@ -97,7 +97,7 @@
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </GridPane.margin>
                                 </TextField>
-                                <TextField fx:id="MigrateCSCCaseTextField" alignment="CENTER" disable="true" editable="false" maxHeight="1.7976931348623157E308" promptText="Not Completed" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                                <TextField fx:id="MigrateCSCCaseTextField" alignment="CENTER" disable="true" editable="false" maxHeight="1.7976931348623157E308" promptText="Not Completed" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="6">
                                     <GridPane.margin>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </GridPane.margin>
@@ -112,7 +112,7 @@
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </GridPane.margin>
                                 </Button>
-                                <Button fx:id="MigrateCSCCaseButton" disable="true" mnemonicParsing="false" onAction="#migrateCSCButton" prefHeight="33.0" prefWidth="263.0" text="Migrate CSC Cases" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                                <Button fx:id="MigrateCSCCaseButton" disable="true" mnemonicParsing="false" onAction="#migrateCSCButton" prefHeight="33.0" prefWidth="263.0" text="Migrate CSC Cases" GridPane.columnSpan="2" GridPane.rowIndex="6">
                                     <GridPane.margin>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </GridPane.margin>
@@ -139,6 +139,36 @@
                                         <Font name="System Bold" size="14.0" />
                                     </font>
                                 </Label>
+                        <Button fx:id="MigrateORGCaseButton" disable="true" mnemonicParsing="false" onAction="#migrateORGButton" prefHeight="33.0" prefWidth="241.0" text="Migrate ORG Cases" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <TextField fx:id="MigrateORGCaseTextField" alignment="CENTER" disable="true" editable="false" maxHeight="1.7976931348623157E308" promptText="Not Completed" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <Button fx:id="MigrateUsersButton" disable="true" mnemonicParsing="false" onAction="#migrateUsersButton" prefHeight="33.0" prefWidth="203.0" text="Migrate Users" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <TextField fx:id="MigrateUsersTextField" alignment="CENTER" disable="true" editable="false" maxHeight="1.7976931348623157E308" promptText="Not Completed" GridPane.columnIndex="7" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <Button fx:id="MigrateDocumentsButton" disable="true" mnemonicParsing="false" onAction="#MigrateDocumentsButton" prefHeight="33.0" prefWidth="203.0" text="Migrate Documents" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <TextField fx:id="MigrateDocumentsTextField" alignment="CENTER" disable="true" editable="false" maxHeight="1.7976931348623157E308" promptText="Not Completed" GridPane.columnIndex="7" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </GridPane.margin>
+                        </TextField>
                             </children>
                         </GridPane>
                     </center>

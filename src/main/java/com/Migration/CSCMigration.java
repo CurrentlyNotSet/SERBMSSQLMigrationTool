@@ -16,9 +16,7 @@ import com.util.StringUtilities;
 public class CSCMigration {
     
     public static void migrateCSCData(final MainWindowSceneController control){
-        Thread cscThread;
-        
-        cscThread = new Thread() {
+        Thread cscThread = new Thread() {
             @Override
             public void run() {
                 cscThread(control);

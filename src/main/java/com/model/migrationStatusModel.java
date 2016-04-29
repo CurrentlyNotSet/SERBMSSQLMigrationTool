@@ -20,6 +20,9 @@ public class migrationStatusModel {
     private Timestamp migrateCSCCases;
     private Timestamp migrateCMDSCases;
     private Timestamp migrateContacts;
+    private Timestamp MigrateORGCase;
+    private Timestamp MigrateUsers;
+    private Timestamp MigrateDocuments;
 
     public int getId() {
         return id;
@@ -76,7 +79,29 @@ public class migrationStatusModel {
     public void setMigrateContacts(Timestamp migrateContacts) {
         this.migrateContacts = migrateContacts;
     }
-    
-    
+
+    public Timestamp getMigrateORGCase() {
+        return MigrateORGCase;
+    }
+
+    public void setMigrateORGCase(Timestamp MigrateORGCase) {
+        this.MigrateORGCase = MigrateORGCase;
+    }
+
+    public Timestamp getMigrateUsers() {
+        return MigrateUsers;
+    }
+
+    public void setMigrateUsers(Timestamp MigrateUsers) {
+        this.MigrateUsers = MigrateUsers;
+    }
+
+    public Timestamp getMigrateDocuments() {
+        return MigrateDocuments;
+    }
+
+    public void setMigrateDocuments(Timestamp MigrateDocuments) {
+        this.MigrateDocuments = MigrateDocuments;
+    }
     
 }

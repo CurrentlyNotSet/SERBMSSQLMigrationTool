@@ -16,9 +16,7 @@ import com.util.StringUtilities;
 public class MEDMigration {
     
     public static void migrateMEDData(final MainWindowSceneController control){
-        Thread medThread;
-        
-        medThread = new Thread() {
+        Thread medThread = new Thread() {
             @Override
             public void run() {
                 medThread(control);

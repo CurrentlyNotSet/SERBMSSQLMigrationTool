@@ -11,11 +11,13 @@ import com.model.caseNumberModel;
 import com.model.casePartyModel;
 import com.model.oldBlobFileModel;
 import com.model.oldULPDataModel;
+import com.model.relatedCaseModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlBlobFile;
 import com.sql.sqlBoardMeeting;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlRelatedCase;
 import com.sql.sqlULPData;
 import com.util.Global;
 import com.util.StringUtilities;
@@ -28,9 +30,7 @@ import java.util.List;
 public class ULPMigration {
     
     public static void migrateULPData(MainWindowSceneController control){
-        Thread ulpThread;
-        
-        ulpThread = new Thread() {
+        Thread ulpThread = new Thread() {
             @Override
             public void run() {
                 ulpThread(control);
@@ -70,6 +70,8 @@ public class ULPMigration {
         ULPMigration.migrateChargedPartyRep(item, caseNumber);
         ULPMigration.migrateCaseData(item, caseNumber);
         ULPMigration.migrateBoardMeetings(item, caseNumber);
+        migrateRelatedCases(item, caseNumber);
+        migrateCaseHistory(item, caseNumber);
     }
     
     private static void migrateChargingParty(oldULPDataModel item, caseNumberModel caseNumber) {
@@ -284,4 +286,20 @@ public class ULPMigration {
         }
     }
 
+    private static void migrateRelatedCases(oldULPDataModel item, caseNumberModel caseNumber) {
+        relatedCaseModel relatedCase = new relatedCaseModel();
+        
+        relatedCase.setCaseYear(caseNumber.getCaseYear());
+        relatedCase.setCaseType(caseNumber.getCaseType());
+        relatedCase.setCaseMonth(caseNumber.getCaseMonth());
+        relatedCase.setCaseNumber(caseNumber.getCaseNumber());
+        relatedCase.setRelatedCaseNumber(item.getRelatedCases());
+        
+        sqlRelatedCase.addRelatedCase(relatedCase);
+    }
+    
+    private static void migrateCaseHistory(oldULPDataModel item, caseNumberModel caseNumber) {
+        //TODO
+    }
+    
 }

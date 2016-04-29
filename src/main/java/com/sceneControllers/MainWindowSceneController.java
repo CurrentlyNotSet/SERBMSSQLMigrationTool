@@ -6,12 +6,7 @@
 package com.sceneControllers;
 
 
-import com.Migration.CMDSMigration;
-import com.Migration.CSCMigration;
-import com.Migration.ContactsMigration;
-import com.Migration.MEDMigration;
-import com.Migration.REPMigration;
-import com.Migration.ULPMigration;
+import com.Migration.*;
 import com.model.migrationStatusModel;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
@@ -55,6 +50,12 @@ public class MainWindowSceneController implements Initializable {
     @FXML 
     private Button MigrateContactsButton;
     @FXML 
+    private Button MigrateORGCaseButton;
+    @FXML 
+    private Button MigrateUsersButton;
+    @FXML 
+    private Button MigrateDocumentsButton;
+    @FXML 
     private TextField MigrateULPCaseTextField;
     @FXML 
     private TextField MigrateMEDCaseTextField;
@@ -66,6 +67,13 @@ public class MainWindowSceneController implements Initializable {
     private TextField MigrateCMDSCaseTextField;
     @FXML 
     private TextField MigrateContactsTextField;
+    @FXML 
+    private TextField MigrateORGCaseTextField;
+    @FXML 
+    private TextField MigrateUsersTextField;
+    @FXML 
+    private TextField MigrateDocumentsTextField;
+        
     @FXML
     protected void onRectanglePressed(MouseEvent event) {
         X = mainstage.getX() - event.getScreenX();
@@ -114,6 +122,11 @@ public class MainWindowSceneController implements Initializable {
     }
     
     @FXML
+    private void migrateORGButton() {
+        ORGMigration.migrateORGData(control);
+    }
+    
+    @FXML
     private void migrateCSCButton() {
         CSCMigration.migrateCSCData(control);
     }
@@ -126,6 +139,16 @@ public class MainWindowSceneController implements Initializable {
     @FXML
     private void migrateContactsButton() {
         ContactsMigration.migrateContacts(control);
+    }
+    
+    @FXML
+    private void migrateUsersButton() {
+        UserMigration.migrateUserData(control);
+    }
+    
+    @FXML
+    private void MigrateDocumentsButton() {
+        
     }
     
     public void setProgressBarIndeterminate(final String text) {
@@ -166,13 +189,22 @@ public class MainWindowSceneController implements Initializable {
                     ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateREPCases())));
             MigrateContactsTextField.setText(((item.getMigrateContacts() == null)
                     ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateContacts())));
-
+            MigrateORGCaseTextField.setText(((item.getMigrateORGCase() == null)
+                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateORGCase())));
+            MigrateUsersTextField.setText(((item.getMigrateUsers() == null)
+                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateUsers())));
+            MigrateDocumentsTextField.setText(((item.getMigrateDocuments() == null)
+                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
+            
             MigrateCMDSCaseButton.setDisable(item.getMigrateCMDSCases() != null);
             MigrateContactsButton.setDisable(item.getMigrateContacts() != null);
             MigrateCSCCaseButton.setDisable(item.getMigrateCSCCases() != null);
             MigrateREPCaseButton.setDisable(item.getMigrateREPCases() != null);
             MigrateMEDCaseButton.setDisable(item.getMigrateMEDCases() != null);
             MigrateULPCaseButton.setDisable(item.getMigrateULPCases() != null);
+            MigrateORGCaseButton.setDisable(item.getMigrateORGCase() != null);
+            MigrateUsersButton.setDisable(item.getMigrateUsers()!= null);
+            MigrateDocumentsButton.setDisable(item.getMigrateDocuments()!= null);
   
     }
 

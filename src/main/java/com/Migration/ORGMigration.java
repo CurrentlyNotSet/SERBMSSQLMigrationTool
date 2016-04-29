@@ -13,28 +13,28 @@ import com.util.StringUtilities;
  *
  * @author Andrew
  */
-public class CMDSMigration {
+public class ORGMigration {
     
-    public static void migrateCMDSData(final MainWindowSceneController control){
-        Thread cmdsThread = new Thread() {
+    public static void migrateORGData(final MainWindowSceneController control){
+        Thread orgThread = new Thread() {
             @Override
             public void run() {
-                cmdsThread(control);
+                orgThread(control);
             }
         };
-        cmdsThread.start();        
+        orgThread.start();        
     }
     
-    private static void cmdsThread(MainWindowSceneController control){
+    private static void orgThread(MainWindowSceneController control){
         long lStartTime = System.currentTimeMillis();
-        control.setProgressBarIndeterminate("CMDS Case Migration");
+        control.setProgressBarIndeterminate("ORG Case Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
         
         long lEndTime = System.currentTimeMillis();
-        String finishedText = "Finished Migrating CMDS Cases: " 
+        String finishedText = "Finished Migrating ORG Cases: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
         control.setProgressBarDisable(finishedText);
-        sqlMigrationStatus.updateTimeCompleted("MigrateCMDSCases");
+        sqlMigrationStatus.updateTimeCompleted("MigrateORGCases");
     }
 }

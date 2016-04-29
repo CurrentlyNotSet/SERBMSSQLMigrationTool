@@ -23,9 +23,7 @@ import java.util.List;
 public class REPMigration {
 
     public static void migrateREPData(final MainWindowSceneController control) {
-        Thread repThread;
-
-        repThread = new Thread() {
+        Thread repThread = new Thread() {
             @Override
             public void run() {
                 repThread(control);
@@ -77,6 +75,7 @@ public class REPMigration {
         migrateIntervenerRep(item, caseNumber);
         migrateConversionSchool(item, caseNumber);
         migrateConversionSchoolRep(item, caseNumber);
+        migrateCaseData(item, caseNumber);
     }
 
     private static void migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -799,4 +798,7 @@ public class REPMigration {
         }
     }
 
+    private static void migrateCaseData(oldREPDataModel item, caseNumberModel caseNumber) {
+    
+    }
 }

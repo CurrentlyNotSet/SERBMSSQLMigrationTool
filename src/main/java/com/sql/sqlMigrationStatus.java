@@ -34,9 +34,12 @@ public class sqlMigrationStatus {
                 item.setMigrateULPCases(rs.getTimestamp("MigrateULPCases"));
                 item.setMigrateMEDCases(rs.getTimestamp("MigrateMEDCases"));
                 item.setMigrateREPCases(rs.getTimestamp("MigrateREPCases"));
+                item.setMigrateORGCase(rs.getTimestamp("MigrateORGCases"));
                 item.setMigrateCSCCases(rs.getTimestamp("MigrateCSCCases"));
                 item.setMigrateCMDSCases(rs.getTimestamp("MigrateCMDSCases"));
                 item.setMigrateContacts(rs.getTimestamp("MigrateContacts"));
+                item.setMigrateUsers(rs.getTimestamp("MigrateUsers"));
+                item.setMigrateDocuments(rs.getTimestamp("MigrateDocuments"));
             } else {
                 item = null;
             }
