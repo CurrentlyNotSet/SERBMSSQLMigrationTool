@@ -36,8 +36,8 @@ public class sqlActivity {
                     + "date, "            //06
                     + "action, "          //07
                     + "fileName, "        //08
-                    + "from, "            //09
-                    + "to, "              //10
+                    + "[from], "          //09
+                    + "[to], "            //10
                     + "type, "            //11
                     + "redacted, "        //12
                     + "awaitingTimeStamp "//13
@@ -77,24 +77,24 @@ public class sqlActivity {
             DbUtils.closeQuietly(conn);
         }
     }
-    
-    
-    public static List<oldULPHistoryModel> getUsers() {
+        
+    public static List<oldULPHistoryModel> getULPHistoryByCase(String caseNumber) {
         List<oldULPHistoryModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT * FROM Users";
+            String sql = "SELECT *, cast(date as datetime) as Date2 FROM ULPHistory WHERE caseNumber = ?";
             ps = conn.prepareStatement(sql);
+            ps.setString( 1, caseNumber);
             rs = ps.executeQuery();
             while (rs.next()) {
                 oldULPHistoryModel item = new oldULPHistoryModel();
                 item.setHistoryID(rs.getInt("HistoryID"));
                 item.setActive(rs.getInt("Active"));
-                item.setUserInitials(rs.getString("UserInitials"));
-                item.setDate(rs.getString("Date"));
+                item.setUserInitials(rs.getString("UserInitals"));
+                item.setDate(rs.getTimestamp("Date2"));
                 item.setAction(rs.getString("Action"));
                 item.setCaseNumber(rs.getString("CaseNumber"));
                 item.setFileName(rs.getString("FileName"));

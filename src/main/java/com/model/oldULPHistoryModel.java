@@ -5,6 +5,8 @@
  */
 package com.model;
 
+import java.sql.Timestamp;
+
 /**
  *
  * @author Andrew
@@ -13,7 +15,7 @@ public class oldULPHistoryModel {
     private int historyID;
     private int active;
     private String userInitials;
-    private String date;
+    private Timestamp date;
     private String action;
     private String caseNumber;
     private String fileName;
@@ -50,11 +52,11 @@ public class oldULPHistoryModel {
         this.userInitials = userInitials;
     }
 
-    public String getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

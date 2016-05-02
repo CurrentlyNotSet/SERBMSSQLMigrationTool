@@ -8,10 +8,7 @@ package com.Migration;
 import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlMigrationStatus;
-import com.sql.sqlUsers;
-import com.util.Global;
 import com.util.StringUtilities;
-import java.util.List;
 
 /**
  *
@@ -34,17 +31,17 @@ public class DocumentMigration {
         control.setProgressBarIndeterminate("Documents Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
-        List<userModel> oldUserList = sqlUsers.getUsers();
-        totalRecordCount = oldUserList.size();
-        
-        for (userModel item : oldUserList){
-            migrateDocument(item);
-            currentRecord++;
-            if (Global.isDebug()){
-                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getUserName().trim() + ")");
-            }
-            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
-        }
+//        List<userModel> oldUserList = sqlUsers.getUsers();
+//        totalRecordCount = oldUserList.size();
+//        
+//        for (userModel item : oldUserList){
+//            migrateDocument(item);
+//            currentRecord++;
+//            if (Global.isDebug()){
+//                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getUserName().trim() + ")");
+//            }
+//            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
+//        }
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Documents: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);

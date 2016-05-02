@@ -9,6 +9,7 @@ package com.sceneControllers;
 import com.Migration.*;
 import com.model.migrationStatusModel;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlUsers;
 import com.util.Global;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -99,6 +100,7 @@ public class MainWindowSceneController implements Initializable {
         mainstage = stage;
         control = controller;
         checkButtonStatus();
+        sqlUsers.getNewDBUsers();
     }
     
     @FXML

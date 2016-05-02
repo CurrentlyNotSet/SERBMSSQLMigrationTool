@@ -6,18 +6,21 @@
 package com.Migration;
 
 import com.model.ULPCaseModel;
+import com.model.activityModel;
 import com.model.boardMeetingModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
 import com.model.oldBlobFileModel;
 import com.model.oldULPDataModel;
+import com.model.oldULPHistoryModel;
 import com.model.relatedCaseModel;
+import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
 import com.sql.sqlBoardMeeting;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
-import com.sql.sqlRelatedCase;
 import com.sql.sqlULPData;
 import com.util.Global;
 import com.util.StringUtilities;
@@ -71,7 +74,7 @@ public class ULPMigration {
         ULPMigration.migrateCaseData(item, caseNumber);
         ULPMigration.migrateBoardMeetings(item, caseNumber);
         migrateRelatedCases(item, caseNumber);
-        migrateCaseHistory(item, caseNumber);
+        migrateCaseHistory(caseNumber);
     }
     
     private static void migrateChargingParty(oldULPDataModel item, caseNumberModel caseNumber) {
@@ -295,11 +298,37 @@ public class ULPMigration {
         relatedCase.setCaseNumber(caseNumber.getCaseNumber());
         relatedCase.setRelatedCaseNumber(item.getRelatedCases());
         
-        sqlRelatedCase.addRelatedCase(relatedCase);
+//        sqlRelatedCase.addRelatedCase(relatedCase);
     }
     
-    private static void migrateCaseHistory(oldULPDataModel item, caseNumberModel caseNumber) {
-        //TODO
+    private static void migrateCaseHistory(caseNumberModel caseNumber) {
+        List<oldULPHistoryModel> oldULPDataList = sqlActivity.getULPHistoryByCase(StringUtilities.generateFullCaseNumber(caseNumber));
+        
+        for (oldULPHistoryModel old : oldULPDataList){
+            int userID = 0;
+            for (userModel usr : Global.getUserList()){
+                if (old.getUserInitials().toLowerCase().trim().equals(usr.getUserName().toLowerCase().trim())){
+                    userID = usr.getId();
+                }
+            }
+                                                
+            activityModel item = new activityModel();
+            item.setCaseYear(caseNumber.getCaseYear());
+            item.setCaseType(caseNumber.getCaseType());
+            item.setCaseMonth(caseNumber.getCaseMonth());
+            item.setCaseNumber(caseNumber.getCaseNumber());
+            item.setUserID(userID);
+            item.setDate(old.getDate());
+            item.setAction(old.getAction());
+            item.setFileName(old.getFileName());
+            item.setFrom(old.getEmailFrom());
+            item.setTo(old.getEmailTo());
+            item.setType("");
+            item.setRedacted(0);
+            item.setAwaitingTimeStamp(0);
+            
+            sqlActivity.addActivity(item);
+        }
     }
     
 }

@@ -34,10 +34,11 @@ public class UserMigration {
         control.setProgressBarIndeterminate("Users Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
+        List<userModel> oldSecUserList = sqlUsers.getSecUsers();
         List<userModel> oldUserList = sqlUsers.getUsers();
-        totalRecordCount = oldUserList.size();
+        totalRecordCount = oldUserList.size() + oldSecUserList.size();
         
-        for (userModel item : oldUserList){
+        for (userModel item : oldSecUserList){
             migrateUser(item);
             currentRecord++;
             if (Global.isDebug()){
@@ -45,16 +46,36 @@ public class UserMigration {
             }
             control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
         }
+
+        for (userModel item : oldUserList) {
+            boolean missingEntry = true;
+            for (userModel secitem : oldSecUserList){
+                if (secitem.getUserName().trim() == null ? item.getUserName().trim() == null : secitem.getUserName().trim().equalsIgnoreCase(item.getUserName().trim())){
+                    missingEntry = false;
+                    break;
+                }
+            }
+            if (missingEntry) {
+                migrateUser(item);
+            }
+            currentRecord++;
+            if (Global.isDebug()) {
+                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getUserName().trim() + ")");
+            }
+            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
+        }
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Users: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
         control.setProgressBarDisable(finishedText);
-        sqlMigrationStatus.updateTimeCompleted("MigrateUsers");
+//        sqlMigrationStatus.updateTimeCompleted("MigrateUsers");
     }
         
     private static void migrateUser(userModel item){
-        item = seperateName(item);
-        item.setUserName(item.getFirstName() + "." + item.getLastName());
+        if ("".equals(item.getFirstName().trim()) && "".equals(item.getMiddleInitial().trim())){
+            item = seperateName(item);
+        }
         sqlUsers.saveUserInformation(seperateName(item));
     }
         

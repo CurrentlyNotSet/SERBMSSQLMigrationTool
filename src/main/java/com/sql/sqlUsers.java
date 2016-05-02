@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.userModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,8 +36,55 @@ public class sqlUsers {
                 userModel item = new userModel();
                 item.setActive(rs.getInt("Active"));
                 item.setLastName(rs.getString("Name"));
-                item.setUserName(rs.getString("Username"));
+                item.setUserName(rs.getString("Username").toLowerCase());
                 item.setEmail(rs.getString("Email"));
+                
+                //blank data
+                item.setFirstName("");
+                item.setMiddleInitial("");
+                item.setWorkPhone("");
+                item.setPasswordSalt(0);
+                item.setPassword("");
+                item.setLastLoginDateTime(null);
+                item.setLastLoginPCName("");
+                item.setActiveLogin(false);
+                item.setPasswordReset(true);
+                item.setApplicationVersion("");
+                item.setDefaultSection("");
+                item.setULPCaseWorker(true);
+                item.setMediator(true);
+                item.setREPDocketing(true);
+                item.setULPDocketing(true);
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
+    
+    public static List<userModel> getSecUsers() {
+        List<userModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "SELECT * FROM Secuser";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                userModel item = new userModel();
+                item.setActive(rs.getInt("Active"));
+                item.setFirstName(rs.getString("firstname"));
+                item.setMiddleInitial(rs.getString("middlename"));
+                item.setLastName(rs.getString("lastName"));
+                item.setUserName(rs.getString("Username").toLowerCase());
+                item.setEmail(rs.getString("userEmail"));
                 
                 //blank data
                 item.setWorkPhone("");
@@ -62,6 +110,32 @@ public class sqlUsers {
             DbUtils.closeQuietly(rs);
         }
         return list;
+    }
+    
+    public static void getNewDBUsers() {
+        List<userModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "SELECT Username, id FROM Users";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                userModel item = new userModel();
+                item.setId(rs.getInt("id"));
+                item.setUserName(rs.getString("Username"));
+                list.add(item);
+            }
+            Global.setUserList(list);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
     }
     
     public static void saveUserInformation(userModel item){

@@ -13,6 +13,7 @@ import java.sql.Timestamp;
  */
 public class userModel {
     
+    private int id;
     private String userName;
     private int active;
     private String firstName;
@@ -32,6 +33,14 @@ public class userModel {
     private boolean mediator;
     private boolean REPDocketing;
     private boolean ULPDocketing;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getActive() {
         return active;
