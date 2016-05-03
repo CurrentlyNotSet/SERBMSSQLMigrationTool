@@ -5,7 +5,6 @@
  */
 package com.sceneControllers;
 
-
 import com.Migration.*;
 import com.model.migrationStatusModel;
 import com.sql.sqlMigrationStatus;
@@ -33,126 +32,135 @@ public class MainWindowSceneController implements Initializable {
     Stage mainstage;
     private double X, Y;
     MainWindowSceneController control;
-    
+
     @FXML
     private ProgressBar progressbar;
     @FXML
     private Label progressBarLabel;
-    @FXML 
+    @FXML
     private Button MigrateULPCaseButton;
-    @FXML 
+    @FXML
     private Button MigrateMEDCaseButton;
-    @FXML 
+    @FXML
     private Button MigrateREPCaseButton;
-    @FXML 
+    @FXML
     private Button MigrateCSCCaseButton;
-    @FXML 
+    @FXML
     private Button MigrateCMDSCaseButton;
-    @FXML 
+    @FXML
     private Button MigrateContactsButton;
-    @FXML 
+    @FXML
     private Button MigrateORGCaseButton;
-    @FXML 
+    @FXML
     private Button MigrateUsersButton;
-    @FXML 
+    @FXML
     private Button MigrateDocumentsButton;
-    @FXML 
+    @FXML
+    private Button MigrateEmployersButton;
+    @FXML
     private TextField MigrateULPCaseTextField;
-    @FXML 
+    @FXML
     private TextField MigrateMEDCaseTextField;
-    @FXML 
+    @FXML
     private TextField MigrateREPCaseTextField;
-    @FXML 
+    @FXML
     private TextField MigrateCSCCaseTextField;
-    @FXML 
+    @FXML
     private TextField MigrateCMDSCaseTextField;
-    @FXML 
+    @FXML
     private TextField MigrateContactsTextField;
-    @FXML 
+    @FXML
     private TextField MigrateORGCaseTextField;
-    @FXML 
+    @FXML
     private TextField MigrateUsersTextField;
-    @FXML 
+    @FXML
     private TextField MigrateDocumentsTextField;
-        
+
     @FXML
     protected void onRectanglePressed(MouseEvent event) {
         X = mainstage.getX() - event.getScreenX();
         Y = mainstage.getY() - event.getScreenY();
     }
+
     @FXML
     protected void onRectangleDragged(MouseEvent event) {
         mainstage.setX(event.getScreenX() + X);
         mainstage.setY(event.getScreenY() + Y);
     }
-    
+
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //TODO
-    }    
-    
-    public void setDefaults(Stage stage, MainWindowSceneController controller){
+    }
+
+    public void setDefaults(Stage stage, MainWindowSceneController controller) {
         mainstage = stage;
         control = controller;
         checkButtonStatus();
         sqlUsers.getNewDBUsers();
     }
-    
+
     @FXML
     private void MenuExit() {
         System.exit(0);
     }
-    
+
     @FXML
     private void migrateULPButton() {
         ULPMigration.migrateULPData(control);
     }
-    
+
     @FXML
     private void migrateMEDButton() {
         MEDMigration.migrateMEDData(control);
     }
-    
+
     @FXML
     private void migrateREPButton() {
         REPMigration.migrateREPData(control);
     }
-    
+
     @FXML
     private void migrateORGButton() {
         ORGMigration.migrateORGData(control);
     }
-    
+
     @FXML
     private void migrateCSCButton() {
         CSCMigration.migrateCSCData(control);
     }
-    
+
     @FXML
     private void migrateCMDSButton() {
         CMDSMigration.migrateCMDSData(control);
     }
-    
+
     @FXML
     private void migrateContactsButton() {
         ContactsMigration.migrateContacts(control);
     }
-    
+
     @FXML
     private void migrateUsersButton() {
         UserMigration.migrateUserData(control);
     }
-    
+
     @FXML
-    private void MigrateDocumentsButton() {
-        
+    private void migrateDocumentsButton() {
+
     }
-    
+
+    @FXML
+    private void migrateEmployersButton() {
+        EmployersMigration.migrateEmployers(control);
+    }
+
     public void setProgressBarIndeterminate(final String text) {
         Platform.runLater(() -> {
             progressBarLabel.setText("Gathering Records for: " + text);
@@ -160,14 +168,14 @@ public class MainWindowSceneController implements Initializable {
             disableAllButtons();
         });
     }
-    
+
     public void updateProgressBar(final double currentValue, final double maxValue) {
         Platform.runLater(() -> {
             progressBarLabel.setText("Processing Record: " + (int) currentValue + "/" + (int) maxValue);
             progressbar.setProgress(currentValue / maxValue);
         });
-    } 
-    
+    }
+
     public void setProgressBarDisable(final String text) {
         Platform.runLater(() -> {
             progressBarLabel.setText(text);
@@ -179,45 +187,48 @@ public class MainWindowSceneController implements Initializable {
     private void checkButtonStatus() {
         migrationStatusModel item = sqlMigrationStatus.getMigrationStatus();
 
-            MigrateCMDSCaseTextField.setText(((item.getMigrateCMDSCases() == null)
-                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateCMDSCases())));
-            MigrateCSCCaseTextField.setText(((item.getMigrateCSCCases() == null)
-                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateCSCCases())));
-            MigrateULPCaseTextField.setText(((item.getMigrateULPCases() == null)
-                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateULPCases())));
-            MigrateMEDCaseTextField.setText(((item.getMigrateMEDCases() == null)
-                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateMEDCases())));
-            MigrateREPCaseTextField.setText(((item.getMigrateREPCases() == null)
-                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateREPCases())));
-            MigrateContactsTextField.setText(((item.getMigrateContacts() == null)
-                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateContacts())));
-            MigrateORGCaseTextField.setText(((item.getMigrateORGCase() == null)
-                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateORGCase())));
-            MigrateUsersTextField.setText(((item.getMigrateUsers() == null)
-                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateUsers())));
-            MigrateDocumentsTextField.setText(((item.getMigrateDocuments() == null)
-                    ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
-            
-            MigrateCMDSCaseButton.setDisable(item.getMigrateCMDSCases() != null);
-            MigrateContactsButton.setDisable(item.getMigrateContacts() != null);
-            MigrateCSCCaseButton.setDisable(item.getMigrateCSCCases() != null);
-            MigrateREPCaseButton.setDisable(item.getMigrateREPCases() != null);
-            MigrateMEDCaseButton.setDisable(item.getMigrateMEDCases() != null);
-            MigrateULPCaseButton.setDisable(item.getMigrateULPCases() != null);
-            MigrateORGCaseButton.setDisable(item.getMigrateORGCase() != null);
-            MigrateUsersButton.setDisable(item.getMigrateUsers()!= null);
-            MigrateDocumentsButton.setDisable(item.getMigrateDocuments()!= null);
-  
+        MigrateCMDSCaseTextField.setText(((item.getMigrateCMDSCases() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateCMDSCases())));
+        MigrateCSCCaseTextField.setText(((item.getMigrateCSCCases() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateCSCCases())));
+        MigrateULPCaseTextField.setText(((item.getMigrateULPCases() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateULPCases())));
+        MigrateMEDCaseTextField.setText(((item.getMigrateMEDCases() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateMEDCases())));
+        MigrateREPCaseTextField.setText(((item.getMigrateREPCases() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateREPCases())));
+        MigrateContactsTextField.setText(((item.getMigrateContacts() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateContacts())));
+        MigrateORGCaseTextField.setText(((item.getMigrateORGCase() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateORGCase())));
+        MigrateUsersTextField.setText(((item.getMigrateUsers() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateUsers())));
+        MigrateDocumentsTextField.setText(((item.getMigrateDocuments() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
+
+        MigrateCMDSCaseButton.setDisable(item.getMigrateCMDSCases() != null);
+        MigrateContactsButton.setDisable(item.getMigrateContacts() != null);
+        MigrateCSCCaseButton.setDisable(item.getMigrateCSCCases() != null);
+        MigrateREPCaseButton.setDisable(item.getMigrateREPCases() != null);
+        MigrateMEDCaseButton.setDisable(item.getMigrateMEDCases() != null);
+        MigrateULPCaseButton.setDisable(item.getMigrateULPCases() != null);
+        MigrateORGCaseButton.setDisable(item.getMigrateORGCase() != null);
+        MigrateUsersButton.setDisable(item.getMigrateUsers() != null);
+        MigrateDocumentsButton.setDisable(item.getMigrateDocuments() != null);
+        MigrateEmployersButton.setDisable(item.getMigrateDocuments() != null);
     }
 
     private void disableAllButtons() {
-            MigrateCMDSCaseButton.setDisable(true);
-            MigrateContactsButton.setDisable(true);
-            MigrateCSCCaseButton.setDisable(true);
-            MigrateREPCaseButton.setDisable(true);
-            MigrateMEDCaseButton.setDisable(true);
-            MigrateULPCaseButton.setDisable(true);
-      
+        MigrateCMDSCaseButton.setDisable(true);
+        MigrateContactsButton.setDisable(true);
+        MigrateCSCCaseButton.setDisable(true);
+        MigrateREPCaseButton.setDisable(true);
+        MigrateMEDCaseButton.setDisable(true);
+        MigrateULPCaseButton.setDisable(true);
+        MigrateORGCaseButton.setDisable(true);
+        MigrateUsersButton.setDisable(true);
+        MigrateDocumentsButton.setDisable(true);
+        MigrateEmployersButton.setDisable(true);
     }
 
 }

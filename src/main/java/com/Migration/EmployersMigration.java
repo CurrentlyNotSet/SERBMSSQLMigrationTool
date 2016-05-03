@@ -5,10 +5,13 @@
  */
 package com.Migration;
 
+import com.model.BarginingUnitModel;
 import com.model.employerTypeModel;
 import com.model.employersModel;
+import com.model.oldBarginingUnitNewModel;
 import com.model.oldPartyModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlBarginingUnit;
 import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
@@ -38,14 +41,25 @@ public class EmployersMigration {
         int currentRecord = 0;
         
         List<employerTypeModel> types = sqlEmployers.getEmployerType();
-        List<oldPartyModel> masterList = sqlEmployers.getOldEmployers();
-        totalRecordCount = masterList.size();
+        List<oldPartyModel> employersList = sqlEmployers.getOldEmployers();
+        List<oldBarginingUnitNewModel> unionList = sqlBarginingUnit.getOldBarginingUnits();
         
-        for (oldPartyModel item : masterList){
-            migrateContact(item, types);
+        totalRecordCount = employersList.size() + unionList.size();
+        
+        for (oldPartyModel item : employersList){
+            migrateEmployers(item, types);
             currentRecord++;
             if (Global.isDebug()){
                 System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getLastName().trim() + ")");
+            }
+            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
+        }
+        
+        for (oldBarginingUnitNewModel item : unionList){
+            migrateBarginingUnitUnions(item);
+            currentRecord++;
+            if (Global.isDebug()){
+                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getBUEmployerName().trim() + ")");
             }
             control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
         }
@@ -57,7 +71,7 @@ public class EmployersMigration {
         sqlMigrationStatus.updateTimeCompleted("MigrateEmployers");
     }
     
-    private static void migrateContact(oldPartyModel old, List<employerTypeModel> typeList) {
+    private static void migrateEmployers(oldPartyModel old, List<employerTypeModel> typeList) {
         int typeID = 0;
         for (employerTypeModel type : typeList){
             if (type.getType().equals(old.getPartyType())){
@@ -99,4 +113,50 @@ public class EmployersMigration {
         sqlEmployers.addEmployer(item);
     }
 
+    private static void migrateBarginingUnitUnions(oldBarginingUnitNewModel old) {
+        BarginingUnitModel item = new BarginingUnitModel();
+        
+        item.setActive(old.getActive());
+        item.setEmployerNumber((old.getEmployerNumber()== null) ? "" : old.getEmployerNumber().trim());
+        item.setUnitNumber((old.getUnitNumber()== null) ? "" : old.getUnitNumber().trim());
+        item.setCert((old.getCert()== null) ? "" : old.getCert().trim());
+        item.setBUEmployerName((old.getBUEmployerName()== null) ? "" : old.getBUEmployerName().trim());
+        item.setJurisdiction((old.getJur()== null) ? "" : old.getJur().trim());
+        item.setCounty((old.getCounty()== null) ? "" : old.getCounty().trim());
+        item.setLUnion((old.getLUnion()== null) ? "" : old.getLUnion().trim());
+        item.setLocal((old.getLocal()== null) ? "" : old.getLocal().trim());
+        item.setStrike(("Y".equals(old.getStrike().trim())) ? 1 : 0);
+        item.setLGroup((old.getLGroup()== null) ? "" : old.getLGroup().trim());
+//        item.setCertDate((old.getCertDate()== null) ? "" : old.getCertDate().trim());
+        item.setEnabled(("Y".equals(old.getEnabled().trim())) ? 1 : 0);
+        item.setUnitDescription((old.getUnitDescription()== null) ? "" : old.getUnitDescription().trim());
+        
+        String[] caseNumber = old.getCaseRef().split("-");
+        if (old.getCaseRef().trim().length() == 16 &&
+                (caseNumber[0].length() == 4 || caseNumber[0].length() == 2) &&
+                caseNumber[1].length() < 5 && caseNumber[2].length() == 2){
+            if (caseNumber[0].length() == 4){
+                item.setCaseRefYear(caseNumber[0]);
+            } else if (caseNumber[0].length() == 2) {
+                if (Integer.parseInt(caseNumber[0]) > 20){
+                    item.setCaseRefYear( "19" + caseNumber[0]);
+                } else {
+                    item.setCaseRefYear( "20" + caseNumber[0]);
+                }
+            }            
+            item.setCaseRefSection(caseNumber[1]);
+            item.setCaseRefMonth(caseNumber[2]);
+            if (caseNumber[3].length() > 4){
+                item.setCaseRefSequence(caseNumber[3].substring(0, 3));
+            } else {
+                item.setCaseRefSequence(caseNumber[3]);
+            }
+        } else {
+            item.setCaseRefYear("");
+            item.setCaseRefSection("");
+            item.setCaseRefMonth("");
+            item.setCaseRefSequence("");
+        }
+        sqlBarginingUnit.addBarginingUnit(item);
+    }
 }

@@ -28,7 +28,7 @@ public class sqlEmployers {
         PreparedStatement ps = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO Activity ("
+            String sql = "Insert INTO Employers ("
                     + "Active, "            //01
                     + "EmployerType, "      //02
                     + "EmployerName, "      //03
