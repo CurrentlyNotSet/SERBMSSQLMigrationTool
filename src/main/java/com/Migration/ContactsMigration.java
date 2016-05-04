@@ -51,7 +51,9 @@ public class ContactsMigration {
         String finishedText = "Finished Migrating Contacts: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
         control.setProgressBarDisable(finishedText);
-        sqlMigrationStatus.updateTimeCompleted("MigrateContacts");
+        if (Global.isDebug() == false){
+            sqlMigrationStatus.updateTimeCompleted("MigrateContacts");
+        }
     }
     
     private static void migrateContact(partyModel item) {

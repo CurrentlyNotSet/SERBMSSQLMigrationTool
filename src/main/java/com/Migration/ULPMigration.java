@@ -62,7 +62,9 @@ public class ULPMigration {
         String finishedText = "Finished Migrating ULP Cases: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
         control.setProgressBarDisable(finishedText);
-        sqlMigrationStatus.updateTimeCompleted("MigrateULPCases");
+        if (Global.isDebug() == false){
+            sqlMigrationStatus.updateTimeCompleted("MigrateULPCases");
+        }
     }
         
     private static void migrateCase(oldULPDataModel item){
@@ -83,25 +85,16 @@ public class ULPMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setPartyID(0);
         party.setCaseRelation("Charging Party");
-        party.setPrefix("");
-        party.setFirstName("");
-        party.setMiddleInitial("");
-        party.setLastName(((item.getCPName() == null) ? "" : item.getCPName().trim()));
-        party.setSuffix("");
-        party.setNameTitle("");
-        party.setJobTitle("");
-        party.setCompanyName("");
-        party.setAddress1(((item.getCPAddress1() == null) ? "" : item.getCPAddress1().trim()));
-        party.setAddress2(((item.getCPAddress2() == null) ? "" : item.getCPAddress2().trim()));
-        party.setAddress3("");
-        party.setCity(((item.getCPCity() == null) ? "" : item.getCPCity().trim()));
-        party.setState(((item.getCPState() == null) ? "" : item.getCPState().trim()));
-        party.setZip(((item.getCPZip() == null) ? "" : item.getCPZip().trim()));
-        party.setPhoneOne(((item.getCPPhone1() == null) ? "" : StringUtilities.convertPhoneNumberToString(item.getCPPhone1().trim())));
-        party.setPhoneTwo(((item.getCPPhone2() == null) ? "" : StringUtilities.convertPhoneNumberToString(item.getCPPhone2().trim())));
-        party.setEmailAddress(((item.getCPEmail() == null) ? "" : item.getCPEmail().trim()));
+        party.setLastName(!"".equals(item.getCPName().trim()) ? item.getCPName().trim() : null);
+        party.setAddress1(!"".equals(item.getCPAddress1().trim()) ? item.getCPAddress1().trim() : null);
+        party.setAddress2(!"".equals(item.getCPAddress2().trim()) ? item.getCPAddress2().trim() : null);
+        party.setCity(!"".equals(item.getCPCity().trim()) ? item.getCPCity().trim() : null);
+        party.setState(!"".equals(item.getCPState().trim()) ? item.getCPState().trim() : null);
+        party.setZip(!"".equals(item.getCPZip().trim()) ? item.getCPZip().trim() : null);
+        party.setPhoneOne(!"".equals(item.getCPPhone1().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCPPhone1().trim()) : null);
+        party.setPhoneTwo(!"".equals(item.getCPPhone2().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCPPhone2().trim()) : null);
+        party.setEmailAddress(!"".equals(item.getCPEmail().trim()) ? item.getCPEmail().trim() : null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
             sqlCaseParty.savePartyInformation(party);
@@ -114,25 +107,16 @@ public class ULPMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setPartyID(0);
         party.setCaseRelation("Charging Party REP");
-        party.setPrefix("");
-        party.setFirstName("");
-        party.setMiddleInitial("");
-        party.setLastName(((item.getCPREPName() == null) ? "" : item.getCPREPName().trim()));
-        party.setSuffix("");
-        party.setNameTitle("");
-        party.setJobTitle("");
-        party.setCompanyName("");
-        party.setAddress1(((item.getCPREPAddress1() == null) ? "" : item.getCPREPAddress1().trim()));
-        party.setAddress2(((item.getCPREPAddress2() == null) ? "" : item.getCPREPAddress2().trim()));
-        party.setAddress3("");
-        party.setCity(((item.getCPREPCity() == null) ? "" : item.getCPREPCity().trim()));
-        party.setState(((item.getCPREPState() == null) ? "" : item.getCPREPState().trim()));
-        party.setZip(((item.getCPREPZip() == null) ? "" : item.getCPREPZip().trim()));
-        party.setPhoneOne(((item.getCPREPPhone1() == null) ? "" : StringUtilities.convertPhoneNumberToString(item.getCPREPPhone1().trim())));
-        party.setPhoneTwo(((item.getCPREPPhone2() == null) ? "" : StringUtilities.convertPhoneNumberToString(item.getCPREPPhone2().trim())));
-        party.setEmailAddress(((item.getCPREPEmail() == null) ? "" : item.getCPREPEmail().trim()));
+        party.setLastName(!"".equals(item.getCPREPName().trim()) ? item.getCPREPName().trim() : null);
+        party.setAddress1(!"".equals(item.getCPREPAddress1().trim()) ? item.getCPREPAddress1().trim() : null);
+        party.setAddress2(!"".equals(item.getCPREPAddress2().trim()) ? item.getCPREPAddress2().trim() : null);
+        party.setCity(!"".equals(item.getCPREPCity().trim()) ? item.getCPREPCity().trim() : null);
+        party.setState(!"".equals(item.getCPREPState().trim()) ? item.getCPREPState().trim() : null);
+        party.setZip(!"".equals(item.getCPREPZip().trim()) ? item.getCPREPZip().trim() : null);
+        party.setPhoneOne(!"".equals(item.getCPREPPhone1().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCPREPPhone1().trim()) : null);
+        party.setPhoneTwo(!"".equals(item.getCPREPPhone2().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCPREPPhone2().trim()) : null);
+        party.setEmailAddress(!"".equals(item.getCPREPEmail().trim()) ? item.getCPREPEmail().trim() : null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
             sqlCaseParty.savePartyInformation(party);
@@ -145,25 +129,16 @@ public class ULPMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setPartyID(0);
         party.setCaseRelation("Charged Party");
-        party.setPrefix("");
-        party.setFirstName("");
-        party.setMiddleInitial("");
-        party.setLastName(((item.getCHDName() == null) ? "" : item.getCHDName().trim()));
-        party.setSuffix("");
-        party.setNameTitle("");
-        party.setJobTitle("");
-        party.setCompanyName("");
-        party.setAddress1(((item.getCHDAddress1() == null) ? "" : item.getCHDAddress1().trim()));
-        party.setAddress2(((item.getCHDAddress2() == null) ? "" : item.getCHDAddress2().trim()));
-        party.setAddress3("");
-        party.setCity(((item.getCHDCity() == null) ? "" : item.getCHDCity().trim()));
-        party.setState(((item.getCHDState() == null) ? "" : item.getCHDState().trim()));
-        party.setZip(((item.getCHDZip() == null) ? "" : item.getCHDZip().trim()));
-        party.setPhoneOne(((item.getCHDPhone1() == null) ? "" : StringUtilities.convertPhoneNumberToString(item.getCHDPhone1().trim())));
-        party.setPhoneTwo(((item.getCHDPhone2() == null) ? "" : StringUtilities.convertPhoneNumberToString(item.getCHDPhone2().trim())));
-        party.setEmailAddress(((item.getCHDEmail() == null) ? "" : item.getCHDEmail().trim()));
+        party.setLastName(!"".equals(item.getCHDName().trim()) ? item.getCHDName().trim() : null);
+        party.setAddress1(!"".equals(item.getCHDAddress1().trim()) ? item.getCHDAddress1().trim() : null);
+        party.setAddress2(!"".equals(item.getCHDAddress2().trim()) ? item.getCHDAddress2().trim() : null);
+        party.setCity(!"".equals(item.getCHDCity().trim()) ? item.getCHDCity().trim() : null);
+        party.setState(!"".equals(item.getCHDState().trim()) ? item.getCHDState().trim() : null);
+        party.setZip(!"".equals(item.getCHDZip().trim()) ? item.getCHDZip().trim() : null);
+        party.setPhoneOne(!"".equals(item.getCHDPhone1().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCHDPhone1().trim()) : null);
+        party.setPhoneTwo(!"".equals(item.getCHDPhone2().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCHDPhone2().trim()) : null);
+        party.setEmailAddress(!"".equals(item.getCHDEmail().trim()) ? item.getCHDEmail().trim() : null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
             sqlCaseParty.savePartyInformation(party);
@@ -176,25 +151,16 @@ public class ULPMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setPartyID(0);
         party.setCaseRelation("Charged Party REP");
-        party.setPrefix("");
-        party.setFirstName("");
-        party.setMiddleInitial("");
-        party.setLastName(((item.getCHDREPName() == null) ? "" : item.getCHDREPName().trim()));
-        party.setSuffix("");
-        party.setNameTitle("");
-        party.setJobTitle("");
-        party.setCompanyName("");
-        party.setAddress1(((item.getCHDREPAddress1() == null) ? "" : item.getCHDREPAddress1().trim()));
-        party.setAddress2(((item.getCHDREPAddress2() == null) ? "" : item.getCHDREPAddress2().trim()));
-        party.setAddress3("");
-        party.setCity(((item.getCHDREPCity() == null) ? "" : item.getCHDREPCity().trim()));
-        party.setState(((item.getCHDREPState() == null) ? "" : item.getCHDREPState().trim()));
-        party.setZip(((item.getCHDREPZip() == null) ? "" : item.getCHDREPZip().trim()));
-        party.setPhoneOne(((item.getCHDREPPhone1() == null) ? "" : StringUtilities.convertPhoneNumberToString(item.getCHDREPPhone1().trim())));
-        party.setPhoneTwo(((item.getCHDREPPhone2() == null) ? "" : StringUtilities.convertPhoneNumberToString(item.getCHDREPPhone2().trim())));
-        party.setEmailAddress(((item.getCHDREPEmail() == null) ? "" : item.getCHDREPEmail().trim()));
+        party.setLastName(!"".equals(item.getCHDREPName().trim()) ? item.getCHDREPName().trim() : null);
+        party.setAddress1(!"".equals(item.getCHDREPAddress1().trim()) ? item.getCHDREPAddress1().trim() : null);
+        party.setAddress2(!"".equals(item.getCHDREPAddress2().trim()) ? item.getCHDREPAddress2().trim() : null);
+        party.setCity(!"".equals(item.getCHDREPCity().trim()) ? item.getCHDREPCity().trim() : null);
+        party.setState(!"".equals(item.getCHDREPState().trim()) ? item.getCHDREPState().trim() : null);
+        party.setZip(!"".equals(item.getCHDREPZip().trim()) ? item.getCHDREPZip().trim() : null);
+        party.setPhoneOne(!"".equals(item.getCHDREPPhone1().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCHDREPPhone1().trim()) : null);
+        party.setPhoneTwo(!"".equals(item.getCHDREPPhone2().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCHDREPPhone2().trim()) : null);
+        party.setEmailAddress(!"".equals(item.getCHDREPEmail().trim()) ? item.getCHDREPEmail().trim() : null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
             sqlCaseParty.savePartyInformation(party);
@@ -210,12 +176,12 @@ public class ULPMigration {
         ulpcase.setCaseType(caseNumber.getCaseType());
         ulpcase.setCaseMonth(caseNumber.getCaseMonth());
         ulpcase.setCaseNumber(caseNumber.getCaseNumber());
-        ulpcase.setEmployerIDNumber((item.getEmployerNum()== null) ? "" : item.getEmployerNum().trim());
-        ulpcase.setDeptInState((item.getDeptInState() == null) ? "" : item.getDeptInState().trim());
-        ulpcase.setBarginingUnitNo((item.getBarginingUnitNumber() == null) ? "" : item.getBarginingUnitNumber().trim());
-        ulpcase.setEONumber((item.getEmployeeOrgNumber() == null) ? "" : item.getEmployeeOrgNumber().trim());
-        ulpcase.setAllegation((item.getAllegation() == null) ? "" : item.getAllegation().trim());
-        ulpcase.setCurrentStatus((item.getStatus() == null) ? "" : item.getStatus().trim());
+        ulpcase.setEmployerIDNumber(!"".equals(item.getEmployerNum().trim()) ? item.getEmployerNum().trim() : null);
+        ulpcase.setDeptInState(!"".equals(item.getDeptInState().trim()) ? item.getDeptInState().trim() : null);
+        ulpcase.setBarginingUnitNo(!"".equals(item.getBarginingUnitNumber().trim()) ? item.getBarginingUnitNumber().trim() : null);
+        ulpcase.setEONumber(!"".equals(item.getEmployeeOrgNumber().trim()) ? item.getEmployeeOrgNumber().trim() : null);
+        ulpcase.setAllegation(!"".equals(item.getAllegation().trim()) ? item.getAllegation().trim() : null);
+        ulpcase.setCurrentStatus(!"".equals(item.getStatus().trim()) ? item.getStatus().trim() : null);
         ulpcase.setPriority("Y".equals(item.getPriority().trim()) || "Yes".equals(item.getPriority().trim()) || "1".equals(item.getPriority().trim()));
         ulpcase.setAssignedDate(StringUtilities.convertStringDate(item.getAssignedDate()));
         ulpcase.setTurnInDate(StringUtilities.convertStringDate(item.getTurnInDate()));
@@ -226,17 +192,17 @@ public class ULPMigration {
         ulpcase.setProbableCause("Y".equals(item.getProbable().trim()) || "Yes".equals(item.getProbable().trim()) || "1".equals(item.getProbable().trim()));
         ulpcase.setAppealDateReceived(StringUtilities.convertStringDate(item.getAppealDateReceived()));
         ulpcase.setAppealDateSent(StringUtilities.convertStringDate(item.getAppealDateSent()));
-        ulpcase.setCourtName((item.getCourt() == null) ? "" : item.getCourt().trim());
-        ulpcase.setCourtCaseNumber((item.getCourtCaseNumber() == null) ? "" : item.getCourtCaseNumber().trim());
-        ulpcase.setSERBCaseNumber((item.getSERBCourtCaseNumber() == null) ? "" : item.getSERBCourtCaseNumber().trim());
-        ulpcase.setFinalDispositionStatus((item.getFinalDispostion() == null) ? "" : item.getFinalDispostion().trim());
+        ulpcase.setCourtName(!"".equals(item.getCourt().trim()) ? item.getCourt().trim() : null);
+        ulpcase.setCourtCaseNumber(!"".equals(item.getCourtCaseNumber().trim()) ? item.getCourtCaseNumber().trim() : null);
+        ulpcase.setSERBCaseNumber(!"".equals(item.getSERBCourtCaseNumber().trim()) ? item.getSERBCourtCaseNumber().trim() : null);
+        ulpcase.setFinalDispositionStatus(!"".equals(item.getFinalDispostion().trim()) ? item.getFinalDispostion().trim() : null);
 //        ulpcase.setInvestigatorID();
 //        ulpcase.setMediatorAssignedID();
 //        ulpcase.setAljID();
-        ulpcase.setNote("");
-        ulpcase.setInvestigationReveals("");
-        ulpcase.setStatement("");
-        ulpcase.setRecommendation("");
+        ulpcase.setNote(null);
+        ulpcase.setInvestigationReveals(null);
+        ulpcase.setStatement(null);
+        ulpcase.setRecommendation(null);
 
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
@@ -268,23 +234,23 @@ public class ULPMigration {
         meeting.setCaseNumber(caseNumber.getCaseNumber());
         
         if (!"".equals(item.getBoardMeetingDate().trim()) || !"".equals(item.getAgendaItem().trim()) || !"".equals(item.getRecommendation().trim())) {
-            meeting.setAgendaItemNumber(item.getAgendaItem().trim());
-            meeting.setBoardMeetingDate(StringUtilities.convertStringDate(item.getBoardMeetingDate()));
-            meeting.setRecommendation(item.getRecommendation().trim());
+            meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem().trim()) ? item.getAgendaItem().trim() : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate()) : null);
+            meeting.setRecommendation(!"".equals(item.getRecommendation().trim()) ? item.getRecommendation().trim() : null);
             sqlBoardMeeting.addULPBoardMeeting(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate1().trim()) || !"".equals(item.getAgendaItem1().trim()) || !"".equals(item.getRecommendation1().trim())) {
-            meeting.setAgendaItemNumber(item.getAgendaItem1().trim());
-            meeting.setBoardMeetingDate(StringUtilities.convertStringDate(item.getBoardMeetingDate1()));
-            meeting.setRecommendation(item.getRecommendation1().trim());
+            meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem1().trim()) ? item.getAgendaItem1().trim() : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate1()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate1()) : null);
+            meeting.setRecommendation(!"".equals(item.getRecommendation1().trim()) ? item.getRecommendation1().trim() : null);
             sqlBoardMeeting.addULPBoardMeeting(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate2().trim()) || !"".equals(item.getAgendaItem2().trim()) || !"".equals(item.getRecommendation2().trim())) {
-            meeting.setAgendaItemNumber(item.getAgendaItem2().trim());
-            meeting.setBoardMeetingDate(StringUtilities.convertStringDate(item.getBoardMeetingDate2()));
-            meeting.setRecommendation(item.getRecommendation2().trim());
+            meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem2().trim()) ? item.getAgendaItem2().trim() : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate2()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate2()) : null);
+            meeting.setRecommendation(!"".equals(item.getRecommendation2().trim()) ? item.getRecommendation2().trim() : null);
             sqlBoardMeeting.addULPBoardMeeting(meeting);
         }
     }
@@ -319,12 +285,12 @@ public class ULPMigration {
             item.setCaseNumber(caseNumber.getCaseNumber());
             item.setUserID(userID);
             item.setDate(old.getDate());
-            item.setAction(old.getAction());
-            item.setFileName(old.getFileName());
-            item.setFrom(old.getEmailFrom());
-            item.setTo(old.getEmailTo());
-            item.setType("");
-            item.setComment("");
+            item.setAction(!"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
+            item.setFileName(!"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
+            item.setFrom(!"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
+            item.setTo(!"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
+            item.setType(null);
+            item.setComment(null);
             item.setRedacted(0);
             item.setAwaitingTimeStamp(0);
             

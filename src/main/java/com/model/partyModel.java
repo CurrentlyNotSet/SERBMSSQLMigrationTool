@@ -11,23 +11,23 @@ package com.model;
  */
 public class partyModel {
     
-    private String prefix;
-    private String firstName;
-    private String middleInitial;
-    private String lastName;
-    private String suffix;
-    private String nameTitle;
-    private String jobTitle;
-    private String companyName;
-    private String address1;
-    private String address2;
-    private String address3;
-    private String city;
-    private String state;
-    private String zip;
-    private String phoneOne;
-    private String phoneTwo;
-    private String emailAddress;
+    private String prefix = null;
+    private String firstName = null;
+    private String middleInitial = null;
+    private String lastName = null;
+    private String suffix = null;
+    private String nameTitle = null;
+    private String jobTitle = null;
+    private String companyName = null;
+    private String address1 = null;
+    private String address2 = null;
+    private String address3 = null;
+    private String city = null;
+    private String state = null;
+    private String zip = null;
+    private String phoneOne = null;
+    private String phoneTwo = null;
+    private String emailAddress = null;
 
     public String getPrefix() {
         return prefix;

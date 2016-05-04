@@ -8,6 +8,7 @@ package com.Migration;
 import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlMigrationStatus;
+import com.util.Global;
 import com.util.StringUtilities;
 
 /**
@@ -46,7 +47,9 @@ public class DocumentMigration {
         String finishedText = "Finished Migrating Documents: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
         control.setProgressBarDisable(finishedText);
-        sqlMigrationStatus.updateTimeCompleted("MigrateDocuments");
+        if (Global.isDebug() == false){
+            sqlMigrationStatus.updateTimeCompleted("MigrateDocuments");
+        }
     }
         
     private static void migrateDocument(userModel item){

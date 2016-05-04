@@ -68,7 +68,9 @@ public class EmployersMigration {
         String finishedText = "Finished Migrating Employers: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
         control.setProgressBarDisable(finishedText);
-        sqlMigrationStatus.updateTimeCompleted("MigrateEmployers");
+        if (Global.isDebug() == false){
+            sqlMigrationStatus.updateTimeCompleted("MigrateEmployers");
+        }
     }
     
     private static void migrateEmployers(oldPartyModel old, List<employerTypeModel> typeList) {
@@ -78,37 +80,36 @@ public class EmployersMigration {
                 typeID = type.getId();
                 break;
             }
-        }
-        
+        }        
         employersModel item = new employersModel();
         item.setActive(old.getActive());
         item.setEmployerType(typeID);
-        item.setEmployerName((old.getBusinessName() == null) ? "" : old.getBusinessName().trim());
-        item.setPrefix((old.getPrefix()== null) ? "" : old.getPrefix().trim());
-        item.setFirstName((old.getFirstName()== null) ? "" : old.getFirstName().trim());
-        item.setMiddleInitial((old.getMiddleInitial()== null) ? "" : old.getMiddleInitial().trim());
-        item.setLastName((old.getLastName()== null) ? "" : old.getLastName().trim());
-        item.setSuffix((old.getSuffix()== null) ? "" : old.getSuffix().trim());
-        item.setTitle((old.getTitle()== null) ? "" : old.getTitle().trim());
-        item.setAddress1((old.getAddress1()== null) ? "" : old.getAddress1().trim());
-        item.setAddress2((old.getAddress2()== null) ? "" : old.getAddress2().trim());
-        item.setAddress3("");
-        item.setCity((old.getCity()== null) ? "" : old.getCity().trim());
-        item.setState((old.getState()== null) ? "" : old.getState().trim());
-        item.setZipCode((old.getZipPlusFive()== null) ? "" : old.getZipPlusFive().trim());
-        item.setPhone1((old.getWorkPhone()== null) ? "" : StringUtilities.convertPhoneNumberToString(old.getWorkPhone().trim()));
-        item.setPhone2((old.getCellPhone()== null) ? "" : StringUtilities.convertPhoneNumberToString(old.getCellPhone().trim()));
-        item.setFax((old.getFax()== null) ? "" : StringUtilities.convertPhoneNumberToString(old.getFax().trim()));
-        item.setEmailAddress((old.getEMail() == null) ? "" : old.getEMail().trim());
-        item.setEmployerIDNumber((old.getPartyField1()== null) ? "" : old.getPartyField1().trim());
-        item.setEmployerTypeCode((old.getPartyField2()== null) ? "" : old.getPartyField2().trim());
-        item.setJurisdiction((old.getPartyField3()== null) ? "" : old.getPartyField3().trim());
-        item.setRegion((old.getPartyField4()== null) ? "" : old.getPartyField4().trim());
-        item.setAssistantFirstName((old.getAssistantFirstName()== null) ? "" : old.getAssistantFirstName().trim());
-        item.setAssistantMiddleInitial((old.getAssistantMiddleInitial()== null) ? "" : old.getAssistantMiddleInitial().trim());
-        item.setAssistantLastName((old.getAssistantLastName()== null) ? "" : old.getAssistantLastName().trim());
-        item.setAssistantEmail((old.getAssistantEMail()== null) ? "" : old.getAssistantEMail().trim());
-        item.setCounty((old.getCounty()== null) ? "" : old.getCounty().trim());
+        item.setEmployerName(!"".equals(old.getBusinessName().trim()) ? old.getBusinessName().trim() : null);
+        item.setPrefix(!"".equals(old.getPrefix().trim()) ? old.getPrefix().trim() : null);
+        item.setFirstName(!"".equals(old.getFirstName().trim()) ? old.getFirstName().trim() : null);
+        item.setMiddleInitial(!"".equals(old.getMiddleInitial().trim()) ? old.getMiddleInitial().trim() : null);
+        item.setLastName(!"".equals(old.getLastName().trim()) ? old.getLastName().trim() : null);
+        item.setSuffix(!"".equals(old.getSuffix().trim()) ? old.getSuffix().trim() : null);   
+        item.setTitle(!"".equals(old.getTitle().trim()) ? old.getTitle().trim() : null);       
+        item.setAddress1(!"".equals(old.getAddress1().trim()) ? old.getAddress1().trim() : null);
+        item.setAddress2(!"".equals(old.getAddress2().trim()) ? old.getAddress2().trim() : null);
+        item.setAddress3(null);
+        item.setCity(!"".equals(old.getCity().trim()) ? old.getCity().trim() : null);
+        item.setState(!"".equals(old.getState().trim()) ? old.getState().trim() : null);
+        item.setZipCode(!"".equals(old.getZipPlusFive().trim()) ? old.getZipPlusFive().trim() : null);
+        item.setPhone1(!"".equals(StringUtilities.convertPhoneNumberToString(old.getWorkPhone().trim())) ? StringUtilities.convertPhoneNumberToString(old.getWorkPhone().trim()) : null);
+        item.setPhone2(!"".equals(StringUtilities.convertPhoneNumberToString(old.getCellPhone().trim())) ? StringUtilities.convertPhoneNumberToString(old.getCellPhone().trim()) : null);
+        item.setFax(!"".equals(StringUtilities.convertPhoneNumberToString(old.getFax().trim())) ? StringUtilities.convertPhoneNumberToString(old.getFax().trim()) : null);
+        item.setEmailAddress(!"".equals(old.getEMail().trim()) ? old.getEMail().trim() : null);
+        item.setEmployerIDNumber(!"".equals(old.getPartyField1().trim()) ? old.getPartyField1().trim() : null);
+        item.setEmployerTypeCode(!"".equals(old.getPartyField2().trim()) ? old.getPartyField2().trim() : null);
+        item.setJurisdiction(!"".equals(old.getPartyField3().trim()) ? old.getPartyField3().trim() : null);
+        item.setRegion(!"".equals(old.getPartyField4().trim()) ? old.getPartyField4().trim() : null);
+        item.setAssistantFirstName(!"".equals(old.getAssistantFirstName().trim()) ? old.getAssistantFirstName().trim() : null);
+        item.setAssistantMiddleInitial(!"".equals(old.getAssistantMiddleInitial().trim()) ? old.getAssistantMiddleInitial().trim() : null);
+        item.setAssistantLastName(!"".equals(old.getAssistantLastName().trim()) ? old.getAssistantLastName().trim() : null);
+        item.setAssistantEmail(!"".equals(old.getAssistantEMail().trim()) ? old.getAssistantEMail().trim() : null);
+        item.setCounty(!"".equals(old.getCounty().trim()) ? old.getCounty().trim() : null);
 
         sqlEmployers.addEmployer(item);
     }
@@ -117,20 +118,21 @@ public class EmployersMigration {
         BarginingUnitModel item = new BarginingUnitModel();
         
         item.setActive(old.getActive());
-        item.setEmployerNumber((old.getEmployerNumber()== null) ? "" : old.getEmployerNumber().trim());
-        item.setUnitNumber((old.getUnitNumber()== null) ? "" : old.getUnitNumber().trim());
-        item.setCert((old.getCert()== null) ? "" : old.getCert().trim());
-        item.setBUEmployerName((old.getBUEmployerName()== null) ? "" : old.getBUEmployerName().trim());
-        item.setJurisdiction((old.getJur()== null) ? "" : old.getJur().trim());
-        item.setCounty((old.getCounty()== null) ? "" : old.getCounty().trim());
-        item.setLUnion((old.getLUnion()== null) ? "" : old.getLUnion().trim());
-        item.setLocal((old.getLocal()== null) ? "" : old.getLocal().trim());
+        item.setEmployerNumber(!"".equals(old.getEmployerNumber().trim()) ? old.getEmployerNumber().trim() : null);
+        item.setUnitNumber(!"".equals(old.getUnitNumber().trim()) ? old.getUnitNumber().trim() : null);
+        item.setCert(!"".equals(old.getCert().trim()) ? old.getCert().trim() : null);
+        item.setBUEmployerName(!"".equals(old.getBUEmployerName().trim()) ? old.getBUEmployerName().trim() : null);
+        item.setJurisdiction(!"".equals(old.getJur().trim()) ? old.getJur().trim() : null);
+        item.setCounty(!"".equals(old.getCounty().trim()) ? old.getCounty().trim() : null);
+        item.setLUnion(!"".equals(old.getLUnion().trim()) ? old.getLUnion().trim() : null);
+        item.setLocal(!"".equals(old.getLocal().trim()) ? old.getLocal().trim() : null);
         item.setStrike(("Y".equals(old.getStrike().trim())) ? 1 : 0);
-        item.setLGroup((old.getLGroup()== null) ? "" : old.getLGroup().trim());
-//        item.setCertDate((old.getCertDate()== null) ? "" : old.getCertDate().trim());
+        item.setLGroup(!"".equals(old.getLGroup().trim()) ? old.getLGroup().trim() : null);
+//        item.setCertDate((old.getCertDate()== null) ? "" : old.getCertDate().trim());  //this is broken, bad Dates in Database
         item.setEnabled(("Y".equals(old.getEnabled().trim())) ? 1 : 0);
-        item.setUnitDescription((old.getUnitDescription()== null) ? "" : old.getUnitDescription().trim());
+        item.setUnitDescription(!"".equals(old.getUnitDescription().trim()) ? old.getUnitDescription().trim() : null);
         
+        //Check CaseNumber
         String[] caseNumber = old.getCaseRef().split("-");
         if (old.getCaseRef().trim().length() == 16 &&
                 (caseNumber[0].length() == 4 || caseNumber[0].length() == 2) &&

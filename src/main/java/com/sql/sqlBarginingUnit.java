@@ -61,8 +61,7 @@ public class sqlBarginingUnit {
         }
         return list;
     }
-    
-    
+        
     public static void addBarginingUnit(BarginingUnitModel item) {
         Connection conn = null;
         PreparedStatement ps = null;

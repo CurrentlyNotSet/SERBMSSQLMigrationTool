@@ -69,7 +69,10 @@ public class UserMigration {
         String finishedText = "Finished Migrating Users: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
         control.setProgressBarDisable(finishedText);
-//        sqlMigrationStatus.updateTimeCompleted("MigrateUsers");
+        if (Global.isDebug() == false){
+            sqlMigrationStatus.updateTimeCompleted("MigrateUsers");
+        }
+        
     }
         
     private static void migrateUser(userModel item){

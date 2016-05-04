@@ -7,6 +7,7 @@ package com.Migration;
 
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlMigrationStatus;
+import com.util.Global;
 import com.util.StringUtilities;
 
 /**
@@ -35,6 +36,8 @@ public class ORGMigration {
         String finishedText = "Finished Migrating ORG Cases: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
         control.setProgressBarDisable(finishedText);
-        sqlMigrationStatus.updateTimeCompleted("MigrateORGCases");
+        if (Global.isDebug() == false){
+            sqlMigrationStatus.updateTimeCompleted("MigrateORGCases");
+        }
     }
 }
