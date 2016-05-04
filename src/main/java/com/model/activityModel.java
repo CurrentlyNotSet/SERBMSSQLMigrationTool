@@ -24,6 +24,7 @@ public class activityModel {
     private String from;
     private String to;
     private String type;
+    private String comment;
     private int redacted;
     private int awaitingTimeStamp;
 
@@ -138,6 +139,13 @@ public class activityModel {
     public void setAwaitingTimeStamp(int awaitingTimeStamp) {
         this.awaitingTimeStamp = awaitingTimeStamp;
     }
-    
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
     
 }

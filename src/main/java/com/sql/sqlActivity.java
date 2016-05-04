@@ -39,8 +39,9 @@ public class sqlActivity {
                     + "[from], "          //09
                     + "[to], "            //10
                     + "type, "            //11
-                    + "redacted, "        //12
-                    + "awaitingTimeStamp "//13
+                    + "comment, "         //12
+                    + "redacted, "        //13
+                    + "awaitingTimeStamp "//14
                     + ") VALUES ("
                     + "?,"  //01
                     + "?,"  //02
@@ -54,7 +55,8 @@ public class sqlActivity {
                     + "?,"  //10
                     + "?,"  //11
                     + "?,"  //12
-                    + "?)"; //13
+                    + "?,"  //13
+                    + "?)"; //14
             ps = conn.prepareStatement(sql);
             ps.setString   ( 1, item.getCaseYear());
             ps.setString   ( 2, item.getCaseType());
@@ -67,8 +69,9 @@ public class sqlActivity {
             ps.setString   ( 9, item.getFrom());
             ps.setString   (10, item.getTo());
             ps.setString   (11, item.getType());
-            ps.setInt      (12, item.getRedacted());
-            ps.setInt      (13, item.getAwaitingTimeStamp());
+            ps.setString   (12, item.getComment());
+            ps.setInt      (13, item.getRedacted());
+            ps.setInt      (14, item.getAwaitingTimeStamp());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

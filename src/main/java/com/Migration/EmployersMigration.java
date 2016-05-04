@@ -96,9 +96,9 @@ public class EmployersMigration {
         item.setCity((old.getCity()== null) ? "" : old.getCity().trim());
         item.setState((old.getState()== null) ? "" : old.getState().trim());
         item.setZipCode((old.getZipPlusFive()== null) ? "" : old.getZipPlusFive().trim());
-        item.setPhone1((old.getWorkPhone()== null) ? "" : old.getWorkPhone().trim());
-        item.setPhone2((old.getCellPhone()== null) ? "" : old.getCellPhone().trim());
-        item.setFax((old.getFax()== null) ? "" : old.getFax().trim());
+        item.setPhone1((old.getWorkPhone()== null) ? "" : StringUtilities.convertPhoneNumberToString(old.getWorkPhone().trim()));
+        item.setPhone2((old.getCellPhone()== null) ? "" : StringUtilities.convertPhoneNumberToString(old.getCellPhone().trim()));
+        item.setFax((old.getFax()== null) ? "" : StringUtilities.convertPhoneNumberToString(old.getFax().trim()));
         item.setEmailAddress((old.getEMail() == null) ? "" : old.getEMail().trim());
         item.setEmployerIDNumber((old.getPartyField1()== null) ? "" : old.getPartyField1().trim());
         item.setEmployerTypeCode((old.getPartyField2()== null) ? "" : old.getPartyField2().trim());

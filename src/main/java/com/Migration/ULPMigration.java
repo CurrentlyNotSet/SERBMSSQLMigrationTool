@@ -324,6 +324,7 @@ public class ULPMigration {
             item.setFrom(old.getEmailFrom());
             item.setTo(old.getEmailTo());
             item.setType("");
+            item.setComment("");
             item.setRedacted(0);
             item.setAwaitingTimeStamp(0);
             
