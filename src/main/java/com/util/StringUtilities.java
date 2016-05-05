@@ -107,7 +107,7 @@ public class StringUtilities {
                 return Timestamp.valueOf("1900-01-01 00:00:00.0");
             }
         }
-        return Timestamp.valueOf("1900-01-01 00:00:00.0");
+        return null;
     }
 
     public static String convertLongToTime(long millis) {

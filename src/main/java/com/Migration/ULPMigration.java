@@ -6,6 +6,7 @@
 package com.Migration;
 
 import com.model.ULPCaseModel;
+import com.model.ULPCaseSearchModel;
 import com.model.activityModel;
 import com.model.boardMeetingModel;
 import com.model.caseNumberModel;
@@ -21,6 +22,7 @@ import com.sql.sqlBlobFile;
 import com.sql.sqlBoardMeeting;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlULPCaseSearch;
 import com.sql.sqlULPData;
 import com.util.Global;
 import com.util.StringUtilities;
@@ -69,14 +71,15 @@ public class ULPMigration {
         
     private static void migrateCase(oldULPDataModel item){
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
-        ULPMigration.migrateChargingParty(item, caseNumber);
-        ULPMigration.migrateChargingPartyRep(item, caseNumber);
-        ULPMigration.migrateChargedParty(item, caseNumber);
-        ULPMigration.migrateChargedPartyRep(item, caseNumber);
+//        ULPMigration.migrateChargingParty(item, caseNumber);
+//        ULPMigration.migrateChargingPartyRep(item, caseNumber);
+//        ULPMigration.migrateChargedParty(item, caseNumber);
+//        ULPMigration.migrateChargedPartyRep(item, caseNumber);
         ULPMigration.migrateCaseData(item, caseNumber);
-        ULPMigration.migrateBoardMeetings(item, caseNumber);
-        migrateRelatedCases(item, caseNumber);
-        migrateCaseHistory(caseNumber);
+//        ULPMigration.migrateBoardMeetings(item, caseNumber);
+//        migrateRelatedCases(item, caseNumber);
+//        migrateCaseHistory(caseNumber);
+//        migrateCaseSearch(item, caseNumber);
     }
     
     private static void migrateChargingParty(oldULPDataModel item, caseNumberModel caseNumber) {
@@ -296,6 +299,21 @@ public class ULPMigration {
             
             sqlActivity.addActivity(item);
         }
+    }
+    
+    private static void migrateCaseSearch(oldULPDataModel item, caseNumberModel caseNumber) {
+        ULPCaseSearchModel search = new ULPCaseSearchModel();
+        
+        search.setCaseYear(caseNumber.getCaseYear());
+        search.setCaseType(caseNumber.getCaseType());
+        search.setCaseMonth(caseNumber.getCaseMonth());
+        search.setCaseNumber(caseNumber.getCaseNumber());
+        search.setChargingParty(!"".equals(item.getCPName().trim()) ? item.getCPName().trim() : null);
+        search.setChargedParty(!"".equals(item.getCHDName().trim()) ? item.getCHDName().trim() : null);
+        search.setEmployerNumber(!"".equals(item.getEmployerNum().trim()) ? item.getEmployerNum().trim() : null);
+        search.setUnionNumber(!"".equals(item.getBarginingUnitNumber().trim()) ? item.getBarginingUnitNumber().trim() : null);
+        
+        sqlULPCaseSearch.addULPCaseSearchCase(search);
     }
     
 }
