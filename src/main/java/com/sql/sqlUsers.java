@@ -35,22 +35,23 @@ public class sqlUsers {
             while (rs.next()) {
                 userModel item = new userModel();
                 item.setActive(rs.getInt("Active"));
-                item.setLastName(rs.getString("Name"));
+                item.setLastName(rs.getString("Name").trim());
+                item.setInitials(rs.getString("Initials").trim());
                 item.setUserName(rs.getString("Username").toLowerCase());
-                item.setEmail(rs.getString("Email"));
+                item.setEmail(rs.getString("Email").trim());
                 
                 //blank data
-                item.setFirstName("");
-                item.setMiddleInitial("");
-                item.setWorkPhone("");
+                item.setFirstName(null);
+                item.setMiddleInitial(null);
+                item.setWorkPhone(null);
                 item.setPasswordSalt(0);
-                item.setPassword("");
+                item.setPassword(null);
                 item.setLastLoginDateTime(null);
-                item.setLastLoginPCName("");
+                item.setLastLoginPCName(null);
                 item.setActiveLogin(false);
                 item.setPasswordReset(true);
-                item.setApplicationVersion("");
-                item.setDefaultSection("");
+                item.setApplicationVersion(null);
+                item.setDefaultSection(null);
                 item.setULPCaseWorker(true);
                 item.setMediator(true);
                 item.setREPDocketing(true);
@@ -83,19 +84,20 @@ public class sqlUsers {
                 item.setFirstName(rs.getString("firstname"));
                 item.setMiddleInitial(rs.getString("middlename"));
                 item.setLastName(rs.getString("lastName"));
+                item.setInitials(rs.getString("UserInitials"));
                 item.setUserName(rs.getString("Username").toLowerCase());
                 item.setEmail(rs.getString("userEmail"));
                 
                 //blank data
-                item.setWorkPhone("");
+                item.setWorkPhone(null);
                 item.setPasswordSalt(0);
-                item.setPassword("");
+                item.setPassword(null);
                 item.setLastLoginDateTime(null);
-                item.setLastLoginPCName("");
+                item.setLastLoginPCName(null);
                 item.setActiveLogin(false);
                 item.setPasswordReset(true);
-                item.setApplicationVersion("");
-                item.setDefaultSection("");
+                item.setApplicationVersion(null);
+                item.setDefaultSection(null);
                 item.setULPCaseWorker(true);
                 item.setMediator(true);
                 item.setREPDocketing(true);
@@ -119,13 +121,19 @@ public class sqlUsers {
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "SELECT Username, id FROM Users";
+            String sql = "SELECT "
+                    + "id, Username, firstname, middleinitial, lastName, initials "
+                    + "FROM Users";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
                 userModel item = new userModel();
                 item.setId(rs.getInt("id"));
-                item.setUserName(rs.getString("Username"));
+                item.setUserName(rs.getString("Username") == null ? "" : rs.getString("Username"));
+                item.setFirstName(rs.getString("firstname") == null ? "" : rs.getString("firstname"));
+                item.setMiddleInitial(rs.getString("middleinitial") == null ? "" : rs.getString("middleinitial"));
+                item.setLastName(rs.getString("lastName") == null ? "" : rs.getString("lastName"));
+                item.setInitials(rs.getString("initials") == null ? "" : rs.getString("initials"));
                 list.add(item);
             }
             Global.setUserList(list);
@@ -162,7 +170,8 @@ public class sqlUsers {
                     + "ULPCaseWorker, "     //16
                     + "mediator, "          //17
                     + "ULPDocketing, "      //18
-                    + "REPDocketing "       //19
+                    + "REPDocketing, "       //19
+                    + "initials "           //20
                     + ") VALUES ("
                     + "?, " //01 active
                     + "?, " //02 firstName
@@ -182,7 +191,8 @@ public class sqlUsers {
                     + "?, " //16 ULPCaseWorker
                     + "?, " //17 mediator
                     + "?, " //18 ULPDocketing
-                    + "?) ";//19 REPDocketing
+                    + "?, " //19 REPDocketing
+                    + "?) ";//20 intiials
             ps = conn.prepareStatement(sql);
             ps.setInt      ( 1, item.getActive());
             ps.setString   ( 2, item.getFirstName());
@@ -203,6 +213,7 @@ public class sqlUsers {
             ps.setBoolean  (17, item.isMediator());
             ps.setBoolean  (18, item.isULPDocketing());
             ps.setBoolean  (19, item.isREPDocketing());
+            ps.setString   (20, item.getInitials());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

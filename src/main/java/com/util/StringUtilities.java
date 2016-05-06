@@ -6,6 +6,7 @@
 package com.util;
 
 import com.model.caseNumberModel;
+import com.model.userModel;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -30,7 +31,6 @@ public class StringUtilities {
         item.setCaseType(parsedCaseNumber[1]);
         item.setCaseMonth(parsedCaseNumber[2]);
         item.setCaseNumber(parsedCaseNumber[3]);
-
         return item;
     }
 
@@ -61,7 +61,6 @@ public class StringUtilities {
             String year = "";
 
             oldDate = oldDate.replaceAll("\\\\", "-").replaceAll("/", "-");
-
             String[] parsedOldDate = oldDate.trim().split("-");
 
             //  0         1           2
@@ -96,7 +95,6 @@ public class StringUtilities {
                 day = parsedOldDate[1];
                 year = parsedOldDate[2];
             }
-
             try {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 Date parsedDate = dateFormat.parse(year + "-" + month + "-" + day);
@@ -120,10 +118,22 @@ public class StringUtilities {
         if (TimeUnit.MILLISECONDS.toHours(millis) == 0){
             String[] split = duration.split("hr");
             duration = split[1].trim();
-        }
-        
-        
+        }        
         return duration.trim();
-        
     }
+
+    public static int convertUserToID(String userEntry) {
+        if (!"".equals(userEntry.trim())) {
+            for (userModel usr : Global.getUserList()) {
+                if (userEntry.toLowerCase().trim().equals(usr.getUserName().toLowerCase().trim())
+                        || userEntry.toLowerCase().trim().equals(usr.getInitials().toLowerCase().trim())
+                        || (userEntry.toLowerCase().trim().startsWith(usr.getFirstName().toLowerCase().trim())
+                        && userEntry.toLowerCase().trim().endsWith(usr.getLastName().toLowerCase().trim()))) {
+                    return usr.getId();
+                }
+            }
+        }
+        return 0;
+    }
+
 }

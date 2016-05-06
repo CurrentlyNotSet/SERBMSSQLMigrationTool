@@ -22,6 +22,7 @@ import com.sql.sqlBlobFile;
 import com.sql.sqlBoardMeeting;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlRelatedCase;
 import com.sql.sqlULPCaseSearch;
 import com.sql.sqlULPData;
 import com.util.Global;
@@ -78,7 +79,7 @@ public class ULPMigration {
         ULPMigration.migrateCaseData(item, caseNumber);
 //        ULPMigration.migrateBoardMeetings(item, caseNumber);
 //        migrateRelatedCases(item, caseNumber);
-//        migrateCaseHistory(caseNumber);
+        migrateCaseHistory(caseNumber);
 //        migrateCaseSearch(item, caseNumber);
     }
     
@@ -199,9 +200,9 @@ public class ULPMigration {
         ulpcase.setCourtCaseNumber(!"".equals(item.getCourtCaseNumber().trim()) ? item.getCourtCaseNumber().trim() : null);
         ulpcase.setSERBCaseNumber(!"".equals(item.getSERBCourtCaseNumber().trim()) ? item.getSERBCourtCaseNumber().trim() : null);
         ulpcase.setFinalDispositionStatus(!"".equals(item.getFinalDispostion().trim()) ? item.getFinalDispostion().trim() : null);
-//        ulpcase.setInvestigatorID();
-//        ulpcase.setMediatorAssignedID();
-//        ulpcase.setAljID();
+        ulpcase.setInvestigatorID(StringUtilities.convertUserToID(item.getLRSName().trim()));
+        ulpcase.setMediatorAssignedID(StringUtilities.convertUserToID(item.getMediatorAssigned().trim()));
+        ulpcase.setAljID(StringUtilities.convertUserToID(item.getALJ().trim()));
         ulpcase.setNote(null);
         ulpcase.setInvestigationReveals(null);
         ulpcase.setStatement(null);
@@ -259,34 +260,35 @@ public class ULPMigration {
     }
 
     private static void migrateRelatedCases(oldULPDataModel item, caseNumberModel caseNumber) {
-        relatedCaseModel relatedCase = new relatedCaseModel();
-        
-        relatedCase.setCaseYear(caseNumber.getCaseYear());
-        relatedCase.setCaseType(caseNumber.getCaseType());
-        relatedCase.setCaseMonth(caseNumber.getCaseMonth());
-        relatedCase.setCaseNumber(caseNumber.getCaseNumber());
-        relatedCase.setRelatedCaseNumber(item.getRelatedCases());
-        
-//        sqlRelatedCase.addRelatedCase(relatedCase);
+        if (item.getRelatedCases() != null) {
+            relatedCaseModel relatedCase = new relatedCaseModel();
+
+            relatedCase.setCaseYear(caseNumber.getCaseYear());
+            relatedCase.setCaseType(caseNumber.getCaseType());
+            relatedCase.setCaseMonth(caseNumber.getCaseMonth());
+            relatedCase.setCaseNumber(caseNumber.getCaseNumber());
+
+            String[] caseNumberArray = item.getRelatedCases().split("[" + System.getProperty("line.separator") + "\\,]");
+
+            for (String casenumber : caseNumberArray) {
+                if (!"".equals(casenumber.trim())) {
+                    relatedCase.setRelatedCaseNumber(casenumber.trim());
+                    sqlRelatedCase.addRelatedCase(relatedCase);
+                }
+            }
+        }
     }
-    
+
     private static void migrateCaseHistory(caseNumberModel caseNumber) {
         List<oldULPHistoryModel> oldULPDataList = sqlActivity.getULPHistoryByCase(StringUtilities.generateFullCaseNumber(caseNumber));
         
-        for (oldULPHistoryModel old : oldULPDataList){
-            int userID = 0;
-            for (userModel usr : Global.getUserList()){
-                if (old.getUserInitials().toLowerCase().trim().equals(usr.getUserName().toLowerCase().trim())){
-                    userID = usr.getId();
-                }
-            }
-                                                
+        for (oldULPHistoryModel old : oldULPDataList){                                                
             activityModel item = new activityModel();
             item.setCaseYear(caseNumber.getCaseYear());
             item.setCaseType(caseNumber.getCaseType());
             item.setCaseMonth(caseNumber.getCaseMonth());
             item.setCaseNumber(caseNumber.getCaseNumber());
-            item.setUserID(userID);
+            item.setUserID(StringUtilities.convertUserToID(old.getUserInitials()));
             item.setDate(old.getDate());
             item.setAction(!"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
             item.setFileName(!"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);

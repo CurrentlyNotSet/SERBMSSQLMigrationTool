@@ -24,11 +24,11 @@ public class sqlRelatedCase {
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
             String sql = "Insert INTO relatedCase("
-                    + "caseYear, "   //01
-                    + "caseType, "   //02
-                    + "caseMonth, "  //03
-                    + "caseNumber, " //04
-                    + "relatedCase " //05
+                    + "caseYear, "        //01
+                    + "caseType, "        //02
+                    + "caseMonth, "       //03
+                    + "caseNumber, "      //04
+                    + "relatedCaseNumber "//05
                     + ") VALUES ("
                     + "?,"  //01
                     + "?,"  //02

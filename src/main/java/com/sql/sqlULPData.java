@@ -82,8 +82,8 @@ public class sqlULPData {
                 item.setBoardMeetingDate(rs.getString("BoardMeetingDate"));
                 item.setDismissalBoardMeetingDate(rs.getString("DismissalBoardMeetingDate"));
                 item.setDeferredBoardMeetingDate(rs.getString("DeferredBoardMeetingDate"));
-                item.setLRSName(rs.getString("LRSName"));
-                item.setMediatorAssigned(rs.getString("MediatorAssigned"));
+                item.setLRSName(rs.getString("LRSName") == null ? "" : rs.getString("LRSName"));
+                item.setMediatorAssigned(rs.getString("MediatorAssigned") == null ? "" : rs.getString("MediatorAssigned"));
                 item.setRelatedCases(rs.getString("RelatedCases"));
                 item.setEmployerNum(rs.getString("EmployerNum"));
                 item.setProbable(rs.getString("Probable"));
@@ -91,7 +91,7 @@ public class sqlULPData {
                 item.setFinalDispostion(rs.getString("FinalDispostion"));
                 item.setEmployeeOrgNumber(rs.getString("EmployeeOrgNumber"));
                 item.setFileDate(rs.getString("FileDate"));
-                item.setALJ(rs.getString("ALJ"));
+                item.setALJ(rs.getString("ALJ") == null ? "" : rs.getString("ALJ"));
                 item.setBoardMeetingDate1(rs.getString("BoardMeetingDate1"));
                 item.setBoardMeetingDate2(rs.getString("BoardMeetingDate2"));
                 item.setAgendaItem1(rs.getString("AgendaItem1"));
@@ -212,9 +212,21 @@ public class sqlULPData {
             ps.setString   (22, item.getCourtCaseNumber());
             ps.setString   (23, item.getSERBCaseNumber());
             ps.setString   (24, item.getFinalDispositionStatus());
-            ps.setInt      (25, item.getInvestigatorID());
-            ps.setInt      (26, item.getMediatorAssignedID());
-            ps.setInt      (27, item.getAljID());
+            if (item.getInvestigatorID() != 0){
+                ps.setInt  (25, item.getInvestigatorID());
+            } else {
+                ps.setNull (25, java.sql.Types.INTEGER);
+            }
+            if (item.getMediatorAssignedID() != 0){
+                ps.setInt  (26, item.getMediatorAssignedID());
+            } else {
+                ps.setNull (26, java.sql.Types.INTEGER);
+            }
+            if (item.getAljID() != 0){
+                ps.setInt  (27, item.getAljID());
+            } else {
+                ps.setNull (27, java.sql.Types.INTEGER);
+            }
             ps.setString   (28, item.getStatement());
             ps.setString   (29, item.getRecommendation());
             ps.setString   (30, item.getInvestigationReveals());

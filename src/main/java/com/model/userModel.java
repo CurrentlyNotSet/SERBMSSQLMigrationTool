@@ -19,6 +19,7 @@ public class userModel {
     private String firstName;
     private String middleInitial;
     private String lastName;
+    private String initials;
     private String email;
     private String workPhone;
     private int passwordSalt;
@@ -72,6 +73,14 @@ public class userModel {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getInitials() {
+        return initials;
+    }
+
+    public void setInitials(String initials) {
+        this.initials = initials;
     }
 
     public String getUserName() {

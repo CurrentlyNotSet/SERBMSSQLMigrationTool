@@ -62,7 +62,11 @@ public class sqlActivity {
             ps.setString   ( 2, item.getCaseType());
             ps.setString   ( 3, item.getCaseMonth());
             ps.setString   ( 4, item.getCaseNumber());
-            ps.setInt      ( 5, item.getUserID());
+            if (item.getUserID() != 0){
+                ps.setInt  ( 5, item.getUserID());
+            } else {
+                ps.setNull ( 5, java.sql.Types.INTEGER);
+            }
             ps.setTimestamp( 6, item.getDate());
             ps.setString   ( 7, item.getAction());
             ps.setString   ( 8, item.getFileName());
