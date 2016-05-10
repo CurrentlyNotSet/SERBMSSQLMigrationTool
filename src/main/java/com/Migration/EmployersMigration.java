@@ -9,13 +9,17 @@ import com.model.BarginingUnitModel;
 import com.model.employerTypeModel;
 import com.model.employersModel;
 import com.model.oldBarginingUnitNewModel;
+import com.model.oldBlobFileModel;
 import com.model.oldPartyModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlBarginingUnit;
+import com.sql.sqlBlobFile;
 import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
 import com.util.StringUtilities;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -54,7 +58,7 @@ public class EmployersMigration {
             }
             control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
         }
-        
+
         for (oldBarginingUnitNewModel item : unionList){
             migrateBarginingUnitUnions(item);
             currentRecord++;
@@ -117,6 +121,12 @@ public class EmployersMigration {
     private static void migrateBarginingUnitUnions(oldBarginingUnitNewModel old) {
         BarginingUnitModel item = new BarginingUnitModel();
         
+        item.setCaseRefYear(null);
+        item.setCaseRefSection(null);
+        item.setCaseRefMonth(null);
+        item.setCaseRefSequence(null);
+        item.setUnitDescription(null);
+        item.setNotes(null);
         item.setActive(old.getActive());
         item.setEmployerNumber(!"".equals(old.getEmployerNumber().trim()) ? old.getEmployerNumber().trim() : null);
         item.setUnitNumber(!"".equals(old.getUnitNumber().trim()) ? old.getUnitNumber().trim() : null);
@@ -127,10 +137,30 @@ public class EmployersMigration {
         item.setLUnion(!"".equals(old.getLUnion().trim()) ? old.getLUnion().trim() : null);
         item.setLocal(!"".equals(old.getLocal().trim()) ? old.getLocal().trim() : null);
         item.setStrike(("Y".equals(old.getStrike().trim())) ? 1 : 0);
-        item.setLGroup(!"".equals(old.getLGroup().trim()) ? old.getLGroup().trim() : null);
-//        item.setCertDate((old.getCertDate()== null) ? "" : old.getCertDate().trim());  //this is broken, bad Dates in Database
+        item.setLGroup(!"".equals(old.getLGroup().trim()) ? old.getLGroup().trim() : null);        
+        
+        Timestamp certDateTime = StringUtilities.convertStringDate(old.getCertDate());
+        Date certDate = null;
+        if (certDateTime != null){
+            certDate = new Date(certDateTime.getTime());
+        }
+        item.setCertDate(certDate);
         item.setEnabled(("Y".equals(old.getEnabled().trim())) ? 1 : 0);
-        item.setUnitDescription(!"".equals(old.getUnitDescription().trim()) ? old.getUnitDescription().trim() : null);
+        
+        String[] bunnum = (item.getEmployerNumber()+"-"+item.getUnitNumber()).split("-");
+        List<oldBlobFileModel>oldBlobFileList = sqlBlobFile.getOldBlobDataBUDectioption(bunnum);
+        for (oldBlobFileModel blob : oldBlobFileList) {
+            if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
+                case "UnitDesc":
+                    item.setUnitDescription(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "Notes":
+                    item.setNotes(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                default:
+                    break;
+            }
+        }
         
         //Check CaseNumber
         String[] caseNumber = old.getCaseRef().split("-");
@@ -153,11 +183,6 @@ public class EmployersMigration {
             } else {
                 item.setCaseRefSequence(caseNumber[3]);
             }
-        } else {
-            item.setCaseRefYear("");
-            item.setCaseRefSection("");
-            item.setCaseRefMonth("");
-            item.setCaseRefSequence("");
         }
         sqlBarginingUnit.addBarginingUnit(item);
     }

@@ -28,7 +28,7 @@ public class sqlREPData {
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT * FROM REPData";
+            String sql = "SELECT * FROM REPData WHERE caseNumber != ''";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {

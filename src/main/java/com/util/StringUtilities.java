@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -44,18 +46,22 @@ public class StringUtilities {
     }
 
     public static String convertBlobFileToString(Blob text) {
-        try {
-            byte[] bdata = text.getBytes(1, (int) text.length());
-            return new String(bdata).trim();
-        } catch (SQLException ex) {
-            Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
+        if (text != null) {
+            try {
+                byte[] bdata = text.getBytes(1, (int) text.length());
+                return new String(bdata).trim();
+            } catch (SQLException ex) {
+                Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        return "";
+        return null;
     }
 
     public static Timestamp convertStringDate(String oldDate) {
+        Pattern p = Pattern.compile("[a-zA-Z]");
+        
         oldDate = oldDate.trim();
-        if (oldDate != null && !"".equals(oldDate)) {
+        if (oldDate != null && !"".equals(oldDate) && p.matcher(oldDate).find() == false) {
             String day = "";
             String month = "";
             String year = "";

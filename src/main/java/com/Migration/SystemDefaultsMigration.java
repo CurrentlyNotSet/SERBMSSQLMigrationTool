@@ -31,7 +31,7 @@ public class SystemDefaultsMigration {
     
     private static void sysThread(MainWindowSceneController control){
         long lStartTime = System.currentTimeMillis();
-        control.setProgressBarIndeterminate("ULP Case Migration");
+        control.setProgressBarIndeterminate("System Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
         List<oldCountyModel> oldULPDataList = sqlSystemData.getCounties();

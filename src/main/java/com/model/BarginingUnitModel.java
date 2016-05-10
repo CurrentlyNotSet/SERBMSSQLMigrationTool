@@ -31,6 +31,7 @@ public class BarginingUnitModel {
     private String CaseRefMonth;
     private String CaseRefSequence;
     private String UnitDescription;
+    private String Notes;
 
     public int getId() {
         return id;
@@ -183,6 +184,13 @@ public class BarginingUnitModel {
     public void setUnitDescription(String UnitDescription) {
         this.UnitDescription = UnitDescription;
     }
-    
+
+    public String getNotes() {
+        return Notes;
+    }
+
+    public void setNotes(String Notes) {
+        this.Notes = Notes;
+    }
     
 }

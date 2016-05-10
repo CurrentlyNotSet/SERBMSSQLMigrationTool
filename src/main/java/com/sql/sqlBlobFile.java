@@ -30,7 +30,7 @@ public class sqlBlobFile {
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "select * from blobfile where casenumber = ?";
+            String sql = "SELECT * FROM blobfile WHERE casenumber = ?";
             ps = conn.prepareStatement(sql);
             ps.setString( 1, StringUtilities.generateFullCaseNumber(caseNumber));
             rs = ps.executeQuery();
@@ -57,5 +57,39 @@ public class sqlBlobFile {
         }
         return list;
     }
-    
+
+    public static List<oldBlobFileModel> getOldBlobDataBUDectioption(String[] bunnum) {
+        List<oldBlobFileModel> list = new ArrayList();
+        if (bunnum.length == 2) {
+            Connection conn = null;
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            try {
+                conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+                String sql = "SELECT blobfile.selectorA, blobfile.blobData FROM blobfile JOIN barginingunitnew "
+                        + "ON blobfile.caseid = barginingunitNew.barginingunitid "
+                        + "WHERE barginingunitNew.employernumber = ? "
+                        + "AND barginingunitNew.unitnumber = ? "
+                        + "AND blobfile.type = 'BU'";
+                ps = conn.prepareStatement(sql);
+                ps.setString(1, bunnum[0]);
+                ps.setString(2, bunnum[1]);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                oldBlobFileModel item = new oldBlobFileModel();
+                item.setSelectorA(rs.getString("SelectorA"));
+                item.setBlobData(rs.getBlob("BlobData"));                
+                list.add(item);
+            }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } finally {
+                DbUtils.closeQuietly(conn);
+                DbUtils.closeQuietly(ps);
+                DbUtils.closeQuietly(rs);
+            }
+        }
+        return list;
+    }
+
 }

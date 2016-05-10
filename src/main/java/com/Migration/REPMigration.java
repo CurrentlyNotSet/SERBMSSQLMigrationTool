@@ -5,15 +5,24 @@
  */
 package com.Migration;
 
+import com.model.REPcaseModel;
+import com.model.boardMeetingModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
+import com.model.oldBlobFileModel;
 import com.model.oldREPDataModel;
+import com.model.oldULPDataModel;
+import com.model.repCaseSearchModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlBlobFile;
+import com.sql.sqlBoardMeeting;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlREPCaseSearch;
 import com.sql.sqlREPData;
 import com.util.Global;
 import com.util.StringUtilities;
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -59,6 +68,7 @@ public class REPMigration {
 
     private static void migrateCase(oldREPDataModel item) {
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
+        
         migratePetitioner(item, caseNumber);
         migratePetitionerRep(item, caseNumber);
         migrateEmployer(item, caseNumber);
@@ -78,6 +88,8 @@ public class REPMigration {
         migrateConversionSchool(item, caseNumber);
         migrateConversionSchoolRep(item, caseNumber);
         migrateCaseData(item, caseNumber);
+        migrateBoardMeetings(item, caseNumber);
+        migrateCaseSearch(item, caseNumber);
     }
 
     private static void migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -627,7 +639,124 @@ public class REPMigration {
     }
 
     private static void migrateCaseData(oldREPDataModel item, caseNumberModel caseNumber) {
-
+        
+        REPcaseModel rep = new REPcaseModel();
+        
+        rep.setActive(item.getActive());
+        rep.setCaseYear(caseNumber.getCaseYear());
+        rep.setCaseType(caseNumber.getCaseType());
+        rep.setCaseMonth(caseNumber.getCaseMonth());
+        rep.setCaseNumber(caseNumber.getCaseNumber());
+//        rep.setType();
+        rep.setStatus1(item.getStatus1());
+        rep.setStatus2(item.getStatus2());
+//        rep.setCurrentOwnerID();
+        rep.setCounty(item.getCounty());
+        rep.setEmployerIDNumber(item.getEmployerIDNum());
+        rep.setDeptInState(item.getDeptInState());
+        rep.setBargainingUnitNumber(item.getBargainingUnitNum());
+//        rep.setBoardCertified();
+//        rep.setDeemedCertified();
+//        rep.setCertificationRevoked();
+        rep.setFileDate(new Date(StringUtilities.convertStringDate(item.getFileDate()).getTime()));
+        rep.setAmendedFilingDate(new Date(StringUtilities.convertStringDate(item.getAmendedFilingDate()).getTime()));
+        rep.setFinalBoardDate(new Date(StringUtilities.convertStringDate(item.getFinalBoardDate()).getTime()));
+        rep.setRegistrationLetterSent(new Date(StringUtilities.convertStringDate(item.getRegLetterSentDate()).getTime()));
+        rep.setDateOfAppeal(new Date(StringUtilities.convertStringDate(item.getDateOfAppeal()).getTime()));
+        rep.setCourtClosedDate(new Date(StringUtilities.convertStringDate(item.getCourtClosedDate()).getTime()));
+        rep.setReturnSOIDueDate(new Date(StringUtilities.convertStringDate(item.getReturnSOIDueDate()).getTime()));
+        rep.setActualSOIReturnDate(new Date(StringUtilities.convertStringDate(item.getActualSOIReturnDate()).getTime()));
+//        rep.setSOIReturnInitials();
+        rep.setREPClosedCaseDueDate(new Date(StringUtilities.convertStringDate(item.getREPClosedCaseDueDate()).getTime()));
+        rep.setActualREPClosedDate(new Date(StringUtilities.convertStringDate(item.getActualREPClosedDate()).getTime()));
+//        rep.setREPClosedInitials();
+        rep.setActualClerksClosedDate(new Date(StringUtilities.convertStringDate(item.getActualClerksClosed()).getTime()));
+//        rep.setClerksClosedDateInitials();
+//        rep.setNote();
     }
 
+    private static void migrateBoardMeetings(oldREPDataModel item, caseNumberModel caseNumber) {
+        boardMeetingModel meeting = new boardMeetingModel();
+        
+        meeting.setCaseYear(caseNumber.getCaseYear());
+        meeting.setCaseType(caseNumber.getCaseType());
+        meeting.setCaseMonth(caseNumber.getCaseMonth());
+        meeting.setCaseNumber(caseNumber.getCaseNumber());
+        
+        if (!"".equals(item.getBoardMeetingDate1().trim()) || !"".equals(item.getAgendaItem1().trim()) || !"".equals(item.getRecommendation1().trim())) {
+            meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem1().trim()) ? item.getAgendaItem1().trim() : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate1()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate1()) : null);
+            meeting.setRecommendation(!"".equals(item.getRecommendation1().trim()) ? item.getRecommendation1().trim() : null);
+            sqlBoardMeeting.addULPBoardMeeting(meeting);
+        }
+        
+        if (!"".equals(item.getBoardMeetingDate2().trim()) || !"".equals(item.getAgendaItem2().trim()) || !"".equals(item.getRecommendation2().trim())) {
+            meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem2().trim()) ? item.getAgendaItem2().trim() : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate2()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate2()) : null);
+            meeting.setRecommendation(!"".equals(item.getRecommendation2().trim()) ? item.getRecommendation2().trim() : null);
+            sqlBoardMeeting.addULPBoardMeeting(meeting);
+        }
+        
+        if (!"".equals(item.getBoardMeetingDate3().trim()) || !"".equals(item.getAgendaItem3().trim()) || !"".equals(item.getRecommendation3().trim())) {
+            meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem3().trim()) ? item.getAgendaItem3().trim() : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate3()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate3()) : null);
+            meeting.setRecommendation(!"".equals(item.getRecommendation3().trim()) ? item.getRecommendation3().trim() : null);
+            sqlBoardMeeting.addULPBoardMeeting(meeting);
+        }
+        
+        if (!"".equals(item.getBoardMeetingDate4().trim()) || !"".equals(item.getAgendaItem4().trim()) || !"".equals(item.getRecommendation4().trim())) {
+            meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem4().trim()) ? item.getAgendaItem4().trim() : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate4()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate4()) : null);
+            meeting.setRecommendation(!"".equals(item.getRecommendation4().trim()) ? item.getRecommendation4().trim() : null);
+            sqlBoardMeeting.addULPBoardMeeting(meeting);
+        }
+        
+        if (!"".equals(item.getBoardMeetingDate5().trim()) || !"".equals(item.getAgendaItem5().trim()) || !"".equals(item.getRecommendation5().trim())) {
+            meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem5().trim()) ? item.getAgendaItem5().trim() : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate5()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate5()) : null);
+            meeting.setRecommendation(!"".equals(item.getRecommendation5().trim()) ? item.getRecommendation5().trim() : null);
+            sqlBoardMeeting.addULPBoardMeeting(meeting);
+        }        
+    }
+       
+    private static void migrateCaseSearch(oldREPDataModel item, caseNumberModel caseNumber) {
+        String[] bunnum = item.getBargainingUnitNum().trim().split("-");
+        
+        List<oldBlobFileModel>oldBlobFileList = sqlBlobFile.getOldBlobDataBUDectioption(bunnum);
+        
+        repCaseSearchModel search = new repCaseSearchModel();
+        search.setCaseYear(caseNumber.getCaseYear());
+        search.setCaseType(caseNumber.getCaseType());
+        search.setCaseMonth(caseNumber.getCaseMonth());
+        search.setCaseNumber(caseNumber.getCaseNumber());
+        search.setEmployerName(!"".equals(item.getEName().trim()) ? item.getEName().trim() : null);
+        search.setBunNumber(!"".equals(item.getBargainingUnitNum().trim()) ? item.getBargainingUnitNum().trim() : null);
+        search.setCounty(!"".equals(item.getCounty().trim()) ? item.getCounty().trim() : null);
+        search.setEmployeeOrg(!"".equals(item.getEOName().trim()) ? item.getEOName().trim() : null);
+        search.setIncumbent(!"".equals(item.getIEOName().trim()) ? item.getIEOName().trim() : null);
+        search.setDescription(null);
+        
+        for (oldBlobFileModel blob : oldBlobFileList) {
+            if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
+                case "UnitDesc":
+                    search.setDescription(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        if (item.getBoardCertified().equals("1")) {
+            search.setBoardDeemed("Board");
+        } else if (item.getDeemedCertified().equals("1")) {
+            search.setBoardDeemed("Deemed");
+        } else if (item.getCertRevoked().equals("1")) {
+            search.setBoardDeemed("Cert Revoked");
+        } else {
+            search.setBoardDeemed(null);
+        }
+        
+        sqlREPCaseSearch.addREPCaseSearchCase(search);
+    }
+    
 }

@@ -15,7 +15,6 @@ import com.model.oldBlobFileModel;
 import com.model.oldULPDataModel;
 import com.model.oldULPHistoryModel;
 import com.model.relatedCaseModel;
-import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
@@ -72,15 +71,15 @@ public class ULPMigration {
         
     private static void migrateCase(oldULPDataModel item){
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
-//        ULPMigration.migrateChargingParty(item, caseNumber);
-//        ULPMigration.migrateChargingPartyRep(item, caseNumber);
-//        ULPMigration.migrateChargedParty(item, caseNumber);
-//        ULPMigration.migrateChargedPartyRep(item, caseNumber);
+        ULPMigration.migrateChargingParty(item, caseNumber);
+        ULPMigration.migrateChargingPartyRep(item, caseNumber);
+        ULPMigration.migrateChargedParty(item, caseNumber);
+        ULPMigration.migrateChargedPartyRep(item, caseNumber);
         ULPMigration.migrateCaseData(item, caseNumber);
-//        ULPMigration.migrateBoardMeetings(item, caseNumber);
-//        migrateRelatedCases(item, caseNumber);
+        ULPMigration.migrateBoardMeetings(item, caseNumber);
+        migrateRelatedCases(item, caseNumber);
         migrateCaseHistory(caseNumber);
-//        migrateCaseSearch(item, caseNumber);
+        migrateCaseSearch(item, caseNumber);
     }
     
     private static void migrateChargingParty(oldULPDataModel item, caseNumberModel caseNumber) {

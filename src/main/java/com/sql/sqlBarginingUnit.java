@@ -85,7 +85,8 @@ public class sqlBarginingUnit {
                     + "CaseRefSection, "    //15
                     + "CaseRefMonth, "      //16
                     + "CaseRefSequence, "   //17
-                    + "UnitDescription"     //18
+                    + "UnitDescription, "   //18
+                    + "Notes"               //19
                     + ") VALUES ("
                     + "?,"  //01
                     + "?,"  //02
@@ -104,7 +105,8 @@ public class sqlBarginingUnit {
                     + "?,"  //15
                     + "?,"  //16
                     + "?,"  //17
-                    + "?)"; //18
+                    + "?,"  //18
+                    + "?)"; //19
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getEmployerNumber());
@@ -124,6 +126,7 @@ public class sqlBarginingUnit {
             ps.setString(16, item.getCaseRefMonth());
             ps.setString(17, item.getCaseRefSequence());
             ps.setString(18, item.getUnitDescription());
+            ps.setString(19, item.getNotes());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -132,7 +135,5 @@ public class sqlBarginingUnit {
             DbUtils.closeQuietly(conn);
         }
     }
-    
-    
-    
+        
 }
