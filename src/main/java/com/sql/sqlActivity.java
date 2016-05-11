@@ -6,6 +6,7 @@
 package com.sql;
 
 import com.model.activityModel;
+import com.model.oldREPHistoryModel;
 import com.model.oldULPHistoryModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
@@ -124,4 +125,46 @@ public class sqlActivity {
         }
         return list;
     }
+    
+    public static List<oldREPHistoryModel> getREPHistoryByCase(String caseNumber) {
+        List<oldREPHistoryModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "SELECT *, cast(date as datetime) as Date2 FROM REPHistory WHERE caseNumber = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString( 1, caseNumber);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                oldREPHistoryModel item = new oldREPHistoryModel();
+                item.setHistoryID(rs.getInt("HistoryID"));
+                item.setActive(rs.getInt("Active"));
+                item.setUserInitals(rs.getString("UserInitals"));
+                item.setDate(rs.getTimestamp("Date2"));
+                item.setAction(rs.getString("Action"));
+                item.setCaseNumber(rs.getString("CaseNumber"));
+                item.setFileName(rs.getString("FileName"));
+                item.setParseDate(rs.getString("ParseDate"));
+                item.setEmailTo(rs.getString("EmailTo"));
+                item.setEmailFrom(rs.getString("EmailFrom"));
+                item.setMailLogDate(rs.getString("MailLogDate"));
+                item.setApproved(rs.getString("Approved"));
+                item.setRequested(rs.getString("Requested"));
+                item.setRedacted(rs.getString("Redacted"));
+                item.setRedactedHistoryID(rs.getString("RedactedHistoryID"));
+                item.setNote(rs.getString("Note"));
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
+    
 }

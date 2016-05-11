@@ -49,7 +49,10 @@ public class StringUtilities {
         if (text != null) {
             try {
                 byte[] bdata = text.getBytes(1, (int) text.length());
-                return new String(bdata).trim();
+                String blobString = new String(bdata).trim();
+                if (!"".equals(blobString.trim())){
+                    return blobString.trim();
+                }
             } catch (SQLException ex) {
                 Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
             }

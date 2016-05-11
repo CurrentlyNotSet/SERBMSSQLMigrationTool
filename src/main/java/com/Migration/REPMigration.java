@@ -6,14 +6,16 @@
 package com.Migration;
 
 import com.model.REPcaseModel;
+import com.model.activityModel;
 import com.model.boardMeetingModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
 import com.model.oldBlobFileModel;
 import com.model.oldREPDataModel;
-import com.model.oldULPDataModel;
+import com.model.oldREPHistoryModel;
 import com.model.repCaseSearchModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
 import com.sql.sqlBoardMeeting;
 import com.sql.sqlCaseParty;
@@ -90,6 +92,7 @@ public class REPMigration {
         migrateCaseData(item, caseNumber);
         migrateBoardMeetings(item, caseNumber);
         migrateCaseSearch(item, caseNumber);
+        migrateCaseHistory(caseNumber);
     }
 
     private static void migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -639,7 +642,7 @@ public class REPMigration {
     }
 
     private static void migrateCaseData(oldREPDataModel item, caseNumberModel caseNumber) {
-        
+        List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(caseNumber);
         REPcaseModel rep = new REPcaseModel();
         
         rep.setActive(item.getActive());
@@ -650,14 +653,14 @@ public class REPMigration {
 //        rep.setType();
         rep.setStatus1(item.getStatus1());
         rep.setStatus2(item.getStatus2());
-//        rep.setCurrentOwnerID();
+        rep.setCurrentOwnerID(StringUtilities.convertUserToID(item.getCurrentOwner()));
         rep.setCounty(item.getCounty());
         rep.setEmployerIDNumber(item.getEmployerIDNum());
         rep.setDeptInState(item.getDeptInState());
         rep.setBargainingUnitNumber(item.getBargainingUnitNum());
-//        rep.setBoardCertified();
-//        rep.setDeemedCertified();
-//        rep.setCertificationRevoked();
+        rep.setBoardCertified("1".equals(item.getBoardCertified().trim()) ? 1 : 0);
+        rep.setDeemedCertified("1".equals(item.getDeemedCertified().trim()) ? 1 : 0);
+        rep.setCertificationRevoked("1".equals(item.getCertRevoked().trim()) ? 1 : 0);
         rep.setFileDate(new Date(StringUtilities.convertStringDate(item.getFileDate()).getTime()));
         rep.setAmendedFilingDate(new Date(StringUtilities.convertStringDate(item.getAmendedFilingDate()).getTime()));
         rep.setFinalBoardDate(new Date(StringUtilities.convertStringDate(item.getFinalBoardDate()).getTime()));
@@ -666,13 +669,24 @@ public class REPMigration {
         rep.setCourtClosedDate(new Date(StringUtilities.convertStringDate(item.getCourtClosedDate()).getTime()));
         rep.setReturnSOIDueDate(new Date(StringUtilities.convertStringDate(item.getReturnSOIDueDate()).getTime()));
         rep.setActualSOIReturnDate(new Date(StringUtilities.convertStringDate(item.getActualSOIReturnDate()).getTime()));
-//        rep.setSOIReturnInitials();
+//        rep.setSOIReturnInitials(StringUtilities.convertUserToID(item.getCurrentOwner()));
         rep.setREPClosedCaseDueDate(new Date(StringUtilities.convertStringDate(item.getREPClosedCaseDueDate()).getTime()));
         rep.setActualREPClosedDate(new Date(StringUtilities.convertStringDate(item.getActualREPClosedDate()).getTime()));
 //        rep.setREPClosedInitials();
         rep.setActualClerksClosedDate(new Date(StringUtilities.convertStringDate(item.getActualClerksClosed()).getTime()));
 //        rep.setClerksClosedDateInitials();
-//        rep.setNote();
+        rep.setNote(null);
+
+        for (oldBlobFileModel blob : oldBlobFileList) {
+            if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
+                case "Notes":
+                    rep.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                default:
+                    break;
+            }
+        }
+        
     }
 
     private static void migrateBoardMeetings(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -719,6 +733,30 @@ public class REPMigration {
         }        
     }
        
+    private static void migrateCaseHistory(caseNumberModel caseNumber) {
+        List<oldREPHistoryModel> oldREPDataList = sqlActivity.getREPHistoryByCase(StringUtilities.generateFullCaseNumber(caseNumber));
+        
+        for (oldREPHistoryModel old : oldREPDataList){                                                
+            activityModel item = new activityModel();
+            item.setCaseYear(caseNumber.getCaseYear());
+            item.setCaseType(caseNumber.getCaseType());
+            item.setCaseMonth(caseNumber.getCaseMonth());
+            item.setCaseNumber(caseNumber.getCaseNumber());
+            item.setUserID(StringUtilities.convertUserToID(old.getUserInitals()));
+            item.setDate(old.getDate());
+            item.setAction(!"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
+            item.setFileName(!"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
+            item.setFrom(!"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
+            item.setTo(!"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
+            item.setType(null);
+            item.setComment(null);
+            item.setRedacted("Y".equals(old.getRedacted().trim()) ? 1 : 0);
+            item.setAwaitingTimeStamp(0);
+            
+            sqlActivity.addActivity(item);
+        }
+    }
+        
     private static void migrateCaseSearch(oldREPDataModel item, caseNumberModel caseNumber) {
         String[] bunnum = item.getBargainingUnitNum().trim().split("-");
         
