@@ -5,6 +5,7 @@
  */
 package com.sql;
 
+import com.model.REPcaseModel;
 import com.model.oldREPDataModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
@@ -411,4 +412,118 @@ public class sqlREPData {
         return list;
     }
 
+    public static void importOldREPCase(REPcaseModel item) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "INSERT INTO REPcase ("
+                    + "active, "            //01
+                    + "caseYear, "          //02
+                    + "caseType, "          //03
+                    + "caseMonth, "         //04
+                    + "caseNumber, "        //05
+                    + "type, "              //06
+                    + "status1, "           //07
+                    + "status2, "           //08
+                    + "currentOwnerID, "    //09
+                    + "county, "            //10
+                    + "employerIDNumber, "  //11
+                    + "deptInState, "       //12
+                    + "bargainingUnitNumber, "  //13
+                    + "boardCertified, "        //14
+                    + "deemedCertified, "       //15
+                    + "certificationRevoked, "  //16
+                    + "fileDate, "              //17
+                    + "amendedFilingDate, "     //18
+                    + "finalBoardDate, "        //19
+                    + "registrationLetterSent, "//20
+                    + "dateOfAppeal, "          //21
+                    + "courtClosedDate, "       //22
+                    + "returnSOIDueDate, "      //23
+                    + "actualSOIReturnDate, "   //24
+                    + "SOIReturnInitials, "     //25
+                    + "REPClosedCaseDueDate, "  //26
+                    + "actualREPClosedDate, "   //27
+                    + "REPClosedInitials, "     //28
+                    + "actualClerksClosedDate, "  //29
+                    + "clerksClosedDateInitials, "//30
+                    + "note"                      //31
+                    + ") VALUES ("
+                    + "?, " //01 
+                    + "?, " //02 
+                    + "?, " //03 
+                    + "?, " //04 
+                    + "?, " //05
+                    + "?, " //06 
+                    + "?, " //07 
+                    + "?, " //08 
+                    + "?, " //09 
+                    + "?, " //10 
+                    + "?, " //11 
+                    + "?, " //12 
+                    + "?, " //13 
+                    + "?, " //14 
+                    + "?, " //15 
+                    + "?, " //16 
+                    + "?, " //17 
+                    + "?, " //18 
+                    + "?, " //19 
+                    + "?, " //20 
+                    + "?, " //21 
+                    + "?, " //22 
+                    + "?, " //23 
+                    + "?, " //24 
+                    + "?, " //25 
+                    + "?, " //26 
+                    + "?, " //27 
+                    + "?, " //28 
+                    + "?, " //29 
+                    + "?, " //30 
+                    + "?)"; //31 
+            ps = conn.prepareStatement(sql);
+            ps.setInt      ( 1, item.getActive());
+            ps.setString   ( 2, item.getCaseYear());
+            ps.setString   ( 3, item.getCaseType());
+            ps.setString   ( 4, item.getCaseMonth());
+            ps.setString   ( 5, item.getCaseNumber());
+            ps.setString   ( 6, item.getType());
+            ps.setString   ( 7, item.getStatus1());
+            ps.setString   ( 8, item.getStatus2());
+            if (item.getCurrentOwnerID() != 0){
+                ps.setInt  ( 9, item.getCurrentOwnerID());
+            } else {
+                ps.setNull ( 9, java.sql.Types.INTEGER);
+            }
+            ps.setString   (10, item.getCounty());
+            ps.setString   (11, item.getEmployerIDNumber());
+            ps.setString   (12, item.getDeptInState());
+            ps.setString   (13, item.getBargainingUnitNumber());
+            ps.setInt      (14, item.getBoardCertified());
+            ps.setInt      (15, item.getDeemedCertified());
+            ps.setInt      (16, item.getCertificationRevoked());
+            ps.setDate     (17, item.getFileDate());
+            ps.setDate     (18, item.getAmendedFilingDate());
+            ps.setDate     (19, item.getFinalBoardDate());
+            ps.setDate     (20, item.getRegistrationLetterSent());
+            ps.setDate     (21, item.getDateOfAppeal());
+            ps.setDate     (22, item.getCourtClosedDate());
+            ps.setDate     (23, item.getReturnSOIDueDate());
+            ps.setDate     (24, item.getActualSOIReturnDate());
+            ps.setString   (25, item.getSOIReturnInitials());
+            ps.setDate     (26, item.getREPClosedCaseDueDate());
+            ps.setDate     (27, item.getActualREPClosedDate());
+            ps.setString   (28, item.getREPClosedInitials());
+            ps.setDate     (29, item.getActualClerksClosedDate());
+            ps.setString   (30, item.getClerksClosedDateInitials());
+            ps.setString   (31, item.getNote());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
 }

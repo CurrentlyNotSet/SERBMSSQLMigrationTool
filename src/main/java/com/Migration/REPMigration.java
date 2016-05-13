@@ -112,7 +112,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getPPhone().trim()) ? item.getPPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getPEmail().trim()) ? item.getPEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getPAsstName() == null) ? "" : item.getPAsstName().trim());
@@ -142,7 +142,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getPREPPhone().trim()) ? item.getPREPPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getPREPEmail().trim()) ? item.getPREPEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getPREPAsstName() == null) ? "" : item.getPREPAsstName().trim());
@@ -172,7 +172,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getEPhone().trim()) ? item.getEPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getEEmail().trim()) ? item.getEEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getEAsstName() == null) ? "" : item.getEAsstName().trim());
@@ -202,7 +202,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getEREPPhone().trim()) ? item.getEREPPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getEREPEmail().trim()) ? item.getEREPEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getEREPAsstName() == null) ? "" : item.getEREPAsstName().trim());
@@ -232,7 +232,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getEOPhone().trim()) ? item.getEOPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getEOEmail().trim()) ? item.getEOEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getEOAsstName() == null) ? "" : item.getEOAsstName().trim());
@@ -262,7 +262,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getEOREPPhone().trim()) ? item.getEOREPPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getEOREPEmail().trim()) ? item.getEOREPEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getEOREPAsstName() == null) ? "" : item.getEOREPAsstName().trim());
@@ -293,7 +293,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getREOPhone().trim()) ? item.getREOPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getREOEmail().trim()) ? item.getREOEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getREOAsstName() == null) ? "" : item.getREOAsstName().trim());
@@ -323,7 +323,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getREOREPPhone().trim()) ? item.getREOREPPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getREOREPEmail().trim()) ? item.getREOREPEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getREOREPAsstName() == null) ? "" : item.getREOREPAsstName().trim());
@@ -343,7 +343,7 @@ public class REPMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setCaseRelation("Rival Employee Organization");
+        party.setCaseRelation("Rival Employee Organization 2");
         party.setLastName(!"".equals(item.getREO2Name().trim()) ? item.getREO2Name().trim() : null);
         party.setAddress1(!"".equals(item.getREO2Address1().trim()) ? item.getREO2Address1().trim() : null);
         party.setAddress2(!"".equals(item.getREO2Address2().trim()) ? item.getREO2Address2().trim() : null);
@@ -353,12 +353,12 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getREO2Phone().trim()) ? item.getREO2Phone().trim() : null);
         party.setEmailAddress(!"".equals(item.getREO2Email().trim()) ? item.getREO2Email().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getREO2AsstName() == null) ? "" : item.getREO2AsstName().trim());
             if (!"".equals(asstName)) {
-                party.setCaseRelation("Rival Employee Organization Assistant");
+                party.setCaseRelation("Rival Employee Organization 2 Assistant");
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getREO2AsstEmail().trim()) ? item.getREO2AsstEmail().trim() : null);
@@ -373,7 +373,7 @@ public class REPMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setCaseRelation("Rival Employee Organization REP");
+        party.setCaseRelation("Rival Employee Organization 2 REP");
         party.setLastName(!"".equals(item.getREO2REPName().trim()) ? item.getREO2REPName().trim() : null);
         party.setAddress1(!"".equals(item.getREO2REPAddress1().trim()) ? item.getREO2REPAddress1().trim() : null);
         party.setAddress2(!"".equals(item.getREO2REPAddress2().trim()) ? item.getREO2REPAddress2().trim() : null);
@@ -383,12 +383,12 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getREO2REPPhone().trim()) ? item.getREO2REPPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getREO2REPEmail().trim()) ? item.getREO2REPEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getREO2REPAsstName() == null) ? "" : item.getREO2REPAsstName().trim());
             if (!"".equals(asstName)) {
-                party.setCaseRelation("Rival Employee Organization REP Assistant");
+                party.setCaseRelation("Rival Employee Organization 2 REP Assistant");
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getREO2REPAsstEmail().trim()) ? item.getREO2REPAsstEmail().trim() : null);
@@ -404,7 +404,7 @@ public class REPMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setCaseRelation("Rival Employee Organization");
+        party.setCaseRelation("Rival Employee Organization 3");
         party.setLastName(!"".equals(item.getREO3Name().trim()) ? item.getREO3Name().trim() : null);
         party.setAddress1(!"".equals(item.getREO3Address1().trim()) ? item.getREO3Address1().trim() : null);
         party.setAddress2(!"".equals(item.getREO3Address2().trim()) ? item.getREO3Address2().trim() : null);
@@ -414,12 +414,12 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getREO3Phone().trim()) ? item.getREO3Phone().trim() : null);
         party.setEmailAddress(!"".equals(item.getREO3Email().trim()) ? item.getREO3Email().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getREO3AsstName() == null) ? "" : item.getREO3AsstName().trim());
             if (!"".equals(asstName)) {
-                party.setCaseRelation("Rival Employee Organization Assistant");
+                party.setCaseRelation("Rival Employee Organization 3 Assistant");
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getREO3AsstEmail().trim()) ? item.getREO3AsstEmail().trim() : null);
@@ -435,7 +435,7 @@ public class REPMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setCaseRelation("Rival Employee Organization REP");
+        party.setCaseRelation("Rival Employee Organization 3 REP");
         party.setLastName(!"".equals(item.getREO3REPName().trim()) ? item.getREO3REPName().trim() : null);
         party.setAddress1(!"".equals(item.getREO3REPAddress1().trim()) ? item.getREO3REPAddress1().trim() : null);
         party.setAddress2(!"".equals(item.getREO3REPAddress2().trim()) ? item.getREO3REPAddress2().trim() : null);
@@ -445,12 +445,12 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getREO3REPPhone().trim()) ? item.getREO3REPPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getREO3REPEmail().trim()) ? item.getREO3REPEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getREO3REPAsstName() == null) ? "" : item.getREO3REPAsstName().trim());
             if (!"".equals(asstName)) {
-                party.setCaseRelation("Rival Employee Organization REP Assistant");
+                party.setCaseRelation("Rival Employee Organization 3 REP Assistant");
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getREO3REPAsstEmail().trim()) ? item.getREO3REPAsstEmail().trim() : null);
@@ -476,7 +476,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getIEOPhone().trim()) ? item.getIEOPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getIEOEmail().trim()) ? item.getIEOEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getIEOAsstName() == null) ? "" : item.getIEOAsstName().trim());
@@ -506,7 +506,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getIEOREPPhone().trim()) ? item.getIEOREPPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getIEOREPEmail().trim()) ? item.getIEOREPEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getIEOREPAsstName() == null) ? "" : item.getIEOREPAsstName().trim());
@@ -536,7 +536,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getIPhone().trim()) ? item.getIPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getIEmail().trim()) ? item.getIEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getIAsstName() == null) ? "" : item.getIAsstName().trim());
@@ -567,7 +567,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getIREPPhone().trim()) ? item.getIREPPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getIREPEmail().trim()) ? item.getIREPEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getIREPAsstName() == null) ? "" : item.getIREPAsstName().trim());
@@ -597,7 +597,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getCSPhone().trim()) ? item.getCSPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getCSEmail().trim()) ? item.getCSEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getCSAsstName() == null) ? "" : item.getCSAsstName().trim());
@@ -627,7 +627,7 @@ public class REPMigration {
         party.setPhoneOne(!"".equals(item.getCSREPPhone().trim()) ? item.getCSREPPhone().trim() : null);
         party.setEmailAddress(!"".equals(item.getCSREPEmail().trim()) ? item.getCSREPEmail().trim() : null);
 
-        if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
+        if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
 
             String asstName = ((item.getCSREPAsstName() == null) ? "" : item.getCSREPAsstName().trim());
@@ -687,6 +687,7 @@ public class REPMigration {
             }
         }
         
+        sqlREPData.importOldREPCase(rep);
     }
 
     private static void migrateBoardMeetings(oldREPDataModel item, caseNumberModel caseNumber) {

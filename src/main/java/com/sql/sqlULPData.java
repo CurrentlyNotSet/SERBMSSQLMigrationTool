@@ -117,8 +117,7 @@ public class sqlULPData {
         return list;
     }
     
-    
-    public static void importOldULPCase(ULPCaseModel item){
+    public static void importOldULPCase(ULPCaseModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
