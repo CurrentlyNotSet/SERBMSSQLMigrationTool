@@ -109,7 +109,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getPCity().trim()) ? item.getPCity().trim() : null);
         party.setState(!"".equals(item.getPState().trim()) ? item.getPState().trim() : null);
         party.setZip(!"".equals(item.getPZip().trim()) ? item.getPZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getPPhone().trim()) ? item.getPPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getPEmail().trim()) ? item.getPEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -139,7 +139,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getPREPCity().trim()) ? item.getPREPCity().trim() : null);
         party.setState(!"".equals(item.getPREPState().trim()) ? item.getPREPState().trim() : null);
         party.setZip(!"".equals(item.getPREPZip().trim()) ? item.getPREPZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getPREPPhone().trim()) ? item.getPREPPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getPREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getPREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getPREPEmail().trim()) ? item.getPREPEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -169,7 +169,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getECity().trim()) ? item.getECity().trim() : null);
         party.setState(!"".equals(item.getEState().trim()) ? item.getEState().trim() : null);
         party.setZip(!"".equals(item.getEZip().trim()) ? item.getEZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getEPhone().trim()) ? item.getEPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getEPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEEmail().trim()) ? item.getEEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -199,7 +199,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getEREPCity().trim()) ? item.getEREPCity().trim() : null);
         party.setState(!"".equals(item.getEREPState().trim()) ? item.getEREPState().trim() : null);
         party.setZip(!"".equals(item.getEREPZip().trim()) ? item.getEREPZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getEREPPhone().trim()) ? item.getEREPPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getEREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEREPEmail().trim()) ? item.getEREPEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -229,7 +229,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getEOCity().trim()) ? item.getEOCity().trim() : null);
         party.setState(!"".equals(item.getEOState().trim()) ? item.getEOState().trim() : null);
         party.setZip(!"".equals(item.getEOZip().trim()) ? item.getEOZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getEOPhone().trim()) ? item.getEOPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getEOPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEOPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEOEmail().trim()) ? item.getEOEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -259,7 +259,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getEOREPCity().trim()) ? item.getEOREPCity().trim() : null);
         party.setState(!"".equals(item.getEOREPState().trim()) ? item.getEOREPState().trim() : null);
         party.setZip(!"".equals(item.getEOREPZip().trim()) ? item.getEOREPZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getEOREPPhone().trim()) ? item.getEOREPPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getEOREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEOREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEOREPEmail().trim()) ? item.getEOREPEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -290,7 +290,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getREOCity().trim()) ? item.getREOCity().trim() : null);
         party.setState(!"".equals(item.getREOState().trim()) ? item.getREOState().trim() : null);
         party.setZip(!"".equals(item.getREOZip().trim()) ? item.getREOZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getREOPhone().trim()) ? item.getREOPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getREOPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getREOPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getREOEmail().trim()) ? item.getREOEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -320,7 +320,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getREOREPCity().trim()) ? item.getREOREPCity().trim() : null);
         party.setState(!"".equals(item.getREOREPState().trim()) ? item.getREOREPState().trim() : null);
         party.setZip(!"".equals(item.getREOREPZip().trim()) ? item.getREOREPZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getREOREPPhone().trim()) ? item.getREOREPPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getREOREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getREOREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getREOREPEmail().trim()) ? item.getREOREPEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -350,7 +350,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getREO2City().trim()) ? item.getREO2City().trim() : null);
         party.setState(!"".equals(item.getREO2State().trim()) ? item.getREO2State().trim() : null);
         party.setZip(!"".equals(item.getREO2Zip().trim()) ? item.getREO2Zip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getREO2Phone().trim()) ? item.getREO2Phone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getREO2Phone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getREO2Phone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getREO2Email().trim()) ? item.getREO2Email().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -380,7 +380,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getREO2REPCity().trim()) ? item.getREO2REPCity().trim() : null);
         party.setState(!"".equals(item.getREO2REPState().trim()) ? item.getREO2REPState().trim() : null);
         party.setZip(!"".equals(item.getREO2REPZip().trim()) ? item.getREO2REPZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getREO2REPPhone().trim()) ? item.getREO2REPPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getREO2REPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getREO2REPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getREO2REPEmail().trim()) ? item.getREO2REPEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -411,7 +411,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getREO3City().trim()) ? item.getREO3City().trim() : null);
         party.setState(!"".equals(item.getREO3State().trim()) ? item.getREO3State().trim() : null);
         party.setZip(!"".equals(item.getREO3Zip().trim()) ? item.getREO3Zip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getREO3Phone().trim()) ? item.getREO3Phone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getREO3Phone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getREO3Phone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getREO3Email().trim()) ? item.getREO3Email().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -442,7 +442,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getREO3REPCity().trim()) ? item.getREO3REPCity().trim() : null);
         party.setState(!"".equals(item.getREO3REPState().trim()) ? item.getREO3REPState().trim() : null);
         party.setZip(!"".equals(item.getREO3REPZip().trim()) ? item.getREO3REPZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getREO3REPPhone().trim()) ? item.getREO3REPPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getREO3REPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getREO3REPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getREO3REPEmail().trim()) ? item.getREO3REPEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -473,7 +473,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getIEOCity().trim()) ? item.getIEOCity().trim() : null);
         party.setState(!"".equals(item.getIEOState().trim()) ? item.getIEOState().trim() : null);
         party.setZip(!"".equals(item.getIEOZip().trim()) ? item.getIEOZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getIEOPhone().trim()) ? item.getIEOPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getIEOPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getIEOPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getIEOEmail().trim()) ? item.getIEOEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -503,7 +503,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getIEOREPCity().trim()) ? item.getIEOREPCity().trim() : null);
         party.setState(!"".equals(item.getIEOREPState().trim()) ? item.getIEOREPState().trim() : null);
         party.setZip(!"".equals(item.getIEOREPZip().trim()) ? item.getIEOREPZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getIEOREPPhone().trim()) ? item.getIEOREPPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getIEOREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getIEOREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getIEOREPEmail().trim()) ? item.getIEOREPEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -533,7 +533,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getICity().trim()) ? item.getICity().trim() : null);
         party.setState(!"".equals(item.getIState().trim()) ? item.getIState().trim() : null);
         party.setZip(!"".equals(item.getIZip().trim()) ? item.getIZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getIPhone().trim()) ? item.getIPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getIPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getIPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getIEmail().trim()) ? item.getIEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -564,7 +564,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getIREPCity().trim()) ? item.getIREPCity().trim() : null);
         party.setState(!"".equals(item.getIREPState().trim()) ? item.getIREPState().trim() : null);
         party.setZip(!"".equals(item.getIREPZip().trim()) ? item.getIREPZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getIREPPhone().trim()) ? item.getIREPPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getIREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getIREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getIREPEmail().trim()) ? item.getIREPEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -594,7 +594,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getCSCity().trim()) ? item.getCSCity().trim() : null);
         party.setState(!"".equals(item.getCSState().trim()) ? item.getCSState().trim() : null);
         party.setZip(!"".equals(item.getCSZip().trim()) ? item.getCSZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getCSPhone().trim()) ? item.getCSPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getCSPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCSPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getCSEmail().trim()) ? item.getCSEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
@@ -624,7 +624,7 @@ public class REPMigration {
         party.setCity(!"".equals(item.getCSREPCity().trim()) ? item.getCSREPCity().trim() : null);
         party.setState(!"".equals(item.getCSREPState().trim()) ? item.getCSREPState().trim() : null);
         party.setZip(!"".equals(item.getCSREPZip().trim()) ? item.getCSREPZip().trim() : null);
-        party.setPhoneOne(!"".equals(item.getCSREPPhone().trim()) ? item.getCSREPPhone().trim() : null);
+        party.setPhoneOne(!"".equals(item.getCSREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCSREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getCSREPEmail().trim()) ? item.getCSREPEmail().trim() : null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
