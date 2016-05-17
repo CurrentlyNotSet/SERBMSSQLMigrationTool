@@ -12,11 +12,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -117,6 +117,75 @@ public class StringUtilities {
         return null;
     }
 
+    public static Timestamp convertStringDateAndTime(String oldDate, String oldTime) {
+        Pattern p = Pattern.compile("[a-zA-Z]");
+        
+        oldDate = oldDate.trim();
+        if (oldDate != null && !"".equals(oldDate) && p.matcher(oldDate).find() == false) {
+            String day = "";
+            String month = "";
+            String year = "";
+
+            oldDate = oldDate.replaceAll("\\\\", "-").replaceAll("/", "-");
+            String[] parsedOldDate = oldDate.trim().split("-");
+
+            //  0         1           2
+            //year  -   month   -   day
+            //year  -   day     -   month
+            //month -   day     -   year
+            //day   -   month   -   year
+            if (parsedOldDate[0].length() == 4) {
+                year = parsedOldDate[0];
+                month = parsedOldDate[1];
+                day = parsedOldDate[2];
+                if (Integer.valueOf(parsedOldDate[1]) > 12) {
+                    month = parsedOldDate[1];
+                    day = parsedOldDate[2];
+                } else if (Integer.valueOf(parsedOldDate[2]) > 12) {
+                    month = parsedOldDate[2];
+                    day = parsedOldDate[1];
+                }
+            } else if (parsedOldDate[2].length() == 4) {
+                month = parsedOldDate[0];
+                day = parsedOldDate[1];
+                year = parsedOldDate[2];
+                if (Integer.valueOf(parsedOldDate[0]) > 12) {
+                    month = parsedOldDate[1];
+                    day = parsedOldDate[0];
+                } else if (Integer.valueOf(parsedOldDate[1]) > 12) {
+                    month = parsedOldDate[0];
+                    day = parsedOldDate[1];
+                }
+            } else {
+                month = parsedOldDate[0];
+                day = parsedOldDate[1];
+                year = parsedOldDate[2];
+            }
+            
+            String[] time = oldTime.replaceAll("\\.", "").split(":| ");
+                            
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR, Integer.valueOf(year));
+                cal.set(Calendar.MONTH, Integer.valueOf(month));
+                cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(day));
+                
+                if(!"".equals(oldTime.trim())){
+                    int hour = Integer.valueOf(time[0]);
+                    cal.set(Calendar.HOUR_OF_DAY, time[2].equalsIgnoreCase("AM") ? hour : hour + 12);
+                    cal.set(Calendar.MINUTE, Integer.valueOf(time[1]));
+                } else {
+                    cal.set(Calendar.HOUR_OF_DAY, 0);
+                    cal.set(Calendar.MINUTE, 0);
+                }
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+        
+                cal.getTimeInMillis();
+                return new Timestamp(cal.getTimeInMillis());
+        }
+        return null;
+    }
+    
     public static String convertLongToTime(long millis) {
         String duration = String.format("%02dhr %02dmin %02dsec",
                 TimeUnit.MILLISECONDS.toHours(millis),

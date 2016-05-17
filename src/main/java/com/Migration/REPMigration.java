@@ -5,6 +5,7 @@
  */
 package com.Migration;
 
+import com.model.REPMediationModel;
 import com.model.REPcaseModel;
 import com.model.activityModel;
 import com.model.boardMeetingModel;
@@ -22,6 +23,7 @@ import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlREPCaseSearch;
 import com.sql.sqlREPData;
+import com.sql.sqlREPMediation;
 import com.util.Global;
 import com.util.StringUtilities;
 import java.sql.Date;
@@ -91,6 +93,7 @@ public class REPMigration {
         migrateConversionSchoolRep(item, caseNumber);
         migrateCaseData(item, caseNumber);
         migrateBoardMeetings(item, caseNumber);
+        migrateMediations(item, caseNumber);
         migrateCaseSearch(item, caseNumber);
         migrateCaseHistory(caseNumber);
     }
@@ -686,8 +689,62 @@ public class REPMigration {
                     break;
             }
         }
-        
         sqlREPData.importOldREPCase(rep);
+    }
+
+    private static void migrateMediations(oldREPDataModel item, caseNumberModel caseNumber) {
+        REPMediationModel mediation = new REPMediationModel();
+        
+        mediation.setCaseYear(caseNumber.getCaseYear());
+        mediation.setCaseType(caseNumber.getCaseType());
+        mediation.setCaseMonth(caseNumber.getCaseMonth());
+        mediation.setCaseNumber(caseNumber.getCaseNumber());
+        
+        //Internal Mediation
+        if(!"".equals(item.getInternalMediationDate()) || !"".equals(item.getInternalMediationTime()) ||
+            !"".equals(item.getInternalMediator()) || !"".equals(item.getInternaResult())) {
+            mediation.setMediationDate(null);
+            mediation.setMediationEntryDate(null);
+            if (!"".equals(item.getInternalMediationDate().trim())){
+                mediation.setMediationDate(StringUtilities.convertStringDateAndTime(item.getInternalMediationDate(), item.getInternalMediationTime()));
+            }
+            mediation.setMediationType("Internal Mediation");
+            mediation.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getInternalMediator())));
+            mediation.setMediationOutcome(!"".equals(item.getInternaResult().trim()) ? item.getInternaResult().trim() : null);
+            
+            sqlREPMediation.addREPMediation(mediation);
+        }
+
+        //30 Day Mediation
+        if (!"".equals(item.getBoardDirMedDate()) || !"".equals(item.getBoardDirMedMeetingDate()) || !"".equals(item.getBoardDirMedMeetingTime())
+                || !"".equals(item.getBoardDirectedMedResult()) || !"".equals(item.getBoardDirectedMediatior())) {                        
+            mediation.setMediationDate(null);
+            mediation.setMediationEntryDate(!"".equals(item.getBoardDirMedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getBoardDirMedDate()).getTime()) : null);
+            if (!"".equals(item.getBoardDirMedMeetingDate().trim())){
+                mediation.setMediationDate(StringUtilities.convertStringDateAndTime(item.getBoardDirMedMeetingDate(), item.getBoardDirMedMeetingTime()));
+            }
+            mediation.setMediationType("30 Day Mediation");
+            mediation.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getBoardDirectedMediatior())));
+            mediation.setMediationOutcome(!"".equals(item.getBoardDirectedMedResult().trim()) ? item.getBoardDirectedMedResult().trim() : null);
+            
+            sqlREPMediation.addREPMediation(mediation);
+        }
+
+        //Post-Directive Mediation
+        if (!"".equals(item.getPostDirMedDate()) || !"".equals(item.getPostDirMedMeetingDate()) || !"".equals(item.getPostDirMedMeetingTime())
+                || !"".equals(item.getPostDirMedResult()) || !"".equals(item.getPostDirMediatior())) {
+            
+            mediation.setMediationDate(null);
+            if (!"".equals(item.getPostDirMedMeetingDate().trim())){
+                mediation.setMediationDate(StringUtilities.convertStringDateAndTime(item.getPostDirMedMeetingDate(), item.getPostDirMedMeetingTime()));
+            }
+            mediation.setMediationEntryDate(!"".equals(item.getPostDirMedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getPostDirMedDate()).getTime()) : null);
+            mediation.setMediationType("Post-Directive Mediation");
+            mediation.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getPostDirMediatior())));
+            mediation.setMediationOutcome(!"".equals(item.getPostDirMedResult().trim()) ? item.getPostDirMedResult().trim() : null);
+            
+            sqlREPMediation.addREPMediation(mediation);
+        }
     }
 
     private static void migrateBoardMeetings(oldREPDataModel item, caseNumberModel caseNumber) {
