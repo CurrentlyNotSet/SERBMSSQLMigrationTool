@@ -24,6 +24,13 @@
     -fx-opacity: 0.9;
 }
 
+#ColumnTitle {
+    -fx-font-size: 16pt;
+    -fx-font-family: "Segoe UI Semibold", "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-text-fill: black;
+    -fx-opacity: 0.9;
+}
+
 .root {
     -fx-background-color: white;
 }

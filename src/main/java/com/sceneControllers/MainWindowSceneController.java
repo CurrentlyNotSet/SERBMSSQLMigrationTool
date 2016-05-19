@@ -58,6 +58,8 @@ public class MainWindowSceneController implements Initializable {
     @FXML
     private Button MigrateEmployersButton;
     @FXML
+    private Button MigrateSystemDefaultsButton;
+    @FXML
     private TextField MigrateULPCaseTextField;
     @FXML
     private TextField MigrateMEDCaseTextField;
@@ -77,7 +79,9 @@ public class MainWindowSceneController implements Initializable {
     private TextField MigrateDocumentsTextField;
     @FXML
     private TextField MigrateSystemDefaultsTextField;
-
+    @FXML
+    private TextField MigrateEmployersTextField;
+    
     @FXML
     protected void onRectanglePressed(MouseEvent event) {
         X = mainstage.getX() - event.getScreenX();
@@ -212,10 +216,10 @@ public class MainWindowSceneController implements Initializable {
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateUsers())));
         MigrateDocumentsTextField.setText(((item.getMigrateDocuments() == null)
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
-//        MigrateEmployersButton.setText(((item.getMigrateDocuments() == null)
-//                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
-//        MigrateSystemDefaultsTextField.setText(((item.getMigrateDocuments() == null)
-//                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
+        MigrateEmployersTextField.setText(((item.getMigrateDocuments() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
+        MigrateSystemDefaultsTextField.setText(((item.getMigrateDocuments() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
         
         MigrateCMDSCaseButton.setDisable(item.getMigrateCMDSCases() != null);
         MigrateContactsButton.setDisable(item.getMigrateContacts() != null);
@@ -226,8 +230,8 @@ public class MainWindowSceneController implements Initializable {
         MigrateORGCaseButton.setDisable(item.getMigrateORGCase() != null);
         MigrateUsersButton.setDisable(item.getMigrateUsers() != null);
         MigrateDocumentsButton.setDisable(item.getMigrateDocuments() != null);
-        //MigrateEmployersButton.setDisable(item.getMigrateDocuments() != null);
-        //MigrateSystemDefaultsTextField.setDisable(item.getMigrateDocuments() != null);
+        MigrateEmployersButton.setDisable(item.getMigrateDocuments() != null);
+        MigrateSystemDefaultsButton.setDisable(item.getMigrateDocuments() != null);
     }
 
     private void disableAllButtons() {
@@ -241,7 +245,7 @@ public class MainWindowSceneController implements Initializable {
         MigrateUsersButton.setDisable(true);
         MigrateDocumentsButton.setDisable(true);
         MigrateEmployersButton.setDisable(true);
-        MigrateSystemDefaultsTextField.setDisable(true);
+        MigrateSystemDefaultsButton.setDisable(true);
     }
 
 }
