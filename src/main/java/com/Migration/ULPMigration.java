@@ -7,6 +7,7 @@ package com.Migration;
 
 import com.model.ULPCaseModel;
 import com.model.ULPCaseSearchModel;
+import com.model.ULPRecommendationsModel;
 import com.model.activityModel;
 import com.model.boardMeetingModel;
 import com.model.caseNumberModel;
@@ -24,7 +25,9 @@ import com.sql.sqlMigrationStatus;
 import com.sql.sqlRelatedCase;
 import com.sql.sqlULPCaseSearch;
 import com.sql.sqlULPData;
+import com.sql.sqlULPRecommendations;
 import com.util.Global;
+import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.util.List;
 
@@ -49,16 +52,18 @@ public class ULPMigration {
         control.setProgressBarIndeterminate("ULP Case Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
+        List<ULPRecommendationsModel> oldULPRecsList = sqlULPRecommendations.getOLDULPRecommendations();
         List<oldULPDataModel> oldULPDataList = sqlULPData.getCases();
-        totalRecordCount = oldULPDataList.size();
+        totalRecordCount = oldULPDataList.size() + oldULPRecsList.size();
+        
+        for (ULPRecommendationsModel item : oldULPRecsList){
+            sqlULPRecommendations.addULPRecommendation(item);
+            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCode());
+        }
         
         for (oldULPDataModel item : oldULPDataList){
             migrateCase(item);
-            currentRecord++;
-            if (Global.isDebug()){
-                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getCaseNumber().trim() + ")");
-            }
-            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
+            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
         }
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ULP Cases: " 

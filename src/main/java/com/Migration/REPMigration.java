@@ -5,6 +5,9 @@
  */
 package com.Migration;
 
+import com.model.BoardAcionTypeModel;
+import com.model.REPCaseStatusModel;
+import com.model.REPCaseTypeModel;
 import com.model.REPMediationModel;
 import com.model.REPcaseModel;
 import com.model.activityModel;
@@ -18,13 +21,17 @@ import com.model.repCaseSearchModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
+import com.sql.sqlBoardActionType;
 import com.sql.sqlBoardMeeting;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlREPCaseSearch;
+import com.sql.sqlREPCaseStatus;
+import com.sql.sqlREPCaseType;
 import com.sql.sqlREPData;
 import com.sql.sqlREPMediation;
 import com.util.Global;
+import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.sql.Date;
 import java.util.List;
@@ -51,16 +58,33 @@ public class REPMigration {
         int totalRecordCount = 0;
         int currentRecord = 0;
         List<oldREPDataModel> oldREPDataList = sqlREPData.getCases();
-        totalRecordCount = oldREPDataList.size();
+        List<BoardAcionTypeModel> REPBoardActionList = sqlBoardActionType.getOldBoardActionType();
+        List<REPCaseTypeModel> REPCaseTypeList = sqlREPCaseType.getOldREPCaseType();
+        List<REPCaseStatusModel> REPCaseStatusList = sqlREPCaseStatus.getOldREPCaseStatus();
+        
+        totalRecordCount = oldREPDataList.size() + REPBoardActionList.size() 
+                + REPCaseTypeList.size() + REPCaseStatusList.size();
 
+        for (BoardAcionTypeModel item : REPBoardActionList){
+            sqlBoardActionType.addREPBoardActionType(item);
+            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getShort());
+        }
+        
+        for (REPCaseTypeModel item : REPCaseTypeList){
+            sqlREPCaseType.addREPCaseType(item);
+            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getTypeAbbrevation());
+        }
+        
+        for (REPCaseStatusModel item : REPCaseStatusList){
+            sqlREPCaseStatus.addREPCaseStatus(item);
+            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getStatus());
+        }
+        
         for (oldREPDataModel item : oldREPDataList) {
             migrateCase(item);
-            currentRecord++;
-            if (Global.isDebug()) {
-                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getCaseNumber().trim() + ")");
-            }
-            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
+            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
         }
+        
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating REP Cases: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
