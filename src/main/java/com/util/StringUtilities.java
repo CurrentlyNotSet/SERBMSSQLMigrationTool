@@ -104,6 +104,19 @@ public class StringUtilities {
                 day = parsedOldDate[1];
                 year = parsedOldDate[2];
             }
+            if (month.length() == 1){
+                month = "0" + month;
+            }
+            if (day.length() == 1){
+                day = "0" + day;
+            }
+            if (year.length() == 2){
+                if (Integer.parseInt(year) > 20){
+                    year = "19" + year;
+                } else{
+                    year = "20" + year;
+                }
+            }
             try {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 Date parsedDate = dateFormat.parse(year + "-" + month + "-" + day);

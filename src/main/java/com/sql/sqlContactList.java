@@ -34,17 +34,17 @@ public class sqlContactList {
             rs = ps.executeQuery();
             while (rs.next()) {
                 partyModel item = new partyModel();                
-                item.setPrefix("");
-                item.setFirstName("");
-                item.setMiddleInitial("");
+                item.setPrefix(null);
+                item.setFirstName(null);
+                item.setMiddleInitial(null);
                 item.setLastName(((rs.getString("Name") == null) ? "" : rs.getString("Name").trim()));
-                item.setSuffix("");
-                item.setNameTitle("");
-                item.setJobTitle("");
-                item.setCompanyName("");
+                item.setSuffix(null);
+                item.setNameTitle(null);
+                item.setJobTitle(null);
+                item.setCompanyName(null);
                 item.setAddress1(((rs.getString("Address1") == null) ? "" : rs.getString("Address1").trim()));
                 item.setAddress2(((rs.getString("Address2") == null) ? "" : rs.getString("Address2").trim()));
-                item.setAddress3("");
+                item.setAddress3(null);
                 item.setCity(((rs.getString("City") == null) ? "" : rs.getString("City").trim()));
                 item.setState(((rs.getString("State") == null) ? "" : rs.getString("State").trim()));
                 item.setZip(((rs.getString("Zip") == null) ? "" : rs.getString("Zip").trim()));

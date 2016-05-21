@@ -69,7 +69,7 @@ public class sqlREPCaseType {
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getTypeAbbrevation());
             ps.setString( 3, item.getTypeName());
-            ps.setString( 3, item.getDescription());
+            ps.setString( 4, item.getDescription());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

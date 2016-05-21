@@ -67,22 +67,22 @@ public class REPMigration {
 
         for (BoardAcionTypeModel item : REPBoardActionList){
             sqlBoardActionType.addREPBoardActionType(item);
-            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getShort());
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getShort());
         }
         
         for (REPCaseTypeModel item : REPCaseTypeList){
             sqlREPCaseType.addREPCaseType(item);
-            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getTypeAbbrevation());
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getTypeAbbrevation());
         }
         
         for (REPCaseStatusModel item : REPCaseStatusList){
             sqlREPCaseStatus.addREPCaseStatus(item);
-            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getStatus());
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getStatus());
         }
         
         for (oldREPDataModel item : oldREPDataList) {
             migrateCase(item);
-            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
         }
         
         long lEndTime = System.currentTimeMillis();
@@ -678,13 +678,13 @@ public class REPMigration {
         rep.setCaseMonth(caseNumber.getCaseMonth());
         rep.setCaseNumber(caseNumber.getCaseNumber());
 //        rep.setType();
-        rep.setStatus1(item.getStatus1());
-        rep.setStatus2(item.getStatus2());
+        rep.setStatus1(!"".equals(item.getStatus1().trim()) ? item.getStatus1().trim() : null);
+        rep.setStatus2(!"".equals(item.getStatus2().trim()) ? item.getStatus2().trim() : null);
         rep.setCurrentOwnerID(StringUtilities.convertUserToID(item.getCurrentOwner()));
-        rep.setCounty(item.getCounty());
-        rep.setEmployerIDNumber(item.getEmployerIDNum());
-        rep.setDeptInState(item.getDeptInState());
-        rep.setBargainingUnitNumber(item.getBargainingUnitNum());
+        rep.setCounty(!"".equals(item.getCounty().trim()) ? item.getCounty().trim() : null);
+        rep.setEmployerIDNumber(!"".equals(item.getEmployerIDNum().trim()) ? item.getEmployerIDNum().trim() : null);
+        rep.setDeptInState(!"".equals(item.getDeptInState().trim()) ? item.getDeptInState().trim() : null);
+        rep.setBargainingUnitNumber(!"".equals(item.getBargainingUnitNum().trim()) ? item.getBargainingUnitNum().trim() : null);
         rep.setBoardCertified("1".equals(item.getBoardCertified().trim()) ? 1 : 0);
         rep.setDeemedCertified("1".equals(item.getDeemedCertified().trim()) ? 1 : 0);
         rep.setCertificationRevoked("1".equals(item.getCertRevoked().trim()) ? 1 : 0);
