@@ -677,7 +677,7 @@ public class REPMigration {
         rep.setCaseType(caseNumber.getCaseType());
         rep.setCaseMonth(caseNumber.getCaseMonth());
         rep.setCaseNumber(caseNumber.getCaseNumber());
-//        rep.setType();
+        rep.setType(!"".equals(item.getCaseType().trim()) ? item.getCaseType().trim() : null);
         rep.setStatus1(!"".equals(item.getStatus1().trim()) ? item.getStatus1().trim() : null);
         rep.setStatus2(!"".equals(item.getStatus2().trim()) ? item.getStatus2().trim() : null);
         rep.setCurrentOwnerID(StringUtilities.convertUserToID(item.getCurrentOwner()));
@@ -696,19 +696,60 @@ public class REPMigration {
         rep.setCourtClosedDate(!"".equals(item.getCourtClosedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getCourtClosedDate()).getTime()) : null);     
         rep.setReturnSOIDueDate(!"".equals(item.getReturnSOIDueDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getReturnSOIDueDate()).getTime()) : null);    
         rep.setActualSOIReturnDate(!"".equals(item.getActualSOIReturnDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getActualSOIReturnDate()).getTime()) : null);     
-//        rep.setSOIReturnInitials(StringUtilities.convertUserToID(item.getCurrentOwner()));
+        rep.setComments(!"".equals(item.getSOIReturnInitials1().trim()) ? item.getSOIReturnInitials1().trim() : null);
         rep.setREPClosedCaseDueDate(!"".equals(item.getREPClosedCaseDueDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getREPClosedCaseDueDate()).getTime()) : null);
         rep.setActualREPClosedDate(!"".equals(item.getActualREPClosedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getActualREPClosedDate()).getTime()) : null);
-//        rep.setREPClosedInitials();
+        rep.setREPClosedUser(StringUtilities.convertUserToID(item.getSOIReturnInitials2()));
         rep.setActualClerksClosedDate(!"".equals(item.getActualClerksClosed().trim()) ? new Date(StringUtilities.convertStringDate(item.getActualClerksClosed()).getTime()) : null);
-//        rep.setClerksClosedDateInitials();
+        rep.setClerksClosedUser(StringUtilities.convertUserToID(item.getClearksClosedInitials()));
         rep.setNote(null);
-
+        rep.setAlphaListDate(null);
+        rep.setFileBy(!"".equals(item.getCaseFiledBy().trim()) ? item.getCaseFiledBy().trim() : null);
+        rep.setProfessionalNonProfessional("1".equals(item.getPNonP().trim()) ? 1 : 0);
+        rep.setToReflect(!"".equals(item.getToReflect().trim()) ? item.getToReflect().trim() : null);
+        rep.setTypeFiledBy(!"".equals(item.getTypeFiledBy().trim()) ? item.getTypeFiledBy().trim() : null);
+        rep.setTypeFiledVia(!"".equals(item.getTypeFiledHow().trim()) ? item.getTypeFiledHow().trim() : null);
+        rep.setPositionStatementFiledBy(!"".equals(item.getPSFiledBy().trim()) ? item.getPSFiledBy().trim() : null);
+        rep.setEEONameChangeFrom(!"".equals(item.getEEONameFrom().trim()) ? item.getEEONameFrom().trim() : null);
+        rep.setEEONameChangeTo(!"".equals(item.getEEONameTo().trim()) ? item.getEEONameTo().trim() : null);
+        rep.setERNameChangeFrom(!"".equals(item.getERNameFrom().trim()) ? item.getERNameFrom().trim() : null);
+        rep.setERNameChangeTo(!"".equals(item.getERNameTo().trim()) ? item.getERNameTo().trim() : null);
+        rep.setBoardActionType(!"".equals(item.getBoardActionType().trim()) ? item.getBoardActionType().trim() : null);
+        rep.setBoardActionDate(!"".equals(item.getBoardActionDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getBoardActionDate()).getTime()) : null);
+        rep.setHearingPersonID(StringUtilities.convertUserToID(item.getBoardPersonAssigned()));
+         
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
                 case "Notes":
                     rep.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
                     break;
+                case "BUIN":
+                    rep.setBargainingUnitIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "BUEX":
+                    rep.setBargainingUnitExcluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "OIN":
+                    rep.setOptInIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "PIN":
+                    rep.setProfessionalIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "PEX":
+                    rep.setProfessionalExcluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "NPIN":
+                    rep.setNonProfessionalIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "NPEX":
+                    rep.setNonProfessionalExcluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+                case "BoardNotes":
+                    rep.setBoardStatusNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;    
+                case "Blurb":
+                    rep.setBoardStatusBlurb(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;    
                 default:
                     break;
             }
@@ -783,35 +824,40 @@ public class REPMigration {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem1().trim()) ? item.getAgendaItem1().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate1()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate1()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation1().trim()) ? item.getRecommendation1().trim() : null);
-            sqlBoardMeeting.addULPBoardMeeting(meeting);
+            meeting.setMemoDate(!"".equals(item.getMemoDate1()) ? StringUtilities.convertStringDate(item.getMemoDate1()) : null);
+            sqlBoardMeeting.addBoardMeeting(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate2().trim()) || !"".equals(item.getAgendaItem2().trim()) || !"".equals(item.getRecommendation2().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem2().trim()) ? item.getAgendaItem2().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate2()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate2()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation2().trim()) ? item.getRecommendation2().trim() : null);
-            sqlBoardMeeting.addULPBoardMeeting(meeting);
+            meeting.setMemoDate(!"".equals(item.getMemoDate2()) ? StringUtilities.convertStringDate(item.getMemoDate2()) : null);
+            sqlBoardMeeting.addBoardMeeting(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate3().trim()) || !"".equals(item.getAgendaItem3().trim()) || !"".equals(item.getRecommendation3().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem3().trim()) ? item.getAgendaItem3().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate3()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate3()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation3().trim()) ? item.getRecommendation3().trim() : null);
-            sqlBoardMeeting.addULPBoardMeeting(meeting);
+            meeting.setMemoDate(!"".equals(item.getMemoDate3()) ? StringUtilities.convertStringDate(item.getMemoDate3()) : null);
+            sqlBoardMeeting.addBoardMeeting(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate4().trim()) || !"".equals(item.getAgendaItem4().trim()) || !"".equals(item.getRecommendation4().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem4().trim()) ? item.getAgendaItem4().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate4()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate4()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation4().trim()) ? item.getRecommendation4().trim() : null);
-            sqlBoardMeeting.addULPBoardMeeting(meeting);
+            meeting.setMemoDate(!"".equals(item.getMemoDate4()) ? StringUtilities.convertStringDate(item.getMemoDate4()) : null);
+            sqlBoardMeeting.addBoardMeeting(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate5().trim()) || !"".equals(item.getAgendaItem5().trim()) || !"".equals(item.getRecommendation5().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem5().trim()) ? item.getAgendaItem5().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate5()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate5()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation5().trim()) ? item.getRecommendation5().trim() : null);
-            sqlBoardMeeting.addULPBoardMeeting(meeting);
+            meeting.setMemoDate(!"".equals(item.getMemoDate5()) ? StringUtilities.convertStringDate(item.getMemoDate5()) : null);
+            sqlBoardMeeting.addBoardMeeting(meeting);
         }        
     }
        

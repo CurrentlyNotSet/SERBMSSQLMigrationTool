@@ -442,13 +442,36 @@ public class sqlREPData {
                     + "courtClosedDate, "       //22
                     + "returnSOIDueDate, "      //23
                     + "actualSOIReturnDate, "   //24
-                    + "SOIReturnInitials, "     //25
+                    + "comments, "              //25
                     + "REPClosedCaseDueDate, "  //26
                     + "actualREPClosedDate, "   //27
-                    + "REPClosedInitials, "     //28
-                    + "actualClerksClosedDate, "  //29
-                    + "clerksClosedDateInitials, "//30
-                    + "note"                      //31
+                    + "REPClosedUser, "         //28
+                    + "actualClerksClosedDate, "//29
+                    + "clerksClosedUser, "      //30
+                    + "note, "                  //31
+                    + "alphaListDate, "         //32
+                    + "fileBy, "                //33
+                    + "bargainingUnitIncluded, "//34
+                    + "bargainingUnitExcluded, "//35
+                    + "optInIncluded, "         //36
+                    + "professionalNonProfessional, "//37
+                    + "professionalIncluded, "       //38
+                    + "professionalExcluded, "       //39
+                    + "nonProfessionalIncluded, "    //40
+                    + "nonProfessionalExcluded, "    //41
+                    + "toReflect, "                  //42
+                    + "typeFiledBy, "                //43
+                    + "typeFiledVia, "               //44
+                    + "positionStatementFiledBy, "   //45
+                    + "EEONameChangeFrom, " //46
+                    + "EEONameChangeTo, "   //47
+                    + "ERNameChangeFrom, "  //48
+                    + "ERNameChangeTo, "    //49
+                    + "boardActionType, "   //50
+                    + "boardActionDate, "   //51
+                    + "hearingPersonID, "   //52
+                    + "boardStatusNote, "   //53
+                    + "boardStatusBlurb "   //54
                     + ") VALUES ("
                     + "?, " //01 
                     + "?, " //02 
@@ -479,8 +502,31 @@ public class sqlREPData {
                     + "?, " //27 
                     + "?, " //28 
                     + "?, " //29 
-                    + "?, " //30 
-                    + "?)"; //31 
+                    + "?, " //30
+                    + "?, " //31
+                    + "?, " //32
+                    + "?, " //33
+                    + "?, " //34
+                    + "?, " //35
+                    + "?, " //36
+                    + "?, " //37
+                    + "?, " //38
+                    + "?, " //39
+                    + "?, " //40
+                    + "?, " //41
+                    + "?, " //42
+                    + "?, " //43
+                    + "?, " //44
+                    + "?, " //45
+                    + "?, " //46
+                    + "?, " //47
+                    + "?, " //48
+                    + "?, " //49
+                    + "?, " //50
+                    + "?, " //51
+                    + "?, " //52
+                    + "?, " //53                    
+                    + "?)"; //54 
             ps = conn.prepareStatement(sql);
             ps.setInt      ( 1, item.getActive());
             ps.setString   ( 2, item.getCaseYear());
@@ -510,13 +556,48 @@ public class sqlREPData {
             ps.setDate     (22, item.getCourtClosedDate());
             ps.setDate     (23, item.getReturnSOIDueDate());
             ps.setDate     (24, item.getActualSOIReturnDate());
-            ps.setString   (25, item.getSOIReturnInitials());
+            ps.setString   (25, item.getComments());
             ps.setDate     (26, item.getREPClosedCaseDueDate());
             ps.setDate     (27, item.getActualREPClosedDate());
-            ps.setString   (28, item.getREPClosedInitials());
+            if (item.getREPClosedUser() != 0){
+                ps.setInt  (28, item.getREPClosedUser());
+            } else {
+                ps.setNull (28, java.sql.Types.INTEGER);
+            }
             ps.setDate     (29, item.getActualClerksClosedDate());
-            ps.setString   (30, item.getClerksClosedDateInitials());
+            if (item.getClerksClosedUser() != 0){
+                ps.setInt  (30, item.getClerksClosedUser());
+            } else {
+                ps.setNull (30, java.sql.Types.INTEGER);
+            }
             ps.setString   (31, item.getNote());
+            ps.setDate     (32, item.getAlphaListDate());
+            ps.setString   (33, item.getFileBy());
+            ps.setString   (34, item.getBargainingUnitIncluded());
+            ps.setString   (35, item.getBargainingUnitExcluded());
+            ps.setString   (36, item.getOptInIncluded());
+            ps.setInt      (37, item.getProfessionalNonProfessional());
+            ps.setString   (38, item.getProfessionalIncluded());
+            ps.setString   (39, item.getProfessionalExcluded());
+            ps.setString   (40, item.getNonProfessionalIncluded());
+            ps.setString   (41, item.getNonProfessionalExcluded());
+            ps.setString   (42, item.getToReflect());
+            ps.setString   (43, item.getTypeFiledBy());
+            ps.setString   (44, item.getTypeFiledVia());
+            ps.setString   (45, item.getPositionStatementFiledBy());
+            ps.setString   (46, item.getEEONameChangeFrom());
+            ps.setString   (47, item.getEEONameChangeTo());
+            ps.setString   (48, item.getERNameChangeFrom());
+            ps.setString   (49, item.getERNameChangeTo());
+            ps.setString   (50, item.getBoardActionType());
+            ps.setDate     (51, item.getBoardActionDate());
+            if (item.getHearingPersonID() != 0){
+                ps.setInt  (52, item.getHearingPersonID());
+            } else {
+                ps.setNull (52, java.sql.Types.INTEGER);
+            }
+            ps.setString   (53, item.getBoardStatusNote());
+            ps.setString   (54, item.getBoardStatusBlurb());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

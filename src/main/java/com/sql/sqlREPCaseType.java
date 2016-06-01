@@ -56,14 +56,14 @@ public class sqlREPCaseType {
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
             String sql = "Insert INTO REPCaseType ("
-                    + "Active, "         //01
+                    + "active, "         //01
                     + "typeAbbrevation, "//02
                     + "typeName, "       //03
-                    + "description, "    //04
+                    + "description "     //04
                     + ") VALUES ("
-                    + "?,"  //01
-                    + "?,"  //02
-                    + "?,"  //03
+                    + "?, " //01
+                    + "?, " //02
+                    + "?, " //03
                     + "?)"; //04
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());

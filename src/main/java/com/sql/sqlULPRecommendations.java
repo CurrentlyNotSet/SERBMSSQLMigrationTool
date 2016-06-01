@@ -33,7 +33,7 @@ public class sqlULPRecommendations {
             rs = ps.executeQuery();
             while (rs.next()) {
                 ULPRecommendationsModel item = new ULPRecommendationsModel();
-                item.setId(rs.getInt("UlpRedid"));
+                item.setId(rs.getInt("UlpRecid"));
                 item.setActive(rs.getInt("Active"));
                 item.setCode(!"".equals(rs.getString("RecCode").trim()) ? rs.getString("RecCode").trim() : null);
                 item.setDescription(!"".equals(rs.getString("RecDescription").trim()) ? rs.getString("RecDescription").trim() : null);

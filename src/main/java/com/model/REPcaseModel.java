@@ -38,14 +38,39 @@ public class REPcaseModel {
     private Date courtClosedDate;
     private Date returnSOIDueDate;
     private Date actualSOIReturnDate;
-    private String SOIReturnInitials;
+    private String comments;
     private Date REPClosedCaseDueDate;
     private Date actualREPClosedDate;
-    private String REPClosedInitials;
+    
+    //added columns
+    private int REPClosedUser;
     private Date actualClerksClosedDate;
-    private String clerksClosedDateInitials;
+    private int clerksClosedUser;
     private String note;
-
+    private Date alphaListDate;
+    private String fileBy;
+    private String bargainingUnitIncluded;
+    private String bargainingUnitExcluded;
+    private String optInIncluded;
+    private int professionalNonProfessional;
+    private String professionalIncluded;
+    private String professionalExcluded;
+    private String nonProfessionalIncluded;
+    private String nonProfessionalExcluded;
+    private String toReflect;
+    private String typeFiledBy;
+    private String typeFiledVia;
+    private String positionStatementFiledBy;
+    private String EEONameChangeFrom;
+    private String EEONameChangeTo;
+    private String ERNameChangeFrom;
+    private String ERNameChangeTo;
+    private String boardActionType;
+    private Date boardActionDate;
+    private int hearingPersonID;
+    private String boardStatusNote;
+    private String boardStatusBlurb;
+    
     public int getId() {
         return id;
     }
@@ -246,14 +271,6 @@ public class REPcaseModel {
         this.actualSOIReturnDate = actualSOIReturnDate;
     }
 
-    public String getSOIReturnInitials() {
-        return SOIReturnInitials;
-    }
-
-    public void setSOIReturnInitials(String SOIReturnInitials) {
-        this.SOIReturnInitials = SOIReturnInitials;
-    }
-
     public Date getREPClosedCaseDueDate() {
         return REPClosedCaseDueDate;
     }
@@ -270,14 +287,6 @@ public class REPcaseModel {
         this.actualREPClosedDate = actualREPClosedDate;
     }
 
-    public String getREPClosedInitials() {
-        return REPClosedInitials;
-    }
-
-    public void setREPClosedInitials(String REPClosedInitials) {
-        this.REPClosedInitials = REPClosedInitials;
-    }
-
     public Date getActualClerksClosedDate() {
         return actualClerksClosedDate;
     }
@@ -286,20 +295,220 @@ public class REPcaseModel {
         this.actualClerksClosedDate = actualClerksClosedDate;
     }
 
-    public String getClerksClosedDateInitials() {
-        return clerksClosedDateInitials;
-    }
-
-    public void setClerksClosedDateInitials(String clerksClosedDateInitials) {
-        this.clerksClosedDateInitials = clerksClosedDateInitials;
-    }
-
     public String getNote() {
         return note;
     }
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public int getREPClosedUser() {
+        return REPClosedUser;
+    }
+
+    public void setREPClosedUser(int REPClosedUser) {
+        this.REPClosedUser = REPClosedUser;
+    }
+
+    public int getClerksClosedUser() {
+        return clerksClosedUser;
+    }
+
+    public void setClerksClosedUser(int clerksClosedUser) {
+        this.clerksClosedUser = clerksClosedUser;
+    }
+
+    public Date getAlphaListDate() {
+        return alphaListDate;
+    }
+
+    public void setAlphaListDate(Date alphaListDate) {
+        this.alphaListDate = alphaListDate;
+    }
+
+    public String getFileBy() {
+        return fileBy;
+    }
+
+    public void setFileBy(String fileBy) {
+        this.fileBy = fileBy;
+    }
+
+    public String getBargainingUnitIncluded() {
+        return bargainingUnitIncluded;
+    }
+
+    public void setBargainingUnitIncluded(String bargainingUnitIncluded) {
+        this.bargainingUnitIncluded = bargainingUnitIncluded;
+    }
+
+    public String getBargainingUnitExcluded() {
+        return bargainingUnitExcluded;
+    }
+
+    public void setBargainingUnitExcluded(String bargainingUnitExcluded) {
+        this.bargainingUnitExcluded = bargainingUnitExcluded;
+    }
+
+    public String getOptInIncluded() {
+        return optInIncluded;
+    }
+
+    public void setOptInIncluded(String optInIncluded) {
+        this.optInIncluded = optInIncluded;
+    }
+
+    public int getProfessionalNonProfessional() {
+        return professionalNonProfessional;
+    }
+
+    public void setProfessionalNonProfessional(int professionalNonProfessional) {
+        this.professionalNonProfessional = professionalNonProfessional;
+    }
+
+    public String getProfessionalIncluded() {
+        return professionalIncluded;
+    }
+
+    public void setProfessionalIncluded(String professionalIncluded) {
+        this.professionalIncluded = professionalIncluded;
+    }
+
+    public String getProfessionalExcluded() {
+        return professionalExcluded;
+    }
+
+    public void setProfessionalExcluded(String professionalExcluded) {
+        this.professionalExcluded = professionalExcluded;
+    }
+
+    public String getToReflect() {
+        return toReflect;
+    }
+
+    public void setToReflect(String toReflect) {
+        this.toReflect = toReflect;
+    }
+
+    public String getTypeFiledBy() {
+        return typeFiledBy;
+    }
+
+    public void setTypeFiledBy(String typeFiledBy) {
+        this.typeFiledBy = typeFiledBy;
+    }
+
+    public String getTypeFiledVia() {
+        return typeFiledVia;
+    }
+
+    public void setTypeFiledVia(String typeFiledVia) {
+        this.typeFiledVia = typeFiledVia;
+    }
+
+    public String getPositionStatementFiledBy() {
+        return positionStatementFiledBy;
+    }
+
+    public void setPositionStatementFiledBy(String positionStatementFiledBy) {
+        this.positionStatementFiledBy = positionStatementFiledBy;
+    }
+
+    public String getEEONameChangeFrom() {
+        return EEONameChangeFrom;
+    }
+
+    public void setEEONameChangeFrom(String EEONameChangeFrom) {
+        this.EEONameChangeFrom = EEONameChangeFrom;
+    }
+
+    public String getEEONameChangeTo() {
+        return EEONameChangeTo;
+    }
+
+    public void setEEONameChangeTo(String EEONameChangeTo) {
+        this.EEONameChangeTo = EEONameChangeTo;
+    }
+
+    public String getERNameChangeFrom() {
+        return ERNameChangeFrom;
+    }
+
+    public void setERNameChangeFrom(String ERNameChangeFrom) {
+        this.ERNameChangeFrom = ERNameChangeFrom;
+    }
+
+    public String getERNameChangeTo() {
+        return ERNameChangeTo;
+    }
+
+    public void setERNameChangeTo(String ERNameChangeTo) {
+        this.ERNameChangeTo = ERNameChangeTo;
+    }
+
+    public String getBoardActionType() {
+        return boardActionType;
+    }
+
+    public void setBoardActionType(String boardActionType) {
+        this.boardActionType = boardActionType;
+    }
+
+    public Date getBoardActionDate() {
+        return boardActionDate;
+    }
+
+    public void setBoardActionDate(Date boardActionDate) {
+        this.boardActionDate = boardActionDate;
+    }
+
+    public int getHearingPersonID() {
+        return hearingPersonID;
+    }
+
+    public void setHearingPersonID(int hearingPersonID) {
+        this.hearingPersonID = hearingPersonID;
+    }
+
+    public String getBoardStatusNote() {
+        return boardStatusNote;
+    }
+
+    public void setBoardStatusNote(String boardStatusNote) {
+        this.boardStatusNote = boardStatusNote;
+    }
+
+    public String getBoardStatusBlurb() {
+        return boardStatusBlurb;
+    }
+
+    public void setBoardStatusBlurb(String boardStatusBlurb) {
+        this.boardStatusBlurb = boardStatusBlurb;
+    }
+
+    public String getNonProfessionalIncluded() {
+        return nonProfessionalIncluded;
+    }
+
+    public void setNonProfessionalIncluded(String nonProfessionalIncluded) {
+        this.nonProfessionalIncluded = nonProfessionalIncluded;
+    }
+
+    public String getNonProfessionalExcluded() {
+        return nonProfessionalExcluded;
+    }
+
+    public void setNonProfessionalExcluded(String nonProfessionalExcluded) {
+        this.nonProfessionalExcluded = nonProfessionalExcluded;
     }
 
 }

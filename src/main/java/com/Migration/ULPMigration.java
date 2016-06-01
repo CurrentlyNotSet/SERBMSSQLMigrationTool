@@ -240,26 +240,27 @@ public class ULPMigration {
         meeting.setCaseType(caseNumber.getCaseType());
         meeting.setCaseMonth(caseNumber.getCaseMonth());
         meeting.setCaseNumber(caseNumber.getCaseNumber());
+        meeting.setMemoDate(null);
         
         if (!"".equals(item.getBoardMeetingDate().trim()) || !"".equals(item.getAgendaItem().trim()) || !"".equals(item.getRecommendation().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem().trim()) ? item.getAgendaItem().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation().trim()) ? item.getRecommendation().trim() : null);
-            sqlBoardMeeting.addULPBoardMeeting(meeting);
+            sqlBoardMeeting.addBoardMeeting(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate1().trim()) || !"".equals(item.getAgendaItem1().trim()) || !"".equals(item.getRecommendation1().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem1().trim()) ? item.getAgendaItem1().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate1()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate1()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation1().trim()) ? item.getRecommendation1().trim() : null);
-            sqlBoardMeeting.addULPBoardMeeting(meeting);
+            sqlBoardMeeting.addBoardMeeting(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate2().trim()) || !"".equals(item.getAgendaItem2().trim()) || !"".equals(item.getRecommendation2().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem2().trim()) ? item.getAgendaItem2().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate2()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate2()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation2().trim()) ? item.getRecommendation2().trim() : null);
-            sqlBoardMeeting.addULPBoardMeeting(meeting);
+            sqlBoardMeeting.addBoardMeeting(meeting);
         }
     }
 

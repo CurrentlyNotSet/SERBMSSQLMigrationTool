@@ -20,6 +20,7 @@ public class boardMeetingModel {
     private Timestamp boardMeetingDate;
     private String agendaItemNumber;
     private String recommendation;
+    private Timestamp memoDate;
 
     public int getId() {
         return id;
@@ -84,6 +85,13 @@ public class boardMeetingModel {
     public void setRecommendation(String recommendation) {
         this.recommendation = recommendation;
     }
-    
-    
+
+    public Timestamp getMemoDate() {
+        return memoDate;
+    }
+
+    public void setMemoDate(Timestamp memoDate) {
+        this.memoDate = memoDate;
+    }
+        
 }

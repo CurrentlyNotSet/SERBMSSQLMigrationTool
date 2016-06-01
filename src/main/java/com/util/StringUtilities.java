@@ -55,6 +55,7 @@ public class StringUtilities {
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
             }
         }
         return null;
