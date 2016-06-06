@@ -12,6 +12,7 @@ import com.model.activityModel;
 import com.model.boardMeetingModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
+import com.model.employerCaseSearchModel;
 import com.model.oldBlobFileModel;
 import com.model.oldULPDataModel;
 import com.model.oldULPHistoryModel;
@@ -21,6 +22,8 @@ import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
 import com.sql.sqlBoardMeeting;
 import com.sql.sqlCaseParty;
+import com.sql.sqlEmployerCaseSearchData;
+import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlRelatedCase;
 import com.sql.sqlULPCaseSearch;
@@ -29,6 +32,7 @@ import com.sql.sqlULPRecommendations;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -85,6 +89,7 @@ public class ULPMigration {
         migrateRelatedCases(item, caseNumber);
         migrateCaseHistory(caseNumber);
         migrateCaseSearch(item, caseNumber);
+        migrateEmployerCaseSearch(item, caseNumber);
     }
     
     private static void migrateChargingParty(oldULPDataModel item, caseNumberModel caseNumber) {
@@ -323,4 +328,20 @@ public class ULPMigration {
         sqlULPCaseSearch.addULPCaseSearchCase(search);
     }
     
+    private static void migrateEmployerCaseSearch(oldULPDataModel item, caseNumberModel caseNumber) {
+        if (!"".equals(item.getEmployerNum().trim())) {
+
+            employerCaseSearchModel search = new employerCaseSearchModel();
+
+            search.setCaseYear(caseNumber.getCaseYear());
+            search.setCaseType(caseNumber.getCaseType());
+            search.setCaseMonth(caseNumber.getCaseMonth());
+            search.setCaseNumber(caseNumber.getCaseNumber());
+            search.setCaseStatus(!"".equals(item.getStatus().trim()) ? item.getStatus().trim() : null);
+            search.setFileDate(!"".equals(item.getFileDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getFileDate()).getTime()) : null); 
+            search.setEmployer(sqlEmployers.getEmployerName(item.getEmployerNum().trim()));
+
+            sqlEmployerCaseSearchData.addEmployer(search);
+        }
+    }
 }

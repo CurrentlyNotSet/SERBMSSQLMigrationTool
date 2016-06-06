@@ -202,4 +202,28 @@ public class sqlEmployers {
         }
         return list;
     }
+    
+    public static String getEmployerName(String employerID) {
+        String name = "";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "SELECT EmployerName FROM Employers WHERE EmployerIDNumber = ?";
+            ps = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ps.setString(1, employerID);
+            rs = ps.executeQuery();
+            if (rs.first()) {
+                name = rs.getString("EmployerName");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(rs);
+        }
+        return name;
+    }
 }

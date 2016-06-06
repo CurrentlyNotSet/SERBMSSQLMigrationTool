@@ -9,21 +9,22 @@ import com.model.MEDCaseModel;
 import com.model.activityModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
+import com.model.employerCaseSearchModel;
 import com.model.oldBlobFileModel;
 import com.model.oldMEDCaseModel;
 import com.model.oldMEDHistoryModel;
-import com.model.oldREPDataModel;
-import com.model.oldREPHistoryModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
 import com.sql.sqlCaseParty;
+import com.sql.sqlEmployerCaseSearchData;
+import com.sql.sqlEmployers;
 import com.sql.sqlMEDData;
 import com.sql.sqlMigrationStatus;
-import com.sql.sqlREPData;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -67,14 +68,17 @@ public class MEDMigration {
     }
     
     private static void migrateCase(oldMEDCaseModel item) {
-        caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
+        if (item.getCaseNumber().trim().length() == 16){
+            caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
 
-        migrateEmployer(item, caseNumber);
-        migrateEmployerREP(item, caseNumber);
-        migrateEmployeeORG(item, caseNumber);
-        migrateEmployeeORGREP(item, caseNumber);
-        migrateCaseData(item, caseNumber);
-        migrateCaseHistory(caseNumber);
+            migrateEmployer(item, caseNumber);
+            migrateEmployerREP(item, caseNumber);
+            migrateEmployeeORG(item, caseNumber);
+            migrateEmployeeORGREP(item, caseNumber);
+            migrateCaseData(item, caseNumber);
+            migrateCaseHistory(caseNumber);
+            migrateEmployerCaseSearch(item, caseNumber);
+        }
     }
     
     private static void migrateEmployer(oldMEDCaseModel item, caseNumberModel caseNumber) {
@@ -202,6 +206,23 @@ public class MEDMigration {
             item.setAwaitingTimeStamp(0);
             
             sqlActivity.addActivity(item);
+        }
+    }
+    
+    private static void migrateEmployerCaseSearch(oldMEDCaseModel item, caseNumberModel caseNumber) {
+        if (!"".equals(item.getEmployerIDNumber().trim())) {
+
+            employerCaseSearchModel search = new employerCaseSearchModel();
+
+            search.setCaseYear(caseNumber.getCaseYear());
+            search.setCaseType(caseNumber.getCaseType());
+            search.setCaseMonth(caseNumber.getCaseMonth());
+            search.setCaseNumber(caseNumber.getCaseNumber());
+            search.setCaseStatus(!"".equals(item.getStatus().trim()) ? item.getStatus().trim() : null);
+            search.setFileDate(!"".equals(item.getCaseFileDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getCaseFileDate()).getTime()) : null); 
+            search.setEmployer(sqlEmployers.getEmployerName(item.getEmployerIDNumber().trim()));
+
+            sqlEmployerCaseSearchData.addEmployer(search);
         }
     }
 }

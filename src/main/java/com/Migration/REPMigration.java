@@ -14,6 +14,7 @@ import com.model.activityModel;
 import com.model.boardMeetingModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
+import com.model.employerCaseSearchModel;
 import com.model.oldBlobFileModel;
 import com.model.oldREPDataModel;
 import com.model.oldREPHistoryModel;
@@ -24,6 +25,8 @@ import com.sql.sqlBlobFile;
 import com.sql.sqlBoardActionType;
 import com.sql.sqlBoardMeeting;
 import com.sql.sqlCaseParty;
+import com.sql.sqlEmployerCaseSearchData;
+import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlREPCaseSearch;
 import com.sql.sqlREPCaseStatus;
@@ -120,6 +123,7 @@ public class REPMigration {
         migrateMediations(item, caseNumber);
         migrateCaseSearch(item, caseNumber);
         migrateCaseHistory(caseNumber);
+        migrateEmployerCaseSearch(item, caseNumber);
     }
 
     private static void migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -925,4 +929,20 @@ public class REPMigration {
         sqlREPCaseSearch.addREPCaseSearchCase(search);
     }
     
+    private static void migrateEmployerCaseSearch(oldREPDataModel item, caseNumberModel caseNumber) {
+        if (!"".equals(item.getEmployerIDNum().trim())) {
+
+            employerCaseSearchModel search = new employerCaseSearchModel();
+
+            search.setCaseYear(caseNumber.getCaseYear());
+            search.setCaseType(caseNumber.getCaseType());
+            search.setCaseMonth(caseNumber.getCaseMonth());
+            search.setCaseNumber(caseNumber.getCaseNumber());
+            search.setCaseStatus(!"".equals(item.getStatus1().trim()) ? item.getStatus1().trim() : null);
+            search.setFileDate(!"".equals(item.getFileDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getFileDate()).getTime()) : null); 
+            search.setEmployer(sqlEmployers.getEmployerName(item.getEmployerIDNum().trim()));
+
+            sqlEmployerCaseSearchData.addEmployer(search);
+        }
+    }
 }
