@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -33,6 +34,8 @@ public class MainWindowSceneController implements Initializable {
     private double X, Y;
     MainWindowSceneController control;
 
+    @FXML
+    private MenuBar menuBar;
     @FXML
     private ProgressBar progressbar;
     @FXML
@@ -81,7 +84,7 @@ public class MainWindowSceneController implements Initializable {
     private TextField MigrateSystemDefaultsTextField;
     @FXML
     private TextField MigrateEmployersTextField;
-    
+
     @FXML
     protected void onRectanglePressed(MouseEvent event) {
         X = mainstage.getX() - event.getScreenX();
@@ -163,10 +166,10 @@ public class MainWindowSceneController implements Initializable {
     }
 
     @FXML
-    private void migrateSystemDefaultsButton(){
+    private void migrateSystemDefaultsButton() {
         SystemDefaultsMigration.migrateSystemData(control);
     }
-    
+
     @FXML
     private void migrateEmployersButton() {
         EmployersMigration.migrateEmployers(control);
@@ -220,7 +223,7 @@ public class MainWindowSceneController implements Initializable {
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
         MigrateSystemDefaultsTextField.setText(((item.getMigrateDocuments() == null)
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
-        
+
         MigrateCMDSCaseButton.setDisable(item.getMigrateCMDSCases() != null);
         MigrateContactsButton.setDisable(item.getMigrateContacts() != null);
         MigrateCSCCaseButton.setDisable(item.getMigrateCSCCases() != null);

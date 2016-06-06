@@ -11,6 +11,7 @@ package com.model;
  */
 public class oldMEDCaseModel {
 
+    private int MEDCaseID;
     private int Active;
     private String CaseNumber;
     private String CaseNumber2;
@@ -190,6 +191,14 @@ public class oldMEDCaseModel {
     private String orgConcilDate;
     private String duplicateCase;
     private String UnauthorizedStrike;
+
+    public int getMEDCaseID() {
+        return MEDCaseID;
+    }
+
+    public void setMEDCaseID(int MEDCaseID) {
+        this.MEDCaseID = MEDCaseID;
+    }
 
     public int getActive() {
         return Active;

@@ -50,6 +50,12 @@ public class sqlPartyType {
         list.add(new partyTypeModel("REP", "Rival Employee Organization 3"));
         list.add(new partyTypeModel("REP", "Rival Employee Organization 3 REP"));
         
+        //MED Section
+        list.add(new partyTypeModel("REP", "Employer"));
+        list.add(new partyTypeModel("REP", "Employer REP"));
+        list.add(new partyTypeModel("REP", "Employee Organization"));
+        list.add(new partyTypeModel("REP", "Employee Organization REP"));
+                
         //Return party Type List
         return list;
     }
