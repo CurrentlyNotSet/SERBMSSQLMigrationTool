@@ -5,13 +5,11 @@
  */
 package com.Migration;
 
-import com.model.BoardAcionTypeModel;
-import com.model.SystemEmailModel;
+import com.model.systemEmailModel;
 import com.model.deptInStateModel;
 import com.model.oldCountyModel;
 import com.model.partyTypeModel;
 import com.sceneControllers.MainWindowSceneController;
-import com.sql.sqlBoardActionType;
 import com.sql.sqlDeptInState;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlPartyType;
@@ -50,7 +48,7 @@ public class SystemDefaultsMigration {
         int currentRecord = 0;
         List<oldCountyModel> oldCountiesList = sqlSystemData.getCounties();
         List<deptInStateModel> deptInStateList = sqlDeptInState.getOldDeptInState();
-        List<SystemEmailModel> systemEmailList = sqlSystemEmail.getOldSystemEmail();
+        List<systemEmailModel> systemEmailList = sqlSystemEmail.getOldSystemEmail();
         List<partyTypeModel> partyTypesList = sqlPartyType.getPartyTypeList();
         
         List<String> namePrefixList = Arrays.asList(
@@ -77,7 +75,7 @@ public class SystemDefaultsMigration {
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getStateCode().trim());
         }
         
-        for (SystemEmailModel item : systemEmailList){
+        for (systemEmailModel item : systemEmailList){
             sqlSystemEmail.addSystemEmail(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getEmailAddress());
         }

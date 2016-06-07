@@ -9,6 +9,7 @@ import com.model.BoardAcionTypeModel;
 import com.model.REPCaseStatusModel;
 import com.model.REPCaseTypeModel;
 import com.model.REPMediationModel;
+import com.model.REPRecommendationModel;
 import com.model.REPcaseModel;
 import com.model.activityModel;
 import com.model.boardMeetingModel;
@@ -33,6 +34,7 @@ import com.sql.sqlREPCaseStatus;
 import com.sql.sqlREPCaseType;
 import com.sql.sqlREPData;
 import com.sql.sqlREPMediation;
+import com.sql.sqlREPRecommendation;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
@@ -63,10 +65,11 @@ public class REPMigration {
         List<oldREPDataModel> oldREPDataList = sqlREPData.getCases();
         List<BoardAcionTypeModel> REPBoardActionList = sqlBoardActionType.getOldBoardActionType();
         List<REPCaseTypeModel> REPCaseTypeList = sqlREPCaseType.getOldREPCaseType();
+        List<REPRecommendationModel> REPrecList = sqlREPRecommendation.getOldREPRecommendation();
         List<REPCaseStatusModel> REPCaseStatusList = sqlREPCaseStatus.getOldREPCaseStatus();
         
         totalRecordCount = oldREPDataList.size() + REPBoardActionList.size() 
-                + REPCaseTypeList.size() + REPCaseStatusList.size();
+                + REPCaseTypeList.size() + REPCaseStatusList.size() + REPrecList.size();
 
         for (BoardAcionTypeModel item : REPBoardActionList){
             sqlBoardActionType.addREPBoardActionType(item);
@@ -81,6 +84,11 @@ public class REPMigration {
         for (REPCaseStatusModel item : REPCaseStatusList){
             sqlREPCaseStatus.addREPCaseStatus(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getStatus());
+        }
+        
+        for (REPRecommendationModel item : REPrecList){
+            sqlREPRecommendation.addREPRecommendation(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getRecommendation());
         }
         
         for (oldREPDataModel item : oldREPDataList) {
@@ -305,7 +313,6 @@ public class REPMigration {
                 sqlCaseParty.savePartyInformation(party);
             }
         }
-
     }
 
     private static void migrateRivalEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -426,7 +433,6 @@ public class REPMigration {
                 sqlCaseParty.savePartyInformation(party);
             }
         }
-
     }
 
     private static void migrateRivalEmployeeOrg3(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -457,7 +463,6 @@ public class REPMigration {
                 sqlCaseParty.savePartyInformation(party);
             }
         }
-
     }
 
     private static void migrateRivalEmployeeOrg3Rep(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -488,7 +493,6 @@ public class REPMigration {
                 sqlCaseParty.savePartyInformation(party);
             }
         }
-
     }
 
     private static void migrateIncumbentEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -579,7 +583,6 @@ public class REPMigration {
                 sqlCaseParty.savePartyInformation(party);
             }
         }
-
     }
 
     private static void migrateIntervenerRep(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -925,13 +928,11 @@ public class REPMigration {
         } else {
             search.setBoardDeemed(null);
         }
-        
         sqlREPCaseSearch.addREPCaseSearchCase(search);
     }
     
     private static void migrateEmployerCaseSearch(oldREPDataModel item, caseNumberModel caseNumber) {
         if (!"".equals(item.getEmployerIDNum().trim())) {
-
             employerCaseSearchModel search = new employerCaseSearchModel();
 
             search.setCaseYear(caseNumber.getCaseYear());

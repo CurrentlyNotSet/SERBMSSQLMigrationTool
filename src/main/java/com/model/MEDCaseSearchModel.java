@@ -5,22 +5,21 @@
  */
 package com.model;
 
-import java.sql.Date;
-
 /**
  *
  * @author User
  */
-public class MEDCaseModel {
-    
+public class MEDCaseSearchModel {
     private int id;
-    private int active;
     private String caseYear;
     private String caseType;
     private String caseMonth;
     private String caseNumber;
-    private String note;
-    private Date fileDate;
+    private String employerName;
+    private String unionName;
+    private String county;
+    private String employerID;
+    private String bunNumber;
 
     public int getId() {
         return id;
@@ -28,14 +27,6 @@ public class MEDCaseModel {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getActive() {
-        return active;
-    }
-
-    public void setActive(int active) {
-        this.active = active;
     }
 
     public String getCaseYear() {
@@ -70,20 +61,45 @@ public class MEDCaseModel {
         this.caseNumber = caseNumber;
     }
 
-    public String getNote() {
-        return note;
+    public String getEmployerName() {
+        return employerName;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setEmployerName(String employerName) {
+        this.employerName = employerName;
     }
 
-    public Date getFileDate() {
-        return fileDate;
+    public String getUnionName() {
+        return unionName;
     }
 
-    public void setFileDate(Date fileDate) {
-        this.fileDate = fileDate;
+    public void setUnionName(String unionName) {
+        this.unionName = unionName;
     }
+
+    public String getCounty() {
+        return county;
+    }
+
+    public void setCounty(String county) {
+        this.county = county;
+    }
+
+    public String getEmployerID() {
+        return employerID;
+    }
+
+    public void setEmployerID(String employerID) {
+        this.employerID = employerID;
+    }
+
+    public String getBunNumber() {
+        return bunNumber;
+    }
+
+    public void setBunNumber(String bunNumber) {
+        this.bunNumber = bunNumber;
+    }
+    
     
 }

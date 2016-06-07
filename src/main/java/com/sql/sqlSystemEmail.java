@@ -5,7 +5,7 @@
  */
 package com.sql;
 
-import com.model.SystemEmailModel;
+import com.model.systemEmailModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,8 +21,8 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlSystemEmail {
     
-    public static List<SystemEmailModel> getOldSystemEmail() {
-        List<SystemEmailModel> list = new ArrayList();
+    public static List<systemEmailModel> getOldSystemEmail() {
+        List<systemEmailModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -32,7 +32,7 @@ public class sqlSystemEmail {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                SystemEmailModel item = new SystemEmailModel();
+                systemEmailModel item = new systemEmailModel();
                 item.setId(rs.getInt("SystemEMailid"));
                 item.setActive(rs.getInt("Active"));
                 item.setSection(rs.getString("Section").trim());
@@ -59,7 +59,7 @@ public class sqlSystemEmail {
         return list;
     }
         
-    public static void addSystemEmail(SystemEmailModel item) {
+    public static void addSystemEmail(systemEmailModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {

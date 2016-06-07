@@ -6,6 +6,7 @@
 package com.Migration;
 
 import com.model.MEDCaseModel;
+import com.model.MEDCaseSearchModel;
 import com.model.activityModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
@@ -19,6 +20,7 @@ import com.sql.sqlBlobFile;
 import com.sql.sqlCaseParty;
 import com.sql.sqlEmployerCaseSearchData;
 import com.sql.sqlEmployers;
+import com.sql.sqlMEDCaseSearch;
 import com.sql.sqlMEDData;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
@@ -77,6 +79,7 @@ public class MEDMigration {
             migrateEmployeeORGREP(item, caseNumber);
             migrateCaseData(item, caseNumber);
             migrateCaseHistory(caseNumber);
+            migrateCaseSearch(item, caseNumber);
             migrateEmployerCaseSearch(item, caseNumber);
         }
     }
@@ -119,7 +122,6 @@ public class MEDMigration {
         party.setPhoneOne(!"".equals(item.getEmployerREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEmployerREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEmployerREPEmail().trim()) ? item.getEmployerREPEmail().trim() : null);
 
-
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
         }
@@ -140,8 +142,6 @@ public class MEDMigration {
         party.setZip(!"".equals(item.getEmployeeOrgZip().trim()) ? item.getEmployeeOrgZip().trim() : null);
         party.setPhoneOne(!"".equals(item.getEmployeeOrgPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEmployeeOrgPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEmployeeOrgEmail().trim()) ? item.getEmployeeOrgEmail().trim() : null);
-
-
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
@@ -165,7 +165,6 @@ public class MEDMigration {
         party.setPhoneOne(!"".equals(item.getEmployeeOrgREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEmployeeOrgREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEmployeeOrgREPEmail().trim()) ? item.getEmployeeOrgREPEmail().trim() : null);
 
-
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
         }
@@ -180,11 +179,28 @@ public class MEDMigration {
         med.setCaseType(caseNumber.getCaseType());
         med.setCaseMonth(caseNumber.getCaseMonth());
         med.setCaseNumber(caseNumber.getCaseNumber());
+        med.setFileDate(!"".equals(item.getCaseFileDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getCaseFileDate()).getTime()) : null); 
+        
+        
+        for (oldBlobFileModel blob : oldBlobFileList) {
+            if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
+                case "Notes":
+                    med.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
+//                case "StkNotes":
+//                    med.setStkNotes(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+//                    break;
+//                case "FFNotes":
+//                    med.setFFNotes(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+//                    break;  
+                default:
+                    break;
+            }
+        }
         
         sqlMEDData.importOldMEDCase(med);
     }
-    
-    
+        
     private static void migrateCaseHistory(caseNumberModel caseNumber) {
         List<oldMEDHistoryModel> oldMEDCaseList = sqlActivity.getMEDHistoryByCase(StringUtilities.generateFullCaseNumber(caseNumber));
         
@@ -209,9 +225,24 @@ public class MEDMigration {
         }
     }
     
+    private static void migrateCaseSearch(oldMEDCaseModel item, caseNumberModel caseNumber) {
+        MEDCaseSearchModel search = new MEDCaseSearchModel();
+        
+        search.setCaseYear(caseNumber.getCaseYear());
+        search.setCaseType(caseNumber.getCaseType());
+        search.setCaseMonth(caseNumber.getCaseMonth());
+        search.setCaseNumber(caseNumber.getCaseNumber());
+        search.setEmployerName(!"".equals(item.getEmployerName().trim()) ? item.getEmployerName().trim() : null);
+        search.setUnionName(!"".equals(item.getEmployeeOrgName()) ? item.getEmployeeOrgName().trim() : null);
+        search.setCounty(!"".equals(item.getEmployerCounty().trim()) ? item.getEmployerCounty().trim() : null);
+        search.setEmployerID(!"".equals(item.getEmployerIDNumber().trim()) ? item.getEmployerIDNumber().trim() : null);
+        search.setBunNumber(!"".equals(item.getBUNumber().trim()) ? item.getBUNumber().trim() : null);
+        
+        sqlMEDCaseSearch.addMEDCaseSearchCase(search);
+    }
+    
     private static void migrateEmployerCaseSearch(oldMEDCaseModel item, caseNumberModel caseNumber) {
         if (!"".equals(item.getEmployerIDNumber().trim())) {
-
             employerCaseSearchModel search = new employerCaseSearchModel();
 
             search.setCaseYear(caseNumber.getCaseYear());

@@ -9,7 +9,7 @@ package com.model;
  *
  * @author Andrew
  */
-public class SystemEmailModel {
+public class systemEmailModel {
     
     private int    id;
     private int    active;

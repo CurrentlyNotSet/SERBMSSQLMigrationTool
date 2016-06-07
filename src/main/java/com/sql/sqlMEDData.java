@@ -233,23 +233,29 @@ public class sqlMEDData {
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
             String sql = "INSERT INTO MEDCase ("
-                    + "active, "       //01
-                    + "caseYear, "     //02
-                    + "caseType, "     //03
-                    + "caseMonth, "    //04
-                    + "caseNumber "    //05
+                    + "active, "    //01
+                    + "caseYear, "  //02
+                    + "caseType, "  //03
+                    + "caseMonth, " //04
+                    + "caseNumber, "//05
+                    + "note, "      //06
+                    + "fileDate "   //07
                     + ") VALUES ("
-                    + "?, " //01 
-                    + "?, " //02 
-                    + "?, " //03 
-                    + "?, " //04                   
-                    + "?)"; //05 
+                    + "?, " //01
+                    + "?, " //02
+                    + "?, " //03
+                    + "?, " //04
+                    + "?, " //05
+                    + "?, " //06
+                    + "?)"; //07
             ps = conn.prepareStatement(sql);
-            ps.setInt      ( 1, item.getActive());
-            ps.setString   ( 2, item.getCaseYear());
-            ps.setString   ( 3, item.getCaseType());
-            ps.setString   ( 4, item.getCaseMonth());
-            ps.setString   ( 5, item.getCaseNumber());
+            ps.setInt   ( 1, item.getActive());
+            ps.setString( 2, item.getCaseYear());
+            ps.setString( 3, item.getCaseType());
+            ps.setString( 4, item.getCaseMonth());
+            ps.setString( 5, item.getCaseNumber());
+            ps.setString( 6, item.getNote());
+            ps.setDate  ( 7, item.getFileDate());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

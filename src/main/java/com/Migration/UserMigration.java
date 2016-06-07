@@ -8,9 +8,12 @@ package com.Migration;
 import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlRole;
 import com.sql.sqlUsers;
 import com.util.Global;
+import com.util.SceneUpdater;
 import com.util.StringUtilities;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,7 +39,14 @@ public class UserMigration {
         int currentRecord = 0;
         List<userModel> oldSecUserList = sqlUsers.getSecUsers();
         List<userModel> oldUserList = sqlUsers.getUsers();
-        totalRecordCount = oldUserList.size() + oldSecUserList.size();
+        List<String> roleList = Arrays.asList("Admin", "Docketing", "REP", "ULP", "ORG", "MED", "Employer Search");
+        
+        totalRecordCount = oldUserList.size() + oldSecUserList.size() + roleList.size();
+        
+        for (String item : roleList){
+            sqlRole.addUserRole(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item);
+        }
         
         for (userModel item : oldSecUserList){
             migrateUser(item);
@@ -44,7 +54,7 @@ public class UserMigration {
             if (Global.isDebug()){
                 System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getUserName().trim() + ")");
             }
-            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getUserName());
         }
 
         for (userModel item : oldUserList) {
@@ -62,7 +72,7 @@ public class UserMigration {
             if (Global.isDebug()) {
                 System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getUserName().trim() + ")");
             }
-            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getUserName());
         }
 
         long lEndTime = System.currentTimeMillis();
