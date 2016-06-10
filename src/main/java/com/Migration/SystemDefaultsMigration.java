@@ -5,11 +5,15 @@
  */
 package com.Migration;
 
+import com.model.caseTypeModel;
 import com.model.systemEmailModel;
 import com.model.deptInStateModel;
+import com.model.historyTypeModel;
 import com.model.oldCountyModel;
 import com.model.partyTypeModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlActivityType;
+import com.sql.sqlCaseType;
 import com.sql.sqlDeptInState;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlPartyType;
@@ -19,7 +23,6 @@ import com.sql.sqlSystemEmail;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,14 +53,11 @@ public class SystemDefaultsMigration {
         List<deptInStateModel> deptInStateList = sqlDeptInState.getOldDeptInState();
         List<systemEmailModel> systemEmailList = sqlSystemEmail.getOldSystemEmail();
         List<partyTypeModel> partyTypesList = sqlPartyType.getPartyTypeList();
-        
-        List<String> namePrefixList = Arrays.asList(
-            "Ms.", "Miss.", "Mrs.", "Mr.", "Rev.", "Fr.", "Dr.", "Atty.", 
-            "Prof.", "Hon.", "Pres.", "Gov.", "Coach.", "Ofc.", "Supt.", 
-            "Rep.", "Sen.", "Treas.", "Sec.", "Adm." );
+        List<historyTypeModel> activityTypeList = sqlActivityType.getOldActivityType();
+        List<caseTypeModel> caseTypeList = sqlCaseType.getOldCaseType();
         
         totalRecordCount = oldCountiesList.size() + deptInStateList.size() + systemEmailList.size() 
-                 + namePrefixList.size() + partyTypesList.size();
+                 + Global.namePrefixList.size() + partyTypesList.size() + activityTypeList.size();
         
         for (oldCountyModel item : oldCountiesList){
             item.setActive(("OH".equals(item.getStateCode().trim())) ? 1 : 0);
@@ -80,9 +80,19 @@ public class SystemDefaultsMigration {
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getEmailAddress());
         }
         
-        for (String item : namePrefixList){
+        for (String item : Global.namePrefixList){
             sqlPreFix.addNamePrefix(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item);
+        }
+        
+        for (historyTypeModel item : activityTypeList){
+            sqlActivityType.addActivtyType(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFileAttrib());
+        }
+        
+        for (caseTypeModel item : caseTypeList){
+            sqlCaseType.addCaseType(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseType());
         }
         
         long lEndTime = System.currentTimeMillis();

@@ -6,6 +6,7 @@
 package com.util;
 
 import com.model.caseNumberModel;
+import com.model.casePartyModel;
 import com.model.userModel;
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -227,5 +228,5 @@ public class StringUtilities {
         }
         return 0;
     }
-
+    
 }

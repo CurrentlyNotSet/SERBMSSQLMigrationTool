@@ -5,7 +5,6 @@
  */
 package com.sql;
 
-import com.model.boardMeetingModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -162,7 +162,7 @@ public class MainWindowSceneController implements Initializable {
 
     @FXML
     private void migrateDocumentsButton() {
-
+        DocumentMigration.migrateDocuments(control);
     }
 
     @FXML

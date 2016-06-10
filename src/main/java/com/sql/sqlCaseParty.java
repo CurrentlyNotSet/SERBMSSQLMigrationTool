@@ -6,6 +6,7 @@
 package com.sql;
 
 import com.model.casePartyModel;
+import com.util.ContactNameSeperator;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,6 +20,7 @@ import org.apache.commons.dbutils.DbUtils;
 public class sqlCaseParty {
     
     public static void savePartyInformation(casePartyModel item){
+        item = ContactNameSeperator.seperateName(item);
         Connection conn = null;
         PreparedStatement ps = null;
         try {
