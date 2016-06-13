@@ -6,6 +6,7 @@
 package com.model;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -38,11 +39,9 @@ public class REPcaseModel {
     private Date courtClosedDate;
     private Date returnSOIDueDate;
     private Date actualSOIReturnDate;
-    private String comments;
+    private int SOIReturnIntials;
     private Date REPClosedCaseDueDate;
     private Date actualREPClosedDate;
-    
-    //added columns
     private int REPClosedUser;
     private Date actualClerksClosedDate;
     private int clerksClosedUser;
@@ -70,6 +69,27 @@ public class REPcaseModel {
     private int hearingPersonID;
     private String boardStatusNote;
     private String boardStatusBlurb;
+    private int multicaseElection;
+    private String electionType1;
+    private String electionType2;
+    private String electionType3;
+    private Date eligibilityDate;
+    private String ballotOne;
+    private String ballotTwo;
+    private String ballotThree;
+    private String ballotFour;
+    private Date mailKitDate;
+    private Date pollingStartDate;
+    private Date pollingEndDate;
+    private String ballotsCountDay;
+    private Date ballotsCountDate;
+    private Timestamp ballotsCountTime;
+    private Date eligibilityListDate;
+    private Date preElectionConfDate;
+    private String selfReleasing;
+    
+    //added columns
+    
     
     public int getId() {
         return id;
@@ -303,12 +323,12 @@ public class REPcaseModel {
         this.note = note;
     }
 
-    public String getComments() {
-        return comments;
+    public int getSOIReturnIntials() {
+        return SOIReturnIntials;
     }
 
-    public void setComments(String comments) {
-        this.comments = comments;
+    public void setSOIReturnIntials(int SOIReturnIntials) {
+        this.SOIReturnIntials = SOIReturnIntials;
     }
 
     public int getREPClosedUser() {
@@ -509,6 +529,150 @@ public class REPcaseModel {
 
     public void setNonProfessionalExcluded(String nonProfessionalExcluded) {
         this.nonProfessionalExcluded = nonProfessionalExcluded;
+    }
+
+    public int getMulticaseElection() {
+        return multicaseElection;
+    }
+
+    public void setMulticaseElection(int multicaseElection) {
+        this.multicaseElection = multicaseElection;
+    }
+
+    public String getElectionType1() {
+        return electionType1;
+    }
+
+    public void setElectionType1(String electionType1) {
+        this.electionType1 = electionType1;
+    }
+
+    public String getElectionType2() {
+        return electionType2;
+    }
+
+    public void setElectionType2(String electionType2) {
+        this.electionType2 = electionType2;
+    }
+
+    public String getElectionType3() {
+        return electionType3;
+    }
+
+    public void setElectionType3(String electionType3) {
+        this.electionType3 = electionType3;
+    }
+
+    public Date getEligibilityDate() {
+        return eligibilityDate;
+    }
+
+    public void setEligibilityDate(Date eligibilityDate) {
+        this.eligibilityDate = eligibilityDate;
+    }
+
+    public String getBallotOne() {
+        return ballotOne;
+    }
+
+    public void setBallotOne(String ballotOne) {
+        this.ballotOne = ballotOne;
+    }
+
+    public String getBallotTwo() {
+        return ballotTwo;
+    }
+
+    public void setBallotTwo(String ballotTwo) {
+        this.ballotTwo = ballotTwo;
+    }
+
+    public String getBallotThree() {
+        return ballotThree;
+    }
+
+    public void setBallotThree(String ballotThree) {
+        this.ballotThree = ballotThree;
+    }
+
+    public String getBallotFour() {
+        return ballotFour;
+    }
+
+    public void setBallotFour(String ballotFour) {
+        this.ballotFour = ballotFour;
+    }
+
+    public Date getMailKitDate() {
+        return mailKitDate;
+    }
+
+    public void setMailKitDate(Date mailKitDate) {
+        this.mailKitDate = mailKitDate;
+    }
+
+    public Date getPollingStartDate() {
+        return pollingStartDate;
+    }
+
+    public void setPollingStartDate(Date pollingStartDate) {
+        this.pollingStartDate = pollingStartDate;
+    }
+
+    public Date getPollingEndDate() {
+        return pollingEndDate;
+    }
+
+    public void setPollingEndDate(Date pollingEndDate) {
+        this.pollingEndDate = pollingEndDate;
+    }
+
+    public String getBallotsCountDay() {
+        return ballotsCountDay;
+    }
+
+    public void setBallotsCountDay(String ballotsCountDay) {
+        this.ballotsCountDay = ballotsCountDay;
+    }
+
+    public Date getBallotsCountDate() {
+        return ballotsCountDate;
+    }
+
+    public void setBallotsCountDate(Date ballotsCountDate) {
+        this.ballotsCountDate = ballotsCountDate;
+    }
+
+    public Timestamp getBallotsCountTime() {
+        return ballotsCountTime;
+    }
+
+    public void setBallotsCountTime(Timestamp ballotsCountTime) {
+        this.ballotsCountTime = ballotsCountTime;
+    }
+
+    public Date getEligibilityListDate() {
+        return eligibilityListDate;
+    }
+
+    public void setEligibilityListDate(Date eligibilityListDate) {
+        this.eligibilityListDate = eligibilityListDate;
+    }
+
+    public Date getPreElectionConfDate() {
+        return preElectionConfDate;
+    }
+
+    public void setPreElectionConfDate(Date preElectionConfDate) {
+        this.preElectionConfDate = preElectionConfDate;
+    }
+
+    public String getSelfReleasing() {
+        return selfReleasing;
+    }
+
+    public void setSelfReleasing(String selfReleasing) {
+        this.selfReleasing = selfReleasing;
     }
 
 }

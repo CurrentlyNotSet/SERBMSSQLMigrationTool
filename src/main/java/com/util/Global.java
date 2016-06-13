@@ -38,22 +38,26 @@ public class Global {
         return debug;
     }
 
-    public static List<String> namePrefixList = Arrays.asList(
+    public static final List<String> monthList = Arrays.asList("Jan", "Feb", 
+            "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    );
+        
+    public static final List<String> namePrefixList = Arrays.asList(
             "Ms.", "Miss.", "Mrs.", "Messr.", "Messrs.", "Mses.", "Mr.", "Rev.",
             "Fr.", "Dr.", "Atty.", "Prof.", "Hon.", "The Honorable", "Pres.", 
             "Gov.", "Coach.", "Ofc.", "Supt.", "Captain", "Capt.", "Rep.", 
             "Sen.", "Treas.", "Sec.", "Adm."
     );
 
-    public static List<String> suffixList = Arrays.asList(
+    public static final List<String> suffixList = Arrays.asList(
             "II", "III", "IV", "V", "Jr.", "Sr.", "Attorney"
     );
 
-    public static List<String> nameTitleList = Arrays.asList(
+    public static final List<String> nameTitleList = Arrays.asList(
             "Esq", "Esq.", "Esquire"
     );
 
-    public static List<String> jobTitleList = Arrays.asList(
+    public static final List<String> jobTitleList = Arrays.asList(
             "3rd District VP", "3rd District Vice President", "4th District Vice President",
             "Account Manager", "Acting Director", "Administrator", "Administrative Deputy",
             "Administrative Organizer", "Administrative Services Coordinator", "Administratve Organizer",

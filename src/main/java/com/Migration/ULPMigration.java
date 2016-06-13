@@ -62,12 +62,12 @@ public class ULPMigration {
         
         for (ULPRecommendationsModel item : oldULPRecsList){
             sqlULPRecommendations.addULPRecommendation(item);
-            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCode());
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCode());
         }
         
         for (oldULPDataModel item : oldULPDataList){
             migrateCase(item);
-            SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
         }
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ULP Cases: " 

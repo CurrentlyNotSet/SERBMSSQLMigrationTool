@@ -108,15 +108,15 @@ public class sqlREPData {
                 item.setElectionType1(rs.getString("ElectionType1"));
                 item.setElectionType2(rs.getString("ElectionType2"));
                 item.setElectionType3(rs.getString("ElectionType3"));
-                item.setEligibilityDate(rs.getString("EligibilityDate"));
+                item.setEligibilityDate(rs.getString("EligibilityDate") == null ? "" : rs.getString("EligibilityDate").trim());
                 item.setBallotOne(rs.getString("BallotOne"));
                 item.setBallotTwo(rs.getString("BallotTwo"));
                 item.setBallotThree(rs.getString("BallotThree"));
                 item.setBallotFour(rs.getString("BallotFour"));
-                item.setPollingStartDate(rs.getString("PollingStartDate"));
-                item.setPollingEndDate(rs.getString("PollingEndDate"));
+                item.setPollingStartDate(rs.getString("PollingStartDate") == null ? "" : rs.getString("PollingStartDate").trim());
+                item.setPollingEndDate(rs.getString("PollingEndDate") == null ? "" : rs.getString("PollingEndDate").trim());
                 item.setBallotsCountDay(rs.getString("BallotsCountDay"));
-                item.setBallotsCountDate(rs.getString("BallotsCountDate"));
+                item.setBallotsCountDate(rs.getString("BallotsCountDate") == null ? "" : rs.getString("BallotsCountDate").trim());
                 item.setBallotsCountTime(rs.getString("BallotsCountTime"));
                 item.setPreElectionConfDate(rs.getString("PreElectionConfDate"));
                 item.setSelfReleasing(rs.getString("SelfReleasing"));
@@ -387,8 +387,8 @@ public class sqlREPData {
                 item.setREO2EmployeeOrgNum(rs.getString("REO2EmployeeOrgNum"));
                 item.setREO3EmployeeOrgNum(rs.getString("REO3EmployeeOrgNum"));
                 item.setIncumbentEmployeeOrgNum(rs.getString("IncumbentEmployeeOrgNum"));
-                item.setMailKitDate(rs.getString("MailKitDate"));
-                item.setEligibilityListDate(rs.getString("EligibilityListDate"));
+                item.setMailKitDate(rs.getString("MailKitDate") == null ? "" : rs.getString("MailKitDate").trim());
+                item.setEligibilityListDate(rs.getString("EligibilityListDate") == null ? "" : rs.getString("EligibilityListDate").trim());
                 item.setAmendedFilingDate(rs.getString("AmendedFilingDate"));
                 item.setCertRevoked(rs.getString("CertRevoked"));
                 item.setEmployerIDNum2(rs.getString("EmployerIDNum2"));
@@ -442,7 +442,7 @@ public class sqlREPData {
                     + "courtClosedDate, "       //22
                     + "returnSOIDueDate, "      //23
                     + "actualSOIReturnDate, "   //24
-                    + "comments, "              //25
+                    + "SOIReturnIntials, "      //25
                     + "REPClosedCaseDueDate, "  //26
                     + "actualREPClosedDate, "   //27
                     + "REPClosedUser, "         //28
@@ -471,7 +471,25 @@ public class sqlREPData {
                     + "boardActionDate, "   //51
                     + "hearingPersonID, "   //52
                     + "boardStatusNote, "   //53
-                    + "boardStatusBlurb "   //54
+                    + "boardStatusBlurb, "  //54
+                    + "multicaseElection, " //55
+                    + "electionType1, "     //56
+                    + "electionType2, "     //57
+                    + "electionType3, "     //58
+                    + "eligibilityDate, "   //59
+                    + "ballotOne, "         //60
+                    + "ballotTwo, "         //61
+                    + "ballotThree, "       //62
+                    + "ballotFour, "        //63
+                    + "mailKitDate, "       //64
+                    + "pollingStartDate, "  //65
+                    + "pollingEndDate, "    //66
+                    + "ballotsCountDay, "   //67
+                    + "ballotsCountDate, "  //68
+                    + "ballotsCountTime, "  //69
+                    + "eligibilityListDate, "   //70
+                    + "preElectionConfDate, "   //71
+                    + "selfReleasing "          //72
                     + ") VALUES ("
                     + "?, " //01 
                     + "?, " //02 
@@ -525,8 +543,26 @@ public class sqlREPData {
                     + "?, " //50
                     + "?, " //51
                     + "?, " //52
-                    + "?, " //53                    
-                    + "?)"; //54 
+                    + "?, " //53
+                    + "?, " //54
+                    + "?, " //55
+                    + "?, " //56
+                    + "?, " //57
+                    + "?, " //58
+                    + "?, " //59
+                    + "?, " //60
+                    + "?, " //61
+                    + "?, " //62
+                    + "?, " //63
+                    + "?, " //64
+                    + "?, " //65
+                    + "?, " //66
+                    + "?, " //67
+                    + "?, " //68
+                    + "?, " //69
+                    + "?, " //70
+                    + "?, " //71
+                    + "?)"; //72
             ps = conn.prepareStatement(sql);
             ps.setInt      ( 1, item.getActive());
             ps.setString   ( 2, item.getCaseYear());
@@ -556,7 +592,11 @@ public class sqlREPData {
             ps.setDate     (22, item.getCourtClosedDate());
             ps.setDate     (23, item.getReturnSOIDueDate());
             ps.setDate     (24, item.getActualSOIReturnDate());
-            ps.setString   (25, item.getComments());
+            if (item.getSOIReturnIntials() != 0){
+                ps.setInt  (25, item.getSOIReturnIntials());
+            } else {
+                ps.setNull (25, java.sql.Types.INTEGER);
+            }
             ps.setDate     (26, item.getREPClosedCaseDueDate());
             ps.setDate     (27, item.getActualREPClosedDate());
             if (item.getREPClosedUser() != 0){
@@ -598,6 +638,28 @@ public class sqlREPData {
             }
             ps.setString   (53, item.getBoardStatusNote());
             ps.setString   (54, item.getBoardStatusBlurb());
+            if (item.getMulticaseElection() != 0){
+                ps.setInt  (55, item.getMulticaseElection());
+            } else {
+                ps.setNull (55, java.sql.Types.INTEGER);
+            }
+            ps.setString   (56, item.getElectionType1());
+            ps.setString   (57, item.getElectionType2());
+            ps.setString   (58, item.getElectionType3());
+            ps.setDate     (59, item.getEligibilityDate());
+            ps.setString   (60, item.getBallotOne());
+            ps.setString   (61, item.getBallotTwo());
+            ps.setString   (62, item.getBallotThree());
+            ps.setString   (63, item.getBallotFour());
+            ps.setDate     (64, item.getMailKitDate());
+            ps.setDate     (65, item.getPollingStartDate());
+            ps.setDate     (66, item.getPollingEndDate());
+            ps.setString   (67, item.getBallotsCountDay());
+            ps.setDate     (68, item.getBallotsCountDate());
+            ps.setTimestamp(69, item.getBallotsCountTime());
+            ps.setDate     (70, item.getEligibilityListDate());
+            ps.setDate     (71, item.getPreElectionConfDate());
+            ps.setString   (72, item.getSelfReleasing());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

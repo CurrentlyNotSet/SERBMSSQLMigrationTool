@@ -78,7 +78,11 @@ public class sqlCaseParty {
             ps.setString( 2, item.getCaseType());
             ps.setString( 3, item.getCaseMonth());
             ps.setString( 4, item.getCaseNumber());
-            ps.setInt   ( 5, item.getPartyID());
+            if (item.getPartyID() != 0){
+                ps.setInt  ( 5, item.getPartyID());
+            } else {
+                ps.setNull ( 5, java.sql.Types.INTEGER);
+            }
             ps.setString( 6, item.getCaseRelation());
             ps.setString( 7, item.getPrefix());
             ps.setString( 8, item.getFirstName());

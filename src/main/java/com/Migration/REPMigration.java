@@ -76,21 +76,6 @@ public class REPMigration {
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getShort());
         }
         
-        for (REPCaseTypeModel item : REPCaseTypeList){
-            sqlREPCaseType.addREPCaseType(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getTypeAbbrevation());
-        }
-        
-        for (REPCaseStatusModel item : REPCaseStatusList){
-            sqlREPCaseStatus.addREPCaseStatus(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getStatus());
-        }
-        
-        for (REPRecommendationModel item : REPrecList){
-            sqlREPRecommendation.addREPRecommendation(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getRecommendation());
-        }
-        
         for (oldREPDataModel item : oldREPDataList) {
             migrateCase(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
@@ -703,7 +688,7 @@ public class REPMigration {
         rep.setCourtClosedDate(!"".equals(item.getCourtClosedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getCourtClosedDate()).getTime()) : null);     
         rep.setReturnSOIDueDate(!"".equals(item.getReturnSOIDueDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getReturnSOIDueDate()).getTime()) : null);    
         rep.setActualSOIReturnDate(!"".equals(item.getActualSOIReturnDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getActualSOIReturnDate()).getTime()) : null);     
-        rep.setComments(!"".equals(item.getSOIReturnInitials1().trim()) ? item.getSOIReturnInitials1().trim() : null);
+        rep.setSOIReturnIntials(StringUtilities.convertUserToID(item.getSOIReturnInitials1()));
         rep.setREPClosedCaseDueDate(!"".equals(item.getREPClosedCaseDueDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getREPClosedCaseDueDate()).getTime()) : null);
         rep.setActualREPClosedDate(!"".equals(item.getActualREPClosedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getActualREPClosedDate()).getTime()) : null);
         rep.setREPClosedUser(StringUtilities.convertUserToID(item.getSOIReturnInitials2()));
@@ -724,11 +709,36 @@ public class REPMigration {
         rep.setBoardActionType(!"".equals(item.getBoardActionType().trim()) ? item.getBoardActionType().trim() : null);
         rep.setBoardActionDate(!"".equals(item.getBoardActionDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getBoardActionDate()).getTime()) : null);
         rep.setHearingPersonID(StringUtilities.convertUserToID(item.getBoardPersonAssigned()));
-         
+        rep.setMulticaseElection("1".equals(item.getMultiCaseElection().trim()) ? 1 : 0);
+        rep.setElectionType1(!"".equals(item.getElectionType1().trim()) ? item.getElectionType1().trim() : null);
+        rep.setElectionType2(!"".equals(item.getElectionType2().trim()) ? item.getElectionType2().trim() : null);
+        rep.setElectionType3(!"".equals(item.getElectionType3().trim()) ? item.getElectionType3().trim() : null);
+        rep.setEligibilityDate(StringUtilities.convertStringDate(item.getEligibilityDate()) != null ? new Date(StringUtilities.convertStringDate(item.getEligibilityDate()).getTime()) : null);
+        rep.setBallotOne(!"".equals(item.getBallotOne().trim()) ? item.getBallotOne().trim() : null);
+        rep.setBallotTwo(!"".equals(item.getBallotTwo().trim()) ? item.getBallotTwo().trim() : null);
+        rep.setBallotThree(!"".equals(item.getBallotThree().trim()) ? item.getBallotThree().trim() : null);
+        rep.setBallotFour(!"".equals(item.getBallotFour().trim()) ? item.getBallotFour().trim() : null);
+        rep.setMailKitDate(StringUtilities.convertStringDate(item.getMailKitDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getMailKitDate()).getTime()) : null);
+        rep.setPollingStartDate(StringUtilities.convertStringDate(item.getPollingStartDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getPollingStartDate()).getTime()) : null);
+        rep.setPollingEndDate(StringUtilities.convertStringDate(item.getPollingEndDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getPollingEndDate()).getTime()) : null);
+        rep.setBallotsCountDay(!"".equals(item.getBallotsCountDay().trim()) ? item.getBallotsCountDay().trim() : null);
+        rep.setBallotsCountDate(StringUtilities.convertStringDate(item.getBallotsCountDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getBallotsCountDate()).getTime()) : null);
+        rep.setBallotsCountTime(!"".equals(item.getBallotsCountTime().trim()) ? StringUtilities.convertStringDate(item.getBallotsCountTime()) : null);
+        rep.setEligibilityListDate(StringUtilities.convertStringDate(item.getEligibilityListDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getEligibilityListDate()).getTime()) : null);
+        rep.setPreElectionConfDate(StringUtilities.convertStringDate(item.getPreElectionConfDate()) != null ? new Date(StringUtilities.convertStringDate(item.getPreElectionConfDate()).getTime()) : null);
+        rep.setSelfReleasing(!"".equals(item.getSelfReleasing().trim()) ? item.getSelfReleasing().trim() : null);
+        
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
                 case "Notes":
-                    rep.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    if (rep.getSOIReturnIntials() != 0){
+                        rep.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    } else {
+                        rep.setNote(item.getSOIReturnInitials1() 
+                                + System.getProperty("line.separator") + System.getProperty("line.separator")
+                                + StringUtilities.convertBlobFileToString(blob.getBlobData())
+                        );
+                    }
                     break;
                 case "BUIN":
                     rep.setBargainingUnitIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));

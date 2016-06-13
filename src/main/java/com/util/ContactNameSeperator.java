@@ -14,31 +14,34 @@ import com.model.casePartyModel;
 public class ContactNameSeperator {
     
     public static casePartyModel seperateName(casePartyModel item) {
-        String[] jobTitleNameSplit = item.getLastName().split(",");
-        if (jobTitleMatch(jobTitleNameSplit[jobTitleNameSplit.length -1].trim())){
-            item.setJobTitle(jobTitleNameSplit[jobTitleNameSplit.length -1].trim());
-            item.setLastName(item.getLastName().replace(item.getJobTitle(), "").trim());
-            if(item.getLastName().trim().endsWith(",")) {
-                item.setLastName(item.getLastName().substring(0, item.getLastName().length()-1));
-            }   
+        if (item.getLastName() != null) {
+            String[] jobTitleNameSplit = item.getLastName().split(",");
+            if (jobTitleMatch(jobTitleNameSplit[jobTitleNameSplit.length - 1].trim())) {
+                item.setJobTitle(jobTitleNameSplit[jobTitleNameSplit.length - 1].trim());
+                item.setLastName(item.getLastName().replace(item.getJobTitle(), "").trim());
+                if (item.getLastName().trim().endsWith(",")) {
+                    item.setLastName(item.getLastName().substring(0, item.getLastName().length() - 1));
+                }
+            }
+
+            if (item.getLastName().startsWith("The Honorable")) {
+                item.setPrefix("The Honorable");
+                item.setLastName(item.getLastName().replaceFirst("The Honorable", "").trim());
+            }
+
+            String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
+            if (nameSplit.length == 2) {
+                twoPeiceName(item, nameSplit);
+            } else if (nameSplit.length == 3) {
+                threePieceName(item, nameSplit);
+            } else if (nameSplit.length == 4) {
+                fourPieceName(item, nameSplit);
+            } else if (nameSplit.length == 5) {
+                fivePieceName(item, nameSplit);
+            }
+            return sanitizeContact(item);
         }
-        
-        if (item.getLastName().startsWith("The Honorable")){
-            item.setPrefix("The Honorable");
-            item.setLastName(item.getLastName().replaceFirst("The Honorable", "").trim());
-        }
-                
-        String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
-        if (nameSplit.length == 2) {
-            twoPeiceName(item, nameSplit);
-        } else if (nameSplit.length == 3) {
-            threePieceName(item, nameSplit);
-        } else if (nameSplit.length == 4) {
-            fourPieceName(item, nameSplit);
-        } else if (nameSplit.length == 5) {
-            fivePieceName(item, nameSplit);
-        }        
-        return sanitizeContact(item);
+        return item;
     }
     
     private static casePartyModel twoPeiceName(casePartyModel item, String[] nameSplit) {

@@ -6,7 +6,7 @@
 package com.util;
 
 import com.model.caseNumberModel;
-import com.model.casePartyModel;
+import com.model.dateModel;
 import com.model.userModel;
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -64,69 +64,26 @@ public class StringUtilities {
 
     public static Timestamp convertStringDate(String oldDate) {
         Pattern p = Pattern.compile("[a-zA-Z]");
-        
+
         oldDate = oldDate.trim();
-        if (oldDate != null && !"".equals(oldDate) && p.matcher(oldDate).find() == false) {
-            String day = "";
-            String month = "";
-            String year = "";
+        if (oldDate != null && !"".equals(oldDate)) {
+            dateModel date = null;
 
-            oldDate = oldDate.replaceAll("\\\\", "-").replaceAll("/", "-");
-            String[] parsedOldDate = oldDate.trim().split("-");
-
-            //  0         1           2
-            //year  -   month   -   day
-            //year  -   day     -   month
-            //month -   day     -   year
-            //day   -   month   -   year
-            if (parsedOldDate[0].length() == 4) {
-                year = parsedOldDate[0];
-                month = parsedOldDate[1];
-                day = parsedOldDate[2];
-                if (Integer.valueOf(parsedOldDate[1]) > 12) {
-                    month = parsedOldDate[1];
-                    day = parsedOldDate[2];
-                } else if (Integer.valueOf(parsedOldDate[2]) > 12) {
-                    month = parsedOldDate[2];
-                    day = parsedOldDate[1];
-                }
-            } else if (parsedOldDate[2].length() == 4) {
-                month = parsedOldDate[0];
-                day = parsedOldDate[1];
-                year = parsedOldDate[2];
-                if (Integer.valueOf(parsedOldDate[0]) > 12) {
-                    month = parsedOldDate[1];
-                    day = parsedOldDate[0];
-                } else if (Integer.valueOf(parsedOldDate[1]) > 12) {
-                    month = parsedOldDate[0];
-                    day = parsedOldDate[1];
-                }
+            if (p.matcher(oldDate).find() == false) {
+                date = dateParseNumbers(oldDate);
             } else {
-                month = parsedOldDate[0];
-                day = parsedOldDate[1];
-                year = parsedOldDate[2];
+                date = dateParseFullSpelling(oldDate);
             }
-            if (month.length() == 1){
-                month = "0" + month;
-            }
-            if (day.length() == 1){
-                day = "0" + day;
-            }
-            if (year.length() == 2){
-                if (Integer.parseInt(year) > 20){
-                    year = "19" + year;
-                } else{
-                    year = "20" + year;
-                }
-            }
-            try {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date parsedDate = dateFormat.parse(year + "-" + month + "-" + day);
-                return new Timestamp(parsedDate.getTime());
 
-            } catch (ParseException ex) {
-                Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
-                return Timestamp.valueOf("1900-01-01 00:00:00.0");
+            if (date != null) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date parsedDate = dateFormat.parse(date.getYear() + "-" + date.getMonth() + "-" + date.getDay());
+                    return new Timestamp(parsedDate.getTime());
+                } catch (ParseException ex) {
+                    Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                    return Timestamp.valueOf("1900-01-01 00:00:00.0");
+                }
             }
         }
         return null;
@@ -137,52 +94,14 @@ public class StringUtilities {
         
         oldDate = oldDate.trim();
         if (oldDate != null && !"".equals(oldDate) && p.matcher(oldDate).find() == false) {
-            String day = "";
-            String month = "";
-            String year = "";
-
-            oldDate = oldDate.replaceAll("\\\\", "-").replaceAll("/", "-");
-            String[] parsedOldDate = oldDate.trim().split("-");
-
-            //  0         1           2
-            //year  -   month   -   day
-            //year  -   day     -   month
-            //month -   day     -   year
-            //day   -   month   -   year
-            if (parsedOldDate[0].length() == 4) {
-                year = parsedOldDate[0];
-                month = parsedOldDate[1];
-                day = parsedOldDate[2];
-                if (Integer.valueOf(parsedOldDate[1]) > 12) {
-                    month = parsedOldDate[1];
-                    day = parsedOldDate[2];
-                } else if (Integer.valueOf(parsedOldDate[2]) > 12) {
-                    month = parsedOldDate[2];
-                    day = parsedOldDate[1];
-                }
-            } else if (parsedOldDate[2].length() == 4) {
-                month = parsedOldDate[0];
-                day = parsedOldDate[1];
-                year = parsedOldDate[2];
-                if (Integer.valueOf(parsedOldDate[0]) > 12) {
-                    month = parsedOldDate[1];
-                    day = parsedOldDate[0];
-                } else if (Integer.valueOf(parsedOldDate[1]) > 12) {
-                    month = parsedOldDate[0];
-                    day = parsedOldDate[1];
-                }
-            } else {
-                month = parsedOldDate[0];
-                day = parsedOldDate[1];
-                year = parsedOldDate[2];
-            }
+            dateModel date = dateParseNumbers(oldDate);
             
             String[] time = oldTime.replaceAll("\\.", "").split(":| ");
                             
                 Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.YEAR, Integer.valueOf(year));
-                cal.set(Calendar.MONTH, Integer.valueOf(month));
-                cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(day));
+                cal.set(Calendar.YEAR, Integer.valueOf(date.getYear()));
+                cal.set(Calendar.MONTH, Integer.valueOf(date.getMonth()));
+                cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(date.getDay()));
                 
                 if(!"".equals(oldTime.trim())){
                     int hour = Integer.valueOf(time[0]);
@@ -200,7 +119,91 @@ public class StringUtilities {
         }
         return null;
     }
-    
+
+    private static dateModel dateParseNumbers(String oldDate) {
+        dateModel date = new dateModel();
+
+        oldDate = oldDate.replaceAll("\\\\", "-").replaceAll("/", "-");
+        String[] parsedOldDate = oldDate.trim().split("-");
+        if (parsedOldDate.length == 3) {
+            //  0         1           2
+            //year  -   month   -   day
+            //year  -   day     -   month
+            //month -   day     -   year
+            //day   -   month   -   year
+            if (parsedOldDate[0].length() == 4) {
+                date.setYear(parsedOldDate[0]);
+                date.setMonth(parsedOldDate[1]);
+                date.setDay(parsedOldDate[2]);
+                if (Integer.valueOf(parsedOldDate[1]) > 12) {
+                    date.setMonth(parsedOldDate[1]);
+                    date.setDay(parsedOldDate[2]);
+                } else if (Integer.valueOf(parsedOldDate[2]) > 12) {
+                    date.setMonth(parsedOldDate[2]);
+                    date.setDay(parsedOldDate[1]);
+                }
+            } else if (parsedOldDate[2].length() == 4) {
+                date.setMonth(parsedOldDate[0]);
+                date.setDay(parsedOldDate[1]);
+                date.setYear(parsedOldDate[2]);
+                if (Integer.valueOf(parsedOldDate[0]) > 12) {
+                    date.setMonth(parsedOldDate[1]);
+                    date.setDay(parsedOldDate[0]);
+                } else if (Integer.valueOf(parsedOldDate[1]) > 12) {
+                    date.setMonth(parsedOldDate[0]);
+                    date.setDay(parsedOldDate[1]);
+                }
+            } else {
+                date.setMonth(parsedOldDate[0]);
+                date.setDay(parsedOldDate[1]);
+                date.setYear(parsedOldDate[2]);
+            }
+
+            if (date.getMonth().length() == 1) {
+                date.setMonth("0" + date.getMonth());
+            }
+            if (date.getDay().length() == 1) {
+                date.setDay("0" + date.getDay());
+            }
+            if (date.getYear().length() == 2) {
+                if (Integer.parseInt(date.getYear()) > 20) {
+                    date.setYear("19" + date.getYear());
+                } else {
+                    date.setYear("20" + date.getYear());
+                }
+            }
+            return date;
+        }
+        return null;
+    }
+
+    private static dateModel dateParseFullSpelling(String oldDate) {
+        dateModel date = new dateModel();
+        if (monthMatch(oldDate)) {
+            String[] dateSplit = oldDate.split(" ");
+
+            if (dateSplit.length == 3) {
+
+                date.setMonth(monthNumber(dateSplit[0]));
+                date.setDay(dateSplit[1].replaceAll("[^0-9]", ""));
+                date.setYear(dateSplit[2].replaceAll("[^0-9]", ""));
+
+                if (date.getDay().length() == 1) {
+                    date.setDay("0" + date.getDay());
+                }
+                if (date.getYear().length() == 2) {
+                    if (Integer.parseInt(date.getYear()) > 20) {
+                        date.setYear("19" + date.getYear());
+                    } else {
+                        date.setYear("20" + date.getYear());
+                    }
+                }
+                return date;
+            }
+        }
+        return null;
+    }
+
     public static String convertLongToTime(long millis) {
         String duration = String.format("%02dhr %02dmin %02dsec",
                 TimeUnit.MILLISECONDS.toHours(millis),
@@ -208,10 +211,10 @@ public class StringUtilities {
                 - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                 TimeUnit.MILLISECONDS.toSeconds(millis)
                 - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-        if (TimeUnit.MILLISECONDS.toHours(millis) == 0){
+        if (TimeUnit.MILLISECONDS.toHours(millis) == 0) {
             String[] split = duration.split("hr");
             duration = split[1].trim();
-        }        
+        }
         return duration.trim();
     }
 
@@ -227,6 +230,46 @@ public class StringUtilities {
             }
         }
         return 0;
+    }
+
+    private static boolean monthMatch(String month) {
+        if (month != null){
+            for (String s : Global.monthList) {
+                if (month.toUpperCase().startsWith(s.toUpperCase())){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private static String monthNumber(String month){
+        if (       month.startsWith("Jan")){
+            return "01";
+        } else if (month.startsWith("Feb")){
+            return "02";
+        } else if (month.startsWith("Mar")){
+            return "03";
+        } else if (month.startsWith("Apr")){
+            return "04";
+        } else if (month.startsWith("May")){
+            return "05";
+        } else if (month.startsWith("Jun")){
+            return "06";
+        } else if (month.startsWith("Jul")){
+            return "07";
+        } else if (month.startsWith("Aug")){
+            return "08";
+        } else if (month.startsWith("Sep")){
+            return "09";
+        } else if (month.startsWith("Oct")){
+            return "10";
+        } else if (month.startsWith("Nov")){
+            return "11";
+        } else if (month.startsWith("Dec")){
+            return "12";
+        }
+        return null;
     }
     
 }
