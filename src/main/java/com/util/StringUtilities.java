@@ -7,9 +7,11 @@ package com.util;
 
 import com.model.caseNumberModel;
 import com.model.dateModel;
+import com.model.startTimeEndTimeModel;
 import com.model.userModel;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,7 +53,7 @@ public class StringUtilities {
             try {
                 byte[] bdata = text.getBytes(1, (int) text.length());
                 String blobString = new String(bdata).trim();
-                if (!"".equals(blobString.trim())){
+                if (!"".equals(blobString.trim())) {
                     return blobString.trim();
                 }
             } catch (SQLException ex) {
@@ -91,31 +93,35 @@ public class StringUtilities {
 
     public static Timestamp convertStringDateAndTime(String oldDate, String oldTime) {
         Pattern p = Pattern.compile("[a-zA-Z]");
-        
+
         oldDate = oldDate.trim();
         if (oldDate != null && !"".equals(oldDate) && p.matcher(oldDate).find() == false) {
             dateModel date = dateParseNumbers(oldDate);
-            
+
             String[] time = oldTime.replaceAll("\\.", "").split(":| ");
-                            
-                Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.YEAR, Integer.valueOf(date.getYear()));
-                cal.set(Calendar.MONTH, Integer.valueOf(date.getMonth()));
-                cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(date.getDay()));
-                
-                if(!"".equals(oldTime.trim())){
-                    int hour = Integer.valueOf(time[0]);
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, Integer.valueOf(date.getYear()));
+            cal.set(Calendar.MONTH, Integer.valueOf(date.getMonth()));
+            cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(date.getDay()));
+
+            if (!"".equals(oldTime.trim())) {
+                int hour = Integer.valueOf(time[0]);
+                if (hour < 12) {
                     cal.set(Calendar.HOUR_OF_DAY, time[2].equalsIgnoreCase("AM") ? hour : hour + 12);
-                    cal.set(Calendar.MINUTE, Integer.valueOf(time[1]));
                 } else {
-                    cal.set(Calendar.HOUR_OF_DAY, 0);
-                    cal.set(Calendar.MINUTE, 0);
+                    cal.set(Calendar.HOUR_OF_DAY, hour);
                 }
-                cal.set(Calendar.SECOND, 0);
-                cal.set(Calendar.MILLISECOND, 0);
-        
-                cal.getTimeInMillis();
-                return new Timestamp(cal.getTimeInMillis());
+                cal.set(Calendar.MINUTE, Integer.valueOf(time[1]));
+            } else {
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MINUTE, 0);
+            }
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+
+            cal.getTimeInMillis();
+            return new Timestamp(cal.getTimeInMillis());
         }
         return null;
     }
@@ -234,7 +240,7 @@ public class StringUtilities {
 
     private static boolean monthMatch(String month) {
         if (month != null){
-            for (String s : Global.monthList) {
+            for (String s : Global.getMonthList()) {
                 if (month.toUpperCase().startsWith(s.toUpperCase())){
                     return true;
                 }
@@ -268,6 +274,60 @@ public class StringUtilities {
             return "11";
         } else if (month.startsWith("Dec")){
             return "12";
+        }
+        return null;
+    }
+    
+    public static startTimeEndTimeModel splitTime(String time){
+        startTimeEndTimeModel sTeT = new startTimeEndTimeModel();
+        
+        String[] timeSplit = time.split("-");
+        if (timeSplit.length == 2){
+            sTeT.setStartTime(convertToSQLTime(timeSplit[0]));
+            sTeT.setEndTime(convertToSQLTime(timeSplit[1]));
+        }
+        return sTeT;
+    }
+    
+    private static Time convertToSQLTime(String time){
+        Calendar cal = Calendar.getInstance();
+        String numbers = TimeNumbers(time);
+        String ampm = AMPM(time);
+        
+        if (numbers != null && ampm != null) {
+            String[] nunmbersSplit = numbers.split(":");
+            
+            int hour = Integer.valueOf(nunmbersSplit[0]);
+            if (hour < 12){
+                cal.set(Calendar.HOUR_OF_DAY, ampm.equalsIgnoreCase("AM") ? hour : hour + 12);
+            } else {
+                cal.set(Calendar.HOUR_OF_DAY, hour);
+            }
+            cal.set(Calendar.MINUTE, Integer.valueOf(nunmbersSplit[1]));
+            
+            return java.sql.Time.valueOf(Global.getHhmmss().format(cal.getTime()));
+        }
+        return null;
+    }
+    
+    private static String TimeNumbers(String time) {
+        time = time.replaceAll("[^0-9]", "").trim();
+        if (time.length() == 3){
+            time = "0" + time;
+        }
+        if (time.length() == 4){
+            return new StringBuilder(time).insert(time.length()-2, ":").toString();
+        }
+        return null;
+    }
+    
+    private static String AMPM(String time) {
+        time = time.replaceAll("a-zA-Z", "").trim();
+        
+        if(time.toUpperCase().startsWith("A")){
+            return "AM";
+        } else if (time.toUpperCase().startsWith("P") || time.toUpperCase().startsWith("N")){
+            return "PM";
         }
         return null;
     }

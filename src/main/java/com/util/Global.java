@@ -19,45 +19,31 @@ public class Global {
     private static final boolean debug = true;
 
     private static final SimpleDateFormat mmddyyyyhhmmssa = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+    
+    private static final SimpleDateFormat hhmmss = new SimpleDateFormat("hh:mm:ss");
 
     private static List<userModel> userList;
 
-    public static List<userModel> getUserList() {
-        return userList;
-    }
-
-    public static void setUserList(List<userModel> userList) {
-        Global.userList = userList;
-    }
-
-    public static SimpleDateFormat getMmddyyyyhhmmssa() {
-        return mmddyyyyhhmmssa;
-    }
-
-    public static boolean isDebug() {
-        return debug;
-    }
-
-    public static final List<String> monthList = Arrays.asList("Jan", "Feb", 
+    private static final List<String> monthList = Arrays.asList("Jan", "Feb", 
             "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     );
         
-    public static final List<String> namePrefixList = Arrays.asList(
+    private static final List<String> namePrefixList = Arrays.asList(
             "Ms.", "Miss.", "Mrs.", "Messr.", "Messrs.", "Mses.", "Mr.", "Rev.",
             "Fr.", "Dr.", "Atty.", "Prof.", "Hon.", "The Honorable", "Pres.", 
             "Gov.", "Coach.", "Ofc.", "Supt.", "Captain", "Capt.", "Rep.", 
             "Sen.", "Treas.", "Sec.", "Adm."
     );
 
-    public static final List<String> suffixList = Arrays.asList(
+    private static final List<String> suffixList = Arrays.asList(
             "II", "III", "IV", "V", "Jr.", "Sr.", "Attorney"
     );
 
-    public static final List<String> nameTitleList = Arrays.asList(
+    private static final List<String> nameTitleList = Arrays.asList(
             "Esq", "Esq.", "Esquire"
     );
 
-    public static final List<String> jobTitleList = Arrays.asList(
+    private static final List<String> jobTitleList = Arrays.asList(
             "3rd District VP", "3rd District Vice President", "4th District Vice President",
             "Account Manager", "Acting Director", "Administrator", "Administrative Deputy",
             "Administrative Organizer", "Administrative Services Coordinator", "Administratve Organizer",
@@ -125,5 +111,45 @@ public class Global {
             "Vice President of HR", "Vice President/Business Agent", "Vice Provost for Academic Personnel", "VP for Legal Affairs",
             "VP of Human Resources", "VP of Human Resources & Labor Relations", "WEA President"
     );
+    
+    public static List<userModel> getUserList() {
+        return userList;
+    }
+
+    public static void setUserList(List<userModel> userList) {
+        Global.userList = userList;
+    }
+
+    public static List<String> getMonthList() {
+        return monthList;
+    }
+
+    public static List<String> getNamePrefixList() {
+        return namePrefixList;
+    }
+
+    public static List<String> getSuffixList() {
+        return suffixList;
+    }
+
+    public static List<String> getNameTitleList() {
+        return nameTitleList;
+    }
+
+    public static List<String> getJobTitleList() {
+        return jobTitleList;
+    }
+
+    public static SimpleDateFormat getMmddyyyyhhmmssa() {
+        return mmddyyyyhhmmssa;
+    }
+
+    public static SimpleDateFormat getHhmmss() {
+        return hhmmss;
+    }
+    
+    public static boolean isDebug() {
+        return debug;
+    }
 
 }

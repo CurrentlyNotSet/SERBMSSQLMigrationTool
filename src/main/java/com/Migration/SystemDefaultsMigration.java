@@ -57,7 +57,7 @@ public class SystemDefaultsMigration {
         List<caseTypeModel> caseTypeList = sqlCaseType.getOldCaseType();
         
         totalRecordCount = oldCountiesList.size() + deptInStateList.size() + systemEmailList.size() 
-                 + Global.namePrefixList.size() + partyTypesList.size() + activityTypeList.size();
+                 + Global.getNamePrefixList().size() + partyTypesList.size() + activityTypeList.size();
         
         for (oldCountyModel item : oldCountiesList){
             item.setActive(("OH".equals(item.getStateCode().trim())) ? 1 : 0);
@@ -80,7 +80,7 @@ public class SystemDefaultsMigration {
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getEmailAddress());
         }
         
-        for (String item : Global.namePrefixList){
+        for (String item : Global.getNamePrefixList()){
             sqlPreFix.addNamePrefix(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item);
         }

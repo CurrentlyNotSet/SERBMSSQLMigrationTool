@@ -145,7 +145,7 @@ public class ContactNameSeperator {
     
     private static boolean prefixMatch(String prefix) {
         if (prefix != null){
-            for (String s : Global.namePrefixList) {
+            for (String s : Global.getNamePrefixList()) {
                 if (s.trim().toUpperCase().equals(prefix.toUpperCase())) {
                     return true;
                 }
@@ -156,7 +156,7 @@ public class ContactNameSeperator {
     
     private static boolean suffixMatch(String suffix) {
         if (suffix != null){
-            for (String s : Global.suffixList) {
+            for (String s : Global.getSuffixList()) {
                 if (s.trim().toUpperCase().equals(suffix.toUpperCase())) {
                     return true;
                 }
@@ -167,7 +167,7 @@ public class ContactNameSeperator {
     
     private static boolean nameTitleMatch(String nameTitle) {
         if (nameTitle != null){
-            for (String s : Global.nameTitleList) {
+            for (String s : Global.getNameTitleList()) {
                 if (s.trim().toUpperCase().equals(nameTitle.toUpperCase())) {
                     return true;
                 }
@@ -178,7 +178,7 @@ public class ContactNameSeperator {
     
     private static boolean jobTitleMatch(String jobTitle) {
         if (jobTitle != null){
-            for (String s : Global.jobTitleList) {
+            for (String s : Global.getJobTitleList()) {
                 if (s.trim().toUpperCase().equals(jobTitle.toUpperCase())) {
                     return true;
                 }

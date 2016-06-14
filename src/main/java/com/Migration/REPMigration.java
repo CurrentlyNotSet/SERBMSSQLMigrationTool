@@ -8,6 +8,8 @@ package com.Migration;
 import com.model.BoardAcionTypeModel;
 import com.model.REPCaseStatusModel;
 import com.model.REPCaseTypeModel;
+import com.model.REPElectionMultiCase;
+import com.model.REPElectionSiteInformationModel;
 import com.model.REPMediationModel;
 import com.model.REPRecommendationModel;
 import com.model.REPcaseModel;
@@ -33,6 +35,8 @@ import com.sql.sqlREPCaseSearch;
 import com.sql.sqlREPCaseStatus;
 import com.sql.sqlREPCaseType;
 import com.sql.sqlREPData;
+import com.sql.sqlREPElectionMultiCase;
+import com.sql.sqlREPElectionSiteInformation;
 import com.sql.sqlREPMediation;
 import com.sql.sqlREPRecommendation;
 import com.util.Global;
@@ -113,6 +117,8 @@ public class REPMigration {
         migrateConversionSchoolRep(item, caseNumber);
         migrateCaseData(item, caseNumber);
         migrateBoardMeetings(item, caseNumber);
+        migrateMultiCaseElections(item, caseNumber);
+        migrateElectionSiteInfo(item, caseNumber);
         migrateMediations(item, caseNumber);
         migrateCaseSearch(item, caseNumber);
         migrateCaseHistory(caseNumber);
@@ -120,7 +126,6 @@ public class REPMigration {
     }
 
     private static void migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber) {
-
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -876,6 +881,79 @@ public class REPMigration {
             meeting.setMemoDate(!"".equals(item.getMemoDate5()) ? StringUtilities.convertStringDate(item.getMemoDate5()) : null);
             sqlBoardMeeting.addBoardMeeting(meeting);
         }        
+    }
+    
+    private static void migrateMultiCaseElections(oldREPDataModel item, caseNumberModel caseNumber) {
+        REPElectionMultiCase multi = new REPElectionMultiCase();
+        
+        multi.setActive(item.getActive());
+        multi.setCaseYear(caseNumber.getCaseYear());
+        multi.setCaseType(caseNumber.getCaseType());
+        multi.setCaseMonth(caseNumber.getCaseMonth());
+        multi.setCaseNumber(caseNumber.getCaseNumber());
+        
+        if (!"".equals(item.getElectionCaseNumber1().trim())){
+            multi.setMultiCase(item.getElectionCaseNumber1().trim());
+            sqlREPElectionMultiCase.addElectionSite(multi);
+        }
+        if (!"".equals(item.getElectionCaseNumber2().trim())){
+            multi.setMultiCase(item.getElectionCaseNumber2().trim());
+            sqlREPElectionMultiCase.addElectionSite(multi);
+        }
+        if (!"".equals(item.getElectionCaseNumber3().trim())){
+            multi.setMultiCase(item.getElectionCaseNumber3().trim());
+            sqlREPElectionMultiCase.addElectionSite(multi);
+        }
+        if (!"".equals(item.getElectionCaseNumber4().trim())){
+            multi.setMultiCase(item.getElectionCaseNumber4().trim());
+            sqlREPElectionMultiCase.addElectionSite(multi);
+        }
+        if (!"".equals(item.getElectionCaseNumber5().trim())){
+            multi.setMultiCase(item.getElectionCaseNumber5().trim());
+            sqlREPElectionMultiCase.addElectionSite(multi);
+        }
+        if (!"".equals(item.getElectionCaseNumber6().trim())){
+            multi.setMultiCase(item.getElectionCaseNumber6().trim());
+            sqlREPElectionMultiCase.addElectionSite(multi);
+        }
+    }
+    
+    private static void migrateElectionSiteInfo(oldREPDataModel item, caseNumberModel caseNumber) {
+        REPElectionSiteInformationModel site = new REPElectionSiteInformationModel();
+        
+        site.setActive(item.getActive());
+        site.setCaseYear(caseNumber.getCaseYear());
+        site.setCaseType(caseNumber.getCaseType());
+        site.setCaseMonth(caseNumber.getCaseMonth());
+        site.setCaseNumber(caseNumber.getCaseNumber());
+                
+        if (!"".equals(item.getSite1Location().trim()) || !"".equals(item.getSite1Place().trim()) || !"".equals(item.getSite1Date().trim())){
+//            site.setSiteDate(item.getSite1Date());
+//            site.setSiteTime(item.getSite1Time());
+            site.setSitePlace(!"".equals(item.getSite1Place().trim()) ? item.getSite1Place().trim() : null); 
+            site.setSiteAddress1(!"".equals(item.getSite1Address1().trim()) ? item.getSite1Address1().trim() : null);
+            site.setSiteAddress2(!"".equals(item.getSite1Address2().trim()) ? item.getSite1Address2().trim() : null);
+            site.setSiteLocation(!"".equals(item.getSite1Location().trim()) ? item.getSite1Location().trim() : null);
+            sqlREPElectionSiteInformation.addElectionSite(site);
+        }
+        if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())){
+//            site.setSiteDate(item.getSite2Date());
+//            site.setSiteTime(item.getSite2Time());
+            site.setSitePlace(!"".equals(item.getSite2Place().trim()) ? item.getSite2Place().trim() : null); 
+            site.setSiteAddress1(!"".equals(item.getSite2Address1().trim()) ? item.getSite2Address1().trim() : null);
+            site.setSiteAddress2(!"".equals(item.getSite2Address2().trim()) ? item.getSite2Address2().trim() : null);
+            site.setSiteLocation(!"".equals(item.getSite2Location().trim()) ? item.getSite2Location().trim() : null);
+            sqlREPElectionSiteInformation.addElectionSite(site);
+        }
+        if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())){
+//            site.setSiteDate(item.getSite3Date());
+//            site.setSiteTime(item.getSite3Time());
+            site.setSitePlace(!"".equals(item.getSite2Place().trim()) ? item.getSite2Place().trim() : null); 
+            site.setSiteAddress1(!"".equals(item.getSite2Address1().trim()) ? item.getSite2Address1().trim() : null);
+            site.setSiteAddress2(!"".equals(item.getSite2Address2().trim()) ? item.getSite2Address2().trim() : null);
+            site.setSiteLocation(!"".equals(item.getSite2Location().trim()) ? item.getSite2Location().trim() : null);
+            sqlREPElectionSiteInformation.addElectionSite(site);
+        }
     }
        
     private static void migrateCaseHistory(caseNumberModel caseNumber) {
