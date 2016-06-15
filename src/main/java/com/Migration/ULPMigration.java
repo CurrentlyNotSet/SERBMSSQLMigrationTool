@@ -278,7 +278,7 @@ public class ULPMigration {
             relatedCase.setCaseMonth(caseNumber.getCaseMonth());
             relatedCase.setCaseNumber(caseNumber.getCaseNumber());
 
-            String[] caseNumberArray = item.getRelatedCases().split("[" + System.getProperty("line.separator") + "\\,]");
+            String[] caseNumberArray = item.getRelatedCases().split("[" + System.lineSeparator() + "\\,]");
 
             for (String casenumber : caseNumberArray) {
                 if (!"".equals(casenumber.trim())) {

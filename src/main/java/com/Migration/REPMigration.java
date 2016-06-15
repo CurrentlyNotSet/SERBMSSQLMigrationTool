@@ -75,10 +75,10 @@ public class REPMigration {
         totalRecordCount = oldREPDataList.size() + REPBoardActionList.size() 
                 + REPCaseTypeList.size() + REPCaseStatusList.size() + REPrecList.size();
 
-        for (BoardAcionTypeModel item : REPBoardActionList){
-            sqlBoardActionType.addREPBoardActionType(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getShort());
-        }
+//        for (BoardAcionTypeModel item : REPBoardActionList){
+//            sqlBoardActionType.addREPBoardActionType(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getShort());
+//        }
         
         for (oldREPDataModel item : oldREPDataList) {
             migrateCase(item);
@@ -97,32 +97,32 @@ public class REPMigration {
     private static void migrateCase(oldREPDataModel item) {
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
         
-        migratePetitioner(item, caseNumber);
-        migratePetitionerRep(item, caseNumber);
-        migrateEmployer(item, caseNumber);
-        migrateEmployerRep(item, caseNumber);
-        migrateEmployeeOrg(item, caseNumber);
-        migrateEmployeeOrgRep(item, caseNumber);
-        migrateRivalEmployeeOrg(item, caseNumber);
-        migrateRivalEmployeeOrgRep(item, caseNumber);
-        migrateRivalEmployeeOrg2(item, caseNumber);
-        migrateRivalEmployeeOrg2Rep(item, caseNumber);
-        migrateRivalEmployeeOrg3(item, caseNumber);
-        migrateRivalEmployeeOrg3Rep(item, caseNumber);
-        migrateIncumbentEmployeeOrg(item, caseNumber);
-        migrateIncumbentEmployeeOrgRep(item, caseNumber);
-        migrateIntervener(item, caseNumber);
-        migrateIntervenerRep(item, caseNumber);
-        migrateConversionSchool(item, caseNumber);
-        migrateConversionSchoolRep(item, caseNumber);
+//        migratePetitioner(item, caseNumber);
+//        migratePetitionerRep(item, caseNumber);
+//        migrateEmployer(item, caseNumber);
+//        migrateEmployerRep(item, caseNumber);
+//        migrateEmployeeOrg(item, caseNumber);
+//        migrateEmployeeOrgRep(item, caseNumber);
+//        migrateRivalEmployeeOrg(item, caseNumber);
+//        migrateRivalEmployeeOrgRep(item, caseNumber);
+//        migrateRivalEmployeeOrg2(item, caseNumber);
+//        migrateRivalEmployeeOrg2Rep(item, caseNumber);
+//        migrateRivalEmployeeOrg3(item, caseNumber);
+//        migrateRivalEmployeeOrg3Rep(item, caseNumber);
+//        migrateIncumbentEmployeeOrg(item, caseNumber);
+//        migrateIncumbentEmployeeOrgRep(item, caseNumber);
+//        migrateIntervener(item, caseNumber);
+//        migrateIntervenerRep(item, caseNumber);
+//        migrateConversionSchool(item, caseNumber);
+//        migrateConversionSchoolRep(item, caseNumber);
         migrateCaseData(item, caseNumber);
-        migrateBoardMeetings(item, caseNumber);
-        migrateMultiCaseElections(item, caseNumber);
-        migrateElectionSiteInfo(item, caseNumber);
-        migrateMediations(item, caseNumber);
-        migrateCaseSearch(item, caseNumber);
-        migrateCaseHistory(caseNumber);
-        migrateEmployerCaseSearch(item, caseNumber);
+//        migrateBoardMeetings(item, caseNumber);
+//        migrateMultiCaseElections(item, caseNumber);
+//        migrateElectionSiteInfo(item, caseNumber);
+//        migrateMediations(item, caseNumber);
+//        migrateCaseSearch(item, caseNumber);
+//        migrateCaseHistory(caseNumber);
+//        migrateEmployerCaseSearch(item, caseNumber);
     }
 
     private static void migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -736,13 +736,11 @@ public class REPMigration {
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
                 case "Notes":
-                    if (rep.getSOIReturnIntials() != 0){
-                        rep.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    String note = StringUtilities.convertBlobFileToString(blob.getBlobData());
+                    if (rep.getSOIReturnIntials() == 0 && !"".equals(item.getSOIReturnInitials1().trim()) && note != null) {
+                        rep.setNote(item.getSOIReturnInitials1() + System.lineSeparator() + System.lineSeparator() + note);
                     } else {
-                        rep.setNote(item.getSOIReturnInitials1() 
-                                + System.getProperty("line.separator") + System.getProperty("line.separator")
-                                + StringUtilities.convertBlobFileToString(blob.getBlobData())
-                        );
+                        rep.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
                     }
                     break;
                 case "BUIN":
