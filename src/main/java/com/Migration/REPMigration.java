@@ -12,7 +12,7 @@ import com.model.REPElectionMultiCase;
 import com.model.REPElectionSiteInformationModel;
 import com.model.REPMediationModel;
 import com.model.REPRecommendationModel;
-import com.model.REPcaseModel;
+import com.model.REPCaseModel;
 import com.model.activityModel;
 import com.model.boardMeetingModel;
 import com.model.caseNumberModel;
@@ -75,10 +75,10 @@ public class REPMigration {
         totalRecordCount = oldREPDataList.size() + REPBoardActionList.size() 
                 + REPCaseTypeList.size() + REPCaseStatusList.size() + REPrecList.size();
 
-//        for (BoardAcionTypeModel item : REPBoardActionList){
-//            sqlBoardActionType.addREPBoardActionType(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getShort());
-//        }
+        for (BoardAcionTypeModel item : REPBoardActionList){
+            sqlBoardActionType.addREPBoardActionType(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getShort());
+        }
         
         for (oldREPDataModel item : oldREPDataList) {
             migrateCase(item);
@@ -97,32 +97,32 @@ public class REPMigration {
     private static void migrateCase(oldREPDataModel item) {
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
         
-//        migratePetitioner(item, caseNumber);
-//        migratePetitionerRep(item, caseNumber);
-//        migrateEmployer(item, caseNumber);
-//        migrateEmployerRep(item, caseNumber);
-//        migrateEmployeeOrg(item, caseNumber);
-//        migrateEmployeeOrgRep(item, caseNumber);
-//        migrateRivalEmployeeOrg(item, caseNumber);
-//        migrateRivalEmployeeOrgRep(item, caseNumber);
-//        migrateRivalEmployeeOrg2(item, caseNumber);
-//        migrateRivalEmployeeOrg2Rep(item, caseNumber);
-//        migrateRivalEmployeeOrg3(item, caseNumber);
-//        migrateRivalEmployeeOrg3Rep(item, caseNumber);
-//        migrateIncumbentEmployeeOrg(item, caseNumber);
-//        migrateIncumbentEmployeeOrgRep(item, caseNumber);
-//        migrateIntervener(item, caseNumber);
-//        migrateIntervenerRep(item, caseNumber);
-//        migrateConversionSchool(item, caseNumber);
-//        migrateConversionSchoolRep(item, caseNumber);
+        migratePetitioner(item, caseNumber);
+        migratePetitionerRep(item, caseNumber);
+        migrateEmployer(item, caseNumber);
+        migrateEmployerRep(item, caseNumber);
+        migrateEmployeeOrg(item, caseNumber);
+        migrateEmployeeOrgRep(item, caseNumber);
+        migrateRivalEmployeeOrg(item, caseNumber);
+        migrateRivalEmployeeOrgRep(item, caseNumber);
+        migrateRivalEmployeeOrg2(item, caseNumber);
+        migrateRivalEmployeeOrg2Rep(item, caseNumber);
+        migrateRivalEmployeeOrg3(item, caseNumber);
+        migrateRivalEmployeeOrg3Rep(item, caseNumber);
+        migrateIncumbentEmployeeOrg(item, caseNumber);
+        migrateIncumbentEmployeeOrgRep(item, caseNumber);
+        migrateIntervener(item, caseNumber);
+        migrateIntervenerRep(item, caseNumber);
+        migrateConversionSchool(item, caseNumber);
+        migrateConversionSchoolRep(item, caseNumber);
         migrateCaseData(item, caseNumber);
-//        migrateBoardMeetings(item, caseNumber);
-//        migrateMultiCaseElections(item, caseNumber);
-//        migrateElectionSiteInfo(item, caseNumber);
-//        migrateMediations(item, caseNumber);
-//        migrateCaseSearch(item, caseNumber);
-//        migrateCaseHistory(caseNumber);
-//        migrateEmployerCaseSearch(item, caseNumber);
+        migrateBoardMeetings(item, caseNumber);
+        migrateMultiCaseElections(item, caseNumber);
+        migrateElectionSiteInfo(item, caseNumber);
+        migrateMediations(item, caseNumber);
+        migrateCaseSearch(item, caseNumber);
+        migrateCaseHistory(caseNumber);
+        migrateEmployerCaseSearch(item, caseNumber);
     }
 
     private static void migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber) {
@@ -667,7 +667,7 @@ public class REPMigration {
 
     private static void migrateCaseData(oldREPDataModel item, caseNumberModel caseNumber) {
         List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(caseNumber);
-        REPcaseModel rep = new REPcaseModel();
+        REPCaseModel rep = new REPCaseModel();
         
         rep.setActive(item.getActive());
         rep.setCaseYear(caseNumber.getCaseYear());
@@ -732,6 +732,68 @@ public class REPMigration {
         rep.setEligibilityListDate(StringUtilities.convertStringDate(item.getEligibilityListDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getEligibilityListDate()).getTime()) : null);
         rep.setPreElectionConfDate(StringUtilities.convertStringDate(item.getPreElectionConfDate()) != null ? new Date(StringUtilities.convertStringDate(item.getPreElectionConfDate()).getTime()) : null);
         rep.setSelfReleasing(!"".equals(item.getSelfReleasing().trim()) ? item.getSelfReleasing().trim() : null);
+        
+        
+        
+        rep.setResultApproxNumberEligibleVoters(!"".equals(item.getResultsApproxNumEligible().trim()) ? StringUtilities.parseStringtoInt(item.getResultsApproxNumEligible().trim()) : -1);
+        rep.setResultVoidBallots(!"".equals(item.getResultsVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVoidBallots().trim()) : -1);
+        rep.setResultVotesCastForEEO(!"".equals(item.getResultsVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVoidBallots().trim()) : -1);
+        rep.setResultVotesCastForIncumbentEEO(!"".equals(item.getResultsVotesForIncumbent().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVotesForIncumbent().trim()) : -1);
+        rep.setResultVotesCastForRivalEEO1(!"".equals(item.getResultsVotesForRival().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVotesForRival().trim()) : -1);
+        rep.setResultVotesCastForRivalEEO2(!"".equals(item.getResultsVotesForRival2().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVotesForRival2().trim()) : -1);
+        rep.setResultVotesCastForRivalEEO3(!"".equals(item.getResultsVotesForRival3().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVotesForRival3().trim()) : -1);
+        rep.setResultVotesCastForNoRepresentative(!"".equals(item.getResultsVotesForNoREP().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVotesForNoREP().trim()) : -1);
+        rep.setResultValidVotesCounted(!"".equals(item.getResultsVaildCounted().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVaildCounted().trim()) : -1);
+        rep.setResultChallengedBallots(!"".equals(item.getResultsChallenged().trim()) ? StringUtilities.parseStringtoInt(item.getResultsChallenged().trim()) : -1);
+        rep.setResultTotalBallotsCast(!"".equals(item.getResultsTotalVotesCast().trim()) ? StringUtilities.parseStringtoInt(item.getResultsTotalVotesCast().trim()) : -1);
+        rep.setResultWhoPrevailed(!"".equals(item.getResultsWhoPrevailed().trim()) ? item.getResultsWhoPrevailed().trim() : null);
+        rep.setProfessionalApproxNumberEligible(!"".equals(item.getPApproxNumEligible().trim()) ? StringUtilities.parseStringtoInt(item.getPApproxNumEligible().trim()) : -1);
+        rep.setProfessionalYES(!"".equals(item.getPYES().trim()) ? StringUtilities.parseStringtoInt(item.getPYES().trim()) : -1);
+        rep.setProfessionalNO(!"".equals(item.getPNO().trim()) ? StringUtilities.parseStringtoInt(item.getPNO().trim()) : -1);
+        rep.setProfessionalChallenged(!"".equals(item.getPChallenged().trim()) ? StringUtilities.parseStringtoInt(item.getPChallenged().trim()) : -1);
+        rep.setProfessionalTotalVotes(!"".equals(item.getPTotalVotes().trim()) ? StringUtilities.parseStringtoInt(item.getPTotalVotes().trim()) : -1);
+        rep.setProfessionalOutcome(!"".equals(item.getPOutcome().trim()) ? item.getPOutcome().trim() : null);
+        rep.setProfessionalWhoPrevailed(!"".equals(item.getPWhoPrevailed().trim()) ? item.getPWhoPrevailed().trim() : null);
+        rep.setProfessionalVoidBallots(!"".equals(item.getPVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getPVoidBallots().trim()) : -1);
+        rep.setProfessionalValidVotes(!"".equals(item.getPValidVotes().trim()) ? StringUtilities.parseStringtoInt(item.getPValidVotes().trim()) : -1);
+        rep.setProfessionalVotesCastForNoRepresentative(!"".equals(item.getPVotesforNoREP().trim()) ? StringUtilities.parseStringtoInt(item.getPVotesforNoREP().trim()) : -1);
+        rep.setProfessionalVotesCastForEEO(!"".equals(item.getPVotesforEEO().trim()) ? StringUtilities.parseStringtoInt(item.getPVotesforEEO().trim()) : -1);
+        rep.setProfessionalVotesCstForIncumbentEEO(!"".equals(item.getPVotesforIncumbentEEO().trim()) ? StringUtilities.parseStringtoInt(item.getPVotesforIncumbentEEO().trim()) : -1);
+        rep.setProfessionalVotesCastForRivalEEO1(!"".equals(item.getPVotesCastforRivalEEO1().trim()) ? StringUtilities.parseStringtoInt(item.getPVotesCastforRivalEEO1().trim()) : -1);
+        rep.setProfessionalVotesCastForRivalEEO2(!"".equals(item.getPVotesCastforRivalEEO2().trim()) ? StringUtilities.parseStringtoInt(item.getPVotesCastforRivalEEO2().trim()) : -1);
+        rep.setProfessionalVotesCastForRivalEEO3(!"".equals(item.getPVotesCastforRivalEEO3().trim()) ? StringUtilities.parseStringtoInt(item.getPVotesCastforRivalEEO3().trim()) : -1);
+        rep.setNonprofessionalApproxNumberEligible(!"".equals(item.getNPApproxNumEligible().trim()) ? StringUtilities.parseStringtoInt(item.getNPApproxNumEligible().trim()) : -1);
+        rep.setNonprofessionalYES(!"".equals(item.getNPYES().trim()) ? StringUtilities.parseStringtoInt(item.getNPYES().trim()) : -1);
+        rep.setNonprofessionalNO(!"".equals(item.getNPNO().trim()) ? StringUtilities.parseStringtoInt(item.getNPNO().trim()) : -1);
+        rep.setNonprofessionalChallenged(!"".equals(item.getNPChallenged().trim()) ? StringUtilities.parseStringtoInt(item.getNPChallenged().trim()) : -1);
+        rep.setNonprofessionalTotalVotes(!"".equals(item.getNPTotalVotes().trim()) ? StringUtilities.parseStringtoInt(item.getNPTotalVotes().trim()) : -1);
+        rep.setNonprofessionalOutcome(!"".equals(item.getNPOutcome().trim()) ? item.getNPOutcome().trim() : null);
+        rep.setNonprofessionalWhoPrevailed(!"".equals(item.getNPWhoPrevailed().trim()) ? item.getNPWhoPrevailed().trim() : null);
+        rep.setNonprofessionalVoidBallots(!"".equals(item.getNPVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getNPVoidBallots().trim()) : -1);
+        rep.setNonprofessionalValidVotes(!"".equals(item.getNPValidVotes().trim()) ? StringUtilities.parseStringtoInt(item.getNPValidVotes().trim()) : -1);
+        rep.setNonprofessionalVotesCastForNoRepresentative(!"".equals(item.getNPVotesforNoREP().trim()) ? StringUtilities.parseStringtoInt(item.getNPVotesforNoREP().trim()) : -1);
+        rep.setNonprofessionalVotesCastForEEO(!"".equals(item.getNPVotesforEEO().trim()) ? StringUtilities.parseStringtoInt(item.getNPVotesforEEO().trim()) : -1);
+        rep.setNonprofessionalVotesCastForIncumbentEEO(!"".equals(item.getNPVotesforIncumbentEEO().trim()) ? StringUtilities.parseStringtoInt(item.getNPVotesforIncumbentEEO().trim()) : -1);
+        rep.setNonprofessionalVotesCastForRivalEEO1(!"".equals(item.getNPVotesCastforRivalEEO1().trim()) ? StringUtilities.parseStringtoInt(item.getNPVotesCastforRivalEEO1().trim()) : -1);
+        rep.setNonprofessionalVotesCastForRivalEEO2(!"".equals(item.getNPVotesCastforRivalEEO2().trim()) ? StringUtilities.parseStringtoInt(item.getNPVotesCastforRivalEEO2().trim()) : -1);
+        rep.setNonprofessionalVotesCastForRivalEEO3(!"".equals(item.getNPVotesCastforRivalEEO3().trim()) ? StringUtilities.parseStringtoInt(item.getNPVotesCastforRivalEEO3().trim()) : -1);
+        rep.setCombinedApproxNumberEligible(!"".equals(item.getCApproxNumEligible().trim()) ? StringUtilities.parseStringtoInt(item.getCApproxNumEligible().trim()) : -1);
+        rep.setCombinedYES(!"".equals(item.getCYes().trim()) ? StringUtilities.parseStringtoInt(item.getCYes().trim()) : -1);
+        rep.setCombinedNO(!"".equals(item.getCNo().trim()) ? StringUtilities.parseStringtoInt(item.getCNo().trim()) : -1);
+        rep.setCombinedChallenged(!"".equals(item.getCChallenged().trim()) ? StringUtilities.parseStringtoInt(item.getCChallenged().trim()) : -1);
+        rep.setCombinedTotalVotes(!"".equals(item.getCTotalVotes().trim()) ? StringUtilities.parseStringtoInt(item.getCTotalVotes().trim()) : -1);
+        rep.setCombinedOutcome(!"".equals(item.getCOutcome().trim()) ? item.getCOutcome().trim() : null);
+        rep.setCombinedWhoPrevailed(!"".equals(item.getCWhoPrevailed().trim()) ? item.getCWhoPrevailed().trim() : null);
+        rep.setCombinedVoidBallots(!"".equals(item.getCVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getCVoidBallots().trim()) : -1);
+        rep.setCombinedValidVotes(!"".equals(item.getCVaildVotes().trim()) ? StringUtilities.parseStringtoInt(item.getCVaildVotes().trim()) : -1);
+        rep.setCombinedVotesCastForNoRepresentative(!"".equals(item.getCVotesForNoREP().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesForNoREP().trim()) : -1);
+        rep.setCombinedVotesCastForEEO(!"".equals(item.getCVotesforEEO().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesforEEO().trim()) : -1);
+        rep.setCombinedVotesCastForIncumbentEEO(!"".equals(item.getCVotesForIncumbentEEO().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesForIncumbentEEO().trim()) : -1);
+        rep.setCombinedVotesCastForRivalEEO1(!"".equals(item.getCVotesCastforRivalEEO1().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesCastforRivalEEO1().trim()) : -1);
+        rep.setCombinedVotesCastForRivalEEO2(!"".equals(item.getCVotesCastforRivalEEO2().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesCastforRivalEEO2().trim()) : -1);
+        rep.setCombinedVotesCastForRivalEEO3(!"".equals(item.getCVotesCastforRivalEEO3().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesCastforRivalEEO3().trim()) : -1);
+
+
         
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {

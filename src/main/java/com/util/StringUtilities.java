@@ -332,4 +332,12 @@ public class StringUtilities {
         return null;
     }
     
+    public static int parseStringtoInt(String number) {
+        String numberCheck = number.replaceAll("[0-9]", "").trim();
+        if ("".equals(numberCheck.trim())) {
+            return Integer.parseInt(number);
+        }
+        return -1;
+    }
+
 }
