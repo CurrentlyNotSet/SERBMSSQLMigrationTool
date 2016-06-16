@@ -732,9 +732,6 @@ public class REPMigration {
         rep.setEligibilityListDate(StringUtilities.convertStringDate(item.getEligibilityListDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getEligibilityListDate()).getTime()) : null);
         rep.setPreElectionConfDate(StringUtilities.convertStringDate(item.getPreElectionConfDate()) != null ? new Date(StringUtilities.convertStringDate(item.getPreElectionConfDate()).getTime()) : null);
         rep.setSelfReleasing(!"".equals(item.getSelfReleasing().trim()) ? item.getSelfReleasing().trim() : null);
-        
-        
-        
         rep.setResultApproxNumberEligibleVoters(!"".equals(item.getResultsApproxNumEligible().trim()) ? StringUtilities.parseStringtoInt(item.getResultsApproxNumEligible().trim()) : -1);
         rep.setResultVoidBallots(!"".equals(item.getResultsVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVoidBallots().trim()) : -1);
         rep.setResultVotesCastForEEO(!"".equals(item.getResultsVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVoidBallots().trim()) : -1);
@@ -793,8 +790,6 @@ public class REPMigration {
         rep.setCombinedVotesCastForRivalEEO2(!"".equals(item.getCVotesCastforRivalEEO2().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesCastforRivalEEO2().trim()) : -1);
         rep.setCombinedVotesCastForRivalEEO3(!"".equals(item.getCVotesCastforRivalEEO3().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesCastforRivalEEO3().trim()) : -1);
 
-
-        
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
                 case "Notes":
