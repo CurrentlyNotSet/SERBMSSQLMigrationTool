@@ -5,7 +5,6 @@
  */
 package com.sql;
 
-import com.model.BarginingUnitModel;
 import com.model.partyTypeModel;
 import com.util.DBCInfo;
 import java.sql.Connection;

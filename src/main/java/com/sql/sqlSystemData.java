@@ -6,7 +6,6 @@
 package com.sql;
 
 import com.model.oldCountyModel;
-import com.model.oldULPDataModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -67,13 +66,13 @@ public class sqlSystemData {
                     + "?,"  //02
                     + "?,"  //03
                     + "?,"  //04
-                    + "?)"; //15
+                    + "?)"; //05
             ps = conn.prepareStatement(sql);
-            ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, item.getStateCode());
-            ps.setString( 3, item.getRegionCode());
-            ps.setString( 4, item.getCountyCode());
-            ps.setString( 5, item.getName());
+            ps.setInt   (1, item.getActive());
+            ps.setString(2, item.getStateCode());
+            ps.setString(3, item.getRegionCode());
+            ps.setString(4, item.getCountyCode());
+            ps.setString(5, item.getName());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

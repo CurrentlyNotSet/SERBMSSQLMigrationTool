@@ -170,29 +170,14 @@ public class sqlUsers {
                     + "ULPCaseWorker, "     //16
                     + "mediator, "          //17
                     + "ULPDocketing, "      //18
-                    + "REPDocketing, "       //19
+                    + "REPDocketing, "      //19
                     + "initials "           //20
                     + ") VALUES ("
-                    + "?, " //01 active
-                    + "?, " //02 firstName
-                    + "?, " //03 middleInital
-                    + "?, " //04 lastName
-                    + "?, " //05 username
-                    + "?, " //06 emailAddress
-                    + "?, " //07 workPhone
-                    + "?, " //08 passwordSalt
-                    + "?, " //09 password
-                    + "?, " //10 lastLoginDateTime
-                    + "?, " //11 lastLoginPCName
-                    + "?, " //12 activeLogin
-                    + "?, " //13 passwordReset
-                    + "?, " //14 applicationVersion
-                    + "?, " //15 defaultSection
-                    + "?, " //16 ULPCaseWorker
-                    + "?, " //17 mediator
-                    + "?, " //18 ULPDocketing
-                    + "?, " //19 REPDocketing
-                    + "?) ";//20 intiials
+                    + "?";              //01
+                    for(int i=1; i<20; i++){
+                        sql += ", ?";   //02-20
+                    }
+                     sql += ")";
             ps = conn.prepareStatement(sql);
             ps.setInt      ( 1, item.getActive());
             ps.setString   ( 2, item.getFirstName());

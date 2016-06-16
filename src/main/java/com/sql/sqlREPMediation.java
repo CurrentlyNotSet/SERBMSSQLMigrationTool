@@ -34,15 +34,11 @@ public class sqlREPMediation {
                     + "mediatorID, "        //08
                     + "mediationOutcome "   //09
                     + ") VALUES ("
-                    + "?,"  //01
-                    + "?,"  //02
-                    + "?,"  //03
-                    + "?,"  //04
-                    + "?,"  //05
-                    + "?,"  //06
-                    + "?,"  //07
-                    + "?,"  //08
-                    + "?)"; //09
+                    + "?";              //01
+                    for(int i=1; i<9; i++){
+                        sql += ", ?";   //02-09
+                    }
+                     sql += ")";
             ps = conn.prepareStatement(sql);
             ps.setString   (1, item.getCaseYear());
             ps.setString   (2, item.getCaseType());

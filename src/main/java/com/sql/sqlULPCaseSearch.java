@@ -33,14 +33,11 @@ public class sqlULPCaseSearch {
                     + "EmployerNumber, "//07
                     + "UnionNumber "    //08
                     + ") VALUES ("
-                    + "?,"  //01
-                    + "?,"  //02
-                    + "?,"  //03
-                    + "?,"  //04
-                    + "?,"  //05
-                    + "?,"  //06
-                    + "?,"  //07
-                    + "?)"; //08
+                    + "?";              //01
+                    for(int i=1; i<8; i++){
+                        sql += ", ?";   //02-08
+                    }
+                     sql += ")";
             ps = conn.prepareStatement(sql);
             ps.setString(1, item.getCaseYear());
             ps.setString(2, item.getCaseType());

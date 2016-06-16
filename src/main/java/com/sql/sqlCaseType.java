@@ -6,7 +6,6 @@
 package com.sql;
 
 import com.model.caseTypeModel;
-import com.model.historyTypeModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

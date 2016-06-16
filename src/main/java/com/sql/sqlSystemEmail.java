@@ -79,19 +79,11 @@ public class sqlSystemEmail {
                     + "outgoingPort, "      //12
                     + "outgoingFolder"      //13
                     + ") VALUES ("
-                    + "?,"  //01
-                    + "?,"  //02
-                    + "?,"  //03
-                    + "?,"  //04
-                    + "?,"  //05
-                    + "?,"  //06
-                    + "?,"  //07
-                    + "?,"  //08
-                    + "?,"  //09
-                    + "?,"  //10
-                    + "?,"  //11
-                    + "?,"  //12
-                    + "?)"; //13
+                    + "?";              //01
+                    for(int i=1; i<13; i++){
+                        sql += ", ?";   //02-13
+                    }
+                     sql += ")";
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getSection());

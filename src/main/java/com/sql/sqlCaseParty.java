@@ -50,29 +50,11 @@ public class sqlCaseParty {
                     + "phone2, "        //22
                     + "email  "         //23
                     + ") VALUES ("
-                    + "?, " //01 caseYear
-                    + "?, " //02 caseType
-                    + "?, " //03 caseMonth
-                    + "?, " //04 caseNumber
-                    + "?, " //05 partyID = none to master
-                    + "?, " //06 caseRelation
-                    + "?, " //07 prefix
-                    + "?, " //08 firstName
-                    + "?, " //09 middleInital
-                    + "?, " //10 lastName
-                    + "?, " //11 suffix
-                    + "?, " //12 nameTitle
-                    + "?, " //13 jobTitle
-                    + "?, " //14 companyName
-                    + "?, " //15 address1
-                    + "?, " //16 address2
-                    + "?, " //17 address3
-                    + "?, " //18 city
-                    + "?, " //19 stateCode
-                    + "?, " //20 zipCode
-                    + "?, " //21 phone1
-                    + "?, " //22 phone2
-                    + "?)"; //23 emailAddress
+                    + "?";              //01
+                    for(int i=1; i<23; i++){
+                        sql += ", ?";   //02-23
+                    }
+                     sql += ")";
             ps = conn.prepareStatement(sql);
             ps.setString( 1, item.getCaseYear());
             ps.setString( 2, item.getCaseType());

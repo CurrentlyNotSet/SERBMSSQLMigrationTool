@@ -708,23 +708,11 @@ public class sqlContactList {
                     + "phone2, "        //16
                     + "emailAddress  "  //17
                     + ") VALUES ("
-                    + "?, " //01 prefix
-                    + "?, " //02 firstName
-                    + "?, " //03 middleInital
-                    + "?, " //04 lastName
-                    + "?, " //05 suffix
-                    + "?, " //06 nameTitle
-                    + "?, " //07 jobTitle
-                    + "?, " //08 companyName
-                    + "?, " //09 address1
-                    + "?, " //10 address2
-                    + "?, " //11 address3
-                    + "?, " //12 city
-                    + "?, " //13 stateCode
-                    + "?, " //14 zipCode
-                    + "?, " //15 phone1
-                    + "?, " //16 phone2
-                    + "?) ";//17 emailAddress
+                    + "?";              //01
+                    for(int i=1; i<17; i++){
+                        sql += ", ?";   //02-17
+                    }
+                     sql += ")";
             ps = conn.prepareStatement(sql);
             ps.setString( 1, item.getPrefix());
             ps.setString( 2, item.getFirstName());

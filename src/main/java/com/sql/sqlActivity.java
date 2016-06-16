@@ -45,20 +45,11 @@ public class sqlActivity {
                     + "redacted, "        //13
                     + "awaitingTimeStamp "//14
                     + ") VALUES ("
-                    + "?,"  //01
-                    + "?,"  //02
-                    + "?,"  //03
-                    + "?,"  //04
-                    + "?,"  //05
-                    + "?,"  //06
-                    + "?,"  //07
-                    + "?,"  //08
-                    + "?,"  //09
-                    + "?,"  //10
-                    + "?,"  //11
-                    + "?,"  //12
-                    + "?,"  //13
-                    + "?)"; //14
+                    + "?";              //01
+                    for(int i=1; i<14; i++){
+                        sql += ", ?";   //02-14
+                    }
+                     sql += ")";
             ps = conn.prepareStatement(sql);
             ps.setString   ( 1, item.getCaseYear());
             ps.setString   ( 2, item.getCaseType());

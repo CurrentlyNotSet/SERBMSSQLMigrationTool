@@ -147,45 +147,19 @@ public class sqlULPData {
                     + "courtCaseNumber, "   //22
                     + "SERBCaseNumber, "    //23
                     + "finalDispositionStatus, "//24
-                    + "investigatorID, "    //25
-                    + "mediatorAssignedID, "//26
-                    + "aljID, "             //27
-                    + "statement, "         //28
-                    + "recommendation, "    //29
-                    + "investigationReveals, "//30
-                    + "note "//31
+                    + "investigatorID, "        //25
+                    + "mediatorAssignedID, "    //26
+                    + "aljID, "                 //27
+                    + "statement, "             //28
+                    + "recommendation, "        //29
+                    + "investigationReveals, "  //30
+                    + "note "                   //31
                     + ") VALUES ("
-                    + "?, " //01 
-                    + "?, " //02 
-                    + "?, " //03 
-                    + "?, " //04 
-                    + "?, " //05
-                    + "?, " //06 
-                    + "?, " //07 
-                    + "?, " //08 
-                    + "?, " //09 
-                    + "?, " //10 
-                    + "?, " //11 
-                    + "?, " //12 
-                    + "?, " //13 
-                    + "?, " //14 
-                    + "?, " //15 
-                    + "?, " //16 
-                    + "?, " //17 
-                    + "?, " //18 
-                    + "?, " //19 
-                    + "?, " //20 
-                    + "?, " //21 
-                    + "?, " //22 
-                    + "?, " //23 
-                    + "?, " //24 
-                    + "?, " //25 
-                    + "?, " //26 
-                    + "?, " //27 
-                    + "?, " //28 
-                    + "?, " //29 
-                    + "?, " //30 
-                    + "?)"; //31 
+                    + "?";              //01
+                    for(int i=1; i<31; i++){
+                        sql += ", ?";   //02-31
+                    }
+                     sql += ")";
             ps = conn.prepareStatement(sql);
             ps.setString   ( 1, item.getCaseYear());
             ps.setString   ( 2, item.getCaseType());

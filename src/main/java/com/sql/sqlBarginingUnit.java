@@ -88,25 +88,11 @@ public class sqlBarginingUnit {
                     + "UnitDescription, "   //18
                     + "Notes"               //19
                     + ") VALUES ("
-                    + "?,"  //01
-                    + "?,"  //02
-                    + "?,"  //03
-                    + "?,"  //04
-                    + "?,"  //05
-                    + "?,"  //06
-                    + "?,"  //07
-                    + "?,"  //08
-                    + "?,"  //09
-                    + "?,"  //10
-                    + "?,"  //11
-                    + "?,"  //12
-                    + "?,"  //13
-                    + "?,"  //14
-                    + "?,"  //15
-                    + "?,"  //16
-                    + "?,"  //17
-                    + "?,"  //18
-                    + "?)"; //19
+                    + "?";              //01
+                    for(int i=1; i<19; i++){
+                        sql += ", ?";   //02-19
+                    }
+                     sql += ")";
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getEmployerNumber());
