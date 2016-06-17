@@ -240,12 +240,11 @@ public class sqlMEDData {
                     + "caseNumber, "//05
                     + "note, "      //06
                     + "fileDate "   //07
-                    + ") VALUES ("
-                    + "?";              //01
-                    for(int i=1; i<07; i++){
-                        sql += ", ?";   //02-07
+                    + ") VALUES (";
+                    for(int i=0; i<06; i++){
+                        sql += "?, ";   //01-06
                     }
-                     sql += ")";
+                     sql += "?)";   //07
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getCaseYear());

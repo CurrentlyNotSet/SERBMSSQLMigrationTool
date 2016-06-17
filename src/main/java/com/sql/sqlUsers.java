@@ -172,12 +172,11 @@ public class sqlUsers {
                     + "ULPDocketing, "      //18
                     + "REPDocketing, "      //19
                     + "initials "           //20
-                    + ") VALUES ("
-                    + "?";              //01
-                    for(int i=1; i<20; i++){
-                        sql += ", ?";   //02-20
+                    + ") VALUES (";
+                    for(int i=0; i<19; i++){
+                        sql += "?, ";   //01-19
                     }
-                     sql += ")";
+                     sql += "?)";   //20
             ps = conn.prepareStatement(sql);
             ps.setInt      ( 1, item.getActive());
             ps.setString   ( 2, item.getFirstName());

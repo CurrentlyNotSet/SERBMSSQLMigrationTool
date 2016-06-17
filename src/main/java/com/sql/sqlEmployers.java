@@ -52,17 +52,16 @@ public class sqlEmployers {
                     + "EmployerTypeCode, "  //21
                     + "Jurisdiction, "      //22
                     + "Region, "            //23
-                    + "AssistantFirstName, "//24
+                    + "AssistantFirstName, "    //24
                     + "AssistantMiddleInitial, "//25
-                    + "AssistantLastName, " //26
-                    + "AssistantEmail, "    //27
-                    + "County"              //28
-                    + ") VALUES ("
-                    + "?";              //01
-                    for(int i=1; i<14; i++){
-                        sql += ", ?";   //02-18
+                    + "AssistantLastName, "     //26
+                    + "AssistantEmail, "        //27
+                    + "County"                  //28
+                    + ") VALUES (";
+                    for(int i=0; i<27; i++){
+                        sql += "?, ";   //01-27
                     }
-                     sql += ")";
+                     sql += "?)"; //28
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());             
             ps.setInt   ( 2, item.getEmployerType());       

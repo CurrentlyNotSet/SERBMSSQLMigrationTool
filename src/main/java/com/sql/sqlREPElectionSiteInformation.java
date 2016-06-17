@@ -35,12 +35,11 @@ public class sqlREPElectionSiteInformation {
                     + "siteAddress1, "//09
                     + "siteAddress2, "//10
                     + "siteLocation " //11
-                    + ") VALUES ("
-                    + "?";              //01
-                    for(int i=1; i<11; i++){
-                        sql += ", ?";   //02-11
+                    + ") VALUES (";
+                    for(int i=0; i<10; i++){
+                        sql += "?, ";   //01-10
                     }
-                     sql += ")";
+                     sql += "?)";   //11
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getCaseYear());

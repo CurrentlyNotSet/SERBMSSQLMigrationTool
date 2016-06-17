@@ -87,12 +87,11 @@ public class sqlBarginingUnit {
                     + "CaseRefSequence, "   //17
                     + "UnitDescription, "   //18
                     + "Notes"               //19
-                    + ") VALUES ("
-                    + "?";              //01
-                    for(int i=1; i<19; i++){
-                        sql += ", ?";   //02-19
+                    + ") VALUES ("; 
+                    for(int i=0; i<18; i++){
+                        sql += "?, ";   //01-18
                     }
-                     sql += ")";
+                     sql += "?)"; //19
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getEmployerNumber());

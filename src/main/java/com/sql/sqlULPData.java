@@ -154,12 +154,11 @@ public class sqlULPData {
                     + "recommendation, "        //29
                     + "investigationReveals, "  //30
                     + "note "                   //31
-                    + ") VALUES ("
-                    + "?";              //01
-                    for(int i=1; i<31; i++){
-                        sql += ", ?";   //02-31
+                    + ") VALUES (";
+                    for(int i=0; i<30; i++){
+                        sql += "?, ";   //01-30
                     }
-                     sql += ")";
+                     sql += "?)";   //31
             ps = conn.prepareStatement(sql);
             ps.setString   ( 1, item.getCaseYear());
             ps.setString   ( 2, item.getCaseType());

@@ -49,12 +49,11 @@ public class sqlCaseParty {
                     + "phone1, "        //21
                     + "phone2, "        //22
                     + "email  "         //23
-                    + ") VALUES ("
-                    + "?";              //01
-                    for(int i=1; i<23; i++){
-                        sql += ", ?";   //02-23
+                    + ") VALUES (";
+                    for(int i=0; i<22; i++){
+                        sql += ", ?";   //01-22
                     }
-                     sql += ")";
+                     sql += "?)"; //23
             ps = conn.prepareStatement(sql);
             ps.setString( 1, item.getCaseYear());
             ps.setString( 2, item.getCaseType());

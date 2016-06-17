@@ -547,12 +547,11 @@ public class sqlREPData {
                     + "combinedVotesCastForRivalEEO1, "       //127
                     + "combinedVotesCastForRivalEEO2, "       //128
                     + "combinedVotesCastForRivalEEO3"         //129
-                    + ") VALUES ("
-                    + "?";              //001
-                    for(int i=1; i<129; i++){
-                        sql += ", ?";   //002-129
+                    + ") VALUES (";
+                    for(int i=0; i<128; i++){
+                        sql += "?, ";   //01-128
                     }
-                     sql += ")"; 
+                     sql += "?)";   //129
             ps = conn.prepareStatement(sql);
             ps.setInt      ( 1, item.getActive());
             ps.setString   ( 2, item.getCaseYear());

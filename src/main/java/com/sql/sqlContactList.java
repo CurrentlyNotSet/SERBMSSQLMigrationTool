@@ -707,12 +707,11 @@ public class sqlContactList {
                     + "phone1, "        //15
                     + "phone2, "        //16
                     + "emailAddress  "  //17
-                    + ") VALUES ("
-                    + "?";              //01
-                    for(int i=1; i<17; i++){
-                        sql += ", ?";   //02-17
+                    + ") VALUES (";
+                    for(int i=0; i<16; i++){
+                        sql += "?, ";   //01-16
                     }
-                     sql += ")";
+                     sql += "?)"; //17
             ps = conn.prepareStatement(sql);
             ps.setString( 1, item.getPrefix());
             ps.setString( 2, item.getFirstName());

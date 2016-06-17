@@ -44,12 +44,11 @@ public class sqlActivity {
                     + "comment, "         //12
                     + "redacted, "        //13
                     + "awaitingTimeStamp "//14
-                    + ") VALUES ("
-                    + "?";              //01
-                    for(int i=1; i<14; i++){
-                        sql += ", ?";   //02-14
+                    + ") VALUES (";
+                    for(int i=0; i<13; i++){
+                        sql += "?, ";   //01-13
                     }
-                     sql += ")";
+                     sql += "?)"; //14
             ps = conn.prepareStatement(sql);
             ps.setString   ( 1, item.getCaseYear());
             ps.setString   ( 2, item.getCaseType());
