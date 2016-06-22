@@ -22,6 +22,7 @@ import com.model.oldBlobFileModel;
 import com.model.oldREPDataModel;
 import com.model.oldREPHistoryModel;
 import com.model.repCaseSearchModel;
+import com.model.startTimeEndTimeModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
@@ -983,8 +984,10 @@ public class REPMigration {
         site.setCaseNumber(caseNumber.getCaseNumber());
                 
         if (!"".equals(item.getSite1Location().trim()) || !"".equals(item.getSite1Place().trim()) || !"".equals(item.getSite1Date().trim())){
-//            site.setSiteDate(item.getSite1Date());
-//            site.setSiteTime(item.getSite1Time());
+            startTimeEndTimeModel time = StringUtilities.splitTime(item.getSite1Time());
+            site.setSiteDate(null);
+            site.setSiteStartTime(time.getStartTime());
+            site.setSiteEndTime(time.getEndTime());
             site.setSitePlace(!"".equals(item.getSite1Place().trim()) ? item.getSite1Place().trim() : null); 
             site.setSiteAddress1(!"".equals(item.getSite1Address1().trim()) ? item.getSite1Address1().trim() : null);
             site.setSiteAddress2(!"".equals(item.getSite1Address2().trim()) ? item.getSite1Address2().trim() : null);
@@ -992,8 +995,11 @@ public class REPMigration {
             sqlREPElectionSiteInformation.addElectionSite(site);
         }
         if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())){
-//            site.setSiteDate(item.getSite2Date());
-//            site.setSiteTime(item.getSite2Time());
+            startTimeEndTimeModel time = StringUtilities.splitTime(item.getSite2Time());
+            
+            site.setSiteDate(null);
+            site.setSiteStartTime(time.getStartTime());
+            site.setSiteEndTime(time.getEndTime());
             site.setSitePlace(!"".equals(item.getSite2Place().trim()) ? item.getSite2Place().trim() : null); 
             site.setSiteAddress1(!"".equals(item.getSite2Address1().trim()) ? item.getSite2Address1().trim() : null);
             site.setSiteAddress2(!"".equals(item.getSite2Address2().trim()) ? item.getSite2Address2().trim() : null);
@@ -1001,8 +1007,10 @@ public class REPMigration {
             sqlREPElectionSiteInformation.addElectionSite(site);
         }
         if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())){
-//            site.setSiteDate(item.getSite3Date());
-//            site.setSiteTime(item.getSite3Time());
+            startTimeEndTimeModel time = StringUtilities.splitTime(item.getSite3Time());
+            site.setSiteDate(null);
+            site.setSiteStartTime(time.getStartTime());
+            site.setSiteEndTime(time.getEndTime());
             site.setSitePlace(!"".equals(item.getSite2Place().trim()) ? item.getSite2Place().trim() : null); 
             site.setSiteAddress1(!"".equals(item.getSite2Address1().trim()) ? item.getSite2Address1().trim() : null);
             site.setSiteAddress2(!"".equals(item.getSite2Address2().trim()) ? item.getSite2Address2().trim() : null);

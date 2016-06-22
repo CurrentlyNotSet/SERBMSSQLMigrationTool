@@ -24,22 +24,23 @@ public class sqlREPElectionSiteInformation {
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
             String sql = "Insert INTO REPElectionSiteInformation ("
-                    + "active, "      //01
-                    + "caseYear, "    //02
-                    + "caseType, "    //03
-                    + "caseMonth, "   //04
-                    + "caseNumber, "  //05
-                    + "siteDate, "    //06
-                    + "siteTime, "    //07
-                    + "sitePlace, "   //08
-                    + "siteAddress1, "//09
-                    + "siteAddress2, "//10
-                    + "siteLocation " //11
+                    + "active, "        //01
+                    + "caseYear, "      //02
+                    + "caseType, "      //03
+                    + "caseMonth, "     //04
+                    + "caseNumber, "    //05
+                    + "siteDate, "      //06
+                    + "siteStartTime, " //07
+                    + "siteEndTime, "   //08
+                    + "sitePlace, "     //09
+                    + "siteAddress1, "  //10
+                    + "siteAddress2, "  //11
+                    + "siteLocation "   //12
                     + ") VALUES (";
-                    for(int i=0; i<10; i++){
-                        sql += "?, ";   //01-10
+                    for(int i=0; i<11; i++){
+                        sql += "?, ";   //01-11
                     }
-                     sql += "?)";   //11
+                     sql += "?)";   //12
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getCaseYear());
@@ -47,11 +48,12 @@ public class sqlREPElectionSiteInformation {
             ps.setString( 4, item.getCaseMonth());
             ps.setString( 5, item.getCaseNumber());
             ps.setDate  ( 6, item.getSiteDate());
-            ps.setTime  ( 7, item.getSiteTime());
-            ps.setString( 8, item.getSitePlace());
-            ps.setString( 9, item.getSiteAddress1());
-            ps.setString(10, item.getSiteAddress2());
-            ps.setString(11, item.getSiteLocation());
+            ps.setTime  ( 7, item.getSiteStartTime());
+            ps.setTime  ( 8, item.getSiteEndTime());
+            ps.setString( 9, item.getSitePlace());
+            ps.setString(10, item.getSiteAddress1());
+            ps.setString(11, item.getSiteAddress2());
+            ps.setString(12, item.getSiteLocation());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

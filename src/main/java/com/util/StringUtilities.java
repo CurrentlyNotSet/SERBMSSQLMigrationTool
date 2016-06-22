@@ -290,22 +290,22 @@ public class StringUtilities {
     }
     
     private static Time convertToSQLTime(String time){
-        Calendar cal = Calendar.getInstance();
         String numbers = TimeNumbers(time);
         String ampm = AMPM(time);
+        String hour = "";
+        
         
         if (numbers != null && ampm != null) {
-            String[] nunmbersSplit = numbers.split(":");
+            String[] numbersSplit = numbers.split(":");
             
-            int hour = Integer.valueOf(nunmbersSplit[0]);
-            if (hour < 12){
-                cal.set(Calendar.HOUR_OF_DAY, ampm.equalsIgnoreCase("AM") ? hour : hour + 12);
+            int hourBlock = Integer.valueOf(numbersSplit[0]);
+            if (hourBlock < 12){
+                hour = String.valueOf(ampm.equalsIgnoreCase("AM") ? hourBlock : hourBlock + 12);
             } else {
-                cal.set(Calendar.HOUR_OF_DAY, hour);
+                hour = String.valueOf(hourBlock);
             }
-            cal.set(Calendar.MINUTE, Integer.valueOf(nunmbersSplit[1]));
             
-            return java.sql.Time.valueOf(Global.getHhmmss().format(cal.getTime()));
+            return java.sql.Time.valueOf(hour + ":" + numbersSplit[1] + ":00");
         }
         return null;
     }
@@ -322,7 +322,7 @@ public class StringUtilities {
     }
     
     private static String AMPM(String time) {
-        time = time.replaceAll("a-zA-Z", "").trim();
+        time = time.replaceAll("[^a-zA-Z]", "").trim();
         
         if(time.toUpperCase().startsWith("A")){
             return "AM";

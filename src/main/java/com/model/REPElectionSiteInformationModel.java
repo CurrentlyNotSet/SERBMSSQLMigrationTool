@@ -21,7 +21,8 @@ public class REPElectionSiteInformationModel {
     private String caseMonth;
     private String caseNumber;
     private Date siteDate;
-    private Time siteTime;
+    private Time siteStartTime;
+    private Time siteEndTime;
     private String sitePlace;
     private String siteAddress1;
     private String siteAddress2;
@@ -83,12 +84,20 @@ public class REPElectionSiteInformationModel {
         this.siteDate = siteDate;
     }
 
-    public Time getSiteTime() {
-        return siteTime;
+    public Time getSiteStartTime() {
+        return siteStartTime;
     }
 
-    public void setSiteTime(Time siteTime) {
-        this.siteTime = siteTime;
+    public void setSiteStartTime(Time siteStartTime) {
+        this.siteStartTime = siteStartTime;
+    }
+
+    public Time getSiteEndTime() {
+        return siteEndTime;
+    }
+
+    public void setSiteEndTime(Time siteEndTime) {
+        this.siteEndTime = siteEndTime;
     }
 
     public String getSitePlace() {
