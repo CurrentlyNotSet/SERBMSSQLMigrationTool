@@ -5,7 +5,7 @@
  */
 package com.Migration;
 
-import com.model.BoardAcionTypeModel;
+import com.model.boardAcionTypeModel;
 import com.model.REPCaseStatusModel;
 import com.model.REPCaseTypeModel;
 import com.model.REPElectionMultiCase;
@@ -68,7 +68,7 @@ public class REPMigration {
         int totalRecordCount = 0;
         int currentRecord = 0;
         List<oldREPDataModel> oldREPDataList = sqlREPData.getCases();
-        List<BoardAcionTypeModel> REPBoardActionList = sqlBoardActionType.getOldBoardActionType();
+        List<boardAcionTypeModel> REPBoardActionList = sqlBoardActionType.getOldBoardActionType();
         List<REPCaseTypeModel> REPCaseTypeList = sqlREPCaseType.getOldREPCaseType();
         List<REPRecommendationModel> REPrecList = sqlREPRecommendation.getOldREPRecommendation();
         List<REPCaseStatusModel> REPCaseStatusList = sqlREPCaseStatus.getOldREPCaseStatus();
@@ -76,7 +76,7 @@ public class REPMigration {
         totalRecordCount = oldREPDataList.size() + REPBoardActionList.size() 
                 + REPCaseTypeList.size() + REPCaseStatusList.size() + REPrecList.size();
 
-        for (BoardAcionTypeModel item : REPBoardActionList){
+        for (boardAcionTypeModel item : REPBoardActionList){
             sqlBoardActionType.addREPBoardActionType(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getShort());
         }

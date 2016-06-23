@@ -5,7 +5,7 @@
  */
 package com.sql;
 
-import com.model.BoardAcionTypeModel;
+import com.model.boardAcionTypeModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,8 +21,8 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlBoardActionType {
     
-    public static List<BoardAcionTypeModel> getOldBoardActionType() {
-        List<BoardAcionTypeModel> list = new ArrayList();
+    public static List<boardAcionTypeModel> getOldBoardActionType() {
+        List<boardAcionTypeModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -32,7 +32,7 @@ public class sqlBoardActionType {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                BoardAcionTypeModel item = new BoardAcionTypeModel();
+                boardAcionTypeModel item = new boardAcionTypeModel();
                 item.setId(rs.getInt("BoardActionTypeID"));
                 item.setActive(rs.getInt("Active"));
                 item.setShort(!"".equals(rs.getString("Short").trim()) ? rs.getString("Short").trim() : null);
@@ -49,7 +49,7 @@ public class sqlBoardActionType {
         return list;
     }
         
-    public static void addREPBoardActionType(BoardAcionTypeModel item) {
+    public static void addREPBoardActionType(boardAcionTypeModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {

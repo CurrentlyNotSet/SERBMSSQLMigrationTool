@@ -11,7 +11,7 @@ import java.sql.Date;
  *
  * @author Andrew
  */
-public class BarginingUnitModel {
+public class barginingUnitModel {
     private int id;
     private int Active;
     private String EmployerNumber;

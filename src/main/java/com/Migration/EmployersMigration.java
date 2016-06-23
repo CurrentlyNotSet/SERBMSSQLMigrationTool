@@ -5,7 +5,7 @@
  */
 package com.Migration;
 
-import com.model.BarginingUnitModel;
+import com.model.barginingUnitModel;
 import com.model.employerTypeModel;
 import com.model.employersModel;
 import com.model.oldBarginingUnitNewModel;
@@ -119,7 +119,7 @@ public class EmployersMigration {
     }
 
     private static void migrateBarginingUnitUnions(oldBarginingUnitNewModel old) {
-        BarginingUnitModel item = new BarginingUnitModel();
+        barginingUnitModel item = new barginingUnitModel();
         
         item.setCaseRefYear(null);
         item.setCaseRefSection(null);

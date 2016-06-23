@@ -5,7 +5,7 @@
  */
 package com.sql;
 
-import com.model.BarginingUnitModel;
+import com.model.barginingUnitModel;
 import com.model.oldBarginingUnitNewModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
@@ -62,7 +62,7 @@ public class sqlBarginingUnit {
         return list;
     }
         
-    public static void addBarginingUnit(BarginingUnitModel item) {
+    public static void addBarginingUnit(barginingUnitModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {

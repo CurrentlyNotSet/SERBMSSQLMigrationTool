@@ -20,8 +20,7 @@ import org.apache.commons.dbutils.DbUtils;
  * @author User
  */
 public class sqlCaseType {
-    
-    
+        
     public static List<caseTypeModel> getOldCaseType() {
         List<caseTypeModel> list = new ArrayList();
         Connection conn = null;

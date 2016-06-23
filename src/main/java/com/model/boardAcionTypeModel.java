@@ -9,7 +9,7 @@ package com.model;
  *
  * @author User
  */
-public class BoardAcionTypeModel {
+public class boardAcionTypeModel {
     private int id;
     private int Active;
     private String Short;
