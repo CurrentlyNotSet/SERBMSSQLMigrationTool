@@ -104,7 +104,7 @@ public class SystemDefaultsMigration {
         
         for (systemExecutiveModel item : execList){
             migrateExec(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getName());
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName() + " " + item.getLastName());
         }
         
         for (administrationInformationModel item : systemInfoList){
@@ -122,8 +122,23 @@ public class SystemDefaultsMigration {
     }
 
     private static void migrateExec(systemExecutiveModel item) {
+        String[] nameSplit = item.getLastName().split(" ");
+        
+        if (nameSplit.length == 2){
+            item.setFirstName(nameSplit[0]);
+            item.setLastName(nameSplit[1]);
+        } else if (nameSplit.length == 3) {
+            item.setFirstName(nameSplit[0]);
+            item.setMiddleName(nameSplit[1]);
+            item.setLastName(nameSplit[2]);
+        } else {
+            item.setFirstName(null);
+            item.setMiddleName(null);
+            item.setLastName(null);
+        }
+        
+        
         item.setPosition("".equals(item.getPosition()) ? null : item.getPosition());
-        item.setName("".equals(item.getName()) ? null : item.getName());
         item.setPhone("".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""));
         item.setEmail("".equals(item.getEmail()) ? null : item.getEmail());
                 

@@ -14,7 +14,9 @@ public class systemExecutiveModel {
     private int active;
     private String department;
     private String position;
-    private String Name;
+    private String firstName;
+    private String middleName;
+    private String lastName;
     private String phone;
     private String email;
 
@@ -50,12 +52,28 @@ public class systemExecutiveModel {
         this.position = position;
     }
 
-    public String getName() {
-        return Name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String Name) {
-        this.Name = Name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPhone() {

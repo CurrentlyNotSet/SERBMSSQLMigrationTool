@@ -41,7 +41,7 @@ public class sqlSystemExecutive {
                 item.setActive(rs.getInt("Active"));
                 item.setDepartment(rs.getString("Department").trim());
                 item.setPosition(rs.getString("Position").trim());
-                item.setName(rs.getString("Name").trim());
+                item.setLastName(rs.getString("Name").trim());
                 item.setPhone(rs.getString("Phone").trim());
                 item.setEmail(rs.getString("EMail").trim());
                 list.add(item);
@@ -65,21 +65,25 @@ public class sqlSystemExecutive {
                     + "active, "     //01
                     + "department, " //02
                     + "position, "   //03
-                    + "Name, "       //04
-                    + "phoneNumber, "//05
-                    + "email "       //06
+                    + "firstName, "  //04
+                    + "middleName, " //05
+                    + "lastName, "   //06
+                    + "phoneNumber, "//07
+                    + "email "       //08
                     + ") VALUES (";
-                    for(int i=0; i<5; i++){
-                        sql += "?, ";//01-05
+                    for(int i=0; i<7; i++){
+                        sql += "?, ";//01-07
                     }
-                     sql += "?)";    //06
+                     sql += "?)";    //08
             ps = conn.prepareStatement(sql);
             ps.setInt   (1, item.getActive());
             ps.setString(2, item.getDepartment());
             ps.setString(3, item.getPosition());
-            ps.setString(4, item.getName());
-            ps.setString(5, item.getPhone());
-            ps.setString(6, item.getEmail());
+            ps.setString(4, item.getFirstName());
+            ps.setString(5, item.getMiddleName());
+            ps.setString(6, item.getLastName());
+            ps.setString(7, item.getPhone());
+            ps.setString(8, item.getEmail());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
