@@ -51,7 +51,7 @@ public class sqlCaseParty {
                     + "email  "         //23
                     + ") VALUES (";
                     for(int i=0; i<22; i++){
-                        sql += ", ?";   //01-22
+                        sql += "?, ";   //01-22
                     }
                      sql += "?)"; //23
             ps = conn.prepareStatement(sql);

@@ -34,7 +34,7 @@ public class sqlBoardMeeting {
                     + "memoDate "         //08
                     + ") VALUES (";
                     for(int i=0; i<7; i++){
-                        sql += ", ?";   //01-07
+                        sql += "?, ";   //01-07
                     }
                      sql += "?)"; //08
             ps = conn.prepareStatement(sql);
