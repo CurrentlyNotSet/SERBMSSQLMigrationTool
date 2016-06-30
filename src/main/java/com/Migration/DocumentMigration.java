@@ -6,12 +6,9 @@
 package com.Migration;
 
 import com.model.oldDocumentModel;
-import com.model.partyTypeModel;
-import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlDocument;
 import com.sql.sqlMigrationStatus;
-import com.sql.sqlPartyType;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
@@ -39,11 +36,10 @@ public class DocumentMigration {
         int totalRecordCount = 0;
         int currentRecord = 0;
         List<oldDocumentModel> oldDocumentList = sqlDocument.getOldDocuments();
-
         totalRecordCount = oldDocumentList.size();
         
         for (oldDocumentModel item : oldDocumentList){
-            sqlDocument.addSMDSDocument(item);
+            migrateDocument(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getSection() + ": " + item.getDocumentFileName());
         }
 
@@ -54,6 +50,18 @@ public class DocumentMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateDocuments");
         }
+    }
+    
+    private static void migrateDocument(oldDocumentModel item){
+        if (item.getSection().trim().equalsIgnoreCase("ULP") && item.getType().trim().equalsIgnoreCase("letter")){
+            if (item.getDocumentFileName().contains("IL") || item.getDocumentFileName().contains("ILP")){
+                item.setDueDate(21);
+            } else if (item.getDocumentFileName().contains("FR") || item.getDocumentFileName().contains("LTR") 
+                    || item.getDocumentFileName().contains("RECON") || item.getDocumentFileName().contains("Suf")){
+                item.setDueDate(7);
+            }
+        }        
+        sqlDocument.addSMDSDocument(item);
     }
     
 }

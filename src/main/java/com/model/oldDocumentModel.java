@@ -20,6 +20,7 @@ public class oldDocumentModel {
     private String bodyFileName;
     private String subjectFileName;
     private String attachmentListFileName;
+    private int dueDate;
 
     public int getDocumentID() {
         return documentID;
@@ -92,7 +93,13 @@ public class oldDocumentModel {
     public void setAttachmentListFileName(String attachmentListFileName) {
         this.attachmentListFileName = attachmentListFileName;
     }
-    
-    
+
+    public int getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(int dueDate) {
+        this.dueDate = dueDate;
+    }
     
 }
