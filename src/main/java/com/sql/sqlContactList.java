@@ -655,7 +655,7 @@ public class sqlContactList {
             rs = ps.executeQuery();
             while (rs.next()) {
                 casePartyModel item = new casePartyModel();
-                item.setPrefix((rs.getString("Sal") == null) ? null : rs.getString("Sal").trim().replaceAll("a-zA-Z", ""));
+                item.setPrefix((rs.getString("Sal") == null) ? null : rs.getString("Sal").trim().replaceAll("[^A-Za-z.]", ""));
                 item.setFirstName(null);
                 item.setMiddleInitial(null);
                 item.setLastName((rs.getString("LastName") == null) ? null : rs.getString("LastName").trim());

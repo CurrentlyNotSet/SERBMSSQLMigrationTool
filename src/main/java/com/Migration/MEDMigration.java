@@ -11,6 +11,7 @@ import com.model.activityModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
 import com.model.employerCaseSearchModel;
+import com.model.factFinderModel;
 import com.model.oldBlobFileModel;
 import com.model.oldMEDCaseModel;
 import com.model.oldMEDHistoryModel;
@@ -20,6 +21,7 @@ import com.sql.sqlBlobFile;
 import com.sql.sqlCaseParty;
 import com.sql.sqlEmployerCaseSearchData;
 import com.sql.sqlEmployers;
+import com.sql.sqlFactFinder;
 import com.sql.sqlMEDCaseSearch;
 import com.sql.sqlMEDData;
 import com.sql.sqlMigrationStatus;
@@ -52,8 +54,14 @@ public class MEDMigration {
         int currentRecord = 0;
                 
         List<oldMEDCaseModel> oldMEDCaseList = sqlMEDData.getCases();
+        List<factFinderModel> oldFactFindersList = sqlFactFinder.getOldFactFinders();
         
-        totalRecordCount = oldMEDCaseList.size();
+        totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size();
+        
+        for (factFinderModel item : oldFactFindersList) {
+            migrateFactFinder(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
+        }
         
         for (oldMEDCaseModel item : oldMEDCaseList) {
             migrateCase(item);
@@ -67,6 +75,39 @@ public class MEDMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateMEDCases");
         }
+    }
+    
+    private static void migrateFactFinder(factFinderModel item) { 
+        String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
+        
+        if (nameSplit.length == 2){
+            item.setFirstName(nameSplit[0].trim());
+            item.setMiddleName(null);
+            item.setLastName(nameSplit[1].trim());
+        } else if (nameSplit.length == 3) {
+                item.setFirstName(nameSplit[0].trim());
+                item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
+                item.setLastName(nameSplit[2].trim());
+        } else if (nameSplit.length == 4) {
+                item.setFirstName(nameSplit[0].trim());
+                item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
+                item.setLastName(nameSplit[2].trim() + ", " + nameSplit[3].trim());
+        }
+        if (item.getCity() != null){
+            String[] cityStateZipSplit = item.getCity().split(",", 2);
+            item.setCity("".equals(cityStateZipSplit[0]) ? null : cityStateZipSplit[0].trim().replaceAll(",", ""));
+            
+            String[] stateZipSplit = cityStateZipSplit[1].trim().split(" ");
+            item.setState("".equals(stateZipSplit[0]) ? null : stateZipSplit[0].trim().replaceAll("[^A-Za-z]", ""));
+            item.setZip("".equals(stateZipSplit[1]) ? null : stateZipSplit[1].trim().replaceAll(",", ""));
+        }
+        
+        if ("Ohio".equals(item.getState())){
+            item.setState("OH");
+        } else if ("Kentucky".equals(item.getState())){
+            item.setState("KY");
+        }    
+        sqlFactFinder.addFactFinder(item);
     }
     
     private static void migrateCase(oldMEDCaseModel item) {
@@ -111,7 +152,7 @@ public class MEDMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setCaseRelation("Employer Rep");
+        party.setCaseRelation("Employer REP");
         party.setPrefix(!"".equals(item.getEmployerREPSal().trim()) ? item.getEmployerREPSal().trim() : null);
         party.setLastName(!"".equals(item.getEmployerREPName().trim()) ? item.getEmployerREPName().trim() : null);
         party.setAddress1(!"".equals(item.getEmployerREPAddress1().trim()) ? item.getEmployerREPAddress1().trim() : null);
@@ -154,7 +195,7 @@ public class MEDMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setCaseRelation("Employee Org Rep");
+        party.setCaseRelation("Employee Org REP");
         party.setPrefix(!"".equals(item.getEmployeeOrgREPSal().trim()) ? item.getEmployeeOrgREPSal().trim() : null);
         party.setLastName(!"".equals(item.getEmployeeOrgREPName().trim()) ? item.getEmployeeOrgREPName().trim() : null);
         party.setAddress1(!"".equals(item.getEmployeeOrgREPAddress1().trim()) ? item.getEmployeeOrgREPAddress1().trim() : null);
@@ -180,7 +221,26 @@ public class MEDMigration {
         med.setCaseMonth(caseNumber.getCaseMonth());
         med.setCaseNumber(caseNumber.getCaseNumber());
         med.setFileDate(!"".equals(item.getCaseFileDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getCaseFileDate()).getTime()) : null); 
-        
+        med.setConcilList1OrderDate(!"".equals(item.getConciliationOrderDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getConciliationOrderDate()).getTime()) : null);
+        med.setConcilList1SelectionDueDate(!"".equals(item.getConciliationSelectionDue().trim()) ? new Date(StringUtilities.convertStringDate(item.getConciliationSelectionDue()).getTime()) : null);
+        med.setConcilList1Name1(!"".equals(item.getConciliator1().trim()) ? item.getConciliator1().trim() : null);
+        med.setConcilList1Name2(!"".equals(item.getConciliator2().trim()) ? item.getConciliator2().trim() : null);
+        med.setConcilList1Name3(!"".equals(item.getConciliator3().trim()) ? item.getConciliator3().trim() : null);
+        med.setConcilList1Name4(!"".equals(item.getConciliator4().trim()) ? item.getConciliator4().trim() : null);
+        med.setConcilList1Name5(!"".equals(item.getConciliator5().trim()) ? item.getConciliator5().trim() : null);
+        med.setConcilAppointmentDate(!"".equals(item.getConciliatorApptDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getConciliatorApptDate()).getTime()) : null);
+        med.setConcilType(!"".equals(item.getConciliationType().trim()) ? item.getConciliationType().trim() : null);
+        med.setConcilSelection(!"".equals(item.getConciliatorSelection().trim()) ? item.getConciliatorSelection().trim() : null);
+        med.setConcilReplacement(!"".equals(item.getConciliatorReplacement().trim()) ? item.getConciliatorReplacement().trim() : null);
+        med.setConcilOriginalConciliator(!"".equals(item.getTempHolder2().trim()) ? item.getTempHolder2().trim() : null); 
+        med.setConcilOriginalConcilDate(!"".equals(item.getOrgConcilDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getOrgConcilDate()).getTime()) : null);
+        med.setConcilList2OrderDate(!"".equals(item.getConciliationOrderDate2().trim()) ? new Date(StringUtilities.convertStringDate(item.getConciliationOrderDate2()).getTime()) : null);
+        med.setConcilList2SelectionDueDate(!"".equals(item.getConciliationSelectionDate2().trim()) ? new Date(StringUtilities.convertStringDate(item.getConciliationSelectionDate2()).getTime()) : null);
+        med.setConcilList2Name1(!"".equals(item.getConciliator1Set2().trim()) ? item.getConciliator1Set2().trim() : null);
+        med.setConcilList2Name2(!"".equals(item.getConciliator2Set2().trim()) ? item.getConciliator2Set2().trim() : null);
+        med.setConcilList2Name3(!"".equals(item.getConciliator3Set2().trim()) ? item.getConciliator3Set2().trim() : null);
+        med.setConcilList2Name4(!"".equals(item.getConciliator4Set2().trim()) ? item.getConciliator4Set2().trim() : null);
+        med.setConcilList2Name5(!"".equals(item.getConciliator5Set2().trim()) ? item.getConciliator5Set2().trim() : null);
         
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {

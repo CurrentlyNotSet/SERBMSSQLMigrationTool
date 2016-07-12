@@ -239,12 +239,32 @@ public class sqlMEDData {
                     + "caseMonth, " //04
                     + "caseNumber, "//05
                     + "note, "      //06
-                    + "fileDate "   //07
+                    + "fileDate, "  //07
+                    + "concilList1OrderDate, "       //08
+                    + "concilList1SelectionDueDate, "//09
+                    + "concilList1Name1, "           //10
+                    + "concilList1Name2, "           //11
+                    + "concilList1Name3, "           //12
+                    + "concilList1Name4, "           //13
+                    + "concilList1Name5, "           //14
+                    + "concilAppointmentDate, "      //15
+                    + "concilType, "                 //16
+                    + "concilSelection, "            //17
+                    + "concilReplacement, "          //18
+                    + "concilOriginalConciliator, "  //19
+                    + "concilOriginalConcilDate, "   //20
+                    + "concilList2OrderDate, "       //21
+                    + "concilList2SelectionDueDate, "//22
+                    + "concilList2Name1, "//23
+                    + "concilList2Name2, "//24
+                    + "concilList2Name3, "//25
+                    + "concilList2Name4, "//26
+                    + "concilList2Name5 " //27
                     + ") VALUES (";
-                    for(int i=0; i<06; i++){
-                        sql += "?, ";   //01-06
+                    for(int i=0; i<26; i++){
+                        sql += "?, ";   //01-26
                     }
-                     sql += "?)";   //07
+                     sql += "?)";   //27
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getCaseYear());
@@ -253,6 +273,26 @@ public class sqlMEDData {
             ps.setString( 5, item.getCaseNumber());
             ps.setString( 6, item.getNote());
             ps.setDate  ( 7, item.getFileDate());
+            ps.setDate  ( 8, item.getConcilList1OrderDate());
+            ps.setDate  ( 9, item.getConcilList1SelectionDueDate());
+            ps.setString(10, item.getConcilList1Name1());
+            ps.setString(11, item.getConcilList1Name2());
+            ps.setString(12, item.getConcilList1Name3());
+            ps.setString(13, item.getConcilList1Name4());
+            ps.setString(14, item.getConcilList1Name5());
+            ps.setDate  (15, item.getConcilAppointmentDate());
+            ps.setString(16, item.getConcilType());
+            ps.setString(17, item.getConcilSelection());
+            ps.setString(18, item.getConcilReplacement());
+            ps.setString(19, item.getConcilOriginalConciliator());
+            ps.setDate  (20, item.getConcilOriginalConcilDate());
+            ps.setDate  (21, item.getConcilList2OrderDate());
+            ps.setDate  (22, item.getConcilList2SelectionDueDate());
+            ps.setString(23, item.getConcilList2Name1());
+            ps.setString(24, item.getConcilList2Name2());
+            ps.setString(25, item.getConcilList2Name3());
+            ps.setString(26, item.getConcilList2Name4());
+            ps.setString(27, item.getConcilList2Name5());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
