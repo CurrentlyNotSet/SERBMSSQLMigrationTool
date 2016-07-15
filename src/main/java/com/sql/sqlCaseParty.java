@@ -10,7 +10,10 @@ import com.util.ContactNameSeperator;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 
 /**
@@ -91,7 +94,58 @@ public class sqlCaseParty {
         }
     }
     
-    
+    public static List<casePartyModel> getCasePartyFromParties(String caseYear, String caseType, String caseMonth, String caseNumber) {
+        List<casePartyModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "SELECT * FROM CaseParty WHERE "
+                    + "caseYear = ? AND caseType = ? AND caseMonth = ? AND caseNumber = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, caseYear);
+            ps.setString(2, caseType);
+            ps.setString(3, caseMonth);
+            ps.setString(4, caseNumber);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                casePartyModel item = new casePartyModel();          
+                item.setId(rs.getInt("id"));
+                item.setCaseYear(rs.getString("caseYear"));
+                item.setCaseType(rs.getString("caseType"));
+                item.setCaseMonth(rs.getString("caseMonth"));
+                item.setCaseNumber(rs.getString("caseNumber"));
+                item.setPartyID(rs.getInt("partyID"));
+                item.setCaseRelation(rs.getString("caseRelation"));
+                item.setPrefix(rs.getString("prefix"));
+                item.setFirstName(rs.getString("firstName"));
+                item.setMiddleInitial(rs.getString("middleInitial"));
+                item.setLastName(rs.getString("lastName"));
+                item.setSuffix(rs.getString("suffix"));
+                item.setNameTitle(rs.getString("nameTitle"));
+                item.setJobTitle(rs.getString("jobTitle"));
+                item.setCompanyName(rs.getString("companyName"));
+                item.setAddress1(rs.getString("address1"));
+                item.setAddress2(rs.getString("address2"));
+                item.setAddress3(rs.getString("address3"));
+                item.setCity(rs.getString("city"));
+                item.setState(rs.getString("stateCode"));
+                item.setZip(rs.getString("zipCode"));
+                item.setPhoneOne(rs.getString("phone1"));
+                item.setEmailAddress(rs.getString("email"));
+                item.setPhoneTwo(rs.getString("phone2"));                
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
     
     
 }

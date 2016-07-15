@@ -98,14 +98,14 @@ public class REPCaseModel {
     private int resultValidVotesCounted;
     private int resultChallengedBallots;
     private int resultTotalBallotsCast;
-    private String resultWhoPrevailed;
+    private int resultWhoPrevailed;
     private int professionalApproxNumberEligible;
     private int professionalYES;
     private int professionalNO;
     private int professionalChallenged;
     private int professionalTotalVotes;
     private String professionalOutcome;
-    private String professionalWhoPrevailed;
+    private int professionalWhoPrevailed;
     private int professionalVoidBallots;
     private int professionalValidVotes;
     private int professionalVotesCastForNoRepresentative;
@@ -120,7 +120,7 @@ public class REPCaseModel {
     private int nonprofessionalChallenged;
     private int nonprofessionalTotalVotes;
     private String nonprofessionalOutcome;
-    private String nonprofessionalWhoPrevailed;
+    private int nonprofessionalWhoPrevailed;
     private int nonprofessionalVoidBallots;
     private int nonprofessionalValidVotes;
     private int nonprofessionalVotesCastForNoRepresentative;
@@ -135,7 +135,7 @@ public class REPCaseModel {
     private int combinedChallenged;
     private int combinedTotalVotes;
     private String combinedOutcome;
-    private String combinedWhoPrevailed;
+    private int combinedWhoPrevailed;
     private int combinedVoidBallots;
     private int combinedValidVotes;
     private int combinedVotesCastForNoRepresentative;
@@ -817,11 +817,11 @@ public class REPCaseModel {
         this.resultTotalBallotsCast = resultTotalBallotsCast;
     }
 
-    public String getResultWhoPrevailed() {
+    public int getResultWhoPrevailed() {
         return resultWhoPrevailed;
     }
 
-    public void setResultWhoPrevailed(String resultWhoPrevailed) {
+    public void setResultWhoPrevailed(int resultWhoPrevailed) {
         this.resultWhoPrevailed = resultWhoPrevailed;
     }
 
@@ -873,11 +873,11 @@ public class REPCaseModel {
         this.professionalOutcome = professionalOutcome;
     }
 
-    public String getProfessionalWhoPrevailed() {
+    public int getProfessionalWhoPrevailed() {
         return professionalWhoPrevailed;
     }
 
-    public void setProfessionalWhoPrevailed(String professionalWhoPrevailed) {
+    public void setProfessionalWhoPrevailed(int professionalWhoPrevailed) {
         this.professionalWhoPrevailed = professionalWhoPrevailed;
     }
 
@@ -993,11 +993,11 @@ public class REPCaseModel {
         this.nonprofessionalOutcome = nonprofessionalOutcome;
     }
 
-    public String getNonprofessionalWhoPrevailed() {
+    public int getNonprofessionalWhoPrevailed() {
         return nonprofessionalWhoPrevailed;
     }
 
-    public void setNonprofessionalWhoPrevailed(String nonprofessionalWhoPrevailed) {
+    public void setNonprofessionalWhoPrevailed(int nonprofessionalWhoPrevailed) {
         this.nonprofessionalWhoPrevailed = nonprofessionalWhoPrevailed;
     }
 
@@ -1113,11 +1113,11 @@ public class REPCaseModel {
         this.combinedOutcome = combinedOutcome;
     }
 
-    public String getCombinedWhoPrevailed() {
+    public int getCombinedWhoPrevailed() {
         return combinedWhoPrevailed;
     }
 
-    public void setCombinedWhoPrevailed(String combinedWhoPrevailed) {
+    public void setCombinedWhoPrevailed(int combinedWhoPrevailed) {
         this.combinedWhoPrevailed = combinedWhoPrevailed;
     }
 

@@ -501,52 +501,52 @@ public class sqlREPData {
                     + "resultValidVotesCounted, "           //81
                     + "resultChallengedBallots, "           //82
                     + "resultTotalBallotsCast, "            //83
-                    + "resultWhoPrevailed, "                //84
-                    + "professionalApproxNumberEligible, "  //85
-                    + "professionalYES, "                   //86
-                    + "professionalNO, "                    //87
-                    + "professionalChallenged, "            //88
-                    + "professionalTotalVotes, "            //89
-                    + "professionalOutcome, "               //90
-                    + "professionalWhoPrevailed, "          //91
-                    + "professionalVoidBallots, "           //92
-                    + "professionalValidVotes, "            //93
-                    + "professionalVotesCastForNoRepresentative, "//94
-                    + "professionalVotesCastForEEO, "             //95
-                    + "professionalVotesCstForIncumbentEEO, "     //96
-                    + "professionalVotesCastForRivalEEO1, "       //97
-                    + "professionalVotesCastForRivalEEO2, "       //98
-                    + "professionalVotesCastForRivalEEO3, "       //99
-                    + "nonprofessionalApproxNumberEligible, "     //100
-                    + "nonprofessionalYES, "                //101
-                    + "nonprofessionalNO, "                 //102
-                    + "nonprofessionalChallenged, "         //103
-                    + "nonprofessionalTotalVotes, "         //104
-                    + "nonprofessionalOutcome, "            //105
-                    + "nonprofessionalWhoPrevailed, "       //106
-                    + "nonprofessionalVoidBallots, "        //107
-                    + "nonprofessionalValidVotes, "         //108
-                    + "nonprofessionalVotesCastForNoRepresentative, "//109
-                    + "nonprofessionalVotesCastForEEO, "             //110
-                    + "nonprofessionalVotesCastForIncumbentEEO, "    //111
-                    + "nonprofessionalVotesCastForRivalEEO1, "       //112
-                    + "nonprofessionalVotesCastForRivalEEO2, "       //113
-                    + "nonprofessionalVotesCastForRivalEEO3, "       //114
-                    + "combinedApproxNumberEligible, "               //115
-                    + "combinedYES, "               //116
-                    + "combinedNO, "                //117
-                    + "combinedChallenged, "        //118
-                    + "combinedTotalVotes, "        //119
-                    + "combinedOutcome, "           //120
-                    + "combinedWhoPrevailed, "      //121
-                    + "combinedVoidBallots, "       //122
-                    + "combinedValidVotes, "        //123
-                    + "combinedVotesCastForNoRepresentative, "//124
-                    + "combinedVotesCastForEEO, "             //125
-                    + "combinedVotesCastForIncumbentEEO, "    //126
-                    + "combinedVotesCastForRivalEEO1, "       //127
-                    + "combinedVotesCastForRivalEEO2, "       //128
-                    + "combinedVotesCastForRivalEEO3"         //129
+                    + "professionalApproxNumberEligible, "  //84
+                    + "professionalYES, "                   //85
+                    + "professionalNO, "                    //86
+                    + "professionalChallenged, "            //87
+                    + "professionalTotalVotes, "            //88
+                    + "professionalOutcome, "               //89
+                    + "professionalVoidBallots, "           //90
+                    + "professionalValidVotes, "            //91
+                    + "professionalVotesCastForNoRepresentative, "  //92
+                    + "professionalVotesCastForEEO, "           //93
+                    + "professionalVotesCastForIncumbentEEO, "  //94
+                    + "professionalVotesCastForRivalEEO1, "     //95
+                    + "professionalVotesCastForRivalEEO2, "     //96
+                    + "professionalVotesCastForRivalEEO3, "     //97
+                    + "nonprofessionalApproxNumberEligible, "   //98
+                    + "nonprofessionalYES, "                    //99
+                    + "nonprofessionalNO, "                     //100
+                    + "nonprofessionalChallenged, "             //101
+                    + "nonprofessionalTotalVotes, "             //102
+                    + "nonprofessionalOutcome, "                //103
+                    + "nonprofessionalVoidBallots, "            //104
+                    + "nonprofessionalValidVotes, "             //105
+                    + "nonprofessionalVotesCastForNoRepresentative, "//106
+                    + "nonprofessionalVotesCastForEEO, "             //107
+                    + "nonprofessionalVotesCastForIncumbentEEO, "    //108
+                    + "nonprofessionalVotesCastForRivalEEO1, "  //109
+                    + "nonprofessionalVotesCastForRivalEEO2, "  //110
+                    + "nonprofessionalVotesCastForRivalEEO3, "  //111
+                    + "combinedApproxNumberEligible, "          //112
+                    + "combinedYES, "                           //113
+                    + "combinedNO, "                            //114
+                    + "combinedChallenged, "                    //115
+                    + "combinedTotalVotes, "                    //116
+                    + "combinedOutcome, "                       //117
+                    + "combinedVoidBallots, "                   //118
+                    + "combinedValidVotes, "                    //119
+                    + "combinedVotesCastForNoRepresentative, "  //120
+                    + "combinedVotesCastForEEO, "               //121
+                    + "combinedVotesCastForIncumbentEEO, "      //122
+                    + "combinedVotesCastForRivalEEO1, "         //123
+                    + "combinedVotesCastForRivalEEO2, "         //124
+                    + "combinedVotesCastForRivalEEO3, "         //125
+                    + "resultWhoPrevailed, "                    //126
+                    + "professionalWhoPrevailed, "              //127
+                    + "nonprofessionalWhoPrevailed, "           //128
+                    + "combinedWhoPrevailed "                   //129
                     + ") VALUES (";
                     for(int i=0; i<128; i++){
                         sql += "?, ";   //01-128
@@ -704,205 +704,221 @@ public class sqlREPData {
             } else {
                 ps.setNull (83, java.sql.Types.INTEGER);
             }
-            ps.setString(84, item.getResultWhoPrevailed());
             if (item.getProfessionalApproxNumberEligible() != -1){
-                ps.setInt  (85, item.getProfessionalApproxNumberEligible());
+                ps.setInt  (84, item.getProfessionalApproxNumberEligible());
+            } else {
+                ps.setNull (84, java.sql.Types.INTEGER);
+            }
+            if (item.getProfessionalYES() != -1){
+                ps.setInt  (85, item.getProfessionalYES());
             } else {
                 ps.setNull (85, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalYES() != -1){
-                ps.setInt  (86, item.getProfessionalYES());
+            if (item.getProfessionalNO() != -1){
+                ps.setInt  (86, item.getProfessionalNO());
             } else {
                 ps.setNull (86, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalNO() != -1){
-                ps.setInt  (87, item.getProfessionalNO());
+            if (item.getProfessionalChallenged() != -1){
+                ps.setInt  (87, item.getProfessionalChallenged());
             } else {
                 ps.setNull (87, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalChallenged() != -1){
-                ps.setInt  (88, item.getProfessionalChallenged());
+            if (item.getProfessionalTotalVotes() != -1){
+                ps.setInt  (88, item.getProfessionalTotalVotes());
             } else {
                 ps.setNull (88, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalTotalVotes() != -1){
-                ps.setInt  (89, item.getProfessionalTotalVotes());
-            } else {
-                ps.setNull (89, java.sql.Types.INTEGER);
-            }
-            ps.setString(90, item.getProfessionalOutcome());
-            ps.setString(91, item.getProfessionalWhoPrevailed());
+            ps.setString(89, item.getProfessionalOutcome());
             if (item.getProfessionalVoidBallots() != -1){
-                ps.setInt  (92, item.getProfessionalVoidBallots());
+                ps.setInt  (90, item.getProfessionalVoidBallots());
+            } else {
+                ps.setNull (90, java.sql.Types.INTEGER);
+            }
+            if (item.getProfessionalValidVotes() != -1){
+                ps.setInt  (91, item.getProfessionalValidVotes());
+            } else {
+                ps.setNull (91, java.sql.Types.INTEGER);
+            }
+            if (item.getProfessionalVotesCastForNoRepresentative() != -1){
+                ps.setInt  (92, item.getProfessionalVotesCastForNoRepresentative());
             } else {
                 ps.setNull (92, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalValidVotes() != -1){
-                ps.setInt  (93, item.getProfessionalValidVotes());
+            if (item.getProfessionalVotesCastForEEO() != -1){
+                ps.setInt  (93, item.getProfessionalVotesCastForEEO());
             } else {
                 ps.setNull (93, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalVotesCastForNoRepresentative() != -1){
-                ps.setInt  (94, item.getProfessionalVotesCastForNoRepresentative());
+            if (item.getProfessionalVotesCstForIncumbentEEO() != -1){
+                ps.setInt  (94, item.getProfessionalVotesCstForIncumbentEEO());
             } else {
                 ps.setNull (94, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalVotesCastForEEO() != -1){
-                ps.setInt  (95, item.getProfessionalVotesCastForEEO());
+            if (item.getProfessionalVotesCastForRivalEEO1() != -1){
+                ps.setInt  (95, item.getProfessionalVotesCastForRivalEEO1());
             } else {
                 ps.setNull (95, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalVotesCstForIncumbentEEO() != -1){
-                ps.setInt  (96, item.getProfessionalVotesCstForIncumbentEEO());
+            if (item.getProfessionalVotesCastForRivalEEO2() != -1){
+                ps.setInt  (96, item.getProfessionalVotesCastForRivalEEO2());
             } else {
                 ps.setNull (96, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalVotesCastForRivalEEO1() != -1){
-                ps.setInt  (97, item.getProfessionalVotesCastForRivalEEO1());
+            if (item.getProfessionalVotesCastForRivalEEO3() != -1){
+                ps.setInt  (97, item.getProfessionalVotesCastForRivalEEO3());
             } else {
                 ps.setNull (97, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalVotesCastForRivalEEO2() != -1){
-                ps.setInt  (98, item.getProfessionalVotesCastForRivalEEO2());
+            if (item.getNonprofessionalApproxNumberEligible() != -1){
+                ps.setInt  (98, item.getNonprofessionalApproxNumberEligible());
             } else {
                 ps.setNull (98, java.sql.Types.INTEGER);
             }
-            if (item.getProfessionalVotesCastForRivalEEO3() != -1){
-                ps.setInt  (99, item.getProfessionalVotesCastForRivalEEO3());
+            if (item.getNonprofessionalYES() != -1){
+                ps.setInt  (99, item.getNonprofessionalYES());
             } else {
                 ps.setNull (99, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalApproxNumberEligible() != -1){
-                ps.setInt  (100, item.getNonprofessionalApproxNumberEligible());
+            if (item.getNonprofessionalNO() != -1){
+                ps.setInt  (100, item.getNonprofessionalNO());
             } else {
                 ps.setNull (100, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalYES() != -1){
-                ps.setInt  (101, item.getNonprofessionalYES());
+            if (item.getNonprofessionalChallenged() != -1){
+                ps.setInt  (101, item.getNonprofessionalChallenged());
             } else {
                 ps.setNull (101, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalNO() != -1){
-                ps.setInt  (102, item.getNonprofessionalNO());
+            if (item.getNonprofessionalTotalVotes() != -1){
+                ps.setInt  (102, item.getNonprofessionalTotalVotes());
             } else {
                 ps.setNull (102, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalChallenged() != -1){
-                ps.setInt  (103, item.getNonprofessionalChallenged());
-            } else {
-                ps.setNull (103, java.sql.Types.INTEGER);
-            }
-            if (item.getNonprofessionalTotalVotes() != -1){
-                ps.setInt  (104, item.getNonprofessionalTotalVotes());
+            ps.setString(103, item.getNonprofessionalOutcome());
+            if (item.getNonprofessionalVoidBallots() != -1){
+                ps.setInt  (104, item.getNonprofessionalVoidBallots());
             } else {
                 ps.setNull (104, java.sql.Types.INTEGER);
             }
-            ps.setString(105, item.getNonprofessionalOutcome());
-            ps.setString(106, item.getNonprofessionalWhoPrevailed());
-            if (item.getNonprofessionalVoidBallots() != -1){
-                ps.setInt  (107, item.getNonprofessionalVoidBallots());
+            if (item.getNonprofessionalValidVotes() != -1){
+                ps.setInt  (105, item.getNonprofessionalValidVotes());
+            } else {
+                ps.setNull (105, java.sql.Types.INTEGER);
+            }
+            if (item.getNonprofessionalVotesCastForNoRepresentative() != -1){
+                ps.setInt  (106, item.getNonprofessionalVotesCastForNoRepresentative());
+            } else {
+                ps.setNull (106, java.sql.Types.INTEGER);
+            }
+            if (item.getNonprofessionalVotesCastForEEO() != -1){
+                ps.setInt  (107, item.getNonprofessionalVotesCastForEEO());
             } else {
                 ps.setNull (107, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalValidVotes() != -1){
-                ps.setInt  (108, item.getNonprofessionalValidVotes());
+            if (item.getNonprofessionalVotesCastForIncumbentEEO() != -1){
+                ps.setInt  (108, item.getNonprofessionalVotesCastForIncumbentEEO());
             } else {
                 ps.setNull (108, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalVotesCastForNoRepresentative() != -1){
-                ps.setInt  (109, item.getNonprofessionalVotesCastForNoRepresentative());
+            if (item.getNonprofessionalVotesCastForRivalEEO1() != -1){
+                ps.setInt  (109, item.getNonprofessionalVotesCastForRivalEEO1());
             } else {
                 ps.setNull (109, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalVotesCastForEEO() != -1){
-                ps.setInt  (110, item.getNonprofessionalVotesCastForEEO());
+            if (item.getNonprofessionalVotesCastForRivalEEO2() != -1){
+                ps.setInt  (110, item.getNonprofessionalVotesCastForRivalEEO2());
             } else {
                 ps.setNull (110, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalVotesCastForIncumbentEEO() != -1){
-                ps.setInt  (111, item.getNonprofessionalVotesCastForIncumbentEEO());
+            if (item.getNonprofessionalVotesCastForRivalEEO3() != -1){
+                ps.setInt  (111, item.getNonprofessionalVotesCastForRivalEEO3());
             } else {
                 ps.setNull (111, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalVotesCastForRivalEEO1() != -1){
-                ps.setInt  (112, item.getNonprofessionalVotesCastForRivalEEO1());
+            if (item.getCombinedApproxNumberEligible() != -1){
+                ps.setInt  (112, item.getCombinedApproxNumberEligible());
             } else {
                 ps.setNull (112, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalVotesCastForRivalEEO2() != -1){
-                ps.setInt  (113, item.getNonprofessionalVotesCastForRivalEEO2());
+            if (item.getCombinedYES() != -1){
+                ps.setInt  (113, item.getCombinedYES());
             } else {
                 ps.setNull (113, java.sql.Types.INTEGER);
             }
-            if (item.getNonprofessionalVotesCastForRivalEEO3() != -1){
-                ps.setInt  (114, item.getNonprofessionalVotesCastForRivalEEO3());
+            if (item.getCombinedNO() != -1){
+                ps.setInt  (114, item.getCombinedNO());
             } else {
                 ps.setNull (114, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedApproxNumberEligible() != -1){
-                ps.setInt  (115, item.getCombinedApproxNumberEligible());
+            if (item.getCombinedChallenged() != -1){
+                ps.setInt  (115, item.getCombinedChallenged());
             } else {
                 ps.setNull (115, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedYES() != -1){
-                ps.setInt  (116, item.getCombinedYES());
+            if (item.getCombinedTotalVotes() != -1){
+                ps.setInt  (116, item.getCombinedTotalVotes());
             } else {
                 ps.setNull (116, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedNO() != -1){
-                ps.setInt  (117, item.getCombinedNO());
-            } else {
-                ps.setNull (117, java.sql.Types.INTEGER);
-            }
-            if (item.getCombinedChallenged() != -1){
-                ps.setInt  (118, item.getCombinedChallenged());
+            ps.setString(117, item.getCombinedOutcome());
+            if (item.getCombinedVoidBallots() != -1){
+                ps.setInt  (118, item.getCombinedVoidBallots());
             } else {
                 ps.setNull (118, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedTotalVotes() != -1){
-                ps.setInt  (119, item.getCombinedTotalVotes());
+            if (item.getCombinedValidVotes() != -1){
+                ps.setInt  (119, item.getCombinedValidVotes());
             } else {
                 ps.setNull (119, java.sql.Types.INTEGER);
             }
-            ps.setString(120, item.getCombinedOutcome());
-            ps.setString(121, item.getCombinedWhoPrevailed());
-            if (item.getCombinedVoidBallots() != -1){
-                ps.setInt  (122, item.getCombinedVoidBallots());
+            if (item.getCombinedVotesCastForNoRepresentative() != -1){
+                ps.setInt  (120, item.getCombinedVotesCastForNoRepresentative());
+            } else {
+                ps.setNull (120, java.sql.Types.INTEGER);
+            }
+            if (item.getCombinedVotesCastForEEO() != -1){
+                ps.setInt  (121, item.getCombinedVotesCastForEEO());
+            } else {
+                ps.setNull (121, java.sql.Types.INTEGER);
+            }
+            if (item.getCombinedVotesCastForIncumbentEEO() != -1){
+                ps.setInt  (122, item.getCombinedVotesCastForIncumbentEEO());
             } else {
                 ps.setNull (122, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedValidVotes() != -1){
-                ps.setInt  (123, item.getCombinedValidVotes());
+            if (item.getCombinedVotesCastForRivalEEO1() != -1){
+                ps.setInt  (123, item.getCombinedVotesCastForRivalEEO1());
             } else {
                 ps.setNull (123, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedVotesCastForNoRepresentative() != -1){
-                ps.setInt  (124, item.getCombinedVotesCastForNoRepresentative());
+            if (item.getCombinedVotesCastForRivalEEO2() != -1){
+                ps.setInt  (124, item.getCombinedVotesCastForRivalEEO2());
             } else {
                 ps.setNull (124, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedVotesCastForEEO() != -1){
-                ps.setInt  (125, item.getCombinedVotesCastForEEO());
+            if (item.getCombinedVotesCastForRivalEEO3() != -1){
+                ps.setInt  (125, item.getCombinedVotesCastForRivalEEO3());
             } else {
                 ps.setNull (125, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedVotesCastForIncumbentEEO() != -1){
-                ps.setInt  (126, item.getCombinedVotesCastForIncumbentEEO());
+            if (item.getResultWhoPrevailed() != -1){
+                ps.setInt  (126, item.getResultWhoPrevailed());
             } else {
                 ps.setNull (126, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedVotesCastForRivalEEO1() != -1){
-                ps.setInt  (127, item.getCombinedVotesCastForRivalEEO1());
+            if (item.getProfessionalWhoPrevailed() != -1){
+                ps.setInt  (127, item.getProfessionalWhoPrevailed());
             } else {
                 ps.setNull (127, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedVotesCastForRivalEEO2() != -1){
-                ps.setInt  (128, item.getCombinedVotesCastForRivalEEO2());
+            if (item.getNonprofessionalWhoPrevailed() != -1){
+                ps.setInt  (128, item.getNonprofessionalWhoPrevailed());
             } else {
                 ps.setNull (128, java.sql.Types.INTEGER);
             }
-            if (item.getCombinedVotesCastForRivalEEO3() != -1){
-                ps.setInt  (129, item.getCombinedVotesCastForRivalEEO3());
+            if (item.getCombinedWhoPrevailed() != -1){
+                ps.setInt  (129, item.getCombinedWhoPrevailed());
             } else {
                 ps.setNull (129, java.sql.Types.INTEGER);
             }

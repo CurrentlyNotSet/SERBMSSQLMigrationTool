@@ -6,6 +6,7 @@
 package com.util;
 
 import com.model.caseNumberModel;
+import com.model.casePartyModel;
 import com.model.dateModel;
 import com.model.startTimeEndTimeModel;
 import com.model.userModel;
@@ -340,4 +341,35 @@ public class StringUtilities {
         return -1;
     }
 
+    public static String joinNameTogether(casePartyModel party){
+        String name = "";
+        
+        
+        if(party.getPrefix() != null){
+            name += party.getPrefix().trim() + " ";
+        }
+        if (party.getFirstName() != null){
+            name += party.getFirstName().trim() + " ";
+        }
+        if(party.getMiddleInitial() != null){
+            name += party.getMiddleInitial().trim() + ". ";
+        }
+        if(party.getLastName()!= null){
+            name += party.getLastName().trim() + " ";
+        }
+        if(party.getSuffix()!= null){
+            name += party.getSuffix().trim() + " ";
+        }
+        if(party.getNameTitle()!= null){
+            name += party.getNameTitle().trim() + " ";
+        }
+        if(party.getJobTitle()!= null){
+            name += party.getJobTitle().trim() + " ";
+        }
+        if(party.getCompanyName()!= null){
+            name += party.getCompanyName().trim();
+        }
+        return name.trim();
+    }
+        
 }

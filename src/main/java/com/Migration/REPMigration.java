@@ -668,6 +668,9 @@ public class REPMigration {
 
     private static void migrateCaseData(oldREPDataModel item, caseNumberModel caseNumber) {
         List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(caseNumber);
+        List<casePartyModel> casePartyList = sqlCaseParty.getCasePartyFromParties(
+                caseNumber.getCaseYear(), caseNumber.getCaseType(), caseNumber.getCaseMonth(), caseNumber.getCaseNumber());
+        
         REPCaseModel rep = new REPCaseModel();
         
         rep.setActive(item.getActive());
@@ -744,14 +747,12 @@ public class REPMigration {
         rep.setResultValidVotesCounted(!"".equals(item.getResultsVaildCounted().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVaildCounted().trim()) : -1);
         rep.setResultChallengedBallots(!"".equals(item.getResultsChallenged().trim()) ? StringUtilities.parseStringtoInt(item.getResultsChallenged().trim()) : -1);
         rep.setResultTotalBallotsCast(!"".equals(item.getResultsTotalVotesCast().trim()) ? StringUtilities.parseStringtoInt(item.getResultsTotalVotesCast().trim()) : -1);
-        rep.setResultWhoPrevailed(!"".equals(item.getResultsWhoPrevailed().trim()) ? item.getResultsWhoPrevailed().trim() : null);
         rep.setProfessionalApproxNumberEligible(!"".equals(item.getPApproxNumEligible().trim()) ? StringUtilities.parseStringtoInt(item.getPApproxNumEligible().trim()) : -1);
         rep.setProfessionalYES(!"".equals(item.getPYES().trim()) ? StringUtilities.parseStringtoInt(item.getPYES().trim()) : -1);
         rep.setProfessionalNO(!"".equals(item.getPNO().trim()) ? StringUtilities.parseStringtoInt(item.getPNO().trim()) : -1);
         rep.setProfessionalChallenged(!"".equals(item.getPChallenged().trim()) ? StringUtilities.parseStringtoInt(item.getPChallenged().trim()) : -1);
         rep.setProfessionalTotalVotes(!"".equals(item.getPTotalVotes().trim()) ? StringUtilities.parseStringtoInt(item.getPTotalVotes().trim()) : -1);
         rep.setProfessionalOutcome(!"".equals(item.getPOutcome().trim()) ? item.getPOutcome().trim() : null);
-        rep.setProfessionalWhoPrevailed(!"".equals(item.getPWhoPrevailed().trim()) ? item.getPWhoPrevailed().trim() : null);
         rep.setProfessionalVoidBallots(!"".equals(item.getPVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getPVoidBallots().trim()) : -1);
         rep.setProfessionalValidVotes(!"".equals(item.getPValidVotes().trim()) ? StringUtilities.parseStringtoInt(item.getPValidVotes().trim()) : -1);
         rep.setProfessionalVotesCastForNoRepresentative(!"".equals(item.getPVotesforNoREP().trim()) ? StringUtilities.parseStringtoInt(item.getPVotesforNoREP().trim()) : -1);
@@ -766,7 +767,6 @@ public class REPMigration {
         rep.setNonprofessionalChallenged(!"".equals(item.getNPChallenged().trim()) ? StringUtilities.parseStringtoInt(item.getNPChallenged().trim()) : -1);
         rep.setNonprofessionalTotalVotes(!"".equals(item.getNPTotalVotes().trim()) ? StringUtilities.parseStringtoInt(item.getNPTotalVotes().trim()) : -1);
         rep.setNonprofessionalOutcome(!"".equals(item.getNPOutcome().trim()) ? item.getNPOutcome().trim() : null);
-        rep.setNonprofessionalWhoPrevailed(!"".equals(item.getNPWhoPrevailed().trim()) ? item.getNPWhoPrevailed().trim() : null);
         rep.setNonprofessionalVoidBallots(!"".equals(item.getNPVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getNPVoidBallots().trim()) : -1);
         rep.setNonprofessionalValidVotes(!"".equals(item.getNPValidVotes().trim()) ? StringUtilities.parseStringtoInt(item.getNPValidVotes().trim()) : -1);
         rep.setNonprofessionalVotesCastForNoRepresentative(!"".equals(item.getNPVotesforNoREP().trim()) ? StringUtilities.parseStringtoInt(item.getNPVotesforNoREP().trim()) : -1);
@@ -781,7 +781,6 @@ public class REPMigration {
         rep.setCombinedChallenged(!"".equals(item.getCChallenged().trim()) ? StringUtilities.parseStringtoInt(item.getCChallenged().trim()) : -1);
         rep.setCombinedTotalVotes(!"".equals(item.getCTotalVotes().trim()) ? StringUtilities.parseStringtoInt(item.getCTotalVotes().trim()) : -1);
         rep.setCombinedOutcome(!"".equals(item.getCOutcome().trim()) ? item.getCOutcome().trim() : null);
-        rep.setCombinedWhoPrevailed(!"".equals(item.getCWhoPrevailed().trim()) ? item.getCWhoPrevailed().trim() : null);
         rep.setCombinedVoidBallots(!"".equals(item.getCVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getCVoidBallots().trim()) : -1);
         rep.setCombinedValidVotes(!"".equals(item.getCVaildVotes().trim()) ? StringUtilities.parseStringtoInt(item.getCVaildVotes().trim()) : -1);
         rep.setCombinedVotesCastForNoRepresentative(!"".equals(item.getCVotesForNoREP().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesForNoREP().trim()) : -1);
@@ -790,7 +789,26 @@ public class REPMigration {
         rep.setCombinedVotesCastForRivalEEO1(!"".equals(item.getCVotesCastforRivalEEO1().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesCastforRivalEEO1().trim()) : -1);
         rep.setCombinedVotesCastForRivalEEO2(!"".equals(item.getCVotesCastforRivalEEO2().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesCastforRivalEEO2().trim()) : -1);
         rep.setCombinedVotesCastForRivalEEO3(!"".equals(item.getCVotesCastforRivalEEO3().trim()) ? StringUtilities.parseStringtoInt(item.getCVotesCastforRivalEEO3().trim()) : -1);
-
+        rep.setResultWhoPrevailed(-1);
+        rep.setProfessionalWhoPrevailed(-1);
+        rep.setNonprofessionalWhoPrevailed(-1);
+        rep.setCombinedWhoPrevailed(-1);
+                
+        for (casePartyModel party : casePartyList){
+            if (item.getResultsWhoPrevailed().trim().equalsIgnoreCase(StringUtilities.joinNameTogether(party))){
+                rep.setResultWhoPrevailed(party.getId());
+            }
+            if (item.getPWhoPrevailed().trim().equalsIgnoreCase(StringUtilities.joinNameTogether(party))){
+                rep.setProfessionalWhoPrevailed(party.getId());
+            }
+            if (item.getNPWhoPrevailed().trim().equalsIgnoreCase(StringUtilities.joinNameTogether(party))){
+                rep.setNonprofessionalWhoPrevailed(party.getId());
+            }
+            if (item.getCWhoPrevailed().trim().equalsIgnoreCase(StringUtilities.joinNameTogether(party))){
+                rep.setCombinedWhoPrevailed(party.getId());
+            }
+        }
+        
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
                 case "Notes":
