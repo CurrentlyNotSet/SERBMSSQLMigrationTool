@@ -11,12 +11,28 @@ package com.model;
  */
 public class smdsDocumentsModel {
     
+    private int id;
     private boolean active;
     private String section;
     private String type;
     private String description;
     private String fileName;
+    private int dueDate;
+    private String group;
+    private String historyFileName;
+    private String historyDescription;
+    private String CHDCHG;
+    private String questionsFileName;
+    private String hsitoryQuestionsDescription;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public boolean isActive() {
         return active;
     }
@@ -56,5 +72,62 @@ public class smdsDocumentsModel {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    public int getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(int dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getHistoryFileName() {
+        return historyFileName;
+    }
+
+    public void setHistoryFileName(String historyFileName) {
+        this.historyFileName = historyFileName;
+    }
+
+    public String getHistoryDescription() {
+        return historyDescription;
+    }
+
+    public void setHistoryDescription(String historyDescription) {
+        this.historyDescription = historyDescription;
+    }
+
+    public String getCHDCHG() {
+        return CHDCHG;
+    }
+
+    public void setCHDCHG(String CHDCHG) {
+        this.CHDCHG = CHDCHG;
+    }
+
+    public String getQuestionsFileName() {
+        return questionsFileName;
+    }
+
+    public void setQuestionsFileName(String questionsFileName) {
+        this.questionsFileName = questionsFileName;
+    }
+
+    public String getHsitoryQuestionsDescription() {
+        return hsitoryQuestionsDescription;
+    }
+
+    public void setHsitoryQuestionsDescription(String hsitoryQuestionsDescription) {
+        this.hsitoryQuestionsDescription = hsitoryQuestionsDescription;
+    }
+    
     
 }

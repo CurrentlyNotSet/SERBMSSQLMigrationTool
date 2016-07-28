@@ -174,7 +174,7 @@ public class MEDMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setCaseRelation("Employee Org");
+        party.setCaseRelation("Employee Organization");
         party.setLastName(!"".equals(item.getEmployeeOrgName().trim()) ? item.getEmployeeOrgName().trim() : null);
         party.setAddress1(!"".equals(item.getEmployeeOrgAddress1().trim()) ? item.getEmployeeOrgAddress1().trim() : null);
         party.setAddress2(!"".equals(item.getEmployeeOrgAddress2().trim()) ? item.getEmployeeOrgAddress2().trim() : null);
@@ -195,7 +195,7 @@ public class MEDMigration {
         party.setCaseType(caseNumber.getCaseType());
         party.setCaseMonth(caseNumber.getCaseMonth());
         party.setCaseNumber(caseNumber.getCaseNumber());
-        party.setCaseRelation("Employee Org REP");
+        party.setCaseRelation("Employee Organization REP");
         party.setPrefix(!"".equals(item.getEmployeeOrgREPSal().trim()) ? item.getEmployeeOrgREPSal().trim() : null);
         party.setLastName(!"".equals(item.getEmployeeOrgREPName().trim()) ? item.getEmployeeOrgREPName().trim() : null);
         party.setAddress1(!"".equals(item.getEmployeeOrgREPAddress1().trim()) ? item.getEmployeeOrgREPAddress1().trim() : null);

@@ -6,6 +6,7 @@
 package com.sql;
 
 import com.model.oldDocumentModel;
+import com.model.smdsDocumentsModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,7 @@ import org.apache.commons.lang3.text.WordUtils;
  * @author User
  */
 public class sqlDocument {
-    
+
     public static List<oldDocumentModel> getOldDocuments() {
         List<oldDocumentModel> list = new ArrayList();
         Connection conn = null;
@@ -54,37 +55,84 @@ public class sqlDocument {
         }
         return list;
     }
-    
-    public static void addSMDSDocument(oldDocumentModel item) {
+
+    public static List<smdsDocumentsModel> getNewDocuments() {
+        List<smdsDocumentsModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
-        try { 
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "SELECT * FROM SMDSDocuments";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                smdsDocumentsModel item = new smdsDocumentsModel();
+                item.setId(rs.getInt("id"));
+                item.setActive(rs.getBoolean("Active"));
+                item.setFileName(rs.getString("Type") == null ? null : rs.getString("Type").trim());
+                item.setFileName(rs.getString("Section") == null ? null : rs.getString("Section").trim());
+                item.setFileName(rs.getString("Description") == null ? null : rs.getString("Description").trim());
+                item.setFileName(rs.getString("FileName") == null ? null : rs.getString("FileName").trim());
+                item.setFileName(rs.getString("dueDate") == null ? null : rs.getString("dueDate").trim());
+                item.setFileName(rs.getString("group") == null ? null : rs.getString("group").trim());
+                item.setFileName(rs.getString("historyFileName") == null ? null : rs.getString("historyFileName").trim());
+                item.setFileName(rs.getString("historyDescription") == null ? null : rs.getString("historyDescription").trim());
+                item.setFileName(rs.getString("CHDCHG") == null ? null : rs.getString("CHDCHG").trim());
+                item.setFileName(rs.getString("questionsFileName") == null ? null : rs.getString("questionsFileName").trim());
+                item.setFileName(rs.getString("historyQuestionsDescription") == null ? null : rs.getString("historyQuestionsDescription").trim());
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
+
+    public static void addSMDSDocument(smdsDocumentsModel item) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
             String sql = "Insert INTO SMDSDocuments ("
-                    + "section, "    //01
-                    + "type, "       //02
-                    + "description, "//03
-                    + "fileName, "   //04
-                    + "active, "     //05
-                    + "dueDate "     //06
-                    + ") VALUES ("
-                    + "?,"  //01
-                    + "?,"  //02
-                    + "?,"  //03
-                    + "?,"  //04
-                    + "?,"  //05
-                    + "?)"; //06
+                    + "section, " //01
+                    + "type, " //02
+                    + "description, " //03
+                    + "fileName, " //04
+                    + "active, " //05
+                    + "dueDate, " //06
+                    + "[group], " //07
+                    + "historyFileName, " //08
+                    + "historyDescription, "//09
+                    + "CHDCHG, " //10
+                    + "questionsFileName, " //11
+                    + "historyQuestionsDescription " //12
+                    + ") VALUES (";
+            for (int i = 0; i < 11; i++) {
+                sql += "?, ";   //01-11
+            }
+            sql += "?)";   //12
             ps = conn.prepareStatement(sql);
             ps.setString(1, item.getSection());
             ps.setString(2, item.getType());
-            ps.setString(3, item.getDocumentDescription());
-            ps.setString(4, item.getDocumentFileName());
-            ps.setInt   (5, item.getActive());
-            if (item.getDueDate() != 0){
-                ps.setInt  (6, item.getDueDate());
+            ps.setString(3, item.getDescription());
+            ps.setString(4, item.getFileName());
+            ps.setBoolean(5, item.isActive());
+            if (item.getDueDate() != 0) {
+                ps.setInt(6, item.getDueDate());
             } else {
-                ps.setNull (6, java.sql.Types.INTEGER);
+                ps.setNull(6, java.sql.Types.INTEGER);
             }
+            ps.setString(7, item.getGroup());
+            ps.setString(8, item.getHistoryFileName());
+            ps.setString(9, item.getHistoryDescription());
+            ps.setString(10, item.getCHDCHG());
+            ps.setString(11, item.getQuestionsFileName());
+            ps.setString(12, item.getHsitoryQuestionsDescription());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -93,5 +141,5 @@ public class sqlDocument {
             DbUtils.closeQuietly(conn);
         }
     }
-    
+
 }
