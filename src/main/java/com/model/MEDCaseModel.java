@@ -41,6 +41,27 @@ public class MEDCaseModel {
     private String concilList2Name3;
     private String concilList2Name4;
     private String concilList2Name5;
+    private Date FFList1OrderDate;
+    private Date FFList1SelectionDueDate;
+    private String FFList1Name1;
+    private String FFList1Name2;
+    private String FFList1Name3;
+    private String FFList1Name4;
+    private String FFList1Name5;
+    private Date FFAppointmentDate;
+    private String FFType;
+    private String FFSelection;
+    private String FFReplacement;
+    private String FFOriginalFactFinder;
+    private Date FFOriginalFactFinderDate;
+    private int asAgreedToByParties;
+    private Date FFList2OrderDate;
+    private Date FFList2SelectionDueDate;
+    private String FFList2Name1;
+    private String FFList2Name2;
+    private String FFList2Name3;
+    private String FFList2Name4;
+    private String FFList2Name5;
     
     public int getId() {
         return id;
@@ -265,5 +286,174 @@ public class MEDCaseModel {
     public void setConcilList2Name5(String concilList2Name5) {
         this.concilList2Name5 = concilList2Name5;
     }
+
+    public Date getFFList1OrderDate() {
+        return FFList1OrderDate;
+    }
+
+    public void setFFList1OrderDate(Date FFList1OrderDate) {
+        this.FFList1OrderDate = FFList1OrderDate;
+    }
+
+    public Date getFFList1SelectionDueDate() {
+        return FFList1SelectionDueDate;
+    }
+
+    public void setFFList1SelectionDueDate(Date FFList1SelectionDueDate) {
+        this.FFList1SelectionDueDate = FFList1SelectionDueDate;
+    }
+
+    public String getFFList1Name1() {
+        return FFList1Name1;
+    }
+
+    public void setFFList1Name1(String FFList1Name1) {
+        this.FFList1Name1 = FFList1Name1;
+    }
+
+    public String getFFList1Name2() {
+        return FFList1Name2;
+    }
+
+    public void setFFList1Name2(String FFList1Name2) {
+        this.FFList1Name2 = FFList1Name2;
+    }
+
+    public String getFFList1Name3() {
+        return FFList1Name3;
+    }
+
+    public void setFFList1Name3(String FFList1Name3) {
+        this.FFList1Name3 = FFList1Name3;
+    }
+
+    public String getFFList1Name4() {
+        return FFList1Name4;
+    }
+
+    public void setFFList1Name4(String FFList1Name4) {
+        this.FFList1Name4 = FFList1Name4;
+    }
+
+    public String getFFList1Name5() {
+        return FFList1Name5;
+    }
+
+    public void setFFList1Name5(String FFList1Name5) {
+        this.FFList1Name5 = FFList1Name5;
+    }
+
+    public Date getFFAppointmentDate() {
+        return FFAppointmentDate;
+    }
+
+    public void setFFAppointmentDate(Date FFAppointmentDate) {
+        this.FFAppointmentDate = FFAppointmentDate;
+    }
+
+    public String getFFType() {
+        return FFType;
+    }
+
+    public void setFFType(String FFType) {
+        this.FFType = FFType;
+    }
+
+    public String getFFSelection() {
+        return FFSelection;
+    }
+
+    public void setFFSelection(String FFSelection) {
+        this.FFSelection = FFSelection;
+    }
+
+    public String getFFReplacement() {
+        return FFReplacement;
+    }
+
+    public void setFFReplacement(String FFReplacement) {
+        this.FFReplacement = FFReplacement;
+    }
+
+    public String getFFOriginalFactFinder() {
+        return FFOriginalFactFinder;
+    }
+
+    public void setFFOriginalFactFinder(String FFOriginalFactFinder) {
+        this.FFOriginalFactFinder = FFOriginalFactFinder;
+    }
+
+    public Date getFFOriginalFactFinderDate() {
+        return FFOriginalFactFinderDate;
+    }
+
+    public void setFFOriginalFactFinderDate(Date FFOriginalFactFinderDate) {
+        this.FFOriginalFactFinderDate = FFOriginalFactFinderDate;
+    }
+
+    public int getAsAgreedToByParties() {
+        return asAgreedToByParties;
+    }
+
+    public void setAsAgreedToByParties(int asAgreedToByParties) {
+        this.asAgreedToByParties = asAgreedToByParties;
+    }
+
+    public Date getFFList2OrderDate() {
+        return FFList2OrderDate;
+    }
+
+    public void setFFList2OrderDate(Date FFList2OrderDate) {
+        this.FFList2OrderDate = FFList2OrderDate;
+    }
+
+    public Date getFFList2SelectionDueDate() {
+        return FFList2SelectionDueDate;
+    }
+
+    public void setFFList2SelectionDueDate(Date FFList2SelectionDueDate) {
+        this.FFList2SelectionDueDate = FFList2SelectionDueDate;
+    }
+
+    public String getFFList2Name1() {
+        return FFList2Name1;
+    }
+
+    public void setFFList2Name1(String FFList2Name1) {
+        this.FFList2Name1 = FFList2Name1;
+    }
+
+    public String getFFList2Name2() {
+        return FFList2Name2;
+    }
+
+    public void setFFList2Name2(String FFList2Name2) {
+        this.FFList2Name2 = FFList2Name2;
+    }
+
+    public String getFFList2Name3() {
+        return FFList2Name3;
+    }
+
+    public void setFFList2Name3(String FFList2Name3) {
+        this.FFList2Name3 = FFList2Name3;
+    }
+
+    public String getFFList2Name4() {
+        return FFList2Name4;
+    }
+
+    public void setFFList2Name4(String FFList2Name4) {
+        this.FFList2Name4 = FFList2Name4;
+    }
+
+    public String getFFList2Name5() {
+        return FFList2Name5;
+    }
+
+    public void setFFList2Name5(String FFList2Name5) {
+        this.FFList2Name5 = FFList2Name5;
+    }
+    
     
 }

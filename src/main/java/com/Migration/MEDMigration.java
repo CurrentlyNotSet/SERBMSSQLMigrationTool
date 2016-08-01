@@ -58,10 +58,10 @@ public class MEDMigration {
         
         totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size();
         
-        for (factFinderModel item : oldFactFindersList) {
-            migrateFactFinder(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
-        }
+//        for (factFinderModel item : oldFactFindersList) {
+//            migrateFactFinder(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
+//        }
         
         for (oldMEDCaseModel item : oldMEDCaseList) {
             migrateCase(item);
@@ -114,14 +114,14 @@ public class MEDMigration {
         if (item.getCaseNumber().trim().length() == 16){
             caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
 
-            migrateEmployer(item, caseNumber);
-            migrateEmployerREP(item, caseNumber);
-            migrateEmployeeORG(item, caseNumber);
-            migrateEmployeeORGREP(item, caseNumber);
+//            migrateEmployer(item, caseNumber);
+//            migrateEmployerREP(item, caseNumber);
+//            migrateEmployeeORG(item, caseNumber);
+//            migrateEmployeeORGREP(item, caseNumber);
             migrateCaseData(item, caseNumber);
-            migrateCaseHistory(caseNumber);
-            migrateCaseSearch(item, caseNumber);
-            migrateEmployerCaseSearch(item, caseNumber);
+//            migrateCaseHistory(caseNumber);
+//            migrateCaseSearch(item, caseNumber);
+//            migrateEmployerCaseSearch(item, caseNumber);
         }
     }
     
@@ -241,7 +241,28 @@ public class MEDMigration {
         med.setConcilList2Name3(!"".equals(item.getConciliator3Set2().trim()) ? item.getConciliator3Set2().trim() : null);
         med.setConcilList2Name4(!"".equals(item.getConciliator4Set2().trim()) ? item.getConciliator4Set2().trim() : null);
         med.setConcilList2Name5(!"".equals(item.getConciliator5Set2().trim()) ? item.getConciliator5Set2().trim() : null);
-        
+        med.setFFList1OrderDate(!"".equals(item.getFFPanelSelectionDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getFFPanelSelectionDate().trim()).getTime()) : null);
+        med.setFFList1SelectionDueDate(!"".equals(item.getFFPanelSelectionDue().trim()) ? new Date(StringUtilities.convertStringDate(item.getFFPanelSelectionDue().trim()).getTime()) : null);
+        med.setFFList1Name1(!"".equals(item.getFactFinder1().trim()) ? item.getFactFinder1().trim() : null);
+        med.setFFList1Name2(!"".equals(item.getFactFinder2().trim()) ? item.getFactFinder2().trim() : null);
+        med.setFFList1Name3(!"".equals(item.getFactFinder3().trim()) ? item.getFactFinder3().trim() : null);
+        med.setFFList1Name4(!"".equals(item.getFactFinder4().trim()) ? item.getFactFinder4().trim() : null);
+        med.setFFList1Name5(!"".equals(item.getFactFinder5().trim()) ? item.getFactFinder5().trim() : null);
+        med.setFFAppointmentDate(!"".equals(item.getFactFinderApptDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getFactFinderApptDate().trim()).getTime()) : null);
+        med.setFFType(!"".equals(item.getFactFinderType().trim()) ? item.getFactFinderType().trim() : null);
+        med.setFFSelection(!"".equals(item.getFactFinderSelected().trim()) ? item.getFactFinderSelected().trim() : null);
+        med.setFFReplacement(!"".equals(item.getFactFinderRepalcement().trim()) ? item.getFactFinderRepalcement().trim() : null);
+        med.setFFOriginalFactFinder("".equals(item.getFFOrg().trim()) ? item.getFFOrg().trim() : null);
+        med.setFFOriginalFactFinderDate(!"".equals(item.getOrgFFDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getOrgFFDate().trim()).getTime()) : null);
+        med.setAsAgreedToByParties(!"1".equals(item.getAgreedByTheParties().trim()) ? 1 : 0);
+        med.setFFList2OrderDate(!"".equals(item.getFFPanelSelectionDate2().trim()) ? new Date(StringUtilities.convertStringDate(item.getFFPanelSelectionDate2().trim()).getTime()) : null);
+        med.setFFList2SelectionDueDate(!"".equals(item.getFFPanelSelectionDue2().trim()) ? new Date(StringUtilities.convertStringDate(item.getFFPanelSelectionDue2().trim()).getTime()) : null);
+        med.setFFList2Name1(!"".equals(item.getFactFinder1Set2().trim()) ? item.getFactFinder1Set2().trim() : null);
+        med.setFFList2Name2(!"".equals(item.getFactFinder2Set2().trim()) ? item.getFactFinder2Set2().trim() : null);
+        med.setFFList2Name3(!"".equals(item.getFactFinder3Set2().trim()) ? item.getFactFinder3Set2().trim() : null);
+        med.setFFList2Name4(!"".equals(item.getFactFinder4Set2().trim()) ? item.getFactFinder4Set2().trim() : null);
+        med.setFFList2Name5(!"".equals(item.getFactFinder5Set2().trim()) ? item.getFactFinder5Set2().trim() : null);
+
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
                 case "Notes":

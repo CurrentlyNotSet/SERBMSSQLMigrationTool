@@ -259,12 +259,33 @@ public class sqlMEDData {
                     + "concilList2Name2, "//24
                     + "concilList2Name3, "//25
                     + "concilList2Name4, "//26
-                    + "concilList2Name5 " //27
+                    + "concilList2Name5, "//27
+                    + "FFList1OrderDate, "//28
+                    + "FFList1SelectionDueDate, "//29
+                    + "FFList1Name1, "//30
+                    + "FFList1Name2, "//31
+                    + "FFList1Name3, "//32
+                    + "FFList1Name4, "//33
+                    + "FFList1Name5, "//34
+                    + "FFAppointmentDate, " //35
+                    + "FFType, "            //36
+                    + "FFSelection, "       //37
+                    + "FFReplacement, "     //38
+                    + "FFOriginalFactFinder, "      //39
+                    + "FFOriginalFactFinderDate, "  //40
+                    + "asAgreedToByParties, "       //41
+                    + "FFList2OrderDate, "          //42
+                    + "FFList2SelectionDueDate, "   //43
+                    + "FFList2Name1, "//44
+                    + "FFList2Name2, "//45
+                    + "FFList2Name3, "//46
+                    + "FFList2Name4, "//47
+                    + "FFList2Name5 " //48
                     + ") VALUES (";
-                    for(int i=0; i<26; i++){
-                        sql += "?, ";   //01-26
+                    for(int i=0; i<47; i++){
+                        sql += "?, ";   //01-47
                     }
-                     sql += "?)";   //27
+                     sql += "?)";   //48
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getCaseYear());
@@ -293,6 +314,27 @@ public class sqlMEDData {
             ps.setString(25, item.getConcilList2Name3());
             ps.setString(26, item.getConcilList2Name4());
             ps.setString(27, item.getConcilList2Name5());
+            ps.setDate  (28, item.getFFList1OrderDate());
+            ps.setDate  (29, item.getFFList1SelectionDueDate());
+            ps.setString(30, item.getFFList1Name1());
+            ps.setString(31, item.getFFList1Name2());
+            ps.setString(32, item.getFFList1Name3());
+            ps.setString(33, item.getFFList1Name4());
+            ps.setString(34, item.getFFList1Name5());
+            ps.setDate  (35, item.getFFAppointmentDate());
+            ps.setString(36, item.getFFType());
+            ps.setString(37, item.getFFSelection());
+            ps.setString(38, item.getFFReplacement());
+            ps.setString(39, item.getFFOriginalFactFinder());
+            ps.setDate  (40, item.getFFOriginalFactFinderDate());
+            ps.setInt   (41, item.getAsAgreedToByParties());
+            ps.setDate  (42, item.getFFList2OrderDate());
+            ps.setDate  (43, item.getFFList2SelectionDueDate());
+            ps.setString(44, item.getFFList2Name1());
+            ps.setString(45, item.getFFList2Name2());
+            ps.setString(46, item.getFFList2Name3());
+            ps.setString(47, item.getFFList2Name4());
+            ps.setString(48, item.getFFList2Name5());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
