@@ -254,7 +254,7 @@ public class MEDMigration {
         med.setFFReplacement(!"".equals(item.getFactFinderRepalcement().trim()) ? item.getFactFinderRepalcement().trim() : null);
         med.setFFOriginalFactFinder("".equals(item.getFFOrg().trim()) ? item.getFFOrg().trim() : null);
         med.setFFOriginalFactFinderDate(!"".equals(item.getOrgFFDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getOrgFFDate().trim()).getTime()) : null);
-        med.setAsAgreedToByParties(!"1".equals(item.getAgreedByTheParties().trim()) ? 1 : 0);
+        med.setAsAgreedToByParties("1".equals(item.getAgreedByTheParties().trim()) ? 1 : 0);
         med.setFFList2OrderDate(!"".equals(item.getFFPanelSelectionDate2().trim()) ? new Date(StringUtilities.convertStringDate(item.getFFPanelSelectionDate2().trim()).getTime()) : null);
         med.setFFList2SelectionDueDate(!"".equals(item.getFFPanelSelectionDue2().trim()) ? new Date(StringUtilities.convertStringDate(item.getFFPanelSelectionDue2().trim()).getTime()) : null);
         med.setFFList2Name1(!"".equals(item.getFactFinder1Set2().trim()) ? item.getFactFinder1Set2().trim() : null);
@@ -262,6 +262,16 @@ public class MEDMigration {
         med.setFFList2Name3(!"".equals(item.getFactFinder3Set2().trim()) ? item.getFactFinder3Set2().trim() : null);
         med.setFFList2Name4(!"".equals(item.getFactFinder4Set2().trim()) ? item.getFactFinder4Set2().trim() : null);
         med.setFFList2Name5(!"".equals(item.getFactFinder5Set2().trim()) ? item.getFactFinder5Set2().trim() : null);
+        med.setFFEmployerType(!"".equals(item.getEmployerType().trim()) ? item.getEmployerType().trim() : null);
+        med.setFFEmployeeType(!"".equals(item.getEmployeeType().trim()) ? item.getEmployeeType().trim() : null);
+        med.setFFReportIssueDate(!"".equals(item.getReportIssuedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getReportIssuedDate().trim()).getTime()) : null);
+        med.setFFMediatedSettlement("1".equals(item.getMediatedSettlement().trim()) ? 1 : 0);
+        med.setFFAcceptedBy(!"".equals(item.getResultsAppectedBy().trim()) ? item.getResultsAppectedBy().trim() : null);
+        med.setFFDeemedAcceptedBy(!"".equals(item.getResultsDeemedAcceptedBy().trim()) ? item.getResultsDeemedAcceptedBy().trim() : null);
+        med.setFFRejectedBy(!"".equals(item.getResultsRejectedBy().trim()) ? item.getResultsRejectedBy().trim() : null);
+        med.setFFOverallResult(!"".equals(item.getResultsOverallResult().trim()) ? item.getResultsOverallResult().trim() : null);
+
+        
 
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
@@ -271,9 +281,9 @@ public class MEDMigration {
 //                case "StkNotes":
 //                    med.setStkNotes(StringUtilities.convertBlobFileToString(blob.getBlobData()));
 //                    break;
-//                case "FFNotes":
-//                    med.setFFNotes(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-//                    break;  
+                case "FFNotes":
+                    med.setFFNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;  
                 default:
                     break;
             }

@@ -280,12 +280,21 @@ public class sqlMEDData {
                     + "FFList2Name2, "//45
                     + "FFList2Name3, "//46
                     + "FFList2Name4, "//47
-                    + "FFList2Name5 " //48
+                    + "FFList2Name5, "//48
+                    + "FFEmployerType, "      //49
+                    + "FFEmployeeType, "      //50
+                    + "FFReportIssueDate, "   //51
+                    + "FFMediatedSettlement, "//52
+                    + "FFAcceptedBy, "        //53
+                    + "FFDeemedAcceptedBy, "  //54
+                    + "FFRejectedBy, "        //55
+                    + "FFOverallResult, "     //56
+                    + "FFNote "               //57
                     + ") VALUES (";
-                    for(int i=0; i<47; i++){
-                        sql += "?, ";   //01-47
+                    for(int i=0; i<56; i++){
+                        sql += "?, ";   //01-56
                     }
-                     sql += "?)";   //48
+                     sql += "?)";   //57
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getCaseYear());
@@ -335,6 +344,15 @@ public class sqlMEDData {
             ps.setString(46, item.getFFList2Name3());
             ps.setString(47, item.getFFList2Name4());
             ps.setString(48, item.getFFList2Name5());
+            ps.setString(49, item.getFFEmployerType());
+            ps.setString(50, item.getFFEmployeeType());
+            ps.setDate  (51, item.getFFReportIssueDate());
+            ps.setInt   (52, item.getFFMediatedSettlement());
+            ps.setString(53, item.getFFAcceptedBy());
+            ps.setString(54, item.getFFDeemedAcceptedBy());
+            ps.setString(55, item.getFFRejectedBy());
+            ps.setString(56, item.getFFOverallResult());
+            ps.setString(57, item.getFFNote());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

@@ -62,7 +62,16 @@ public class MEDCaseModel {
     private String FFList2Name3;
     private String FFList2Name4;
     private String FFList2Name5;
-    
+    private String FFEmployerType;
+    private String FFEmployeeType;
+    private Date FFReportIssueDate;
+    private int FFMediatedSettlement;
+    private String FFAcceptedBy;
+    private String FFDeemedAcceptedBy;
+    private String FFRejectedBy;
+    private String FFOverallResult;
+    private String FFNote;
+ 
     public int getId() {
         return id;
     }
@@ -453,6 +462,78 @@ public class MEDCaseModel {
 
     public void setFFList2Name5(String FFList2Name5) {
         this.FFList2Name5 = FFList2Name5;
+    }
+
+    public String getFFEmployerType() {
+        return FFEmployerType;
+    }
+
+    public void setFFEmployerType(String FFEmployerType) {
+        this.FFEmployerType = FFEmployerType;
+    }
+
+    public String getFFEmployeeType() {
+        return FFEmployeeType;
+    }
+
+    public void setFFEmployeeType(String FFEmployeeType) {
+        this.FFEmployeeType = FFEmployeeType;
+    }
+
+    public Date getFFReportIssueDate() {
+        return FFReportIssueDate;
+    }
+
+    public void setFFReportIssueDate(Date FFReportIssueDate) {
+        this.FFReportIssueDate = FFReportIssueDate;
+    }
+
+    public int getFFMediatedSettlement() {
+        return FFMediatedSettlement;
+    }
+
+    public void setFFMediatedSettlement(int FFMediatedSettlement) {
+        this.FFMediatedSettlement = FFMediatedSettlement;
+    }
+
+    public String getFFAcceptedBy() {
+        return FFAcceptedBy;
+    }
+
+    public void setFFAcceptedBy(String FFAcceptedBy) {
+        this.FFAcceptedBy = FFAcceptedBy;
+    }
+
+    public String getFFDeemedAcceptedBy() {
+        return FFDeemedAcceptedBy;
+    }
+
+    public void setFFDeemedAcceptedBy(String FFDeemedAcceptedBy) {
+        this.FFDeemedAcceptedBy = FFDeemedAcceptedBy;
+    }
+
+    public String getFFRejectedBy() {
+        return FFRejectedBy;
+    }
+
+    public void setFFRejectedBy(String FFRejectedBy) {
+        this.FFRejectedBy = FFRejectedBy;
+    }
+
+    public String getFFOverallResult() {
+        return FFOverallResult;
+    }
+
+    public void setFFOverallResult(String FFOverallResult) {
+        this.FFOverallResult = FFOverallResult;
+    }
+
+    public String getFFNote() {
+        return FFNote;
+    }
+
+    public void setFFNote(String FFNote) {
+        this.FFNote = FFNote;
     }
     
     
