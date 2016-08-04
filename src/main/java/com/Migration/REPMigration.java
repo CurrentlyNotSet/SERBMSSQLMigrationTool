@@ -76,6 +76,21 @@ public class REPMigration {
         totalRecordCount = oldREPDataList.size() + REPBoardActionList.size() 
                 + REPCaseTypeList.size() + REPCaseStatusList.size() + REPrecList.size();
 
+        for (REPRecommendationModel item : REPrecList){
+            sqlREPRecommendation.addREPRecommendation(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getType());
+        }
+        
+        for (REPCaseTypeModel item : REPCaseTypeList){
+            sqlREPCaseType.addREPCaseType(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getTypeName());
+        }
+        
+        for (REPCaseStatusModel item : REPCaseStatusList){
+            sqlREPCaseStatus.addREPCaseStatus(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getStatusType());
+        }
+        
         for (boardAcionTypeModel item : REPBoardActionList){
             sqlBoardActionType.addREPBoardActionType(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getShort());

@@ -58,10 +58,10 @@ public class MEDMigration {
         
         totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size();
         
-//        for (factFinderModel item : oldFactFindersList) {
-//            migrateFactFinder(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
-//        }
+        for (factFinderModel item : oldFactFindersList) {
+            migrateFactFinder(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
+        }
         
         for (oldMEDCaseModel item : oldMEDCaseList) {
             migrateCase(item);
@@ -114,14 +114,14 @@ public class MEDMigration {
         if (item.getCaseNumber().trim().length() == 16){
             caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
 
-//            migrateEmployer(item, caseNumber);
-//            migrateEmployerREP(item, caseNumber);
-//            migrateEmployeeORG(item, caseNumber);
-//            migrateEmployeeORGREP(item, caseNumber);
+            migrateEmployer(item, caseNumber);
+            migrateEmployerREP(item, caseNumber);
+            migrateEmployeeORG(item, caseNumber);
+            migrateEmployeeORGREP(item, caseNumber);
             migrateCaseData(item, caseNumber);
-//            migrateCaseHistory(caseNumber);
-//            migrateCaseSearch(item, caseNumber);
-//            migrateEmployerCaseSearch(item, caseNumber);
+            migrateCaseHistory(caseNumber);
+            migrateCaseSearch(item, caseNumber);
+            migrateEmployerCaseSearch(item, caseNumber);
         }
     }
     
