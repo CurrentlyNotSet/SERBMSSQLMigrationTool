@@ -12,6 +12,7 @@ import com.model.caseNumberModel;
 import com.model.casePartyModel;
 import com.model.employerCaseSearchModel;
 import com.model.factFinderModel;
+import com.model.mediatorsModel;
 import com.model.oldBlobFileModel;
 import com.model.oldMEDCaseModel;
 import com.model.oldMEDHistoryModel;
@@ -24,6 +25,7 @@ import com.sql.sqlEmployers;
 import com.sql.sqlFactFinder;
 import com.sql.sqlMEDCaseSearch;
 import com.sql.sqlMEDData;
+import com.sql.sqlMediator;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
 import com.util.SceneUpdater;
@@ -55,18 +57,24 @@ public class MEDMigration {
                 
         List<oldMEDCaseModel> oldMEDCaseList = sqlMEDData.getCases();
         List<factFinderModel> oldFactFindersList = sqlFactFinder.getOldFactFinders();
+        List<mediatorsModel> oldMediatorsList = sqlMediator.getOldMediator();
         
-        totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size();
+        totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size() + oldMediatorsList.size();
         
-        for (factFinderModel item : oldFactFindersList) {
-            migrateFactFinder(item);
+//        for (factFinderModel item : oldFactFindersList) {
+//            migrateFactFinder(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
+//        }
+        
+        for (mediatorsModel item : oldMediatorsList) {
+            migrateMediator(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
         }
         
-        for (oldMEDCaseModel item : oldMEDCaseList) {
-            migrateCase(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
-        }
+//        for (oldMEDCaseModel item : oldMEDCaseList) {
+//            migrateCase(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
+//        }
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating MED Cases: " 
@@ -108,6 +116,25 @@ public class MEDMigration {
             item.setState("KY");
         }    
         sqlFactFinder.addFactFinder(item);
+    }
+    
+    private static void migrateMediator(mediatorsModel item) { 
+        String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
+        
+        if (nameSplit.length == 2){
+            item.setFirstName(nameSplit[0].trim());
+            item.setMiddleName(null);
+            item.setLastName(nameSplit[1].trim());
+        } else if (nameSplit.length == 3) {
+                item.setFirstName(nameSplit[0].trim());
+                item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
+                item.setLastName(nameSplit[2].trim());
+        } else if (nameSplit.length == 4) {
+                item.setFirstName(nameSplit[0].trim());
+                item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
+                item.setLastName(nameSplit[2].trim() + ", " + nameSplit[3].trim());
+        }  
+        sqlMediator.addMediator(item);
     }
     
     private static void migrateCase(oldMEDCaseModel item) {
