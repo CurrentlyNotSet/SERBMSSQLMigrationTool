@@ -61,20 +61,20 @@ public class MEDMigration {
         
         totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size() + oldMediatorsList.size();
         
-//        for (factFinderModel item : oldFactFindersList) {
-//            migrateFactFinder(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
-//        }
+        for (factFinderModel item : oldFactFindersList) {
+            migrateFactFinder(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
+        }
         
         for (mediatorsModel item : oldMediatorsList) {
             migrateMediator(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
         }
         
-//        for (oldMEDCaseModel item : oldMEDCaseList) {
-//            migrateCase(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
-//        }
+        for (oldMEDCaseModel item : oldMEDCaseList) {
+            migrateCase(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
+        }
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating MED Cases: " 
