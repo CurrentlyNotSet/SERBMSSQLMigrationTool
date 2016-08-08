@@ -21,6 +21,7 @@ import com.model.employerCaseSearchModel;
 import com.model.oldBlobFileModel;
 import com.model.oldREPDataModel;
 import com.model.oldREPHistoryModel;
+import com.model.relatedCaseModel;
 import com.model.repCaseSearchModel;
 import com.model.startTimeEndTimeModel;
 import com.sceneControllers.MainWindowSceneController;
@@ -40,6 +41,7 @@ import com.sql.sqlREPElectionMultiCase;
 import com.sql.sqlREPElectionSiteInformation;
 import com.sql.sqlREPMediation;
 import com.sql.sqlREPRecommendation;
+import com.sql.sqlRelatedCase;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
@@ -860,7 +862,9 @@ public class REPMigration {
                     break;    
                 case "Blurb":
                     rep.setBoardStatusBlurb(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;    
+                    break;
+                case "Related":
+                    migrateRelatedCases(caseNumber, StringUtilities.convertBlobFileToString(blob.getBlobData()));
                 default:
                     break;
             }
@@ -868,6 +872,26 @@ public class REPMigration {
         sqlREPData.importOldREPCase(rep);
     }
 
+    private static void migrateRelatedCases(caseNumberModel caseNumber, String relatedCaseNumbers){
+        if (relatedCaseNumbers != null) {
+            relatedCaseModel relatedCase = new relatedCaseModel();
+
+            relatedCase.setCaseYear(caseNumber.getCaseYear());
+            relatedCase.setCaseType(caseNumber.getCaseType());
+            relatedCase.setCaseMonth(caseNumber.getCaseMonth());
+            relatedCase.setCaseNumber(caseNumber.getCaseNumber());
+
+            String[] caseNumberArray = relatedCaseNumbers.split("[" + System.lineSeparator() + "\\,]");
+
+            for (String casenumber : caseNumberArray) {
+                if (!"".equals(casenumber.trim())) {
+                    relatedCase.setRelatedCaseNumber(casenumber.trim());
+                    sqlRelatedCase.addRelatedCase(relatedCase);
+                }
+            }
+        }
+    }
+    
     private static void migrateMediations(oldREPDataModel item, caseNumberModel caseNumber) {
         REPMediationModel mediation = new REPMediationModel();
         

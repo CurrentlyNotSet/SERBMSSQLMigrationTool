@@ -16,6 +16,7 @@ import com.model.mediatorsModel;
 import com.model.oldBlobFileModel;
 import com.model.oldMEDCaseModel;
 import com.model.oldMEDHistoryModel;
+import com.model.relatedCaseModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
@@ -27,6 +28,7 @@ import com.sql.sqlMEDCaseSearch;
 import com.sql.sqlMEDData;
 import com.sql.sqlMediator;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlRelatedCase;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
@@ -38,6 +40,8 @@ import java.util.List;
  * @author Andrew
  */
 public class MEDMigration {
+    
+    private static List<mediatorsModel> newMediatorsList;
     
     public static void migrateMEDData(final MainWindowSceneController control){
         Thread medThread = new Thread() {
@@ -70,6 +74,8 @@ public class MEDMigration {
             migrateMediator(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
         }
+        
+        newMediatorsList = sqlMediator.getNewMediator();
         
         for (oldMEDCaseModel item : oldMEDCaseList) {
             migrateCase(item);
@@ -146,6 +152,7 @@ public class MEDMigration {
             migrateEmployeeORG(item, caseNumber);
             migrateEmployeeORGREP(item, caseNumber);
             migrateCaseData(item, caseNumber);
+            migrateRelatedCases(item, caseNumber);
             migrateCaseHistory(caseNumber);
             migrateCaseSearch(item, caseNumber);
             migrateEmployerCaseSearch(item, caseNumber);
@@ -297,9 +304,51 @@ public class MEDMigration {
         med.setFFDeemedAcceptedBy(!"".equals(item.getResultsDeemedAcceptedBy().trim()) ? item.getResultsDeemedAcceptedBy().trim() : null);
         med.setFFRejectedBy(!"".equals(item.getResultsRejectedBy().trim()) ? item.getResultsRejectedBy().trim() : null);
         med.setFFOverallResult(!"".equals(item.getResultsOverallResult().trim()) ? item.getResultsOverallResult().trim() : null);
+        
+        
+        med.setEmployerIDNumber(!"".equals(item.getEmployerIDNumber().trim()) ? item.getEmployerIDNumber().trim() : null);
+        med.setBargainingUnitNumber(!"".equals(item.getBUNumber().trim()) ? item.getBUNumber().trim() : null);
+        med.setApproxNumberOfEmployees(!"".equals(item.getApproxNumberOfEmployees().trim()) ? item.getApproxNumberOfEmployees().trim() : null);
+        med.setDuplicateCaseNumber(!"".equals(item.getDuplicateCase().trim()) ? item.getDuplicateCase().trim() : null);
+        med.setRelatedCaseNumber(!"".equals(item.getRelated().trim()) ? item.getRelated().trim() : null);
+        med.setNegotiationType(!"".equals(item.getNegotiationType().trim()) ? item.getNegotiationType().trim() : null);
+        med.setExpirationDate(!"".equals(item.getExpirationDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getExpirationDate().trim()).getTime()) : null);
+        med.setNTNFiledBy(!"".equals(item.getNTNFiledBy().trim()) ? item.getNTNFiledBy().trim() : null);
+        med.setNegotiationPeriod(!"".equals(item.getNegotiationPeriod().trim()) ? item.getNegotiationPeriod().trim() : null);
+        med.setMultiunitBargainingRequested(item.getMultiUnitBargainingRequested().equals("1"));
+        med.setMediatorAppointedDate(!"".equals(item.getMediatorApptDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getMediatorApptDate().trim()).getTime()) : null);
+        med.setMediatorReplacement(item.getMediatorInvolved().equals("1"));
+        med.setSettlementDate(!"".equals(item.getCBAReceivedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getCBAReceivedDate().trim()).getTime()) : null);
+        med.setCaseStatus(!"".equals(item.getStatus().trim()) ? item.getStatus().trim() : null);
+        med.setSendToBoardToClose(item.getTempHolder4().equals("Send to Brd to Close"));
+        med.setBoardFinalDate(!"".equals(item.getTempHolder3().trim()) ? new Date(StringUtilities.convertStringDate(item.getTempHolder3().trim()).getTime()) : null);
+        med.setRetentionTicklerDate(!"".equals(item.getTicklerDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getTicklerDate().trim()).getTime()) : null);
+        med.setLateFiling(item.getLateFiling().equals("1"));
+        med.setImpasse(item.getImpasse().equals("1"));
+        med.setSettled(item.getSettledCheckBox().equals("1"));
+        med.setTA(item.getTACheckBox().equals("1"));
+        med.setMAD(item.getMADCheckBox().equals("1"));
+        med.setWithdrawl(item.getWithdraw().equals("1"));
+        med.setMotion(item.getMotionCheckBox().equals("1"));
+        med.setDismissed(item.getDismiss().equals("1"));
 
         
-
+        for (mediatorsModel person : newMediatorsList) {
+            if (item.getStateMediatorAppt().toLowerCase().startsWith(person.getFirstName().toLowerCase()) || 
+                    item.getStateMediatorAppt().toLowerCase().endsWith(person.getLastName().toLowerCase()) ){
+                med.setStateMediatorAppointedID(String.valueOf(person.getID()));
+                break;
+            }
+        }
+        
+        for (mediatorsModel person : newMediatorsList) { 
+            if (item.getFMCSMediatorAppt().toLowerCase().startsWith(person.getFirstName().toLowerCase()) || 
+                    item.getFMCSMediatorAppt().toLowerCase().endsWith(person.getLastName().toLowerCase()) ){
+                med.setFMCSMediatorAppointedID(String.valueOf(person.getID()));
+                break;
+            }
+        }
+        
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
                 case "Notes":
@@ -317,6 +366,36 @@ public class MEDMigration {
         }
         
         sqlMEDData.importOldMEDCase(med);
+    }
+    
+    private static void migrateRelatedCases(oldMEDCaseModel item, caseNumberModel caseNumber){
+        relatedCaseModel relatedCase = new relatedCaseModel();
+
+        relatedCase.setCaseYear(caseNumber.getCaseYear());
+        relatedCase.setCaseType(caseNumber.getCaseType());
+        relatedCase.setCaseMonth(caseNumber.getCaseMonth());
+        relatedCase.setCaseNumber(caseNumber.getCaseNumber());
+        
+        if (!item.getCaseNumber2().trim().equals("")){
+            relatedCase.setRelatedCaseNumber(item.getCaseNumber2().trim());
+            sqlRelatedCase.addRelatedCase(relatedCase);
+        }
+        if (!item.getCaseNumber3().trim().equals("")){
+            relatedCase.setRelatedCaseNumber(item.getCaseNumber3().trim());
+            sqlRelatedCase.addRelatedCase(relatedCase);
+        }
+        if (!item.getCaseNumber4().trim().equals("")){
+            relatedCase.setRelatedCaseNumber(item.getCaseNumber4().trim());
+            sqlRelatedCase.addRelatedCase(relatedCase);
+        }
+        if (!item.getCaseNumber5().trim().equals("")){
+            relatedCase.setRelatedCaseNumber(item.getCaseNumber5().trim());
+            sqlRelatedCase.addRelatedCase(relatedCase);
+        }
+        if (!item.getCaseNumber6().trim().equals("")){
+            relatedCase.setRelatedCaseNumber(item.getCaseNumber6().trim());
+            sqlRelatedCase.addRelatedCase(relatedCase);
+        }
     }
         
     private static void migrateCaseHistory(caseNumberModel caseNumber) {

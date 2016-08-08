@@ -71,6 +71,33 @@ public class MEDCaseModel {
     private String FFRejectedBy;
     private String FFOverallResult;
     private String FFNote;
+    private String employerIDNumber;
+    private String bargainingUnitNumber;
+    private String approxNumberOfEmployees;
+    private String duplicateCaseNumber;
+    private String relatedCaseNumber;
+    private String negotiationType;
+    private Date expirationDate;
+    private String NTNFiledBy;
+    private String negotiationPeriod;
+    private boolean multiunitBargainingRequested;
+    private Date mediatorAppointedDate;
+    private boolean mediatorReplacement;
+    private String stateMediatorAppointedID;
+    private String FMCSMediatorAppointedID;
+    private Date settlementDate;
+    private String caseStatus;
+    private boolean sendToBoardToClose;
+    private Date boardFinalDate;
+    private Date retentionTicklerDate;
+    private boolean lateFiling;
+    private boolean impasse;
+    private boolean settled;
+    private boolean TA;
+    private boolean MAD;
+    private boolean withdrawl;
+    private boolean motion;
+    private boolean dismissed;
  
     public int getId() {
         return id;
@@ -534,6 +561,222 @@ public class MEDCaseModel {
 
     public void setFFNote(String FFNote) {
         this.FFNote = FFNote;
+    }
+
+    public String getEmployerIDNumber() {
+        return employerIDNumber;
+    }
+
+    public void setEmployerIDNumber(String employerIDNumber) {
+        this.employerIDNumber = employerIDNumber;
+    }
+
+    public String getBargainingUnitNumber() {
+        return bargainingUnitNumber;
+    }
+
+    public void setBargainingUnitNumber(String bargainingUnitNumber) {
+        this.bargainingUnitNumber = bargainingUnitNumber;
+    }
+
+    public String getApproxNumberOfEmployees() {
+        return approxNumberOfEmployees;
+    }
+
+    public void setApproxNumberOfEmployees(String approxNumberOfEmployees) {
+        this.approxNumberOfEmployees = approxNumberOfEmployees;
+    }
+
+    public String getDuplicateCaseNumber() {
+        return duplicateCaseNumber;
+    }
+
+    public void setDuplicateCaseNumber(String duplicateCaseNumber) {
+        this.duplicateCaseNumber = duplicateCaseNumber;
+    }
+
+    public String getRelatedCaseNumber() {
+        return relatedCaseNumber;
+    }
+
+    public void setRelatedCaseNumber(String relatedCaseNumber) {
+        this.relatedCaseNumber = relatedCaseNumber;
+    }
+
+    public String getNegotiationType() {
+        return negotiationType;
+    }
+
+    public void setNegotiationType(String negotiationType) {
+        this.negotiationType = negotiationType;
+    }
+
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public String getNTNFiledBy() {
+        return NTNFiledBy;
+    }
+
+    public void setNTNFiledBy(String NTNFiledBy) {
+        this.NTNFiledBy = NTNFiledBy;
+    }
+
+    public String getNegotiationPeriod() {
+        return negotiationPeriod;
+    }
+
+    public void setNegotiationPeriod(String negotiationPeriod) {
+        this.negotiationPeriod = negotiationPeriod;
+    }
+
+    public boolean isMultiunitBargainingRequested() {
+        return multiunitBargainingRequested;
+    }
+
+    public void setMultiunitBargainingRequested(boolean multiunitBargainingRequested) {
+        this.multiunitBargainingRequested = multiunitBargainingRequested;
+    }
+
+    public Date getMediatorAppointedDate() {
+        return mediatorAppointedDate;
+    }
+
+    public void setMediatorAppointedDate(Date mediatorAppointedDate) {
+        this.mediatorAppointedDate = mediatorAppointedDate;
+    }
+
+    public boolean isMediatorReplacement() {
+        return mediatorReplacement;
+    }
+
+    public void setMediatorReplacement(boolean mediatorReplacement) {
+        this.mediatorReplacement = mediatorReplacement;
+    }
+
+    public String getStateMediatorAppointedID() {
+        return stateMediatorAppointedID;
+    }
+
+    public void setStateMediatorAppointedID(String stateMediatorAppointedID) {
+        this.stateMediatorAppointedID = stateMediatorAppointedID;
+    }
+
+    public String getFMCSMediatorAppointedID() {
+        return FMCSMediatorAppointedID;
+    }
+
+    public void setFMCSMediatorAppointedID(String FMCSMediatorAppointedID) {
+        this.FMCSMediatorAppointedID = FMCSMediatorAppointedID;
+    }
+
+    public Date getSettlementDate() {
+        return settlementDate;
+    }
+
+    public void setSettlementDate(Date settlementDate) {
+        this.settlementDate = settlementDate;
+    }
+
+    public String getCaseStatus() {
+        return caseStatus;
+    }
+
+    public void setCaseStatus(String caseStatus) {
+        this.caseStatus = caseStatus;
+    }
+
+    public boolean isSendToBoardToClose() {
+        return sendToBoardToClose;
+    }
+
+    public void setSendToBoardToClose(boolean sendToBoardToClose) {
+        this.sendToBoardToClose = sendToBoardToClose;
+    }
+
+    public Date getBoardFinalDate() {
+        return boardFinalDate;
+    }
+
+    public void setBoardFinalDate(Date boardFinalDate) {
+        this.boardFinalDate = boardFinalDate;
+    }
+
+    public Date getRetentionTicklerDate() {
+        return retentionTicklerDate;
+    }
+
+    public void setRetentionTicklerDate(Date retentionTicklerDate) {
+        this.retentionTicklerDate = retentionTicklerDate;
+    }
+
+    public boolean isLateFiling() {
+        return lateFiling;
+    }
+
+    public void setLateFiling(boolean lateFiling) {
+        this.lateFiling = lateFiling;
+    }
+
+    public boolean isImpasse() {
+        return impasse;
+    }
+
+    public void setImpasse(boolean impasse) {
+        this.impasse = impasse;
+    }
+
+    public boolean isSettled() {
+        return settled;
+    }
+
+    public void setSettled(boolean settled) {
+        this.settled = settled;
+    }
+
+    public boolean isTA() {
+        return TA;
+    }
+
+    public void setTA(boolean TA) {
+        this.TA = TA;
+    }
+
+    public boolean isMAD() {
+        return MAD;
+    }
+
+    public void setMAD(boolean MAD) {
+        this.MAD = MAD;
+    }
+
+    public boolean isWithdrawl() {
+        return withdrawl;
+    }
+
+    public void setWithdrawl(boolean withdrawl) {
+        this.withdrawl = withdrawl;
+    }
+
+    public boolean isMotion() {
+        return motion;
+    }
+
+    public void setMotion(boolean motion) {
+        this.motion = motion;
+    }
+
+    public boolean isDismissed() {
+        return dismissed;
+    }
+
+    public void setDismissed(boolean dismissed) {
+        this.dismissed = dismissed;
     }
     
     

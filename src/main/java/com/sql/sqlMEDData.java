@@ -267,15 +267,15 @@ public class sqlMEDData {
                     + "FFList1Name3, "//32
                     + "FFList1Name4, "//33
                     + "FFList1Name5, "//34
-                    + "FFAppointmentDate, " //35
-                    + "FFType, "            //36
-                    + "FFSelection, "       //37
-                    + "FFReplacement, "     //38
-                    + "FFOriginalFactFinder, "      //39
-                    + "FFOriginalFactFinderDate, "  //40
-                    + "asAgreedToByParties, "       //41
-                    + "FFList2OrderDate, "          //42
-                    + "FFList2SelectionDueDate, "   //43
+                    + "FFAppointmentDate, "//35
+                    + "FFType, "           //36
+                    + "FFSelection, "      //37
+                    + "FFReplacement, "    //38
+                    + "FFOriginalFactFinder, "    //39
+                    + "FFOriginalFactFinderDate, "//40
+                    + "asAgreedToByParties, "     //41
+                    + "FFList2OrderDate, "        //42
+                    + "FFList2SelectionDueDate, " //43
                     + "FFList2Name1, "//44
                     + "FFList2Name2, "//45
                     + "FFList2Name3, "//46
@@ -289,12 +289,39 @@ public class sqlMEDData {
                     + "FFDeemedAcceptedBy, "  //54
                     + "FFRejectedBy, "        //55
                     + "FFOverallResult, "     //56
-                    + "FFNote "               //57
+                    + "FFNote, "              //57
+                    + "EmployerIDNumber, "            //58
+                    + "bargainingUnitNumber, "        //59
+                    + "ApproxNumberOfEmployees, "     //60
+                    + "DuplicateCaseNumber, "         //61
+                    + "RelatedCaseNumber, "           //62
+                    + "NegotiationType, "             //63
+                    + "ExpirationDate, "              //64
+                    + "NTNFiledBy, "                  //65
+                    + "NegotiationPeriod, "           //66
+                    + "MultiunitBargainingRequested, "//67
+                    + "MediatorAppointedDate, "       //68
+                    + "MediatorReplacement, "         //69
+                    + "StateMediatorAppointedID, "    //70
+                    + "FMCSMediatorAppointedID, "     //71
+                    + "SettlementDate, "              //72
+                    + "CaseStatus, "                  //73
+                    + "SendToBoardToClose, "          //74
+                    + "BoardFinalDate, "              //75
+                    + "RetentionTicklerDate, "        //76
+                    + "LateFiling, "//77
+                    + "Impasse, "   //78
+                    + "Settled, "   //79
+                    + "TA, "        //80
+                    + "MAD, "       //81
+                    + "Withdrawl, " //82
+                    + "Motion, "    //83
+                    + "Dismissed "  //84
                     + ") VALUES (";
-                    for(int i=0; i<56; i++){
-                        sql += "?, ";   //01-56
+                    for(int i=0; i<83; i++){
+                        sql += "?, ";   //01-83
                     }
-                     sql += "?)";   //57
+                     sql += "?)";   //84
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getCaseYear());
@@ -353,6 +380,33 @@ public class sqlMEDData {
             ps.setString(55, item.getFFRejectedBy());
             ps.setString(56, item.getFFOverallResult());
             ps.setString(57, item.getFFNote());
+            ps.setString(58, item.getEmployerIDNumber());
+            ps.setString(59, item.getBargainingUnitNumber());
+            ps.setString(60, item.getApproxNumberOfEmployees());
+            ps.setString(61, item.getDuplicateCaseNumber());
+            ps.setString(62, item.getRelatedCaseNumber());
+            ps.setString(63, item.getNegotiationType());
+            ps.setDate  (64, item.getExpirationDate());
+            ps.setString(65, item.getNTNFiledBy());
+            ps.setString(66, item.getNegotiationPeriod());
+            ps.setBoolean(67, item.isMultiunitBargainingRequested());
+            ps.setDate  (68, item.getMediatorAppointedDate());
+            ps.setBoolean(69, item.isMediatorReplacement());
+            ps.setString(70, item.getStateMediatorAppointedID());
+            ps.setString(71, item.getFMCSMediatorAppointedID());
+            ps.setDate  (72, item.getSettlementDate());
+            ps.setString(73, item.getCaseStatus());
+            ps.setBoolean(74, item.isSendToBoardToClose());
+            ps.setDate  (75, item.getBoardFinalDate());
+            ps.setDate  (76, item.getRetentionTicklerDate());
+            ps.setBoolean(77, item.isLateFiling());
+            ps.setBoolean(78, item.isImpasse());
+            ps.setBoolean(79, item.isSettled());
+            ps.setBoolean(80, item.isTA());
+            ps.setBoolean(81, item.isMAD());
+            ps.setBoolean(82, item.isWithdrawl());
+            ps.setBoolean(83, item.isMotion());
+            ps.setBoolean(84, item.isDismissed());            
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
