@@ -147,16 +147,20 @@ public class MEDMigration {
         if (item.getCaseNumber().trim().length() == 16){
             caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
 
-            migrateEmployer(item, caseNumber);
-            migrateEmployerREP(item, caseNumber);
-            migrateEmployeeORG(item, caseNumber);
-            migrateEmployeeORGREP(item, caseNumber);
+            migrateParties(item, caseNumber);
             migrateCaseData(item, caseNumber);
             migrateRelatedCases(item, caseNumber);
             migrateCaseHistory(caseNumber);
             migrateCaseSearch(item, caseNumber);
             migrateEmployerCaseSearch(item, caseNumber);
         }
+    }
+    
+    private static void migrateParties(oldMEDCaseModel item, caseNumberModel caseNumber){
+        migrateEmployer(item, caseNumber);
+        migrateEmployerREP(item, caseNumber);
+        migrateEmployeeORG(item, caseNumber);
+        migrateEmployeeORGREP(item, caseNumber);
     }
     
     private static void migrateEmployer(oldMEDCaseModel item, caseNumberModel caseNumber) {
@@ -248,6 +252,7 @@ public class MEDMigration {
     private static void migrateCaseData(oldMEDCaseModel item, caseNumberModel caseNumber) {
         List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(caseNumber);
         MEDCaseModel med = new MEDCaseModel();
+        String note = "";
         
         med.setActive(item.getActive());
         med.setCaseYear(caseNumber.getCaseYear());
@@ -304,8 +309,6 @@ public class MEDMigration {
         med.setFFDeemedAcceptedBy(!"".equals(item.getResultsDeemedAcceptedBy().trim()) ? item.getResultsDeemedAcceptedBy().trim() : null);
         med.setFFRejectedBy(!"".equals(item.getResultsRejectedBy().trim()) ? item.getResultsRejectedBy().trim() : null);
         med.setFFOverallResult(!"".equals(item.getResultsOverallResult().trim()) ? item.getResultsOverallResult().trim() : null);
-        
-        
         med.setEmployerIDNumber(!"".equals(item.getEmployerIDNumber().trim()) ? item.getEmployerIDNumber().trim() : null);
         med.setBargainingUnitNumber(!"".equals(item.getBUNumber().trim()) ? item.getBUNumber().trim() : null);
         med.setApproxNumberOfEmployees(!"".equals(item.getApproxNumberOfEmployees().trim()) ? item.getApproxNumberOfEmployees().trim() : null);
@@ -330,8 +333,67 @@ public class MEDMigration {
         med.setMAD(item.getMADCheckBox().equals("1"));
         med.setWithdrawl(item.getWithdraw().equals("1"));
         med.setMotion(item.getMotionCheckBox().equals("1"));
-        med.setDismissed(item.getDismiss().equals("1"));
-
+        med.setDismissed(item.getDismiss().equals("1"));        
+        med.setStrikeFileDate(!"".equals(item.getStrikeFilingDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getStrikeFilingDate().trim()).getTime()) : null);
+        med.setStrikeCaseNumber(!"".equals(item.getStrikeCaseNumber().trim()) ? item.getStrikeCaseNumber().trim() : null);
+        med.setMedCaseNumber(!"".equals(item.getCaseNumber().trim()) ? item.getCaseNumber().trim() : null);
+        med.setUnitDescription(!"".equals(item.getBUDescription().trim()) ? item.getBUDescription().trim() : null);
+        med.setUnitSize(!"".equals(item.getBUSize().trim()) ? item.getBUSize().trim() : null);
+        med.setUnauthorizedStrike(item.getUnauthorizedStrike().equals("Y"));
+        med.setNoticeOfIntentToStrikeOnly(item.getNoticeOfIntentToStrike().equals("1"));
+        med.setIntendedDateStrike(!"".equals(item.getIntendedStrikeDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getIntendedStrikeDate().trim()).getTime()) : null);
+        med.setNoticeOfIntentToPicketOnly(item.getNoticeofIntentToPicket().equals("1"));
+        med.setIntendedDatePicket(!"".equals(item.getIntendedPicketDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getIntendedPicketDate().trim()).getTime()) : null);
+        med.setInformational(item.getInformational().equals("1"));
+        med.setNoticeOfIntentToStrikeAndPicket(item.getNoticeOfIntentToStrikeAndPicket().equals("1"));
+        switch (item.getStrikeOccured()) {
+            case "1":
+                med.setStrikeOccured("Yes");
+                break;
+            case "0":
+                med.setStrikeOccured("No");
+                break;
+            default:
+                med.setStrikeOccured(null);
+                break;
+        }        
+        med.setStrikeStatus(!"".equals(item.getStrikeStatus().trim()) ? item.getStrikeStatus().trim() : null);
+        med.setStrikeBegan(!"".equals(item.getStrikeBegan().trim()) ? new Date(StringUtilities.convertStringDate(item.getStrikeBegan().trim()).getTime()) : null);
+        med.setStrikeEnded(!"".equals(item.getStrikeEnded().trim()) ? new Date(StringUtilities.convertStringDate(item.getStrikeEnded().trim()).getTime()) : null);
+        med.setTotalNumberOfDays(!"".equals(item.getTotalNumOfDays().trim()) ? item.getTotalNumOfDays().trim() : null);
+                
+        if (!"".equals(item.getPicketDate2().trim())) {
+            if (!note.trim().equals("")) {
+                System.lineSeparator();
+            }
+            note += "Picket Date 2:" + item.getPicketDate2();
+        }
+        if (!"".equals(item.getPicketDate3().trim())) {
+            if (!note.trim().equals("")) {
+                System.lineSeparator();
+            }
+            note += "Picket Date 3:" + item.getPicketDate3();
+        }
+        if (!"".equals(item.getPicketDate4().trim())) {
+            if (!note.trim().equals("")) {
+                System.lineSeparator();
+            }
+            note += "Picket Date 4:" + item.getPicketDate4();
+        }
+        if (!"".equals(item.getPicketDate5().trim())) {
+            if (!note.trim().equals("")) {
+                System.lineSeparator();
+            }
+            note += "Picket Date 5:" + item.getPicketDate5();
+        }
+        
+        for (mediatorsModel person : newMediatorsList) {
+            if (item.getTempHolder5().toLowerCase().startsWith(person.getFirstName().toLowerCase()) || 
+                    item.getTempHolder5().toLowerCase().endsWith(person.getLastName().toLowerCase()) ){
+                med.setStrikeMediatorAppointedID(String.valueOf(person.getID()));
+                break;
+            }
+        }
         
         for (mediatorsModel person : newMediatorsList) {
             if (item.getStateMediatorAppt().toLowerCase().startsWith(person.getFirstName().toLowerCase()) || 
@@ -352,11 +414,14 @@ public class MEDMigration {
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
                 case "Notes":
-                    med.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    if (!note.equals("")){
+                        note += System.lineSeparator() + System.lineSeparator();
+                    }                    
+                    med.setNote(note + StringUtilities.convertBlobFileToString(blob.getBlobData()));
                     break;
-//                case "StkNotes":
-//                    med.setStkNotes(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-//                    break;
+                case "StkNotes":
+                    med.setStrikeNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    break;
                 case "FFNotes":
                     med.setFFNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
                     break;  

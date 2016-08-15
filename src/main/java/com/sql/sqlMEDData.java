@@ -316,12 +316,39 @@ public class sqlMEDData {
                     + "MAD, "       //81
                     + "Withdrawl, " //82
                     + "Motion, "    //83
-                    + "Dismissed "  //84
+                    + "Dismissed, " //84
+                    + "strikeFileDate, "    //85
+                    + "strikeCaseNumber, "  //86
+                    + "medCaseNumber, "     //87
+                    + "unitDescription, "   //88
+                    + "unitSize, "          //89
+                    + "unauthorizedStrike, "//90
+                    + "noticeOfIntentToStrikeOnly, "//91
+                    + "intendedDateStrike, "        //92
+                    + "noticeOfIntentToPicketOnly, "//93
+                    + "intendedDatePicket, "        //94
+                    + "informational, "             //95
+                    + "noticeOfIntentToStrikeAndPicket, "//96
+                    + "strikeOccured, "     //97
+                    + "strikeStatus, "      //98
+                    + "strikeBegan, "       //99
+                    + "strikeEnded, "       //100
+                    + "totalNumberOfDays, " //101
+                    + "strikeMediatorAppointedID, " //102
+                    + "strikeNote "                 //103
+
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                     + ") VALUES (";
-                    for(int i=0; i<83; i++){
-                        sql += "?, ";   //01-83
+                    for(int i=0; i<102; i++){
+                        sql += "?, ";   //01-102
                     }
-                     sql += "?)";   //84
+                     sql += "?)";   //103
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getCaseYear());
@@ -406,7 +433,49 @@ public class sqlMEDData {
             ps.setBoolean(81, item.isMAD());
             ps.setBoolean(82, item.isWithdrawl());
             ps.setBoolean(83, item.isMotion());
-            ps.setBoolean(84, item.isDismissed());            
+            ps.setBoolean(84, item.isDismissed());
+            
+            
+            
+            
+            
+            
+            ps.setDate  (85, item.getStrikeFileDate());
+            ps.setString(86, item.getStrikeCaseNumber());
+            ps.setString(87, item.getMedCaseNumber());
+            ps.setString(88, item.getUnitDescription());
+            ps.setString(89, item.getUnitSize());
+            ps.setBoolean(90, item.isUnauthorizedStrike());
+            ps.setBoolean(91, item.isNoticeOfIntentToStrikeOnly());
+            ps.setDate  (92, item.getIntendedDateStrike());
+            ps.setBoolean(93, item.isNoticeOfIntentToPicketOnly());
+            ps.setDate  (94, item.getIntendedDatePicket());
+            ps.setBoolean(95, item.isInformational());
+            ps.setBoolean(96, item.isNoticeOfIntentToStrikeAndPicket());
+            ps.setString(97, item.getStrikeOccured());
+            ps.setString(98, item.getStrikeStatus());
+            ps.setDate  (99, item.getStrikeBegan());
+            ps.setDate  (100, item.getStrikeEnded());
+            ps.setString(101, item.getTotalNumberOfDays());
+            ps.setString(102, item.getStrikeMediatorAppointedID());
+            ps.setString(103, item.getStrikeNote());
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

@@ -115,6 +115,18 @@ public class REPMigration {
     private static void migrateCase(oldREPDataModel item) {
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
         
+        migratePartyInformation(item, caseNumber);
+        migrateCaseData(item, caseNumber);
+        migrateBoardMeetings(item, caseNumber);
+        migrateMultiCaseElections(item, caseNumber);
+        migrateElectionSiteInfo(item, caseNumber);
+        migrateMediations(item, caseNumber);
+        migrateCaseSearch(item, caseNumber);
+        migrateCaseHistory(caseNumber);
+        migrateEmployerCaseSearch(item, caseNumber);
+    }
+
+    private static void migratePartyInformation(oldREPDataModel item, caseNumberModel caseNumber){
         migratePetitioner(item, caseNumber);
         migratePetitionerRep(item, caseNumber);
         migrateEmployer(item, caseNumber);
@@ -133,16 +145,8 @@ public class REPMigration {
         migrateIntervenerRep(item, caseNumber);
         migrateConversionSchool(item, caseNumber);
         migrateConversionSchoolRep(item, caseNumber);
-        migrateCaseData(item, caseNumber);
-        migrateBoardMeetings(item, caseNumber);
-        migrateMultiCaseElections(item, caseNumber);
-        migrateElectionSiteInfo(item, caseNumber);
-        migrateMediations(item, caseNumber);
-        migrateCaseSearch(item, caseNumber);
-        migrateCaseHistory(caseNumber);
-        migrateEmployerCaseSearch(item, caseNumber);
     }
-
+    
     private static void migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());

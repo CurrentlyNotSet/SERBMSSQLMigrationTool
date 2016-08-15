@@ -98,6 +98,25 @@ public class MEDCaseModel {
     private boolean withdrawl;
     private boolean motion;
     private boolean dismissed;
+    private Date strikeFileDate;
+    private String strikeCaseNumber;
+    private String medCaseNumber;
+    private String unitDescription;
+    private String unitSize;
+    private boolean unauthorizedStrike;
+    private boolean noticeOfIntentToStrikeOnly;
+    private Date intendedDateStrike;
+    private boolean noticeOfIntentToPicketOnly;
+    private Date intendedDatePicket;
+    private boolean informational;
+    private boolean noticeOfIntentToStrikeAndPicket;
+    private String strikeOccured;
+    private String strikeStatus;
+    private Date strikeBegan;
+    private Date strikeEnded;
+    private String totalNumberOfDays;
+    private String strikeMediatorAppointedID;
+    private String strikeNote;
  
     public int getId() {
         return id;
@@ -777,6 +796,158 @@ public class MEDCaseModel {
 
     public void setDismissed(boolean dismissed) {
         this.dismissed = dismissed;
+    }
+
+    public Date getStrikeFileDate() {
+        return strikeFileDate;
+    }
+
+    public void setStrikeFileDate(Date strikeFileDate) {
+        this.strikeFileDate = strikeFileDate;
+    }
+
+    public String getStrikeCaseNumber() {
+        return strikeCaseNumber;
+    }
+
+    public void setStrikeCaseNumber(String strikeCaseNumber) {
+        this.strikeCaseNumber = strikeCaseNumber;
+    }
+
+    public String getMedCaseNumber() {
+        return medCaseNumber;
+    }
+
+    public void setMedCaseNumber(String medCaseNumber) {
+        this.medCaseNumber = medCaseNumber;
+    }
+
+    public String getUnitDescription() {
+        return unitDescription;
+    }
+
+    public void setUnitDescription(String unitDescription) {
+        this.unitDescription = unitDescription;
+    }
+
+    public String getUnitSize() {
+        return unitSize;
+    }
+
+    public void setUnitSize(String unitSize) {
+        this.unitSize = unitSize;
+    }
+
+    public boolean isUnauthorizedStrike() {
+        return unauthorizedStrike;
+    }
+
+    public void setUnauthorizedStrike(boolean unauthorizedStrike) {
+        this.unauthorizedStrike = unauthorizedStrike;
+    }
+
+    public boolean isNoticeOfIntentToStrikeOnly() {
+        return noticeOfIntentToStrikeOnly;
+    }
+
+    public void setNoticeOfIntentToStrikeOnly(boolean noticeOfIntentToStrikeOnly) {
+        this.noticeOfIntentToStrikeOnly = noticeOfIntentToStrikeOnly;
+    }
+
+    public Date getIntendedDateStrike() {
+        return intendedDateStrike;
+    }
+
+    public void setIntendedDateStrike(Date intendedDateStrike) {
+        this.intendedDateStrike = intendedDateStrike;
+    }
+
+    public boolean isNoticeOfIntentToPicketOnly() {
+        return noticeOfIntentToPicketOnly;
+    }
+
+    public void setNoticeOfIntentToPicketOnly(boolean noticeOfIntentToPicketOnly) {
+        this.noticeOfIntentToPicketOnly = noticeOfIntentToPicketOnly;
+    }
+
+    public Date getIntendedDatePicket() {
+        return intendedDatePicket;
+    }
+
+    public void setIntendedDatePicket(Date intendedDatePicket) {
+        this.intendedDatePicket = intendedDatePicket;
+    }
+
+    public boolean isInformational() {
+        return informational;
+    }
+
+    public void setInformational(boolean informational) {
+        this.informational = informational;
+    }
+
+    public boolean isNoticeOfIntentToStrikeAndPicket() {
+        return noticeOfIntentToStrikeAndPicket;
+    }
+
+    public void setNoticeOfIntentToStrikeAndPicket(boolean noticeOfIntentToStrikeAndPicket) {
+        this.noticeOfIntentToStrikeAndPicket = noticeOfIntentToStrikeAndPicket;
+    }
+
+    public String getStrikeOccured() {
+        return strikeOccured;
+    }
+
+    public void setStrikeOccured(String strikeOccured) {
+        this.strikeOccured = strikeOccured;
+    }
+
+    public String getStrikeStatus() {
+        return strikeStatus;
+    }
+
+    public void setStrikeStatus(String strikeStatus) {
+        this.strikeStatus = strikeStatus;
+    }
+
+    public Date getStrikeBegan() {
+        return strikeBegan;
+    }
+
+    public void setStrikeBegan(Date strikeBegan) {
+        this.strikeBegan = strikeBegan;
+    }
+
+    public Date getStrikeEnded() {
+        return strikeEnded;
+    }
+
+    public void setStrikeEnded(Date strikeEnded) {
+        this.strikeEnded = strikeEnded;
+    }
+
+    public String getTotalNumberOfDays() {
+        return totalNumberOfDays;
+    }
+
+    public void setTotalNumberOfDays(String totalNumberOfDays) {
+        this.totalNumberOfDays = totalNumberOfDays;
+    }
+
+    public String getStrikeMediatorAppointedID() {
+        return strikeMediatorAppointedID;
+    }
+
+    public void setStrikeMediatorAppointedID(String strikeMediatorAppointedID) {
+        this.strikeMediatorAppointedID = strikeMediatorAppointedID;
+    }
+
+    public String getStrikeNote() {
+        return strikeNote;
+    }
+
+    public void setStrikeNote(String strikeNote) {
+        this.strikeNote = strikeNote;
     }
     
     
