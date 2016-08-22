@@ -250,31 +250,64 @@ public class StringUtilities {
         return false;
     }
     
-    private static String monthNumber(String month){
-        if (       month.startsWith("Jan")){
-            return "01";
-        } else if (month.startsWith("Feb")){
-            return "02";
-        } else if (month.startsWith("Mar")){
-            return "03";
-        } else if (month.startsWith("Apr")){
-            return "04";
-        } else if (month.startsWith("May")){
-            return "05";
-        } else if (month.startsWith("Jun")){
-            return "06";
-        } else if (month.startsWith("Jul")){
-            return "07";
-        } else if (month.startsWith("Aug")){
-            return "08";
-        } else if (month.startsWith("Sep")){
-            return "09";
-        } else if (month.startsWith("Oct")){
-            return "10";
-        } else if (month.startsWith("Nov")){
-            return "11";
-        } else if (month.startsWith("Dec")){
-            return "12";
+    public static String monthNumber(String month){
+        if (month != null){
+            if (       month.startsWith("Jan")){
+                return "01";
+            } else if (month.startsWith("Feb")){
+                return "02";
+            } else if (month.startsWith("Mar")){
+                return "03";
+            } else if (month.startsWith("Apr")){
+                return "04";
+            } else if (month.startsWith("May")){
+                return "05";
+            } else if (month.startsWith("Jun")){
+                return "06";
+            } else if (month.startsWith("Jul")){
+                return "07";
+            } else if (month.startsWith("Aug")){
+                return "08";
+            } else if (month.startsWith("Sep")){
+                return "09";
+            } else if (month.startsWith("Oct")){
+                return "10";
+            } else if (month.startsWith("Nov")){
+                return "11";
+            } else if (month.startsWith("Dec")){
+                return "12";
+            }
+        }
+        return null;
+    }
+    
+    public static String monthName(String month){
+        if (month != null){
+            if (       month.startsWith("01")){
+                return "January";
+            } else if (month.startsWith("02")){
+                return "February";
+            } else if (month.startsWith("03")){
+                return "March";
+            } else if (month.startsWith("04")){
+                return "April";
+            } else if (month.startsWith("05")){
+                return "May";
+            } else if (month.startsWith("06")){
+                return "June";
+            } else if (month.startsWith("07")){
+                return "July";
+            } else if (month.startsWith("08")){
+                return "August";
+            } else if (month.startsWith("09")){
+                return "September";
+            } else if (month.startsWith("10")){
+                return "October";
+            } else if (month.startsWith("11")){
+                return "November";
+            } else if (month.startsWith("12")){
+                return "December";
+            }
         }
         return null;
     }

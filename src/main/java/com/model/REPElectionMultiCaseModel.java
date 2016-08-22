@@ -9,7 +9,7 @@ package com.model;
  *
  * @author User
  */
-public class REPElectionMultiCase {
+public class REPElectionMultiCaseModel {
     
     private int id;
     private int active;

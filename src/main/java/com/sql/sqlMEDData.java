@@ -225,8 +225,7 @@ public class sqlMEDData {
         }
         return list;
     }
-    
-    
+        
     public static void importOldMEDCase(MEDCaseModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -336,14 +335,6 @@ public class sqlMEDData {
                     + "totalNumberOfDays, " //101
                     + "strikeMediatorAppointedID, " //102
                     + "strikeNote "                 //103
-
-                    
-                    
-                    
-                    
-                    
-                    
-                    
                     + ") VALUES (";
                     for(int i=0; i<102; i++){
                         sql += "?, ";   //01-102
@@ -434,12 +425,6 @@ public class sqlMEDData {
             ps.setBoolean(82, item.isWithdrawl());
             ps.setBoolean(83, item.isMotion());
             ps.setBoolean(84, item.isDismissed());
-            
-            
-            
-            
-            
-            
             ps.setDate  (85, item.getStrikeFileDate());
             ps.setString(86, item.getStrikeCaseNumber());
             ps.setString(87, item.getMedCaseNumber());
@@ -459,23 +444,6 @@ public class sqlMEDData {
             ps.setString(101, item.getTotalNumberOfDays());
             ps.setString(102, item.getStrikeMediatorAppointedID());
             ps.setString(103, item.getStrikeNote());
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

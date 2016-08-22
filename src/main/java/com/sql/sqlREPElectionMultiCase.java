@@ -5,7 +5,7 @@
  */
 package com.sql;
 
-import com.model.REPElectionMultiCase;
+import com.model.REPElectionMultiCaseModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +18,7 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlREPElectionMultiCase {
     
-    public static void addElectionSite(REPElectionMultiCase item) {
+    public static void addElectionSite(REPElectionMultiCaseModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {

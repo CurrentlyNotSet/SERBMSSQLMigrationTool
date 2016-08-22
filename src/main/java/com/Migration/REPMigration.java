@@ -8,7 +8,7 @@ package com.Migration;
 import com.model.boardAcionTypeModel;
 import com.model.REPCaseStatusModel;
 import com.model.REPCaseTypeModel;
-import com.model.REPElectionMultiCase;
+import com.model.REPElectionMultiCaseModel;
 import com.model.REPElectionSiteInformationModel;
 import com.model.REPMediationModel;
 import com.model.REPRecommendationModel;
@@ -1001,7 +1001,7 @@ public class REPMigration {
     }
     
     private static void migrateMultiCaseElections(oldREPDataModel item, caseNumberModel caseNumber) {
-        REPElectionMultiCase multi = new REPElectionMultiCase();
+        REPElectionMultiCaseModel multi = new REPElectionMultiCaseModel();
         
         multi.setActive(item.getActive());
         multi.setCaseYear(caseNumber.getCaseYear());
