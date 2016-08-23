@@ -710,19 +710,19 @@ public class REPMigration {
         rep.setBoardCertified("1".equals(item.getBoardCertified().trim()) ? 1 : 0);
         rep.setDeemedCertified("1".equals(item.getDeemedCertified().trim()) ? 1 : 0);
         rep.setCertificationRevoked("1".equals(item.getCertRevoked().trim()) ? 1 : 0);
-        rep.setFileDate(!"".equals(item.getFileDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getFileDate()).getTime()) : null);    
-        rep.setAmendedFilingDate(!"".equals(item.getAmendedFilingDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getAmendedFilingDate()).getTime()) : null);
-        rep.setFinalBoardDate(!"".equals(item.getFinalBoardDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getFinalBoardDate()).getTime()) : null);      
-        rep.setRegistrationLetterSent(!"".equals(item.getRegLetterSentDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getRegLetterSentDate()).getTime()) : null);      
-        rep.setDateOfAppeal(!"".equals(item.getDateOfAppeal().trim()) ? new Date(StringUtilities.convertStringDate(item.getDateOfAppeal()).getTime()) : null);        
-        rep.setCourtClosedDate(!"".equals(item.getCourtClosedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getCourtClosedDate()).getTime()) : null);     
-        rep.setReturnSOIDueDate(!"".equals(item.getReturnSOIDueDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getReturnSOIDueDate()).getTime()) : null);    
-        rep.setActualSOIReturnDate(!"".equals(item.getActualSOIReturnDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getActualSOIReturnDate()).getTime()) : null);     
+        rep.setFileDate(!"".equals(item.getFileDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getFileDate())) : null);    
+        rep.setAmendedFilingDate(!"".equals(item.getAmendedFilingDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getAmendedFilingDate())) : null);
+        rep.setFinalBoardDate(!"".equals(item.getFinalBoardDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getFinalBoardDate())) : null);      
+        rep.setRegistrationLetterSent(!"".equals(item.getRegLetterSentDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getRegLetterSentDate())) : null);      
+        rep.setDateOfAppeal(!"".equals(item.getDateOfAppeal().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getDateOfAppeal())) : null);        
+        rep.setCourtClosedDate(!"".equals(item.getCourtClosedDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getCourtClosedDate())) : null);     
+        rep.setReturnSOIDueDate(!"".equals(item.getReturnSOIDueDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getReturnSOIDueDate())) : null);    
+        rep.setActualSOIReturnDate(!"".equals(item.getActualSOIReturnDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getActualSOIReturnDate())) : null);     
         rep.setSOIReturnIntials(StringUtilities.convertUserToID(item.getSOIReturnInitials1()));
-        rep.setREPClosedCaseDueDate(!"".equals(item.getREPClosedCaseDueDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getREPClosedCaseDueDate()).getTime()) : null);
-        rep.setActualREPClosedDate(!"".equals(item.getActualREPClosedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getActualREPClosedDate()).getTime()) : null);
+        rep.setREPClosedCaseDueDate(!"".equals(item.getREPClosedCaseDueDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getREPClosedCaseDueDate())) : null);
+        rep.setActualREPClosedDate(!"".equals(item.getActualREPClosedDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getActualREPClosedDate())) : null);
         rep.setREPClosedUser(StringUtilities.convertUserToID(item.getSOIReturnInitials2()));
-        rep.setActualClerksClosedDate(!"".equals(item.getActualClerksClosed().trim()) ? new Date(StringUtilities.convertStringDate(item.getActualClerksClosed()).getTime()) : null);
+        rep.setActualClerksClosedDate(!"".equals(item.getActualClerksClosed().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getActualClerksClosed())) : null);
         rep.setClerksClosedUser(StringUtilities.convertUserToID(item.getClearksClosedInitials()));
         rep.setNote(null);
         rep.setAlphaListDate(null);
@@ -737,25 +737,25 @@ public class REPMigration {
         rep.setERNameChangeFrom(!"".equals(item.getERNameFrom().trim()) ? item.getERNameFrom().trim() : null);
         rep.setERNameChangeTo(!"".equals(item.getERNameTo().trim()) ? item.getERNameTo().trim() : null);
         rep.setBoardActionType(!"".equals(item.getBoardActionType().trim()) ? item.getBoardActionType().trim() : null);
-        rep.setBoardActionDate(!"".equals(item.getBoardActionDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getBoardActionDate()).getTime()) : null);
+        rep.setBoardActionDate(!"".equals(item.getBoardActionDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getBoardActionDate())) : null);
         rep.setHearingPersonID(StringUtilities.convertUserToID(item.getBoardPersonAssigned()));
         rep.setMulticaseElection("1".equals(item.getMultiCaseElection().trim()) ? 1 : 0);
         rep.setElectionType1(!"".equals(item.getElectionType1().trim()) ? item.getElectionType1().trim() : null);
         rep.setElectionType2(!"".equals(item.getElectionType2().trim()) ? item.getElectionType2().trim() : null);
         rep.setElectionType3(!"".equals(item.getElectionType3().trim()) ? item.getElectionType3().trim() : null);
-        rep.setEligibilityDate(StringUtilities.convertStringDate(item.getEligibilityDate()) != null ? new Date(StringUtilities.convertStringDate(item.getEligibilityDate()).getTime()) : null);
+        rep.setEligibilityDate(StringUtilities.convertStringDate(item.getEligibilityDate()) != null ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getEligibilityDate())) : null);
         rep.setBallotOne(!"".equals(item.getBallotOne().trim()) ? item.getBallotOne().trim() : null);
         rep.setBallotTwo(!"".equals(item.getBallotTwo().trim()) ? item.getBallotTwo().trim() : null);
         rep.setBallotThree(!"".equals(item.getBallotThree().trim()) ? item.getBallotThree().trim() : null);
         rep.setBallotFour(!"".equals(item.getBallotFour().trim()) ? item.getBallotFour().trim() : null);
-        rep.setMailKitDate(StringUtilities.convertStringDate(item.getMailKitDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getMailKitDate()).getTime()) : null);
-        rep.setPollingStartDate(StringUtilities.convertStringDate(item.getPollingStartDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getPollingStartDate()).getTime()) : null);
-        rep.setPollingEndDate(StringUtilities.convertStringDate(item.getPollingEndDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getPollingEndDate()).getTime()) : null);
+        rep.setMailKitDate(StringUtilities.convertStringDate(item.getMailKitDate()) != null  ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getMailKitDate())) : null);
+        rep.setPollingStartDate(StringUtilities.convertStringDate(item.getPollingStartDate()) != null  ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getPollingStartDate())) : null);
+        rep.setPollingEndDate(StringUtilities.convertStringDate(item.getPollingEndDate()) != null  ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getPollingEndDate())) : null);
         rep.setBallotsCountDay(!"".equals(item.getBallotsCountDay().trim()) ? item.getBallotsCountDay().trim() : null);
-        rep.setBallotsCountDate(StringUtilities.convertStringDate(item.getBallotsCountDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getBallotsCountDate()).getTime()) : null);
+        rep.setBallotsCountDate(StringUtilities.convertStringDate(item.getBallotsCountDate()) != null  ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getBallotsCountDate())) : null);
         rep.setBallotsCountTime(!"".equals(item.getBallotsCountTime().trim()) ? StringUtilities.convertStringDate(item.getBallotsCountTime()) : null);
-        rep.setEligibilityListDate(StringUtilities.convertStringDate(item.getEligibilityListDate()) != null  ? new Date(StringUtilities.convertStringDate(item.getEligibilityListDate()).getTime()) : null);
-        rep.setPreElectionConfDate(StringUtilities.convertStringDate(item.getPreElectionConfDate()) != null ? new Date(StringUtilities.convertStringDate(item.getPreElectionConfDate()).getTime()) : null);
+        rep.setEligibilityListDate(StringUtilities.convertStringDate(item.getEligibilityListDate()) != null  ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getEligibilityListDate())) : null);
+        rep.setPreElectionConfDate(StringUtilities.convertStringDate(item.getPreElectionConfDate()) != null ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getPreElectionConfDate())) : null);
         rep.setSelfReleasing(!"".equals(item.getSelfReleasing().trim()) ? item.getSelfReleasing().trim() : null);
         rep.setResultApproxNumberEligibleVoters(!"".equals(item.getResultsApproxNumEligible().trim()) ? StringUtilities.parseStringtoInt(item.getResultsApproxNumEligible().trim()) : -1);
         rep.setResultVoidBallots(!"".equals(item.getResultsVoidBallots().trim()) ? StringUtilities.parseStringtoInt(item.getResultsVoidBallots().trim()) : -1);
@@ -923,7 +923,7 @@ public class REPMigration {
         if (!"".equals(item.getBoardDirMedDate()) || !"".equals(item.getBoardDirMedMeetingDate()) || !"".equals(item.getBoardDirMedMeetingTime())
                 || !"".equals(item.getBoardDirectedMedResult()) || !"".equals(item.getBoardDirectedMediatior())) {                        
             mediation.setMediationDate(null);
-            mediation.setMediationEntryDate(!"".equals(item.getBoardDirMedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getBoardDirMedDate()).getTime()) : null);
+            mediation.setMediationEntryDate(!"".equals(item.getBoardDirMedDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getBoardDirMedDate())) : null);
             if (!"".equals(item.getBoardDirMedMeetingDate().trim())){
                 mediation.setMediationDate(StringUtilities.convertStringDateAndTime(item.getBoardDirMedMeetingDate(), item.getBoardDirMedMeetingTime()));
             }
@@ -942,7 +942,7 @@ public class REPMigration {
             if (!"".equals(item.getPostDirMedMeetingDate().trim())){
                 mediation.setMediationDate(StringUtilities.convertStringDateAndTime(item.getPostDirMedMeetingDate(), item.getPostDirMedMeetingTime()));
             }
-            mediation.setMediationEntryDate(!"".equals(item.getPostDirMedDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getPostDirMedDate()).getTime()) : null);
+            mediation.setMediationEntryDate(!"".equals(item.getPostDirMedDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getPostDirMedDate())) : null);
             mediation.setMediationType("Post-Directive Mediation");
             mediation.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getPostDirMediatior())));
             mediation.setMediationOutcome(!"".equals(item.getPostDirMedResult().trim()) ? item.getPostDirMedResult().trim() : null);
@@ -1152,7 +1152,7 @@ public class REPMigration {
             search.setCaseMonth(caseNumber.getCaseMonth());
             search.setCaseNumber(caseNumber.getCaseNumber());
             search.setCaseStatus(!"".equals(item.getStatus1().trim()) ? item.getStatus1().trim() : null);
-            search.setFileDate(!"".equals(item.getFileDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getFileDate()).getTime()) : null); 
+            search.setFileDate(!"".equals(item.getFileDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getFileDate())) : null); 
             search.setEmployer(sqlEmployers.getEmployerName(item.getEmployerIDNum().trim()));
 
             sqlEmployerCaseSearchData.addEmployer(search);

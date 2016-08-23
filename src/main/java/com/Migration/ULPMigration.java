@@ -338,7 +338,7 @@ public class ULPMigration {
             search.setCaseMonth(caseNumber.getCaseMonth());
             search.setCaseNumber(caseNumber.getCaseNumber());
             search.setCaseStatus(!"".equals(item.getStatus().trim()) ? item.getStatus().trim() : null);
-            search.setFileDate(!"".equals(item.getFileDate().trim()) ? new Date(StringUtilities.convertStringDate(item.getFileDate()).getTime()) : null); 
+            search.setFileDate(!"".equals(item.getFileDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getFileDate())) : null); 
             search.setEmployer(sqlEmployers.getEmployerName(item.getEmployerNum().trim()));
 
             sqlEmployerCaseSearchData.addEmployer(search);

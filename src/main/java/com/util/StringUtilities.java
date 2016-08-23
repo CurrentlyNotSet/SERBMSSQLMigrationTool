@@ -225,6 +225,13 @@ public class StringUtilities {
         return duration.trim();
     }
 
+    public static java.sql.Date convertTimeStampToDate(Timestamp time){
+        if (time != null){
+            return new java.sql.Date(time.getTime());
+        }
+        return null;
+    }
+    
     public static int convertUserToID(String userEntry) {
         if (!"".equals(userEntry.trim())) {
             for (userModel usr : Global.getUserList()) {
