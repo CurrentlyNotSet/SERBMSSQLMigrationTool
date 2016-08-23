@@ -45,7 +45,6 @@ import com.sql.sqlRelatedCase;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
-import java.sql.Date;
 import java.util.List;
 
 /**

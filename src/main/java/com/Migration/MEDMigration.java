@@ -32,7 +32,6 @@ import com.sql.sqlRelatedCase;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
-import java.sql.Date;
 import java.util.List;
 
 /**
@@ -94,18 +93,24 @@ public class MEDMigration {
     private static void migrateFactFinder(factFinderModel item) { 
         String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
         
-        if (nameSplit.length == 2){
-            item.setFirstName(nameSplit[0].trim());
-            item.setMiddleName(null);
-            item.setLastName(nameSplit[1].trim());
-        } else if (nameSplit.length == 3) {
+        switch (nameSplit.length) {
+            case 2:
+                item.setFirstName(nameSplit[0].trim());
+                item.setMiddleName(null);
+                item.setLastName(nameSplit[1].trim());
+                break;
+            case 3:
                 item.setFirstName(nameSplit[0].trim());
                 item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
                 item.setLastName(nameSplit[2].trim());
-        } else if (nameSplit.length == 4) {
+                break;
+            case 4:
                 item.setFirstName(nameSplit[0].trim());
                 item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
                 item.setLastName(nameSplit[2].trim() + ", " + nameSplit[3].trim());
+                break;
+            default:
+                break;
         }
         if (item.getCity() != null){
             String[] cityStateZipSplit = item.getCity().split(",", 2);
@@ -127,19 +132,25 @@ public class MEDMigration {
     private static void migrateMediator(mediatorsModel item) { 
         String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
         
-        if (nameSplit.length == 2){
-            item.setFirstName(nameSplit[0].trim());
-            item.setMiddleName(null);
-            item.setLastName(nameSplit[1].trim());
-        } else if (nameSplit.length == 3) {
+        switch (nameSplit.length) {
+            case 2:
+                item.setFirstName(nameSplit[0].trim());
+                item.setMiddleName(null);
+                item.setLastName(nameSplit[1].trim());
+                break;
+            case 3:
                 item.setFirstName(nameSplit[0].trim());
                 item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
                 item.setLastName(nameSplit[2].trim());
-        } else if (nameSplit.length == 4) {
+                break;
+            case 4:
                 item.setFirstName(nameSplit[0].trim());
                 item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
                 item.setLastName(nameSplit[2].trim() + ", " + nameSplit[3].trim());
-        }  
+                break;  
+            default:
+                break;
+        }
         sqlMediator.addMediator(item);
     }
     

@@ -32,7 +32,6 @@ import com.sql.sqlULPRecommendations;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
-import java.sql.Date;
 import java.util.List;
 
 /**
