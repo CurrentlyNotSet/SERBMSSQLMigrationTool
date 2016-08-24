@@ -6,13 +6,17 @@
 package com.Migration;
 
 import com.model.ORGCaseModel;
+import com.model.activityModel;
 import com.model.oldEmployeeOrgModel;
+import com.model.oldORGHistoryModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlActivity;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlOrgCase;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -38,12 +42,18 @@ public class ORGMigration {
         int currentRecord = 0;
 
         List<oldEmployeeOrgModel> oldORGCaseList = sqlOrgCase.getCases();
+        List<oldORGHistoryModel> oldORGHistoryList = sqlActivity.getORGHistory();
 
-        totalRecordCount = oldORGCaseList.size();
+        totalRecordCount = oldORGCaseList.size() + oldORGHistoryList.size();
 
-        for (oldEmployeeOrgModel item : oldORGCaseList) {
-            migrateCase(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNumber() + ": " + item.getOrgName());
+//        for (oldEmployeeOrgModel item : oldORGCaseList) {
+//            migrateCase(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNumber() + ": " + item.getOrgName());
+//        }
+        
+        for (oldORGHistoryModel item : oldORGHistoryList) {
+            migrateCaseHistory(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNum() + ": " + item.getDateTimeMillis());
         }
 
         long lEndTime = System.currentTimeMillis();
@@ -76,4 +86,25 @@ public class ORGMigration {
 
         sqlOrgCase.importOldEmployeeOrgCase(org);
     }
+
+    private static void migrateCaseHistory(oldORGHistoryModel old) {
+        activityModel item = new activityModel();
+        item.setCaseYear(null);
+        item.setCaseType("ORG");
+        item.setCaseMonth(null);
+        item.setCaseNumber(old.getOrgNum());
+        item.setUserID(StringUtilities.convertUserToID(old.getUserInitials()));
+        item.setDate(new Timestamp(old.getDateTimeMillis()));
+        item.setAction(!old.getDescription().trim().equals("") ? old.getDescription().trim() : null);
+        item.setFileName(!old.getFileName().trim().equals("") ? old.getFileName().trim() : null);
+        item.setFrom(!old.getSrc().trim().equals("") ? old.getSrc().trim() : null);
+        item.setTo(!old.getDest().trim().equals("") ? old.getDest().trim() : null);
+        item.setType(!old.getFileAttrib().trim().equals("") ? old.getFileAttrib().trim() : null);
+        item.setComment(old.getNote() != null ? old.getNote().trim() : null);
+        item.setRedacted("Y".equals(old.getRedacted().trim()) ? 1 : 0);
+        item.setAwaitingTimeStamp(0);
+
+        sqlActivity.addActivity(item);
+    }
+
 }

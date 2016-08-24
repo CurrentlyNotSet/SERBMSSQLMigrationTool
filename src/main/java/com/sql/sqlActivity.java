@@ -7,9 +7,11 @@ package com.sql;
 
 import com.model.activityModel;
 import com.model.oldMEDHistoryModel;
+import com.model.oldORGHistoryModel;
 import com.model.oldREPHistoryModel;
 import com.model.oldULPHistoryModel;
 import com.util.DBCInfo;
+import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -198,4 +200,50 @@ public class sqlActivity {
         return list;
     }
     
+    public static List<oldORGHistoryModel> getORGHistory() {
+        List<oldORGHistoryModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "SELECT * FROM orghistory where note != 'null'";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                oldORGHistoryModel item = new oldORGHistoryModel();
+                item.setOrgHistoryid(rs.getInt("OrgHistoryid"));
+                item.setActive(rs.getInt("Active"));
+                item.setUserInitials(rs.getString("UserInitials").trim().equals("null") ? "" : rs.getString("UserInitials"));
+                item.setSrc(rs.getString("Src").trim().equals("null") ? "" : rs.getString("Src"));
+                item.setDest(rs.getString("Dest").trim().equals("null") ? "" : rs.getString("Dest"));
+                item.setEmployeeOrgid(rs.getInt("EmployeeOrgid"));
+                item.setDateTimeMillis(rs.getLong("DateTimeMillis"));
+                item.setDirection(rs.getString("Direction").trim().equals("null") ? "" : rs.getString("Direction"));
+                item.setDate(rs.getString("Date").trim().equals("null") ? "" : rs.getString("Date"));
+                item.setTime(rs.getString("Time").trim().equals("null") ? "" : rs.getString("Time"));
+                item.setOrgNum(rs.getString("OrgNum").trim().equals("null") ? "" : rs.getString("OrgNum"));
+                item.setType(rs.getString("Type").trim().equals("null") ? "" : rs.getString("Type"));        
+                item.setSection(rs.getString("Section").trim().equals("null") ? "" : rs.getString("Section"));
+                item.setFileAttrib(rs.getString("FileAttrib").trim().equals("null") ? "" : rs.getString("FileAttrib"));
+                item.setOtherComment(rs.getString("OtherComment").trim().equals("null") ? "" : rs.getString("OtherComment"));
+                item.setFileName(rs.getString("FileName").trim().equals("null") ? "" : rs.getString("FileName"));
+                item.setDescription(rs.getString("Description").trim().equals("null") ? "" : rs.getString("Description"));
+                item.setMailLogDate(rs.getString("MailLogDate").trim().equals("null") ? "" : rs.getString("MailLogDate"));         
+                item.setNote(rs.getString("Note").trim().equals("null") ? "" : rs.getString("Note"));
+                item.setApproved(rs.getString("Approved").trim().equals("null") ? "" : rs.getString("Approved"));
+                item.setRequested(rs.getString("Requested").trim().equals("null") ? "" : rs.getString("Requested"));
+                item.setRedacted(rs.getString("Redacted").trim().equals("null") ? "" : rs.getString("Redacted"));
+                item.setRedactedHistoryID(rs.getString("RedactedHistoryID"));
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
 }
