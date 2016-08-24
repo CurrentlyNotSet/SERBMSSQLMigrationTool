@@ -11,7 +11,6 @@ import com.model.oldORGHistoryModel;
 import com.model.oldREPHistoryModel;
 import com.model.oldULPHistoryModel;
 import com.util.DBCInfo;
-import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

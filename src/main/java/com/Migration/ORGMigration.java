@@ -46,10 +46,10 @@ public class ORGMigration {
 
         totalRecordCount = oldORGCaseList.size() + oldORGHistoryList.size();
 
-//        for (oldEmployeeOrgModel item : oldORGCaseList) {
-//            migrateCase(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNumber() + ": " + item.getOrgName());
-//        }
+        for (oldEmployeeOrgModel item : oldORGCaseList) {
+            migrateCase(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNumber() + ": " + item.getOrgName());
+        }
         
         for (oldORGHistoryModel item : oldORGHistoryList) {
             migrateCaseHistory(item);
