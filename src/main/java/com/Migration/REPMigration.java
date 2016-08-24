@@ -687,7 +687,7 @@ public class REPMigration {
     }
 
     private static void migrateCaseData(oldREPDataModel item, caseNumberModel caseNumber) {
-        List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(caseNumber);
+        List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(StringUtilities.generateFullCaseNumber(caseNumber));
         List<casePartyModel> casePartyList = sqlCaseParty.getCasePartyFromParties(
                 caseNumber.getCaseYear(), caseNumber.getCaseType(), caseNumber.getCaseMonth(), caseNumber.getCaseNumber());
         

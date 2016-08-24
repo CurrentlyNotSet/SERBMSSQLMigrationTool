@@ -24,6 +24,7 @@ public class ORGCaseModel {
     private Date registrationReport;
     private Date constructionAndByLaws;
     private boolean filedByParent;
+    private String note;
 
     public int getId() {
         return id;
@@ -111,6 +112,14 @@ public class ORGCaseModel {
 
     public void setFiledByParent(boolean filedByParent) {
         this.filedByParent = filedByParent;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
 }

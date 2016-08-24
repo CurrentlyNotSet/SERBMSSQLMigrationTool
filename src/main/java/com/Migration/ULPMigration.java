@@ -180,7 +180,7 @@ public class ULPMigration {
     }
     
     private static void migrateCaseData(oldULPDataModel item, caseNumberModel caseNumber) {
-        List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(caseNumber);
+        List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(StringUtilities.generateFullCaseNumber(caseNumber));
         
         ULPCaseModel ulpcase = new ULPCaseModel();
         

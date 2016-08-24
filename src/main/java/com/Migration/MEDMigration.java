@@ -261,7 +261,7 @@ public class MEDMigration {
     }
     
     private static void migrateCaseData(oldMEDCaseModel item, caseNumberModel caseNumber) {
-        List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(caseNumber);
+        List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(StringUtilities.generateFullCaseNumber(caseNumber));
         MEDCaseModel med = new MEDCaseModel();
         String note = "";
         

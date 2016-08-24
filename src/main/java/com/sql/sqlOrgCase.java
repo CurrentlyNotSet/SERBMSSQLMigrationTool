@@ -104,8 +104,7 @@ public class sqlOrgCase {
         }
         return list;
     }
-    
-    
+        
     public static void importOldEmployeeOrgCase(ORGCaseModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -121,12 +120,13 @@ public class sqlOrgCase {
                     + "financialReport, "
                     + "registrationReport, "
                     + "constructionAndByLaws, "
-                    + "filedByParent"
+                    + "filedByParent, "
+                    + "note"
                     + ") VALUES (";
-                    for(int i=0; i<9; i++){
-                        sql += "?, ";   //01-09
+                    for(int i=0; i<10; i++){
+                        sql += "?, ";   //01-10
                     }
-                     sql += "?)";   //10
+                     sql += "?)";   //11
             ps = conn.prepareStatement(sql);
             ps.setInt    ( 1, item.getActive());
             ps.setString ( 2, item.getOrgName());
@@ -138,6 +138,7 @@ public class sqlOrgCase {
             ps.setDate   ( 8, item.getRegistrationReport());
             ps.setDate   ( 9, item.getConstructionAndByLaws());
             ps.setBoolean(10, item.isFiledByParent());
+            ps.setString (11, item.getNote());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

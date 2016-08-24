@@ -23,7 +23,7 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlBlobFile {
     
-    public static List<oldBlobFileModel> getOldBlobData(caseNumberModel caseNumber) {
+    public static List<oldBlobFileModel> getOldBlobData(String caseNumber) {
         List<oldBlobFileModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
@@ -32,7 +32,7 @@ public class sqlBlobFile {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
             String sql = "SELECT * FROM blobfile WHERE casenumber = ?";
             ps = conn.prepareStatement(sql);
-            ps.setString( 1, StringUtilities.generateFullCaseNumber(caseNumber));
+            ps.setString( 1, caseNumber);
             rs = ps.executeQuery();
             while (rs.next()) {
                 oldBlobFileModel item = new oldBlobFileModel();
