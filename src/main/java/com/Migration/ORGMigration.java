@@ -6,6 +6,7 @@
 package com.Migration;
 
 import com.model.ORGCaseModel;
+import com.model.ORGParentChildLinkModel;
 import com.model.activityModel;
 import com.model.oldBlobFileModel;
 import com.model.oldEmployeeOrgModel;
@@ -14,6 +15,7 @@ import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlORGParentChildLink;
 import com.sql.sqlOrgCase;
 import com.util.Global;
 import com.util.SceneUpdater;
@@ -45,18 +47,24 @@ public class ORGMigration {
 
         List<oldEmployeeOrgModel> oldORGCaseList = sqlOrgCase.getCases();
         List<oldORGHistoryModel> oldORGHistoryList = sqlActivity.getORGHistory();
+        List<ORGParentChildLinkModel> ORGParentChildLinkList = sqlORGParentChildLink.getOldLink();
 
-        totalRecordCount = oldORGCaseList.size() + oldORGHistoryList.size();
+        totalRecordCount = oldORGCaseList.size() + oldORGHistoryList.size() + ORGParentChildLinkList.size();
 
         for (oldEmployeeOrgModel item : oldORGCaseList) {
             migrateCase(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNumber() + ": " + item.getOrgName());
         }
-        
-//        for (oldORGHistoryModel item : oldORGHistoryList) {
-//            migrateCaseHistory(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNum() + ": " + item.getDateTimeMillis());
-//        }
+
+        for (oldORGHistoryModel item : oldORGHistoryList) {
+            migrateCaseHistory(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNum() + ": " + item.getDateTimeMillis());
+        }
+
+        for (ORGParentChildLinkModel item : ORGParentChildLinkList) {
+            sqlORGParentChildLink.importOrgParentChildLinks(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getParentOrgNumber() + ": " + item.getChildOrgNumber());
+        }
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ORG Cases: "
@@ -87,35 +95,31 @@ public class ORGMigration {
         org.setConstructionAndByLaws(!item.getConstitutionAndBylawsFiled().trim().equals("null") ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getConstitutionAndBylawsFiled())) : null);
         org.setFiledByParent(item.getFiledByParent().equals("Y"));
         String note = !item.getDescription2().trim().equals("null") ? item.getDescription2().trim() : "";
-        
-        for (oldBlobFileModel blob : oldBlobFileList) {
-            if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
-                case "ORGNotesFile":
-                    String note2 = StringUtilities.convertBlobFileToString(blob.getBlobData());
-                    
-                    if (note2 == null){
-                        note2 = "";
-                    }
-                    
-                    note2 = note2.trim().toLowerCase().equals("null") ? "" : note2.trim();
-                    
-                    if (!note.trim().toLowerCase().equals(note2.trim().toLowerCase())) {
-                        if (!note.trim().equals("") && !note2.trim().equals("")) {
-                            note += System.lineSeparator() + System.lineSeparator() + note2;
-                        } else if (note.trim().equals("") && !note2.trim().equals("")) {
-                            note += note2;
-                        }
-                    }
 
-                    break; 
-                default:
-                    break;
+        for (oldBlobFileModel blob : oldBlobFileList) {
+            if (null != blob.getSelectorA().trim()) {
+                switch (blob.getSelectorA().trim()) {
+                    case "ORGNotesFile":
+                        String note2 = StringUtilities.convertBlobFileToString(blob.getBlobData());
+
+                        note2 = note2 == null ? "" : note2;
+                        note2 = note2.trim().toLowerCase().equals("null") ? "" : note2.trim();
+
+                        if (!note.trim().toLowerCase().equals(note2.trim().toLowerCase())) {
+                            if (!note.trim().equals("") && !note2.trim().equals("")) {
+                                note += System.lineSeparator() + System.lineSeparator() + note2;
+                            } else if (note.trim().equals("") && !note2.trim().equals("")) {
+                                note += note2;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
         }
-        
         org.setNote(note.trim().equals("") ? null : note);
-        
-        
+
         sqlOrgCase.importOldEmployeeOrgCase(org);
     }
 
