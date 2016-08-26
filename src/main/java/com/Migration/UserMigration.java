@@ -39,7 +39,9 @@ public class UserMigration {
         int currentRecord = 0;
         List<userModel> oldSecUserList = sqlUsers.getSecUsers();
         List<userModel> oldUserList = sqlUsers.getUsers();
-        List<String> roleList = Arrays.asList("Admin", "Docketing", "REP", "ULP", "ORG", "MED", "Employer Search");
+        List<String> roleList = Arrays.asList(
+                "Admin", "Docketing", "REP", "ULP", "ORG", "MED", "Employer Search"
+        );
         
         totalRecordCount = oldUserList.size() + oldSecUserList.size() + roleList.size();
         

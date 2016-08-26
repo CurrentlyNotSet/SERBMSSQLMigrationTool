@@ -20,6 +20,7 @@ import com.util.Global;
 import com.util.StringUtilities;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,33 +28,46 @@ import java.util.List;
  * @author Andrew
  */
 public class EmployersMigration {
-    
-    public static void migrateEmployers(final MainWindowSceneController control){
+
+    public static void migrateEmployers(final MainWindowSceneController control) {
         Thread employersThread = new Thread() {
             @Override
             public void run() {
                 employersThread(control);
             }
         };
-        employersThread.start();        
+        employersThread.start();
     }
-    
-    private static void employersThread(MainWindowSceneController control){
+
+    private static void employersThread(MainWindowSceneController control) {
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("Employers Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
         
-        List<employerTypeModel> types = sqlEmployers.getEmployerType();
         List<oldPartyModel> employersList = sqlEmployers.getOldEmployers();
         List<oldBarginingUnitNewModel> unionList = sqlBarginingUnit.getOldBarginingUnits();
+        List<String> employerTypeList = Arrays.asList(
+                "Attorney", "Employer", "FCMS Mediator", "Individual", "Rep", "State Mediator", "Union"
+        );
+
+        totalRecordCount = employersList.size() + unionList.size() + employerTypeList.size();
+
+        for (String type : employerTypeList) {
+            sqlEmployers.addEmployerType(type);
+            currentRecord++;
+            if (Global.isDebug()) {
+                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + type + ")");
+            }
+            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
+        }
+
+        List<employerTypeModel> types = sqlEmployers.getEmployerType();
         
-        totalRecordCount = employersList.size() + unionList.size();
-        
-        for (oldPartyModel item : employersList){
+        for (oldPartyModel item : employersList) {
             migrateEmployers(item, types);
             currentRecord++;
-            if (Global.isDebug()){
+            if (Global.isDebug()) {
                 System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getLastName().trim() + ")");
             }
             control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
@@ -84,7 +98,8 @@ public class EmployersMigration {
                 typeID = type.getId();
                 break;
             }
-        }        
+        }      
+        
         employersModel item = new employersModel();
         item.setActive(old.getActive());
         item.setEmployerType(typeID);

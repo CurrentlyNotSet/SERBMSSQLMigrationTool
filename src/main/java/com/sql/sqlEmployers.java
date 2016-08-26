@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 
@@ -22,6 +23,23 @@ import org.apache.commons.dbutils.DbUtils;
  * @author Andrew
  */
 public class sqlEmployers {
+        
+    public static void addEmployerType(String type){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO Employers (Type) VALUES (?)";
+            ps = conn.prepareStatement(sql);
+            ps.setString( 1, type);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
     
     public static void addEmployer(employersModel item) {
         Connection conn = null;
