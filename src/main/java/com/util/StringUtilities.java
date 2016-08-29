@@ -54,7 +54,7 @@ public class StringUtilities {
             try {
                 byte[] bdata = text.getBytes(1, (int) text.length());
                 String blobString = new String(bdata).trim();
-                if (!"".equals(blobString.trim())) {
+                if (!"".equals(blobString.trim()) || !"null".equals(blobString.trim())) {
                     return blobString.trim();
                 }
             } catch (SQLException ex) {

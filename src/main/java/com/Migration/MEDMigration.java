@@ -77,8 +77,9 @@ public class MEDMigration {
         newMediatorsList = sqlMediator.getNewMediator();
         
         for (oldMEDCaseModel item : oldMEDCaseList) {
-            migrateCase(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
+            migrateCase(item);            
+            String caseNumber = item.getCaseNumber().trim().equals("") ? item.getStrikeCaseNumber() : item.getCaseNumber().trim();
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, caseNumber);
         }
         
         long lEndTime = System.currentTimeMillis();
@@ -155,9 +156,13 @@ public class MEDMigration {
     }
     
     private static void migrateCase(oldMEDCaseModel item) {
+        caseNumberModel caseNumber = null;
         if (item.getCaseNumber().trim().length() == 16){
-            caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
-
+            caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
+        } else if (item.getStrikeCaseNumber().trim().length() == 16){
+            caseNumber = StringUtilities.parseFullCaseNumber(item.getStrikeCaseNumber().trim());
+        }
+        if (caseNumber != null){
             migrateParties(item, caseNumber);
             migrateCaseData(item, caseNumber);
             migrateRelatedCases(item, caseNumber);
@@ -422,13 +427,24 @@ public class MEDMigration {
             }
         }
         
+        med.setNote(note);
+        
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
-                case "Notes":
-                    if (!note.equals("")){
-                        note += System.lineSeparator() + System.lineSeparator();
-                    }                    
-                    med.setNote(note + StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                case "Notes":                   
+                    String note2 = StringUtilities.convertBlobFileToString(blob.getBlobData());
+                    
+                    if (note2 != null && !note.trim().equals("")){
+                        note += System.lineSeparator() + System.lineSeparator() + note2;
+                    } else {
+                        note += note2;
+                    }
+                    
+                    if (note.trim().equals("")){
+                        note = null;
+                    }
+                    
+                    med.setNote(note);
                     break;
                 case "StkNotes":
                     med.setStrikeNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
@@ -440,7 +456,7 @@ public class MEDMigration {
                     break;
             }
         }
-        
+                
         sqlMEDData.importOldMEDCase(med);
     }
     
