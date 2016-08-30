@@ -12,6 +12,7 @@ import com.model.caseNumberModel;
 import com.model.casePartyModel;
 import com.model.employerCaseSearchModel;
 import com.model.factFinderModel;
+import com.model.jurisdictionModel;
 import com.model.mediatorsModel;
 import com.model.oldBlobFileModel;
 import com.model.oldMEDCaseModel;
@@ -24,6 +25,7 @@ import com.sql.sqlCaseParty;
 import com.sql.sqlEmployerCaseSearchData;
 import com.sql.sqlEmployers;
 import com.sql.sqlFactFinder;
+import com.sql.sqlJurisdiction;
 import com.sql.sqlMEDCaseSearch;
 import com.sql.sqlMEDData;
 import com.sql.sqlMediator;
@@ -61,8 +63,14 @@ public class MEDMigration {
         List<oldMEDCaseModel> oldMEDCaseList = sqlMEDData.getCases();
         List<factFinderModel> oldFactFindersList = sqlFactFinder.getOldFactFinders();
         List<mediatorsModel> oldMediatorsList = sqlMediator.getOldMediator();
+        List<jurisdictionModel> oldjurisdictionList = sqlJurisdiction.getOldJurisdiction();
         
         totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size() + oldMediatorsList.size();
+        
+        for (jurisdictionModel item : oldjurisdictionList) {
+            sqlJurisdiction.addJurisdiction(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getJurisName());
+        }
         
         for (factFinderModel item : oldFactFindersList) {
             migrateFactFinder(item);
@@ -439,18 +447,32 @@ public class MEDMigration {
                     } else {
                         note += note2;
                     }
-                    
-                    if (note.trim().equals("")){
-                        note = null;
+                    if (note != null) {
+                        if (note.trim().equals("")){
+                            note = null;
+                        }
                     }
-                    
                     med.setNote(note);
                     break;
                 case "StkNotes":
-                    med.setStrikeNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    String stkNote = StringUtilities.convertBlobFileToString(blob.getBlobData());
+                    if (stkNote != null) {
+                        if (stkNote.trim().equals("")) {
+                            stkNote = null;
+                        }
+                    }
+                    
+                    med.setStrikeNote(stkNote);
                     break;
                 case "FFNotes":
-                    med.setFFNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    String ffNote = StringUtilities.convertBlobFileToString(blob.getBlobData());
+                    if (ffNote != null) {
+                        if (ffNote.trim().equals("")) {
+                            ffNote = null;
+                        }
+                    }
+                    
+                    med.setFFNote(ffNote);
                     break;  
                 default:
                     break;

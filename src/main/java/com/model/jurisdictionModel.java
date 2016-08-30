@@ -12,8 +12,10 @@ package com.model;
 public class jurisdictionModel {
     
     private int id;
+    private boolean active;
     private String jurisCode;
-    private String JurisName;
+    private String jurisName;
+    private String employerType;
 
     public int getId() {
         return id;
@@ -23,6 +25,14 @@ public class jurisdictionModel {
         this.id = id;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+ 
     public String getJurisCode() {
         return jurisCode;
     }
@@ -32,11 +42,19 @@ public class jurisdictionModel {
     }
 
     public String getJurisName() {
-        return JurisName;
+        return jurisName;
     }
 
-    public void setJurisName(String JurisName) {
-        this.JurisName = JurisName;
+    public void setJurisName(String jurisName) {
+        this.jurisName = jurisName;
+    }
+
+    public String getEmployerType() {
+        return employerType;
+    }
+
+    public void setEmployerType(String employerType) {
+        this.employerType = employerType;
     }
     
 }
