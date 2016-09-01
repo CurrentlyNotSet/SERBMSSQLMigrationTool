@@ -6,6 +6,7 @@
 package com.Migration;
 
 import com.model.ORGCaseModel;
+import com.model.ORGCaseOfficersModel;
 import com.model.ORGParentChildLinkModel;
 import com.model.activityModel;
 import com.model.oldBlobFileModel;
@@ -16,7 +17,8 @@ import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlORGParentChildLink;
-import com.sql.sqlOrgCase;
+import com.sql.sqlORGCase;
+import com.sql.sqlORGCaseOfficers;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
@@ -45,7 +47,7 @@ public class ORGMigration {
         int totalRecordCount = 0;
         int currentRecord = 0;
 
-        List<oldEmployeeOrgModel> oldORGCaseList = sqlOrgCase.getCases();
+        List<oldEmployeeOrgModel> oldORGCaseList = sqlORGCase.getCases();
         List<oldORGHistoryModel> oldORGHistoryList = sqlActivity.getORGHistory();
         List<ORGParentChildLinkModel> ORGParentChildLinkList = sqlORGParentChildLink.getOldLink();
 
@@ -77,6 +79,7 @@ public class ORGMigration {
 
     private static void migrateCase(oldEmployeeOrgModel item) {
         migrateCaseData(item);
+        migrateOfficers(item);
     }
 
     private static void migrateCaseData(oldEmployeeOrgModel item) {
@@ -120,9 +123,87 @@ public class ORGMigration {
         }
         org.setNote(note.trim().equals("") ? null : note);
 
-        sqlOrgCase.importOldEmployeeOrgCase(org);
+        sqlORGCase.importOldEmployeeOrgCase(org);
     }
 
+    private static void migrateOfficers(oldEmployeeOrgModel item) {
+        ORGCaseOfficersModel officer = null;
+        
+        if (!item.getOfficer1().trim().equals("")){
+            officer = new ORGCaseOfficersModel();
+            
+            officer.setOrgNumber(item.getOrgNumber());
+            officer.setPosition(item.getOfficer1Title().trim().equals("") ? null : item.getOfficer1Title().trim());
+            officer = seperateOfficerName(item.getOfficer1(), officer);
+            
+            sqlORGCaseOfficers.addOfficer(officer);
+        }
+        
+        if (!item.getOfficer2().trim().equals("")){
+            officer = new ORGCaseOfficersModel();
+            
+            officer.setOrgNumber(item.getOrgNumber());
+            officer.setPosition(item.getOfficer2Title().trim().equals("") ? null : item.getOfficer2Title().trim());
+            officer = seperateOfficerName(item.getOfficer2(), officer);
+            
+            sqlORGCaseOfficers.addOfficer(officer);
+        }
+        
+        if (!item.getOfficer3().trim().equals("")){
+            officer = new ORGCaseOfficersModel();
+            
+            officer.setOrgNumber(item.getOrgNumber());
+            officer.setPosition(item.getOfficer3Title().trim().equals("") ? null : item.getOfficer3Title().trim());
+            officer = seperateOfficerName(item.getOfficer3(), officer);
+            
+            sqlORGCaseOfficers.addOfficer(officer);
+        }
+        
+        if (!item.getOfficer4().trim().equals("")){
+            officer = new ORGCaseOfficersModel();
+            
+            officer.setOrgNumber(item.getOrgNumber());
+            officer.setPosition(item.getOfficer4Title().trim().equals("") ? null : item.getOfficer4Title().trim());
+            officer = seperateOfficerName(item.getOfficer4(), officer);
+            
+            sqlORGCaseOfficers.addOfficer(officer);
+        }
+        
+    }
+        
+    private static ORGCaseOfficersModel seperateOfficerName(String name, ORGCaseOfficersModel item){
+        String[] nameSplit = name.replaceAll(", ", " ").split(" ");
+        
+        switch (nameSplit.length) {
+            case 2:
+                item.setFirstName(nameSplit[0].trim());
+                item.setMiddleName(null);
+                item.setLastName(nameSplit[1].trim());
+                break;
+            case 3:
+                item.setFirstName(nameSplit[0].trim());
+                
+                if (nameSplit[2].startsWith("Jr") || nameSplit[2].startsWith("IV")|| nameSplit[2].startsWith("II")|| nameSplit[2].startsWith("III")){
+                    item.setMiddleName(null);
+                    item.setLastName(nameSplit[1].replaceAll("\\.", "").trim() + ", " + nameSplit[2].trim());
+                } else {
+                    item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
+                    item.setLastName(nameSplit[2].trim());
+                }
+                
+                break;
+            case 4:
+                item.setFirstName(nameSplit[0].trim());
+                item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
+                item.setLastName(nameSplit[2].trim() + ", " + nameSplit[3].trim());
+                break;
+            default:
+                item.setLastName(name);
+                break;
+        }
+        return item;
+    }
+        
     private static void migrateCaseHistory(oldORGHistoryModel old) {
         activityModel item = new activityModel();
         item.setCaseYear(null);

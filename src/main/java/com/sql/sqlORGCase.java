@@ -20,7 +20,7 @@ import org.apache.commons.dbutils.DbUtils;
  *
  * @author User
  */
-public class sqlOrgCase {
+public class sqlORGCase {
     
     public static List<oldEmployeeOrgModel> getCases() {
         List<oldEmployeeOrgModel> list = new ArrayList();
