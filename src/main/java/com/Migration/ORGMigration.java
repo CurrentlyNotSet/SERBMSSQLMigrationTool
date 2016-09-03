@@ -58,15 +58,15 @@ public class ORGMigration {
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNumber() + ": " + item.getOrgName());
         }
 
-        for (oldORGHistoryModel item : oldORGHistoryList) {
-            migrateCaseHistory(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNum() + ": " + item.getDateTimeMillis());
-        }
-
-        for (ORGParentChildLinkModel item : ORGParentChildLinkList) {
-            sqlORGParentChildLink.importOrgParentChildLinks(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getParentOrgNumber() + ": " + item.getChildOrgNumber());
-        }
+//        for (oldORGHistoryModel item : oldORGHistoryList) {
+//            migrateCaseHistory(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNum() + ": " + item.getDateTimeMillis());
+//        }
+//
+//        for (ORGParentChildLinkModel item : ORGParentChildLinkList) {
+//            sqlORGParentChildLink.importOrgParentChildLinks(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getParentOrgNumber() + ": " + item.getChildOrgNumber());
+//        }
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ORG Cases: "
@@ -87,8 +87,8 @@ public class ORGMigration {
         ORGCaseModel org = new ORGCaseModel();
 
         org.setActive(item.getActive());
-        org.setOrgName(!item.getOrgName().trim().equals("null") ? item.getOrgName().trim() : null);
-        org.setOrgNumber(!item.getOrgNumber().trim().equals("null") ? item.getOrgNumber().trim() : null);
+        org.setOrgName((!item.getOrgName().trim().equals("null") || !item.getOrgName().trim().equals("")) ? item.getOrgName().trim() : null);
+        org.setOrgNumber((!item.getOrgNumber().trim().equals("null") || !item.getOrgNumber().trim().equals("")) ? item.getOrgNumber().trim() : null);
         org.setFiscalYearEnding(StringUtilities.monthName(item.getFiscalYearEnding()));
         String filingDueDate = StringUtilities.monthName(StringUtilities.monthNumber(item.getDueDate().replaceAll("[^A-Za-z]", "")));
         org.setFilingDueDate(filingDueDate != null ? filingDueDate + " 15th" : null);
@@ -99,6 +99,47 @@ public class ORGMigration {
         org.setFiledByParent(item.getFiledByParent().equals("Y"));
         String note = !item.getDescription2().trim().equals("null") ? item.getDescription2().trim() : "";
 
+        
+        
+        org.setAlsoKnownAs((!item.getDescription1().trim().equals("null") || !item.getDescription1().trim().equals("")) 
+                ? item.getDescription1().trim() : null);
+        org.setOrgType((!item.getOrgType().trim().equals("null") || !item.getOrgType().trim().equals("")) ? item.getOrgType().trim() : null);
+        org.setOrgPhone1((!item.getOrgPhone1().trim().equals("null") || !item.getOrgPhone1().trim().equals("")) 
+                ? StringUtilities.convertPhoneNumberToString(item.getOrgPhone1().trim()) : null);
+        org.setOrgPhone2((!item.getOrgPhone2().trim().equals("null") || !item.getOrgPhone2().trim().equals("")) 
+                ? StringUtilities.convertPhoneNumberToString(item.getOrgPhone2().trim()) : null);
+        org.setOrgFax((!item.getOrgFax().trim().equals("null") || !item.getOrgFax().trim().equals("")) 
+                ? StringUtilities.convertPhoneNumberToString(item.getOrgFax().trim()) : null);
+        org.setEmployerID(String.valueOf(item.getEmployeeOrgid()));
+        org.setOrgAddress1((!item.getOrgAddress1().trim().equals("null") || !item.getOrgAddress1().trim().equals("")) 
+                ? item.getOrgAddress1().trim() : null);
+        org.setOrgAddress2((!item.getOrgAddress2().trim().equals("null") || !item.getOrgAddress2().trim().equals("")) 
+                ? item.getOrgAddress2().trim() : null);
+        org.setOrgCity((!item.getOrgCity().trim().equals("null") || !item.getOrgCity().trim().equals("")) 
+                ? item.getOrgCity().trim() : null);
+        org.setOrgState((!item.getOrgState().trim().equals("null") || !item.getOrgState().trim().equals("")) 
+                ? item.getOrgState().trim() : null);
+        org.setOrgZip((!item.getOrgZipPlusFive().trim().equals("null") || !item.getOrgZipPlusFive().trim().equals("")) 
+                ? item.getOrgZipPlusFive().trim() : null);
+        org.setOrgCounty((!item.getOrgCounty().trim().equals("null") || !item.getOrgCounty().trim().equals("")) 
+                ? item.getOrgCounty().trim() : null);
+        org.setOrgEmail((!item.getOrgEMail().trim().equals("null") || !item.getOrgEMail().trim().equals("")) 
+                ? item.getOrgEMail().trim() : null);
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) {
                 switch (blob.getSelectorA().trim()) {

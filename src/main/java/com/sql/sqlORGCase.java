@@ -111,22 +111,35 @@ public class sqlORGCase {
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
             String sql = "INSERT INTO ORGCase ("
-                    + "active, "
-                    + "orgName, "
-                    + "orgNumber, "
-                    + "fiscalYearEnding, "
-                    + "filingDueDate, "
-                    + "annualReport, "
-                    + "financialReport, "
-                    + "registrationReport, "
-                    + "constructionAndByLaws, "
-                    + "filedByParent, "
-                    + "note"
+                    + "active, "        //01
+                    + "orgName, "       //02
+                    + "orgNumber, "     //03
+                    + "fiscalYearEnding, "//04
+                    + "filingDueDate, " //05
+                    + "annualReport, "  //06
+                    + "financialReport, "//07
+                    + "registrationReport, "//08
+                    + "constructionAndByLaws, "//09
+                    + "filedByParent, " //10
+                    + "note, "          //11
+                    + "alsoKnownAs, "   //12
+                    + "orgType, "       //13
+                    + "orgPhone1, "     //14
+                    + "orgPhone2, "     //15
+                    + "orgFax, "        //16
+                    + "employerID, "    //17
+                    + "orgAddress1, "   //18
+                    + "orgAddress2, "   //19
+                    + "orgCity, "       //20
+                    + "orgState, "      //21
+                    + "orgZip, "        //22
+                    + "orgCounty, "     //23
+                    + "orgEmail "       //24
                     + ") VALUES (";
-                    for(int i=0; i<10; i++){
-                        sql += "?, ";   //01-10
+                    for(int i=0; i<23; i++){
+                        sql += "?, ";   //01-23
                     }
-                     sql += "?)";   //11
+                     sql += "?)";   //24
             ps = conn.prepareStatement(sql);
             ps.setInt    ( 1, item.getActive());
             ps.setString ( 2, item.getOrgName());
@@ -139,6 +152,20 @@ public class sqlORGCase {
             ps.setDate   ( 9, item.getConstructionAndByLaws());
             ps.setBoolean(10, item.isFiledByParent());
             ps.setString (11, item.getNote());
+            ps.setString (12, item.getAlsoKnownAs().trim().equals("") ? null : item.getAlsoKnownAs());
+            ps.setString (13, item.getOrgType().trim().equals("") ? null : item.getOrgType());
+            ps.setString (14, item.getOrgPhone1().trim().equals("") ? null : item.getOrgPhone1());
+            ps.setString (15, item.getOrgPhone2().trim().equals("") ? null : item.getOrgPhone2());
+            ps.setString (16, item.getOrgFax().trim().equals("") ? null : item.getOrgFax());
+            ps.setString (17, item.getEmployerID().trim().equals("") ? null : item.getEmployerID());
+            ps.setString (18, item.getOrgAddress1().trim().equals("") ? null : item.getOrgAddress1());
+            ps.setString (19, item.getOrgAddress2().trim().equals("") ? null : item.getOrgAddress2());
+            ps.setString (20, item.getOrgCity().trim().equals("") ? null : item.getOrgCity());
+            ps.setString (21, item.getOrgState().trim().equals("") ? null : item.getOrgState());
+            ps.setString (22, item.getOrgZip().trim().equals("") ? null : item.getOrgZip());
+            ps.setString (23, item.getOrgCounty().trim().equals("") ? null : item.getOrgCounty());
+            ps.setString (24, item.getOrgEmail().trim().equals("") ? null : item.getOrgEmail());
+            
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

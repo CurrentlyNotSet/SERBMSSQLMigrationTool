@@ -25,7 +25,20 @@ public class ORGCaseModel {
     private Date constructionAndByLaws;
     private boolean filedByParent;
     private String note;
-
+    private String alsoKnownAs;
+    private String orgType;
+    private String orgPhone1;
+    private String orgPhone2;
+    private String orgFax;
+    private String employerID;
+    private String orgAddress1;
+    private String orgAddress2;
+    private String orgCity;
+    private String orgState;
+    private String orgZip;
+    private String orgCounty;
+    private String orgEmail;
+    
     public int getId() {
         return id;
     }
@@ -120,6 +133,110 @@ public class ORGCaseModel {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getAlsoKnownAs() {
+        return alsoKnownAs;
+    }
+
+    public void setAlsoKnownAs(String alsoKnownAs) {
+        this.alsoKnownAs = alsoKnownAs;
+    }
+
+    public String getOrgType() {
+        return orgType;
+    }
+
+    public void setOrgType(String orgType) {
+        this.orgType = orgType;
+    }
+
+    public String getOrgPhone1() {
+        return orgPhone1;
+    }
+
+    public void setOrgPhone1(String orgPhone1) {
+        this.orgPhone1 = orgPhone1;
+    }
+
+    public String getOrgPhone2() {
+        return orgPhone2;
+    }
+
+    public void setOrgPhone2(String orgPhone2) {
+        this.orgPhone2 = orgPhone2;
+    }
+
+    public String getOrgFax() {
+        return orgFax;
+    }
+
+    public void setOrgFax(String orgFax) {
+        this.orgFax = orgFax;
+    }
+
+    public String getEmployerID() {
+        return employerID;
+    }
+
+    public void setEmployerID(String employerID) {
+        this.employerID = employerID;
+    }
+
+    public String getOrgAddress1() {
+        return orgAddress1;
+    }
+
+    public void setOrgAddress1(String orgAddress1) {
+        this.orgAddress1 = orgAddress1;
+    }
+
+    public String getOrgAddress2() {
+        return orgAddress2;
+    }
+
+    public void setOrgAddress2(String orgAddress2) {
+        this.orgAddress2 = orgAddress2;
+    }
+
+    public String getOrgCity() {
+        return orgCity;
+    }
+
+    public void setOrgCity(String orgCity) {
+        this.orgCity = orgCity;
+    }
+
+    public String getOrgState() {
+        return orgState;
+    }
+
+    public void setOrgState(String orgState) {
+        this.orgState = orgState;
+    }
+
+    public String getOrgZip() {
+        return orgZip;
+    }
+
+    public void setOrgZip(String orgZip) {
+        this.orgZip = orgZip;
+    }
+
+    public String getOrgCounty() {
+        return orgCounty;
+    }
+
+    public void setOrgCounty(String orgCounty) {
+        this.orgCounty = orgCounty;
+    }
+
+    public String getOrgEmail() {
+        return orgEmail;
+    }
+
+    public void setOrgEmail(String orgEmail) {
+        this.orgEmail = orgEmail;
     }
 
 }
