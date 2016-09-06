@@ -9,6 +9,7 @@ import com.model.ORGCaseModel;
 import com.model.oldEmployeeOrgModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -134,12 +135,25 @@ public class sqlORGCase {
                     + "orgState, "      //21
                     + "orgZip, "        //22
                     + "orgCounty, "     //23
-                    + "orgEmail "       //24
+                    + "orgEmail, "      //24
+                    + "lastNotification, "//25
+                    + "deemedCertified, " //26
+                    + "boardCertified, "  //27
+                    + "valid, "         //28
+                    + "parent1, "       //29
+                    + "parent2, "       //30
+                    + "outsideCase, "   //31
+                    + "dateFiled, "     //32
+                    + "certifiedDate, " //33
+                    + "registrationLetterSent, "//34
+                    + "extensionDate "  //35
+                    
+                    
                     + ") VALUES (";
-                    for(int i=0; i<23; i++){
-                        sql += "?, ";   //01-23
+                    for(int i=0; i<34; i++){
+                        sql += "?, ";   //01-34
                     }
-                     sql += "?)";   //24
+                     sql += "?)";   //35
             ps = conn.prepareStatement(sql);
             ps.setInt    ( 1, item.getActive());
             ps.setString ( 2, item.getOrgName());
@@ -165,7 +179,17 @@ public class sqlORGCase {
             ps.setString (22, item.getOrgZip().trim().equals("") ? null : item.getOrgZip());
             ps.setString (23, item.getOrgCounty().trim().equals("") ? null : item.getOrgCounty());
             ps.setString (24, item.getOrgEmail().trim().equals("") ? null : item.getOrgEmail());
-            
+            ps.setString (25, item.getLastNotification().trim().equals("") ? null : item.getLastNotification());
+            ps.setBoolean(26, item.isDeemedCertified());
+            ps.setBoolean(27, item.isBoardCertified());
+            ps.setBoolean(28, item.isValid());
+            ps.setString (29, item.getParent1().trim().equals("") ? null : item.getParent1());
+            ps.setString (30, item.getParent2().trim().equals("") ? null : item.getParent2());
+            ps.setString (31, item.getOutsideCase().trim().equals("") ? null : item.getOutsideCase());
+            ps.setDate   (32, item.getDateFiled());
+            ps.setDate   (33, item.getCertifiedDate());
+            ps.setDate   (34, item.getRegistrationLetterSent());
+            ps.setDate   (35, item.getExtensionDate());            
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

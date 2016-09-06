@@ -92,10 +92,14 @@ public class ORGMigration {
         org.setFiscalYearEnding(StringUtilities.monthName(item.getFiscalYearEnding()));
         String filingDueDate = StringUtilities.monthName(StringUtilities.monthNumber(item.getDueDate().replaceAll("[^A-Za-z]", "")));
         org.setFilingDueDate(filingDueDate != null ? filingDueDate + " 15th" : null);
-        org.setAnnualReport(!item.getAnnualReportLastFiled().trim().equals("null") ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getAnnualReportLastFiled())) : null);
-        org.setFinancialReport(!item.getFinancialStatementLastFiled().trim().equals("null") ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getFinancialStatementLastFiled())) : null);
-        org.setRegistrationReport(!item.getRegistrationReportLastFiled().trim().equals("null") ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getRegistrationReportLastFiled())) : null);
-        org.setConstructionAndByLaws(!item.getConstitutionAndBylawsFiled().trim().equals("null") ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getConstitutionAndBylawsFiled())) : null);
+        org.setAnnualReport(!item.getAnnualReportLastFiled().trim().equals("null") 
+                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getAnnualReportLastFiled())) : null);
+        org.setFinancialReport(!item.getFinancialStatementLastFiled().trim().equals("null") 
+                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getFinancialStatementLastFiled())) : null);
+        org.setRegistrationReport(!item.getRegistrationReportLastFiled().trim().equals("null") 
+                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getRegistrationReportLastFiled())) : null);
+        org.setConstructionAndByLaws(!item.getConstitutionAndBylawsFiled().trim().equals("null") 
+                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getConstitutionAndBylawsFiled())) : null);
         org.setFiledByParent(item.getFiledByParent().equals("Y"));
         String note = !item.getDescription2().trim().equals("null") ? item.getDescription2().trim() : "";
 
@@ -125,18 +129,25 @@ public class ORGMigration {
                 ? item.getOrgCounty().trim() : null);
         org.setOrgEmail((!item.getOrgEMail().trim().equals("null") || !item.getOrgEMail().trim().equals("")) 
                 ? item.getOrgEMail().trim() : null);
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        org.setLastNotification((!item.getLastNotification().trim().equals("null") || !item.getLastNotification().trim().equals("")) 
+                ? item.getLastNotification().trim() : null);
+        org.setDeemedCertified(item.getDeemedCertified().equals("Y"));
+        org.setBoardCertified(item.getBoardCertified().equals("Y"));
+        org.setValid(item.getValid().equals("Y"));
+        org.setParent1((!item.getParent1().trim().equals("null") || !item.getParent1().trim().equals("")) 
+                ? item.getParent1().trim() : null);
+        org.setParent2((!item.getParent2().trim().equals("null") || !item.getParent2().trim().equals("")) 
+                ? item.getParent2().trim() : null);
+        org.setOutsideCase((!item.getCase1().trim().equals("null") || !item.getCase1().trim().equals("")) 
+                ? item.getCase1().trim() : null);
+        org.setDateFiled(!item.getFiled().trim().equals("null") 
+                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getFiled())) : null);
+        org.setCertifiedDate(!item.getCertifiedDate().trim().equals("null") 
+                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getCertifiedDate())) : null);
+        org.setRegistrationLetterSent(!item.getRegistrationSentDate().trim().equals("null") 
+                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getRegistrationSentDate())) : null);
+        org.setExtensionDate(!item.getExtensionDate().trim().equals("null") 
+                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getExtensionDate())) : null);
         
         
         
@@ -163,7 +174,6 @@ public class ORGMigration {
             }
         }
         org.setNote(note.trim().equals("") ? null : note);
-
         sqlORGCase.importOldEmployeeOrgCase(org);
     }
 

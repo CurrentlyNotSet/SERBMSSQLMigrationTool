@@ -38,6 +38,17 @@ public class ORGCaseModel {
     private String orgZip;
     private String orgCounty;
     private String orgEmail;
+    private String lastNotification;
+    private boolean deemedCertified;
+    private boolean boardCertified;
+    private boolean valid;
+    private String parent1;
+    private String parent2;
+    private String outsideCase;
+    private Date dateFiled;
+    private Date certifiedDate;
+    private Date registrationLetterSent;
+    private Date extensionDate;
     
     public int getId() {
         return id;
@@ -239,4 +250,93 @@ public class ORGCaseModel {
         this.orgEmail = orgEmail;
     }
 
+    public String getLastNotification() {
+        return lastNotification;
+    }
+
+    public void setLastNotification(String lastNotification) {
+        this.lastNotification = lastNotification;
+    }
+
+    public boolean isDeemedCertified() {
+        return deemedCertified;
+    }
+
+    public void setDeemedCertified(boolean deemedCertified) {
+        this.deemedCertified = deemedCertified;
+    }
+
+    public boolean isBoardCertified() {
+        return boardCertified;
+    }
+
+    public void setBoardCertified(boolean boardCertified) {
+        this.boardCertified = boardCertified;
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
+    public String getParent1() {
+        return parent1;
+    }
+
+    public void setParent1(String parent1) {
+        this.parent1 = parent1;
+    }
+
+    public String getParent2() {
+        return parent2;
+    }
+
+    public void setParent2(String parent2) {
+        this.parent2 = parent2;
+    }
+
+    public String getOutsideCase() {
+        return outsideCase;
+    }
+
+    public void setOutsideCase(String outsideCase) {
+        this.outsideCase = outsideCase;
+    }
+
+    public Date getDateFiled() {
+        return dateFiled;
+    }
+
+    public void setDateFiled(Date dateFiled) {
+        this.dateFiled = dateFiled;
+    }
+
+    public Date getCertifiedDate() {
+        return certifiedDate;
+    }
+
+    public void setCertifiedDate(Date certifiedDate) {
+        this.certifiedDate = certifiedDate;
+    }
+
+    public Date getRegistrationLetterSent() {
+        return registrationLetterSent;
+    }
+
+    public void setRegistrationLetterSent(Date registrationLetterSent) {
+        this.registrationLetterSent = registrationLetterSent;
+    }
+
+    public Date getExtensionDate() {
+        return extensionDate;
+    }
+
+    public void setExtensionDate(Date extensionDate) {
+        this.extensionDate = extensionDate;
+    }
+
+    
 }
