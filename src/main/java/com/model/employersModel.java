@@ -40,6 +40,8 @@ public class employersModel {
     private String AssistantMiddleInitial;
     private String AssistantLastName;
     private String AssistantEmail;
+    private String Population;
+    private String EmployerIRN;
 
     public int getId() {
         return id;
@@ -273,4 +275,20 @@ public class employersModel {
         this.County = County;
     }
 
+    public String getPopulation() {
+        return Population;
+    }
+
+    public void setPopulation(String Population) {
+        this.Population = Population;
+    }
+
+    public String getEmployerIRN() {
+        return EmployerIRN;
+    }
+
+    public void setEmployerIRN(String EmployerIRN) {
+        this.EmployerIRN = EmployerIRN;
+    }
+    
 }

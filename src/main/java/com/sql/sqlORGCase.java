@@ -9,7 +9,6 @@ import com.model.ORGCaseModel;
 import com.model.oldEmployeeOrgModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -144,16 +143,13 @@ public class sqlORGCase {
                     + "parent2, "       //30
                     + "outsideCase, "   //31
                     + "dateFiled, "     //32
-                    + "certifiedDate, " //33
-                    + "registrationLetterSent, "//34
-                    + "extensionDate "  //35
-                    
-                    
+                    + "registrationLetterSent, "//33
+                    + "extensionDate "  //34
                     + ") VALUES (";
-                    for(int i=0; i<34; i++){
-                        sql += "?, ";   //01-34
+                    for(int i=0; i<33; i++){
+                        sql += "?, ";   //01-33
                     }
-                     sql += "?)";   //35
+                     sql += "?)";   //34
             ps = conn.prepareStatement(sql);
             ps.setInt    ( 1, item.getActive());
             ps.setString ( 2, item.getOrgName());
@@ -187,9 +183,8 @@ public class sqlORGCase {
             ps.setString (30, item.getParent2().trim().equals("") ? null : item.getParent2());
             ps.setString (31, item.getOutsideCase().trim().equals("") ? null : item.getOutsideCase());
             ps.setDate   (32, item.getDateFiled());
-            ps.setDate   (33, item.getCertifiedDate());
-            ps.setDate   (34, item.getRegistrationLetterSent());
-            ps.setDate   (35, item.getExtensionDate());            
+            ps.setDate   (33, item.getRegistrationLetterSent());
+            ps.setDate   (34, item.getExtensionDate());            
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

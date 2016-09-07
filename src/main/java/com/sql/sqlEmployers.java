@@ -14,7 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 
@@ -74,12 +73,14 @@ public class sqlEmployers {
                     + "AssistantMiddleInitial, "//25
                     + "AssistantLastName, "     //26
                     + "AssistantEmail, "        //27
-                    + "County"                  //28
+                    + "County,"                 //28
+                    + "population, "            //29
+                    + "employerIRN "            //30
                     + ") VALUES (";
-                    for(int i=0; i<27; i++){
-                        sql += "?, ";   //01-27
+                    for(int i=0; i<29; i++){
+                        sql += "?, ";   //01-29
                     }
-                     sql += "?)"; //28
+                     sql += "?)"; //30
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());             
             ps.setInt   ( 2, item.getEmployerType());       
@@ -109,6 +110,8 @@ public class sqlEmployers {
             ps.setString(26, item.getAssistantLastName());
             ps.setString(27, item.getAssistantEmail());
             ps.setString(28, item.getCounty());
+            ps.setString(29, item.getPopulation());
+            ps.setString(30, item.getEmployerIRN());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -220,4 +223,37 @@ public class sqlEmployers {
         }
         return name;
     }
+    
+    public static List<employersModel> getEmployersForReference() {
+        List<employersModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "SELECT Employers.EmployerID, Employers.EmployerName, Party.PartyField1 "
+                    + "FROM Employers "
+                    + "LEFT OUTER JOIN Party "
+                    + "ON Employers.EmployerName = Party.DisplayName "
+                    + "WHERE Party.PartyType = 'Employer' "
+                    + "ORDER BY Employers.EmployerID";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                employersModel item = new employersModel();
+                item.setId(rs.getInt("EmployerID"));
+                item.setEmployerName(rs.getString("EmployerName"));
+                item.setEmployerIDNumber(rs.getString("PartyField1"));
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
+    
 }

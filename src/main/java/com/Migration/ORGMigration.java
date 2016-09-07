@@ -6,19 +6,21 @@
 package com.Migration;
 
 import com.model.ORGCaseModel;
-import com.model.ORGCaseOfficersModel;
 import com.model.ORGParentChildLinkModel;
 import com.model.activityModel;
+import com.model.casePartyModel;
+import com.model.employersModel;
 import com.model.oldBlobFileModel;
 import com.model.oldEmployeeOrgModel;
 import com.model.oldORGHistoryModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
+import com.sql.sqlCaseParty;
+import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlORGParentChildLink;
 import com.sql.sqlORGCase;
-import com.sql.sqlORGCaseOfficers;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
@@ -30,6 +32,8 @@ import java.util.List;
  * @author Andrew
  */
 public class ORGMigration {
+    
+    static List<employersModel> employerReference;
 
     public static void migrateORGData(final MainWindowSceneController control) {
         Thread orgThread = new Thread() {
@@ -52,6 +56,8 @@ public class ORGMigration {
         List<ORGParentChildLinkModel> ORGParentChildLinkList = sqlORGParentChildLink.getOldLink();
 
         totalRecordCount = oldORGCaseList.size() + oldORGHistoryList.size() + ORGParentChildLinkList.size();
+        
+        employerReference = sqlEmployers.getEmployersForReference();
 
         for (oldEmployeeOrgModel item : oldORGCaseList) {
             migrateCase(item);
@@ -78,10 +84,100 @@ public class ORGMigration {
     }
 
     private static void migrateCase(oldEmployeeOrgModel item) {
+//        migrateRepresentative(item);
+//        migrateOfficers(item);
         migrateCaseData(item);
-        migrateOfficers(item);
     }
 
+    private static void migrateRepresentative(oldEmployeeOrgModel item) {
+        
+        casePartyModel party = new  casePartyModel();
+        party.setCaseYear(null);
+        party.setCaseType("ORG");
+        party.setCaseMonth(null);
+        party.setCaseNumber(item.getOrgNumber());
+        party.setCaseRelation("Representative");
+        party.setFirstName(item.getRepFirstName().trim().equals("") ? null : item.getRepFirstName().trim());
+        party.setMiddleInitial(item.getRepMiddleInitial().trim().equals("") ? null : item.getRepMiddleInitial().trim());
+        party.setLastName(item.getRepLastName().trim().equals("") ? null : item.getRepLastName().trim());
+        party.setAddress1(item.getRepAddress1().trim().equals("") ? null : item.getRepAddress1().trim());
+        party.setAddress2(item.getRepAddress2().trim().equals("") ? null : item.getRepAddress2().trim());
+        party.setCity(item.getRepCity().trim().equals("") ? null : item.getRepCity().trim());
+        party.setState(item.getRepState().trim().equals("") ? null : item.getRepState().trim());
+        party.setZip(item.getRepZipPlusFive().trim().equals("") ? null : item.getRepZipPlusFive().trim());
+                
+        party.setPhoneOne((!item.getRepPhone1().trim().equals("null") || !item.getRepPhone1().trim().equals("")) 
+                ? StringUtilities.convertPhoneNumberToString(item.getRepPhone1().trim()) : null);
+        party.setPhoneTwo((!item.getRepPhone2().trim().equals("null") || !item.getRepPhone2().trim().equals("")) 
+                ? StringUtilities.convertPhoneNumberToString(item.getRepPhone2().trim()) : null);
+        
+        //need to get fax
+       
+        
+        party.setEmailAddress(item.getRepEMail().trim().equals("") ? null : item.getRepEMail().trim());
+        
+        
+        if (!item.getOfficer1().trim().equals("")){             
+            sqlCaseParty.savePartyInformation(party);
+        }
+    }
+    
+    private static void migrateOfficers(oldEmployeeOrgModel item) {
+        
+        casePartyModel party = new  casePartyModel();
+        party.setCaseYear(null);
+        party.setCaseType("ORG");
+        party.setCaseMonth(null);
+        party.setCaseNumber(item.getOrgNumber());
+        party.setCaseRelation("Officer");
+        party.setAddress1(null);
+        party.setAddress2(null);
+        party.setCity(null);
+        party.setState(null);
+        party.setZip(null);
+        party.setPhoneOne(null);
+        party.setPhoneTwo(null);
+        party.setEmailAddress(null);
+        
+        
+        if (!item.getOfficer1().trim().equals("")){
+            party.setLastName(null);
+            party.setJobTitle(null);
+            party.setLastName(item.getOfficer1().trim().equals("") ? null : item.getOfficer1().trim());
+            party.setJobTitle(item.getOfficer1Title().trim().equals("") ? null : item.getOfficer1Title().trim());
+                        
+            sqlCaseParty.savePartyInformation(party);
+        }
+        
+        if (!item.getOfficer2().trim().equals("")){
+            party.setLastName(null);
+            party.setJobTitle(null);
+            party.setLastName(item.getOfficer2().trim().equals("") ? null : item.getOfficer2().trim());
+            party.setJobTitle(item.getOfficer2Title().trim().equals("") ? null : item.getOfficer2Title().trim());
+                        
+            sqlCaseParty.savePartyInformation(party);
+        }
+        
+        if (!item.getOfficer3().trim().equals("")){
+            party.setLastName(null);
+            party.setJobTitle(null);
+            party.setLastName(item.getOfficer3().trim().equals("") ? null : item.getOfficer3().trim());
+            party.setJobTitle(item.getOfficer3Title().trim().equals("") ? null : item.getOfficer3Title().trim());
+                        
+            sqlCaseParty.savePartyInformation(party);
+        }
+        
+        if (!item.getOfficer4().trim().equals("")){
+            party.setLastName(null);
+            party.setJobTitle(null);
+            party.setLastName(item.getOfficer4().trim().equals("") ? null : item.getOfficer4().trim());
+            party.setJobTitle(item.getOfficer4Title().trim().equals("") ? null : item.getOfficer4Title().trim());
+                        
+            sqlCaseParty.savePartyInformation(party);
+        }
+        
+    }
+    
     private static void migrateCaseData(oldEmployeeOrgModel item) {
         List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(item.getOrgNumber());
         ORGCaseModel org = new ORGCaseModel();
@@ -102,9 +198,6 @@ public class ORGMigration {
                 ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getConstitutionAndBylawsFiled())) : null);
         org.setFiledByParent(item.getFiledByParent().equals("Y"));
         String note = !item.getDescription2().trim().equals("null") ? item.getDescription2().trim() : "";
-
-        
-        
         org.setAlsoKnownAs((!item.getDescription1().trim().equals("null") || !item.getDescription1().trim().equals("")) 
                 ? item.getDescription1().trim() : null);
         org.setOrgType((!item.getOrgType().trim().equals("null") || !item.getOrgType().trim().equals("")) ? item.getOrgType().trim() : null);
@@ -114,7 +207,6 @@ public class ORGMigration {
                 ? StringUtilities.convertPhoneNumberToString(item.getOrgPhone2().trim()) : null);
         org.setOrgFax((!item.getOrgFax().trim().equals("null") || !item.getOrgFax().trim().equals("")) 
                 ? StringUtilities.convertPhoneNumberToString(item.getOrgFax().trim()) : null);
-        org.setEmployerID(String.valueOf(item.getEmployeeOrgid()));
         org.setOrgAddress1((!item.getOrgAddress1().trim().equals("null") || !item.getOrgAddress1().trim().equals("")) 
                 ? item.getOrgAddress1().trim() : null);
         org.setOrgAddress2((!item.getOrgAddress2().trim().equals("null") || !item.getOrgAddress2().trim().equals("")) 
@@ -150,7 +242,6 @@ public class ORGMigration {
                 ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getExtensionDate())) : null);
         
         
-        
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) {
                 switch (blob.getSelectorA().trim()) {
@@ -174,87 +265,36 @@ public class ORGMigration {
             }
         }
         org.setNote(note.trim().equals("") ? null : note);
+
+        org.setEmployerID("");
+        if(item.getOrgEmployerid() != null){
+            String id = item.getOrgEmployerid().replaceAll("[^0-9]", "").trim();
+            
+            if (id.length() == 1){
+                id = "000" + id;
+            } else if (id.length() == 2){
+                id = "00" + id;
+            } else if (id.length() == 3){
+                id = "0" + id;
+            }
+            
+            org.setEmployerID(id);
+        }
+                
+                
+        
+        if (!org.getEmployerID().equals("")) {
+            for (employersModel emp : employerReference) {
+                if (org.getEmployerID().equals(emp.getId())){
+                    org.setEmployerID(emp.getEmployerIDNumber());
+                    break;
+                }
+            }
+        }
+        
         sqlORGCase.importOldEmployeeOrgCase(org);
     }
-
-    private static void migrateOfficers(oldEmployeeOrgModel item) {
-        ORGCaseOfficersModel officer = null;
-        
-        if (!item.getOfficer1().trim().equals("")){
-            officer = new ORGCaseOfficersModel();
-            
-            officer.setOrgNumber(item.getOrgNumber());
-            officer.setPosition(item.getOfficer1Title().trim().equals("") ? null : item.getOfficer1Title().trim());
-            officer = seperateOfficerName(item.getOfficer1(), officer);
-            
-            sqlORGCaseOfficers.addOfficer(officer);
-        }
-        
-        if (!item.getOfficer2().trim().equals("")){
-            officer = new ORGCaseOfficersModel();
-            
-            officer.setOrgNumber(item.getOrgNumber());
-            officer.setPosition(item.getOfficer2Title().trim().equals("") ? null : item.getOfficer2Title().trim());
-            officer = seperateOfficerName(item.getOfficer2(), officer);
-            
-            sqlORGCaseOfficers.addOfficer(officer);
-        }
-        
-        if (!item.getOfficer3().trim().equals("")){
-            officer = new ORGCaseOfficersModel();
-            
-            officer.setOrgNumber(item.getOrgNumber());
-            officer.setPosition(item.getOfficer3Title().trim().equals("") ? null : item.getOfficer3Title().trim());
-            officer = seperateOfficerName(item.getOfficer3(), officer);
-            
-            sqlORGCaseOfficers.addOfficer(officer);
-        }
-        
-        if (!item.getOfficer4().trim().equals("")){
-            officer = new ORGCaseOfficersModel();
-            
-            officer.setOrgNumber(item.getOrgNumber());
-            officer.setPosition(item.getOfficer4Title().trim().equals("") ? null : item.getOfficer4Title().trim());
-            officer = seperateOfficerName(item.getOfficer4(), officer);
-            
-            sqlORGCaseOfficers.addOfficer(officer);
-        }
-        
-    }
-        
-    private static ORGCaseOfficersModel seperateOfficerName(String name, ORGCaseOfficersModel item){
-        String[] nameSplit = name.replaceAll(", ", " ").split(" ");
-        
-        switch (nameSplit.length) {
-            case 2:
-                item.setFirstName(nameSplit[0].trim());
-                item.setMiddleName(null);
-                item.setLastName(nameSplit[1].trim());
-                break;
-            case 3:
-                item.setFirstName(nameSplit[0].trim());
-                
-                if (nameSplit[2].startsWith("Jr") || nameSplit[2].startsWith("IV")|| nameSplit[2].startsWith("II")|| nameSplit[2].startsWith("III")){
-                    item.setMiddleName(null);
-                    item.setLastName(nameSplit[1].replaceAll("\\.", "").trim() + ", " + nameSplit[2].trim());
-                } else {
-                    item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
-                    item.setLastName(nameSplit[2].trim());
-                }
-                
-                break;
-            case 4:
-                item.setFirstName(nameSplit[0].trim());
-                item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
-                item.setLastName(nameSplit[2].trim() + ", " + nameSplit[3].trim());
-                break;
-            default:
-                item.setLastName(name);
-                break;
-        }
-        return item;
-    }
-        
+    
     private static void migrateCaseHistory(oldORGHistoryModel old) {
         activityModel item = new activityModel();
         item.setCaseYear(null);
