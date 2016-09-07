@@ -105,18 +105,20 @@ public class ORGMigration {
         party.setCity(item.getRepCity().trim().equals("") ? null : item.getRepCity().trim());
         party.setState(item.getRepState().trim().equals("") ? null : item.getRepState().trim());
         party.setZip(item.getRepZipPlusFive().trim().equals("") ? null : item.getRepZipPlusFive().trim());
-                
         party.setPhoneOne((!item.getRepPhone1().trim().equals("null") || !item.getRepPhone1().trim().equals("")) 
                 ? StringUtilities.convertPhoneNumberToString(item.getRepPhone1().trim()) : null);
         party.setPhoneTwo((!item.getRepPhone2().trim().equals("null") || !item.getRepPhone2().trim().equals("")) 
                 ? StringUtilities.convertPhoneNumberToString(item.getRepPhone2().trim()) : null);
-        
-        //need to get fax
-       
-        
+        party.setFax((!item.getRepFax().trim().equals("null") || !item.getRepFax().trim().equals("")) 
+                ? StringUtilities.convertPhoneNumberToString(item.getRepFax().trim()) : null);
+        if (party.getPhoneTwo().equals("")){
+            party.setPhoneTwo(null);
+        }     
+        if (party.getFax().equals("")){
+            party.setFax(null);
+        }        
         party.setEmailAddress(item.getRepEMail().trim().equals("") ? null : item.getRepEMail().trim());
-        
-        
+                
         if (!item.getOfficer1().trim().equals("")){             
             sqlCaseParty.savePartyInformation(party);
         }

@@ -672,6 +672,7 @@ public class sqlContactList {
                 item.setPhoneOne((rs.getString("Phone1") == null) ? null : StringUtilities.convertPhoneNumberToString(rs.getString("Phone1")));
                 item.setPhoneTwo((rs.getString("Phone2") == null) ? null : StringUtilities.convertPhoneNumberToString(rs.getString("Phone2")));
                 item.setEmailAddress((rs.getString("Email") == null) ? null : rs.getString("Email").trim());
+                item.setFax(null);
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -706,12 +707,13 @@ public class sqlContactList {
                     + "zipCode, "       //14
                     + "phone1, "        //15
                     + "phone2, "        //16
-                    + "emailAddress  "  //17
+                    + "emailAddress, "  //17
+                    + "fax  "           //18
                     + ") VALUES (";
-                    for(int i=0; i<16; i++){
-                        sql += "?, ";   //01-16
+                    for(int i=0; i<17; i++){
+                        sql += "?, ";   //01-17
                     }
-                     sql += "?)"; //17
+                     sql += "?)"; //18
             ps = conn.prepareStatement(sql);
             ps.setString( 1, item.getPrefix());
             ps.setString( 2, item.getFirstName());
@@ -730,6 +732,7 @@ public class sqlContactList {
             ps.setString(15, item.getPhoneOne());
             ps.setString(16, item.getPhoneTwo());
             ps.setString(17, item.getEmailAddress());
+            ps.setString(18, item.getFax());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

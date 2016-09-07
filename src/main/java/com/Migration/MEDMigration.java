@@ -202,6 +202,7 @@ public class MEDMigration {
         party.setZip(!"".equals(item.getEmployerZip().trim()) ? item.getEmployerZip().trim() : null);
         party.setPhoneOne(!"".equals(item.getEmployerPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEmployerPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEmployerEmail().trim()) ? item.getEmployerEmail().trim() : null);
+        party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
@@ -224,6 +225,7 @@ public class MEDMigration {
         party.setZip(!"".equals(item.getEmployerREPZip().trim()) ? item.getEmployerREPZip().trim() : null);
         party.setPhoneOne(!"".equals(item.getEmployerREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEmployerREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEmployerREPEmail().trim()) ? item.getEmployerREPEmail().trim() : null);
+        party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
@@ -245,6 +247,7 @@ public class MEDMigration {
         party.setZip(!"".equals(item.getEmployeeOrgZip().trim()) ? item.getEmployeeOrgZip().trim() : null);
         party.setPhoneOne(!"".equals(item.getEmployeeOrgPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEmployeeOrgPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEmployeeOrgEmail().trim()) ? item.getEmployeeOrgEmail().trim() : null);
+        party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);
@@ -267,6 +270,7 @@ public class MEDMigration {
         party.setZip(!"".equals(item.getEmployeeOrgREPZip().trim()) ? item.getEmployeeOrgREPZip().trim() : null);
         party.setPhoneOne(!"".equals(item.getEmployeeOrgREPPhone().trim()) ? StringUtilities.convertPhoneNumberToString(item.getEmployeeOrgREPPhone().trim()) : null);
         party.setEmailAddress(!"".equals(item.getEmployeeOrgREPEmail().trim()) ? item.getEmployeeOrgREPEmail().trim() : null);
+        party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             sqlCaseParty.savePartyInformation(party);

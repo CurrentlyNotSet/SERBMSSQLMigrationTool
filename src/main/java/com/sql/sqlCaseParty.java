@@ -51,12 +51,13 @@ public class sqlCaseParty {
                     + "zipCode, "       //20
                     + "phone1, "        //21
                     + "phone2, "        //22
-                    + "email  "         //23
+                    + "email, "         //23
+                    + "fax "            //24
                     + ") VALUES (";
-                    for(int i=0; i<22; i++){
-                        sql += "?, ";   //01-22
+                    for(int i=0; i<23; i++){
+                        sql += "?, ";   //01-23
                     }
-                     sql += "?)"; //23
+                     sql += "?)"; //24
             ps = conn.prepareStatement(sql);
             ps.setString( 1, item.getCaseYear());
             ps.setString( 2, item.getCaseType());
@@ -85,6 +86,7 @@ public class sqlCaseParty {
             ps.setString(21, item.getPhoneOne());
             ps.setString(22, item.getPhoneTwo());
             ps.setString(23, item.getEmailAddress());
+            ps.setString(24, item.getFax());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -134,7 +136,8 @@ public class sqlCaseParty {
                 item.setZip(rs.getString("zipCode"));
                 item.setPhoneOne(rs.getString("phone1"));
                 item.setEmailAddress(rs.getString("email"));
-                item.setPhoneTwo(rs.getString("phone2"));                
+                item.setPhoneTwo(rs.getString("phone2"));   
+                item.setFax(rs.getString("fax"));   
                 list.add(item);
             }
         } catch (SQLException ex) {

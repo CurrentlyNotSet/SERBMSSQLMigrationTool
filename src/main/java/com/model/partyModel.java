@@ -28,6 +28,7 @@ public class partyModel {
     private String phoneOne = null;
     private String phoneTwo = null;
     private String emailAddress = null;
+    private String fax = null;
 
     public String getPrefix() {
         return prefix;
@@ -165,5 +166,11 @@ public class partyModel {
         this.emailAddress = emailAddress;
     }
     
-    
+    public String getFax() {
+        return fax;
+    }
+
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
 }

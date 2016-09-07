@@ -107,6 +107,7 @@ public class ULPMigration {
         party.setPhoneOne(!"".equals(item.getCPPhone1().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCPPhone1().trim()) : null);
         party.setPhoneTwo(!"".equals(item.getCPPhone2().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCPPhone2().trim()) : null);
         party.setEmailAddress(!"".equals(item.getCPEmail().trim()) ? item.getCPEmail().trim() : null);
+        party.setFax(null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
             sqlCaseParty.savePartyInformation(party);
@@ -129,6 +130,7 @@ public class ULPMigration {
         party.setPhoneOne(!"".equals(item.getCPREPPhone1().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCPREPPhone1().trim()) : null);
         party.setPhoneTwo(!"".equals(item.getCPREPPhone2().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCPREPPhone2().trim()) : null);
         party.setEmailAddress(!"".equals(item.getCPREPEmail().trim()) ? item.getCPREPEmail().trim() : null);
+        party.setFax(null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
             sqlCaseParty.savePartyInformation(party);
@@ -151,6 +153,7 @@ public class ULPMigration {
         party.setPhoneOne(!"".equals(item.getCHDPhone1().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCHDPhone1().trim()) : null);
         party.setPhoneTwo(!"".equals(item.getCHDPhone2().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCHDPhone2().trim()) : null);
         party.setEmailAddress(!"".equals(item.getCHDEmail().trim()) ? item.getCHDEmail().trim() : null);
+        party.setFax(null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
             sqlCaseParty.savePartyInformation(party);
@@ -173,6 +176,7 @@ public class ULPMigration {
         party.setPhoneOne(!"".equals(item.getCHDREPPhone1().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCHDREPPhone1().trim()) : null);
         party.setPhoneTwo(!"".equals(item.getCHDREPPhone2().trim()) ? StringUtilities.convertPhoneNumberToString(item.getCHDREPPhone2().trim()) : null);
         party.setEmailAddress(!"".equals(item.getCHDREPEmail().trim()) ? item.getCHDREPEmail().trim() : null);
+        party.setFax(null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
             sqlCaseParty.savePartyInformation(party);
