@@ -154,7 +154,8 @@ public class sqlEmployers {
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT * FROM party";
+            String sql = "SELECT party.*, employers.population, employers.employerIRN "
+                    + "FROM party LEFT JOIN employers ON  party.DisplayName = employers.EmployerName ";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -188,6 +189,8 @@ public class sqlEmployers {
                 item.setPartyField2(rs.getString("PartyField2"));
                 item.setPartyField3(rs.getString("PartyField3"));
                 item.setPartyField4(rs.getString("PartyField4"));
+                item.setPopulation(rs.getString("population") == null ? "" : rs.getString("population"));
+                item.setEmployerIRN(rs.getString("EmployerIRN") == null ? "" : rs.getString("EmployerIRN"));
                 list.add(item);
             }
         } catch (SQLException ex) {

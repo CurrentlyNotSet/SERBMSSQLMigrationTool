@@ -39,6 +39,8 @@ public class oldPartyModel {
     private String PartyField2;
     private String PartyField3;
     private String PartyField4;
+    private String population;
+    private String employerIRN;
 
     public int getPartyid() {
         return Partyid;
@@ -272,5 +274,20 @@ public class oldPartyModel {
         this.PartyField4 = PartyField4;
     }
 
-    
+    public String getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(String population) {
+        this.population = population;
+    }
+
+    public String getEmployerIRN() {
+        return employerIRN;
+    }
+
+    public void setEmployerIRN(String employerIRN) {
+        this.employerIRN = employerIRN;
+    }
+
 }

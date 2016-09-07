@@ -90,7 +90,6 @@ public class ORGMigration {
     }
 
     private static void migrateRepresentative(oldEmployeeOrgModel item) {
-        
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(null);
         party.setCaseType("ORG");
@@ -140,8 +139,7 @@ public class ORGMigration {
         party.setPhoneOne(null);
         party.setPhoneTwo(null);
         party.setEmailAddress(null);
-        
-        
+                
         if (!item.getOfficer1().trim().equals("")){
             party.setLastName(null);
             party.setJobTitle(null);
@@ -177,7 +175,6 @@ public class ORGMigration {
                         
             sqlCaseParty.savePartyInformation(party);
         }
-        
     }
     
     private static void migrateCaseData(oldEmployeeOrgModel item) {

@@ -129,6 +129,8 @@ public class EmployersMigration {
         item.setAssistantLastName(!"".equals(old.getAssistantLastName().trim()) ? old.getAssistantLastName().trim() : null);
         item.setAssistantEmail(!"".equals(old.getAssistantEMail().trim()) ? old.getAssistantEMail().trim() : null);
         item.setCounty(!"".equals(old.getCounty().trim()) ? old.getCounty().trim() : null);
+        item.setPopulation(!"".equals(old.getPopulation().trim()) ? old.getPopulation().trim() : null);
+        item.setEmployerIRN(!"".equals(old.getEmployerIRN().trim()) ? old.getEmployerIRN().trim() : null);
 
         sqlEmployers.addEmployer(item);
     }
