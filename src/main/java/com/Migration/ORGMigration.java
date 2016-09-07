@@ -64,15 +64,15 @@ public class ORGMigration {
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNumber() + ": " + item.getOrgName());
         }
 
-//        for (oldORGHistoryModel item : oldORGHistoryList) {
-//            migrateCaseHistory(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNum() + ": " + item.getDateTimeMillis());
-//        }
-//
-//        for (ORGParentChildLinkModel item : ORGParentChildLinkList) {
-//            sqlORGParentChildLink.importOrgParentChildLinks(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getParentOrgNumber() + ": " + item.getChildOrgNumber());
-//        }
+        for (oldORGHistoryModel item : oldORGHistoryList) {
+            migrateCaseHistory(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNum() + ": " + item.getDateTimeMillis());
+        }
+
+        for (ORGParentChildLinkModel item : ORGParentChildLinkList) {
+            sqlORGParentChildLink.importOrgParentChildLinks(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getParentOrgNumber() + ": " + item.getChildOrgNumber());
+        }
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ORG Cases: "
@@ -84,8 +84,8 @@ public class ORGMigration {
     }
 
     private static void migrateCase(oldEmployeeOrgModel item) {
-//        migrateRepresentative(item);
-//        migrateOfficers(item);
+        migrateRepresentative(item);
+        migrateOfficers(item);
         migrateCaseData(item);
     }
 
@@ -281,8 +281,6 @@ public class ORGMigration {
             org.setEmployerID(id);
         }
                 
-                
-        
         if (!org.getEmployerID().equals("")) {
             for (employersModel emp : employerReference) {
                 if (org.getEmployerID().equals(emp.getId())){
