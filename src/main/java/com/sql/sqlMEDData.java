@@ -317,29 +317,27 @@ public class sqlMEDData {
                     + "Motion, "    //83
                     + "Dismissed, " //84
                     + "strikeFileDate, "    //85
-                    + "strikeCaseNumber, "  //86
-                    + "medCaseNumber, "     //87
-                    + "unitDescription, "   //88
-                    + "unitSize, "          //89
-                    + "unauthorizedStrike, "//90
-                    + "noticeOfIntentToStrikeOnly, "//91
-                    + "intendedDateStrike, "        //92
-                    + "noticeOfIntentToPicketOnly, "//93
-                    + "intendedDatePicket, "        //94
-                    + "informational, "             //95
-                    + "noticeOfIntentToStrikeAndPicket, "//96
-                    + "strikeOccured, "     //97
-                    + "strikeStatus, "      //98
-                    + "strikeBegan, "       //99
-                    + "strikeEnded, "       //100
-                    + "totalNumberOfDays, " //101
-                    + "strikeMediatorAppointedID, " //102
-                    + "strikeNote "                 //103
+                    + "unitDescription, "   //86
+                    + "unitSize, "          //87
+                    + "unauthorizedStrike, "//88
+                    + "noticeOfIntentToStrikeOnly, "//89
+                    + "intendedDateStrike, "        //90
+                    + "noticeOfIntentToPicketOnly, "//91
+                    + "intendedDatePicket, "        //92
+                    + "informational, "             //93
+                    + "noticeOfIntentToStrikeAndPicket, "//94
+                    + "strikeOccured, "     //95
+                    + "strikeStatus, "      //96
+                    + "strikeBegan, "       //97
+                    + "strikeEnded, "       //98
+                    + "totalNumberOfDays, " //99
+                    + "strikeMediatorAppointedID, " //100
+                    + "strikeNote "                 //101
                     + ") VALUES (";
-                    for(int i=0; i<102; i++){
-                        sql += "?, ";   //01-102
+                    for(int i=0; i<100; i++){
+                        sql += "?, ";   //01-100
                     }
-                     sql += "?)";   //103
+                     sql += "?)";   //101
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
             ps.setString( 2, item.getCaseYear());
@@ -404,19 +402,19 @@ public class sqlMEDData {
             ps.setString(61, item.getDuplicateCaseNumber());
             ps.setString(62, item.getRelatedCaseNumber());
             ps.setString(63, item.getNegotiationType());
-            ps.setDate  (64, item.getExpirationDate());
-            ps.setString(65, item.getNTNFiledBy());
-            ps.setString(66, item.getNegotiationPeriod());
+            ps.setDate   (64, item.getExpirationDate());
+            ps.setString (65, item.getNTNFiledBy());
+            ps.setString (66, item.getNegotiationPeriod());
             ps.setBoolean(67, item.isMultiunitBargainingRequested());
-            ps.setDate  (68, item.getMediatorAppointedDate());
+            ps.setDate   (68, item.getMediatorAppointedDate());
             ps.setBoolean(69, item.isMediatorReplacement());
-            ps.setString(70, item.getStateMediatorAppointedID());
-            ps.setString(71, item.getFMCSMediatorAppointedID());
-            ps.setDate  (72, item.getSettlementDate());
-            ps.setString(73, item.getCaseStatus());
+            ps.setString (70, item.getStateMediatorAppointedID());
+            ps.setString (71, item.getFMCSMediatorAppointedID());
+            ps.setDate   (72, item.getSettlementDate());
+            ps.setString (73, item.getCaseStatus());
             ps.setBoolean(74, item.isSendToBoardToClose());
-            ps.setDate  (75, item.getBoardFinalDate());
-            ps.setDate  (76, item.getRetentionTicklerDate());
+            ps.setDate   (75, item.getBoardFinalDate());
+            ps.setDate   (76, item.getRetentionTicklerDate());
             ps.setBoolean(77, item.isLateFiling());
             ps.setBoolean(78, item.isImpasse());
             ps.setBoolean(79, item.isSettled());
@@ -425,25 +423,23 @@ public class sqlMEDData {
             ps.setBoolean(82, item.isWithdrawl());
             ps.setBoolean(83, item.isMotion());
             ps.setBoolean(84, item.isDismissed());
-            ps.setDate  (85, item.getStrikeFileDate());
-            ps.setString(86, item.getStrikeCaseNumber());
-            ps.setString(87, item.getMedCaseNumber());
-            ps.setString(88, item.getUnitDescription());
-            ps.setString(89, item.getUnitSize());
-            ps.setBoolean(90, item.isUnauthorizedStrike());
-            ps.setBoolean(91, item.isNoticeOfIntentToStrikeOnly());
-            ps.setDate  (92, item.getIntendedDateStrike());
-            ps.setBoolean(93, item.isNoticeOfIntentToPicketOnly());
-            ps.setDate  (94, item.getIntendedDatePicket());
-            ps.setBoolean(95, item.isInformational());
-            ps.setBoolean(96, item.isNoticeOfIntentToStrikeAndPicket());
-            ps.setString(97, item.getStrikeOccured());
-            ps.setString(98, item.getStrikeStatus());
-            ps.setDate  (99, item.getStrikeBegan());
-            ps.setDate  (100, item.getStrikeEnded());
-            ps.setString(101, item.getTotalNumberOfDays());
-            ps.setString(102, item.getStrikeMediatorAppointedID());
-            ps.setString(103, item.getStrikeNote());
+            ps.setDate   (85, item.getStrikeFileDate());
+            ps.setString (86, item.getUnitDescription());
+            ps.setString (87, item.getUnitSize());
+            ps.setBoolean(88, item.isUnauthorizedStrike());
+            ps.setBoolean(89, item.isNoticeOfIntentToStrikeOnly());
+            ps.setDate   (90, item.getIntendedDateStrike());
+            ps.setBoolean(91, item.isNoticeOfIntentToPicketOnly());
+            ps.setDate   (92, item.getIntendedDatePicket());
+            ps.setBoolean(93, item.isInformational());
+            ps.setBoolean(94, item.isNoticeOfIntentToStrikeAndPicket());
+            ps.setString (95, item.getStrikeOccured());
+            ps.setString (96, item.getStrikeStatus());
+            ps.setDate   (97, item.getStrikeBegan());
+            ps.setDate   (98, item.getStrikeEnded());
+            ps.setString (99, item.getTotalNumberOfDays());
+            ps.setString (100, item.getStrikeMediatorAppointedID());
+            ps.setString (101, item.getStrikeNote());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

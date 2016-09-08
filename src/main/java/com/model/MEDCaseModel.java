@@ -99,8 +99,6 @@ public class MEDCaseModel {
     private boolean motion;
     private boolean dismissed;
     private Date strikeFileDate;
-    private String strikeCaseNumber;
-    private String medCaseNumber;
     private String unitDescription;
     private String unitSize;
     private boolean unauthorizedStrike;
@@ -804,22 +802,6 @@ public class MEDCaseModel {
 
     public void setStrikeFileDate(Date strikeFileDate) {
         this.strikeFileDate = strikeFileDate;
-    }
-
-    public String getStrikeCaseNumber() {
-        return strikeCaseNumber;
-    }
-
-    public void setStrikeCaseNumber(String strikeCaseNumber) {
-        this.strikeCaseNumber = strikeCaseNumber;
-    }
-
-    public String getMedCaseNumber() {
-        return medCaseNumber;
-    }
-
-    public void setMedCaseNumber(String medCaseNumber) {
-        this.medCaseNumber = medCaseNumber;
     }
 
     public String getUnitDescription() {
