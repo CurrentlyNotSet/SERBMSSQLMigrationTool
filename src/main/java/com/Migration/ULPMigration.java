@@ -199,15 +199,15 @@ public class ULPMigration {
         ulpcase.setAllegation(!"".equals(item.getAllegation().trim()) ? item.getAllegation().trim() : null);
         ulpcase.setCurrentStatus(!"".equals(item.getStatus().trim()) ? item.getStatus().trim() : null);
         ulpcase.setPriority("Y".equals(item.getPriority().trim()) || "Yes".equals(item.getPriority().trim()) || "1".equals(item.getPriority().trim()));
-        ulpcase.setAssignedDate(StringUtilities.convertStringDate(item.getAssignedDate()));
-        ulpcase.setTurnInDate(StringUtilities.convertStringDate(item.getTurnInDate()));
-        ulpcase.setReportDueDate(StringUtilities.convertStringDate(item.getReportDate()));
-        ulpcase.setDismissalDate(StringUtilities.convertStringDate(item.getDismissalBoardMeetingDate()));
-        ulpcase.setDeferredDate(StringUtilities.convertStringDate(item.getDeferredBoardMeetingDate()));
-        ulpcase.setFileDate(StringUtilities.convertStringDate(item.getFileDate()));
+        ulpcase.setAssignedDate(StringUtilities.convertStringTimeStamp(item.getAssignedDate()));
+        ulpcase.setTurnInDate(StringUtilities.convertStringTimeStamp(item.getTurnInDate()));
+        ulpcase.setReportDueDate(StringUtilities.convertStringTimeStamp(item.getReportDate()));
+        ulpcase.setDismissalDate(StringUtilities.convertStringTimeStamp(item.getDismissalBoardMeetingDate()));
+        ulpcase.setDeferredDate(StringUtilities.convertStringTimeStamp(item.getDeferredBoardMeetingDate()));
+        ulpcase.setFileDate(StringUtilities.convertStringTimeStamp(item.getFileDate()));
         ulpcase.setProbableCause("Y".equals(item.getProbable().trim()) || "Yes".equals(item.getProbable().trim()) || "1".equals(item.getProbable().trim()));
-        ulpcase.setAppealDateReceived(StringUtilities.convertStringDate(item.getAppealDateReceived()));
-        ulpcase.setAppealDateSent(StringUtilities.convertStringDate(item.getAppealDateSent()));
+        ulpcase.setAppealDateReceived(StringUtilities.convertStringTimeStamp(item.getAppealDateReceived()));
+        ulpcase.setAppealDateSent(StringUtilities.convertStringTimeStamp(item.getAppealDateSent()));
         ulpcase.setCourtName(!"".equals(item.getCourt().trim()) ? item.getCourt().trim() : null);
         ulpcase.setCourtCaseNumber(!"".equals(item.getCourtCaseNumber().trim()) ? item.getCourtCaseNumber().trim() : null);
         ulpcase.setSERBCaseNumber(!"".equals(item.getSERBCourtCaseNumber().trim()) ? item.getSERBCourtCaseNumber().trim() : null);
@@ -252,21 +252,21 @@ public class ULPMigration {
         
         if (!"".equals(item.getBoardMeetingDate().trim()) || !"".equals(item.getAgendaItem().trim()) || !"".equals(item.getRecommendation().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem().trim()) ? item.getAgendaItem().trim() : null);
-            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate()) : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation().trim()) ? item.getRecommendation().trim() : null);
             sqlBoardMeeting.addBoardMeeting(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate1().trim()) || !"".equals(item.getAgendaItem1().trim()) || !"".equals(item.getRecommendation1().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem1().trim()) ? item.getAgendaItem1().trim() : null);
-            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate1()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate1()) : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate1()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate1()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation1().trim()) ? item.getRecommendation1().trim() : null);
             sqlBoardMeeting.addBoardMeeting(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate2().trim()) || !"".equals(item.getAgendaItem2().trim()) || !"".equals(item.getRecommendation2().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem2().trim()) ? item.getAgendaItem2().trim() : null);
-            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate2()) ? StringUtilities.convertStringDate(item.getBoardMeetingDate2()) : null);
+            meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate2()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate2()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation2().trim()) ? item.getRecommendation2().trim() : null);
             sqlBoardMeeting.addBoardMeeting(meeting);
         }
@@ -341,7 +341,7 @@ public class ULPMigration {
             search.setCaseMonth(caseNumber.getCaseMonth());
             search.setCaseNumber(caseNumber.getCaseNumber());
             search.setCaseStatus(!"".equals(item.getStatus().trim()) ? item.getStatus().trim() : null);
-            search.setFileDate(!"".equals(item.getFileDate().trim()) ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getFileDate())) : null); 
+            search.setFileDate(!"".equals(item.getFileDate().trim()) ? StringUtilities.convertStringSQLDate(item.getFileDate()) : null); 
             search.setEmployer(sqlEmployers.getEmployerName(item.getEmployerNum().trim()));
 
             sqlEmployerCaseSearchData.addEmployer(search);

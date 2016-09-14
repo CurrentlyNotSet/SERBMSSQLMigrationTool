@@ -156,7 +156,7 @@ public class EmployersMigration {
         item.setStrike(("Y".equals(old.getStrike().trim())) ? 1 : 0);
         item.setLGroup(!"".equals(old.getLGroup().trim()) ? old.getLGroup().trim() : null);        
         
-        Timestamp certDateTime = StringUtilities.convertStringDate(old.getCertDate());
+        Timestamp certDateTime = StringUtilities.convertStringTimeStamp(old.getCertDate());
         Date certDate = null;
         if (certDateTime != null){
             certDate = new Date(certDateTime.getTime());

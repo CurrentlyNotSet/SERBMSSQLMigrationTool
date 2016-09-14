@@ -65,7 +65,7 @@ public class StringUtilities {
         return null;
     }
 
-    public static Timestamp convertStringDate(String oldDate) {
+    public static Timestamp convertStringTimeStamp(String oldDate) {
         Pattern p = Pattern.compile("[a-zA-Z]");
 
         oldDate = oldDate.trim();
@@ -85,13 +85,40 @@ public class StringUtilities {
                     return new Timestamp(parsedDate.getTime());
                 } catch (ParseException ex) {
                     Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
-                    return Timestamp.valueOf("1900-01-01 00:00:00.0");
+                    return null;
                 }
             }
         }
         return null;
     }
 
+    public static java.sql.Date convertStringSQLDate(String oldDate) {
+        Pattern p = Pattern.compile("[a-zA-Z]");
+
+        oldDate = oldDate.trim();
+        if (oldDate != null && !"".equals(oldDate)) {
+            dateModel date = null;
+
+            if (p.matcher(oldDate).find() == false) {
+                date = dateParseNumbers(oldDate);
+            } else {
+                date = dateParseFullSpelling(oldDate);
+            }
+
+            if (date != null) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date parsedDate = dateFormat.parse(date.getYear() + "-" + date.getMonth() + "-" + date.getDay());
+                    return new java.sql.Date(parsedDate.getTime());
+                } catch (ParseException ex) {
+                    Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+    
     public static Timestamp convertStringDateAndTime(String oldDate, String oldTime) {
         Pattern p = Pattern.compile("[a-zA-Z]");
 
@@ -143,11 +170,11 @@ public class StringUtilities {
                 date.setMonth(parsedOldDate[1]);
                 date.setDay(parsedOldDate[2]);
                 if (Integer.valueOf(parsedOldDate[1]) > 12) {
-                    date.setMonth(parsedOldDate[1]);
-                    date.setDay(parsedOldDate[2]);
-                } else if (Integer.valueOf(parsedOldDate[2]) > 12) {
                     date.setMonth(parsedOldDate[2]);
                     date.setDay(parsedOldDate[1]);
+                } else if (Integer.valueOf(parsedOldDate[2]) > 12) {
+                    date.setMonth(parsedOldDate[1]);
+                    date.setDay(parsedOldDate[2]);
                 }
             } else if (parsedOldDate[2].length() == 4) {
                 date.setMonth(parsedOldDate[0]);
@@ -225,12 +252,12 @@ public class StringUtilities {
         return duration.trim();
     }
 
-    public static java.sql.Date convertTimeStampToDate(Timestamp time){
-        if (time != null){
-            return new java.sql.Date(time.getTime());
-        }
-        return null;
-    }
+//    public static java.sql.Date convertTimeStampToDate(Timestamp time){
+//        if (time != null){
+//            return new java.sql.Date(time.getTime());
+//        }
+//        return null;
+//    }
     
     public static int convertUserToID(String userEntry) {
         if (!"".equals(userEntry.trim())) {

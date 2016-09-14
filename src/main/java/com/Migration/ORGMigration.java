@@ -187,14 +187,13 @@ public class ORGMigration {
         org.setFiscalYearEnding(StringUtilities.monthName(item.getFiscalYearEnding()));
         String filingDueDate = StringUtilities.monthName(StringUtilities.monthNumber(item.getDueDate().replaceAll("[^A-Za-z]", "")));
         org.setFilingDueDate(filingDueDate != null ? filingDueDate + " 15th" : null);
-        org.setAnnualReport(!item.getAnnualReportLastFiled().trim().equals("null") 
-                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getAnnualReportLastFiled())) : null);
+        org.setAnnualReport(!item.getAnnualReportLastFiled().trim().equals("null") ? StringUtilities.convertStringSQLDate(item.getAnnualReportLastFiled()) : null);
         org.setFinancialReport(!item.getFinancialStatementLastFiled().trim().equals("null") 
-                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getFinancialStatementLastFiled())) : null);
+                ? StringUtilities.convertStringSQLDate(item.getFinancialStatementLastFiled()) : null);
         org.setRegistrationReport(!item.getRegistrationReportLastFiled().trim().equals("null") 
-                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getRegistrationReportLastFiled())) : null);
+                ? StringUtilities.convertStringSQLDate(item.getRegistrationReportLastFiled()) : null);
         org.setConstructionAndByLaws(!item.getConstitutionAndBylawsFiled().trim().equals("null") 
-                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getConstitutionAndBylawsFiled())) : null);
+                ? StringUtilities.convertStringSQLDate(item.getConstitutionAndBylawsFiled()) : null);
         org.setFiledByParent(item.getFiledByParent().equals("Y"));
         String note = !item.getDescription2().trim().equals("null") ? item.getDescription2().trim() : "";
         org.setAlsoKnownAs((!item.getDescription1().trim().equals("null") || !item.getDescription1().trim().equals("")) 
@@ -232,13 +231,13 @@ public class ORGMigration {
         org.setOutsideCase((!item.getCase1().trim().equals("null") || !item.getCase1().trim().equals("")) 
                 ? item.getCase1().trim() : null);
         org.setDateFiled(!item.getFiled().trim().equals("null") 
-                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getFiled())) : null);
+                ? (StringUtilities.convertStringSQLDate(item.getFiled())) : null);
         org.setCertifiedDate(!item.getCertifiedDate().trim().equals("null") 
-                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getCertifiedDate())) : null);
+                ? (StringUtilities.convertStringSQLDate(item.getCertifiedDate())) : null);
         org.setRegistrationLetterSent(!item.getRegistrationSentDate().trim().equals("null") 
-                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getRegistrationSentDate())) : null);
+                ? (StringUtilities.convertStringSQLDate(item.getRegistrationSentDate())) : null);
         org.setExtensionDate(!item.getExtensionDate().trim().equals("null") 
-                ? StringUtilities.convertTimeStampToDate(StringUtilities.convertStringDate(item.getExtensionDate())) : null);
+                ? (StringUtilities.convertStringSQLDate(item.getExtensionDate())) : null);
         
         
         for (oldBlobFileModel blob : oldBlobFileList) {
