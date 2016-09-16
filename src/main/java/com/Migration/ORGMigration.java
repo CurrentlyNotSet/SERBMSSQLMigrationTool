@@ -118,7 +118,7 @@ public class ORGMigration {
         }        
         party.setEmailAddress(item.getRepEMail().trim().equals("") ? null : item.getRepEMail().trim());
                 
-        if (!item.getOfficer1().trim().equals("")){             
+        if (!item.getRepLastName().trim().equals("")){             
             sqlCaseParty.savePartyInformation(party);
         }
     }
