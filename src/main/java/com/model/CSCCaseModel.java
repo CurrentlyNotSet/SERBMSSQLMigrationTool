@@ -18,7 +18,6 @@ public class CSCCaseModel {
     private String name;
     private String type;
     private String cscNumber;
-    private String cscEmployerID;
     private String address1;
     private String address2;
     private String city;
@@ -29,13 +28,11 @@ public class CSCCaseModel {
     private String fax;
     private String email;
     private boolean statutory;
-    private String charter;
+    private boolean charter;
     private String fiscalYearEnding;
     private String lastNotification;
     private Date activityLastFiled;
     private Date previousFileDate;
-    private String parent1;
-    private String parent2;
     private String dueDate;
     private Date filed;
     private boolean valid;
@@ -81,14 +78,6 @@ public class CSCCaseModel {
 
     public void setCscNumber(String cscNumber) {
         this.cscNumber = cscNumber;
-    }
-
-    public String getCscEmployerID() {
-        return cscEmployerID;
-    }
-
-    public void setCscEmployerID(String cscEmployerID) {
-        this.cscEmployerID = cscEmployerID;
     }
 
     public String getAddress1() {
@@ -171,11 +160,11 @@ public class CSCCaseModel {
         this.statutory = statutory;
     }
 
-    public String getCharter() {
+    public boolean isCharter() {
         return charter;
     }
 
-    public void setCharter(String charter) {
+    public void setCharter(boolean charter) {
         this.charter = charter;
     }
 
@@ -209,22 +198,6 @@ public class CSCCaseModel {
 
     public void setPreviousFileDate(Date previousFileDate) {
         this.previousFileDate = previousFileDate;
-    }
-
-    public String getParent1() {
-        return parent1;
-    }
-
-    public void setParent1(String parent1) {
-        this.parent1 = parent1;
-    }
-
-    public String getParent2() {
-        return parent2;
-    }
-
-    public void setParent2(String parent2) {
-        this.parent2 = parent2;
     }
 
     public String getDueDate() {

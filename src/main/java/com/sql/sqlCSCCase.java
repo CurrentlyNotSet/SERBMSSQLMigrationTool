@@ -107,64 +107,58 @@ public class sqlCSCCase {
                     + "name, "          //02
                     + "type, "          //03
                     + "cscNumber, "     //04
-                    + "cscEmployerID, " //05
-                    + "address1, "      //06
-                    + "address2, "      //07
-                    + "city, "          //08
-                    + "state, "         //09
-                    + "zipCode, "       //10
-                    + "phone1, "        //11
-                    + "phone2, "        //12
-                    + "fax, "           //13
-                    + "email, "         //14
-                    + "statutory, "     //15
-                    + "charter, "       //16
-                    + "fiscalYearEnding, "  //17
-                    + "lastNotification, "  //18
-                    + "activityLastFiled, " //19
-                    + "previousFileDate, "  //20
-                    + "parent1, "       //21
-                    + "parent2, "       //22
-                    + "dueDate, "       //23
-                    + "filed, "         //24
-                    + "valid, "         //25
-                    + "note, "          //26
-                    + "alsoknownas, "   //27
-                    + "county "         //28
+                    + "address1, "      //05
+                    + "address2, "      //06
+                    + "city, "          //07
+                    + "state, "         //08
+                    + "zipCode, "       //09
+                    + "phone1, "        //10
+                    + "phone2, "        //11
+                    + "fax, "           //12
+                    + "email, "         //13
+                    + "statutory, "     //14
+                    + "charter, "       //15
+                    + "fiscalYearEnding, "  //16
+                    + "lastNotification, "  //17
+                    + "activityLastFiled, " //18
+                    + "previousFileDate, "  //19
+                    + "dueDate, "       //20
+                    + "filed, "         //21
+                    + "valid, "         //22
+                    + "note, "          //23
+                    + "alsoknownas, "   //24
+                    + "county "         //25
                     + ") VALUES (";
-                    for(int i=0; i<27; i++){
-                        sql += "?, ";   //01-27
+                    for(int i=0; i<24; i++){
+                        sql += "?, ";   //01-24
                     }
-                     sql += "?)";   //28
+                     sql += "?)";   //25
             ps = conn.prepareStatement(sql);
             ps.setBoolean( 1, item.isActive());
             ps.setString ( 2, item.getName());
             ps.setString ( 3, item.getType());
             ps.setString ( 4, item.getCscNumber());
-            ps.setString ( 5, item.getCscEmployerID());
-            ps.setString ( 6, item.getAddress1());
-            ps.setString ( 7, item.getAddress2());
-            ps.setString ( 8, item.getCity());
-            ps.setString ( 9, item.getState());
-            ps.setString (10, item.getZipCode());
-            ps.setString (11, item.getPhone1());
-            ps.setString (12, item.getPhone2());
-            ps.setString (13, item.getFax());
-            ps.setString (14, item.getEmail());
-            ps.setBoolean(15, item.isStatutory());
-            ps.setString (16, item.getCharter());
-            ps.setString (17, item.getFiscalYearEnding());
-            ps.setString (18, item.getLastNotification());
-            ps.setDate   (19, item.getActivityLastFiled());
-            ps.setDate   (20, item.getPreviousFileDate());
-            ps.setString (21, item.getParent1());
-            ps.setString (22, item.getParent2());
-            ps.setString (23, item.getDueDate());
-            ps.setDate   (24, item.getFiled());
-            ps.setBoolean(25, item.isValid());
-            ps.setString (26, item.getNote());
-            ps.setString (27, item.getAlsoknownas());
-            ps.setString (28, item.getCounty());
+            ps.setString ( 5, item.getAddress1());
+            ps.setString ( 6, item.getAddress2());
+            ps.setString ( 7, item.getCity());
+            ps.setString ( 8, item.getState());
+            ps.setString ( 9, item.getZipCode());
+            ps.setString (10, item.getPhone1().equals("") ? null : item.getPhone1());
+            ps.setString (11, item.getPhone2().equals("") ? null : item.getPhone2());
+            ps.setString (12, item.getFax().equals("") ? null : item.getFax());
+            ps.setString (13, item.getEmail());
+            ps.setBoolean(14, item.isStatutory());
+            ps.setBoolean(15, item.isCharter());
+            ps.setString (16, item.getFiscalYearEnding());
+            ps.setString (17, item.getLastNotification());
+            ps.setDate   (18, item.getActivityLastFiled());
+            ps.setDate   (19, item.getPreviousFileDate());
+            ps.setString (20, item.getDueDate());
+            ps.setDate   (21, item.getFiled());
+            ps.setBoolean(22, item.isValid());
+            ps.setString (23, item.getNote());
+            ps.setString (24, item.getAlsoknownas());
+            ps.setString (25, item.getCounty());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

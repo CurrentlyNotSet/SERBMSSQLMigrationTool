@@ -170,7 +170,6 @@ public class CSCMigration {
         org.setName(!item.getCSCName().trim().equals("") ? item.getCSCName().trim() : null);
         org.setType(!item.getCSCType().trim().equals("") ? item.getCSCType().trim() : null);
         org.setCscNumber(String.valueOf(item.getCSCNumber()));
-        org.setCscEmployerID(!item.getCSCEmployerID().trim().equals("") ? item.getCSCEmployerID().trim() : null);
         org.setAddress1(!item.getCSCAddress1().trim().equals("") ? item.getCSCAddress1().trim() : null);
         org.setAddress2(!item.getCSCAddress2().trim().equals("") ? item.getCSCAddress2().trim() : null);
         org.setCity(!item.getCSCCity().trim().equals("") ? item.getCSCCity().trim() : null);
@@ -185,15 +184,13 @@ public class CSCMigration {
                 ? StringUtilities.convertPhoneNumberToString(item.getCSCFax().trim()) : null);
         org.setEmail(!item.getCSCEmail().trim().equals("") ? item.getCSCEmail().trim() : null);
         org.setStatutory(!item.getStatutory().trim().equals("Y"));
-        org.setCharter(!item.getCharter().trim().equals("") ? item.getCharter().trim() : null);
+        org.setCharter(item.getCharter().trim().equals("Home Rule"));
         org.setFiscalYearEnding(StringUtilities.monthName(item.getFiscalYearEnding()));
         org.setLastNotification(!item.getLastNotification().trim().equals("") ? item.getLastNotification().trim() : null);
         org.setActivityLastFiled(!item.getActivitesLastFiled().trim().equals("null") 
                 ? StringUtilities.convertStringSQLDate(item.getActivitesLastFiled()) : null);
         org.setPreviousFileDate(!item.getPreviousFileDate().trim().equals("null") 
                 ? StringUtilities.convertStringSQLDate(item.getPreviousFileDate()) : null);
-        org.setParent1(!item.getParent1().trim().equals("") ? item.getParent1().trim() : null);
-        org.setParent2(!item.getParent2().trim().equals("") ? item.getParent2().trim() : null);
         org.setDueDate(StringUtilities.monthName(item.getDueDate()));
         org.setFiled(!item.getFiled().trim().equals("null") ? StringUtilities.convertStringSQLDate(item.getFiled()) : null);
         org.setValid(!item.getValid().trim().equals("Y"));
