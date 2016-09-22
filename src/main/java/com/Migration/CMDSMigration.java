@@ -5,12 +5,16 @@
  */
 package com.Migration;
 
+import com.model.CMDSCaseModel;
 import com.model.casePartyModel;
+import com.model.oldCMDSCaseModel;
 import com.model.oldCMDSCasePartyModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlCMDSCase;
 import com.sql.sqlCMDSCaseParty;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlUsers;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
@@ -38,15 +42,24 @@ public class CMDSMigration {
         int totalRecordCount = 0;
         int currentRecord = 0;
         
-        List<oldCMDSCasePartyModel> oldCMDScasePartyList = sqlCMDSCaseParty.getParty();
+        sqlUsers.getNewDBUsers();
         
-        totalRecordCount = oldCMDScasePartyList.size();
+        List<oldCMDSCasePartyModel> oldCMDScasePartyList = sqlCMDSCaseParty.getParty();
+        List<oldCMDSCaseModel> oldCMDScaseList = sqlCMDSCase.getCase();
+        
+        totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size();
         
         for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
             migrateCaseParty(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
                     item.getYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber()
                             + ": " + item.getFirstName() + " " + item.getLastName());
+        }
+        
+        for (oldCMDSCaseModel item : oldCMDScaseList) {
+            migrateCase(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+                    item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
         }
                 
         long lEndTime = System.currentTimeMillis();
@@ -93,8 +106,44 @@ public class CMDSMigration {
         }
     }
     
-    private static void migrateCase(){
+    private static void migrateCase(oldCMDSCaseModel item){
+        CMDSCaseModel cmds = new CMDSCaseModel();
         
+        cmds.setActive(item.getActive() == 1);
+        cmds.setCaseYear(item.getYear());
+        cmds.setCaseType(item.getType());
+        cmds.setCaseMonth(item.getMonth());
+        cmds.setCaseNumber(item.getCaseSeqNumber());
+        cmds.setNote("");
+        cmds.setOpenDate(item.getOpenDate().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getOpenDate().substring(0,9)));
+        cmds.setGroupNumber(item.getGroupNumber().equals("") ? null : item.getGroupNumber().trim());
+        cmds.setAljID(String.valueOf(StringUtilities.convertUserToID(item.getALJ().trim())));
+        cmds.setCloseDate(item.getCloseDate().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getCloseDate().substring(0,9)));
+        cmds.setInventoryStatusLine(item.getInventoryStatusLine().equals("") ? null : item.getInventoryStatusLine().trim());
+        cmds.setInventoryStatusDate(item.getInventoryStatusDate().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getInventoryStatusDate().substring(0,9)));
+        cmds.setCaseStatus(item.getStatus().equals("") ? null : item.getStatus().trim());
+        cmds.setResult(item.getResult().equals("") ? null : item.getResult().trim());
+        
+        if(!item.getCaseNote().equals("")){
+            cmds.setNote("Case Note: " + item.getCaseNote().trim());
+        }
+        if (!item.getInventoryStatusNote().equals("")){
+            if (cmds.getNote().equals("")){
+                cmds.setNote(cmds.getNote() + System.lineSeparator() + System.lineSeparator() + "Inventory Status Note: " + item.getInventoryStatusNote().trim());
+            }
+            cmds.setNote(cmds.getNote() + "Inventory Status Note: " + item.getInventoryStatusNote().trim());
+        }
+        if (!item.getOutsideCourtNote().equals("")){
+            if (cmds.getNote().equals("")){
+                cmds.setNote(cmds.getNote() + System.lineSeparator() + System.lineSeparator() + "Outside Court Note: " + item.getOutsideCourtNote().trim());
+            }
+            cmds.setNote(cmds.getNote() + "Outside Court Note: " + item.getOutsideCourtNote().trim());
+        }
+        
+        sqlCMDSCase.addCase(cmds);
     }
     
 }
