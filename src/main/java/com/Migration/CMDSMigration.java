@@ -6,12 +6,15 @@
 package com.Migration;
 
 import com.model.CMDSCaseModel;
+import com.model.CMDSHearingModel;
 import com.model.casePartyModel;
 import com.model.oldCMDSCaseModel;
 import com.model.oldCMDSCasePartyModel;
+import com.model.oldCMDShearingModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlCMDSCase;
 import com.sql.sqlCMDSCaseParty;
+import com.sql.sqlCMDSHearing;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlUsers;
@@ -46,22 +49,29 @@ public class CMDSMigration {
         
         List<oldCMDSCasePartyModel> oldCMDScasePartyList = sqlCMDSCaseParty.getParty();
         List<oldCMDSCaseModel> oldCMDScaseList = sqlCMDSCase.getCase();
+        List<oldCMDShearingModel> oldCMDSHearingList = sqlCMDSHearing.getHearings();
         
-        totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size();
+        totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size() + oldCMDSHearingList.size();
         
-//        for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
-//            migrateCaseParty(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-//                    item.getYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber()
-//                            + ": " + item.getFirstName() + " " + item.getLastName());
-//        }
+        for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
+            migrateCaseParty(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+                    item.getYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber()
+                            + ": " + item.getFirstName() + " " + item.getLastName());
+        }
         
         for (oldCMDSCaseModel item : oldCMDScaseList) {
             migrateCase(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
                     item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
         }
-                
+
+        for (oldCMDShearingModel item : oldCMDSHearingList) {
+            migrateHearings(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+                    item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
+        }
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating CMDS Cases: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -145,5 +155,28 @@ public class CMDSMigration {
         
         sqlCMDSCase.addCase(cmds);
     }
-    
+     
+    private static void migrateHearings(oldCMDShearingModel item){
+        CMDSHearingModel hearing = new CMDSHearingModel();
+                
+        hearing.setActive(item.getActive() == 1);
+        hearing.setCaseYear(item.getYear().equals("") ? null : item.getYear().trim());
+        hearing.setCaseType(item.getType().equals("") ? null : item.getType().trim());
+        hearing.setCaseMonth(item.getMonth().equals("") ? null : item.getMonth().trim());
+        hearing.setCaseNumber(item.getCaseSeqNumber().equals("") ? null : item.getCaseSeqNumber().trim());
+        hearing.setEntryDate(item.getEntryDate().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getEntryDate().substring(0,9)));
+        hearing.setHearingType(item.getHearingtype().equals("") ? null : item.getHearingtype().trim());
+        hearing.setRoom(item.getRoom().trim().equals("") ? null : item.getRoom().trim());
+
+        if (!item.getHearingDate().equals("") && !item.getHearingTime().equals("")){
+            hearing.setHearingDateTime(item.getEntryDate().trim().equals("") 
+                ? null : StringUtilities.convertStringDateAndTime(
+                        item.getHearingDate().substring(0,9).trim(), 
+                        item.getHearingTime().trim())
+            );
+        }
+
+        sqlCMDSHearing.addHearings(hearing);
+    }
 }

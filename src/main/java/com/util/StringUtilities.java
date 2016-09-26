@@ -133,14 +133,15 @@ public class StringUtilities {
             cal.set(Calendar.MONTH, Integer.valueOf(date.getMonth()));
             cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(date.getDay()));
 
-            if (!"".equals(oldTime.trim())) {
-                int hour = Integer.valueOf(time[0]);
+            if (!"".equals(oldTime.trim()) && time.length > 1) {
+                
+                int hour = Integer.valueOf(time[0].replaceAll("\\D+", ""));
                 if (hour < 12) {
-                    cal.set(Calendar.HOUR_OF_DAY, time[2].equalsIgnoreCase("AM") ? hour : hour + 12);
+                    cal.set(Calendar.HOUR_OF_DAY, oldTime.replaceAll("[^A-Za-z]", "").equalsIgnoreCase("AM") ? hour : hour + 12);
                 } else {
                     cal.set(Calendar.HOUR_OF_DAY, hour);
                 }
-                cal.set(Calendar.MINUTE, Integer.valueOf(time[1]));
+                cal.set(Calendar.MINUTE, Integer.valueOf(time[1].replaceAll("\\D+", "")));
             } else {
                 cal.set(Calendar.HOUR_OF_DAY, 0);
                 cal.set(Calendar.MINUTE, 0);
