@@ -168,13 +168,12 @@ public class sqlUsers {
                     + "applicationVersion, "//14
                     + "defaultSection, "    //15
                     + "ULPCaseWorker, "     //16
-                    + "mediator, "          //17
-                    + "ULPDocketing, "      //18
-                    + "REPDocketing, "      //19
-                    + "initials "           //20
+                    + "ULPDocketing, "      //17
+                    + "REPDocketing, "      //18
+                    + "initials "           //19
                     + ") VALUES (";
-                    for(int i=0; i<19; i++){
-                        sql += "?, ";   //01-19
+                    for(int i=0; i<18; i++){
+                        sql += "?, ";   //01-18
                     }
                      sql += "?)";   //20
             ps = conn.prepareStatement(sql);
@@ -194,10 +193,9 @@ public class sqlUsers {
             ps.setString   (14, item.getApplicationVersion());
             ps.setString   (15, item.getDefaultSection());
             ps.setBoolean  (16, item.isULPCaseWorker());
-            ps.setBoolean  (17, item.isMediator());
-            ps.setBoolean  (18, item.isULPDocketing());
-            ps.setBoolean  (19, item.isREPDocketing());
-            ps.setString   (20, item.getInitials());
+            ps.setBoolean  (17, item.isULPDocketing());
+            ps.setBoolean  (18, item.isREPDocketing());
+            ps.setString   (19, item.getInitials());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

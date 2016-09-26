@@ -49,12 +49,12 @@ public class CMDSMigration {
         
         totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size();
         
-        for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
-            migrateCaseParty(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-                    item.getYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber()
-                            + ": " + item.getFirstName() + " " + item.getLastName());
-        }
+//        for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
+//            migrateCaseParty(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+//                    item.getYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber()
+//                            + ": " + item.getFirstName() + " " + item.getLastName());
+//        }
         
         for (oldCMDSCaseModel item : oldCMDScaseList) {
             migrateCase(item);

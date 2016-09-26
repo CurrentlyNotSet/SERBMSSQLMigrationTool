@@ -5,8 +5,10 @@
  */
 package com.Migration;
 
+import com.model.oldALJModel;
 import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlALJ;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlRole;
 import com.sql.sqlUsers;
@@ -39,11 +41,13 @@ public class UserMigration {
         int currentRecord = 0;
         List<userModel> oldSecUserList = sqlUsers.getSecUsers();
         List<userModel> oldUserList = sqlUsers.getUsers();
+        List<oldALJModel> oldALJList = sqlALJ.getOldALJList();
+        
         List<String> roleList = Arrays.asList(
                 "Admin", "Docketing", "REP", "ULP", "ORG", "MED", "Employer Search"
         );
         
-        totalRecordCount = oldUserList.size() + oldSecUserList.size() + roleList.size();
+        totalRecordCount = oldUserList.size() + oldSecUserList.size() + roleList.size() + oldALJList.size();
         
         for (String item : roleList){
             sqlRole.addUserRole(item);
@@ -52,17 +56,15 @@ public class UserMigration {
         
         for (userModel item : oldSecUserList){
             migrateUser(item);
-            currentRecord++;
-            if (Global.isDebug()){
-                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getUserName().trim() + ")");
-            }
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getUserName());
         }
 
+        Global.setUserList(sqlUsers.getUsers());
+        
         for (userModel item : oldUserList) {
             boolean missingEntry = true;
-            for (userModel secitem : oldSecUserList){
-                if (secitem.getUserName().trim() == null ? item.getUserName().trim() == null : secitem.getUserName().trim().equalsIgnoreCase(item.getUserName().trim())){
+            for (userModel newUsers : Global.getUserList()){
+                if (newUsers.getUserName().trim() == null ? item.getUserName().trim() == null : newUsers.getUserName().trim().equalsIgnoreCase(item.getUserName().trim())){
                     missingEntry = false;
                     break;
                 }
@@ -70,21 +72,32 @@ public class UserMigration {
             if (missingEntry) {
                 migrateUser(item);
             }
-            currentRecord++;
-            if (Global.isDebug()) {
-                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getUserName().trim() + ")");
-            }
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getUserName());
         }
 
+        Global.setUserList(sqlUsers.getUsers());
+        
+        for (oldALJModel item : oldALJList) {
+            boolean missingEntry = true;
+            for (userModel newUsers : Global.getUserList()){
+                if (newUsers.getUserName().trim() == null ? item.getUsername().trim() == null : newUsers.getUserName().trim().equalsIgnoreCase(item.getUsername().trim())){
+                    missingEntry = false;
+                    break;
+                }
+            }
+            if (missingEntry) {
+                migrateALJ(item);
+            }
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getUsername());
+        }
+        
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Users: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
         control.setProgressBarDisable(finishedText);
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateUsers");
-        }
-        
+        }   
     }
         
     private static void migrateUser(userModel item){
@@ -94,6 +107,22 @@ public class UserMigration {
         sqlUsers.saveUserInformation(seperateName(item));
     }
         
+    private static void migrateALJ(oldALJModel item){
+        userModel user = new userModel();
+        
+        user.setActive(item.getActive());
+        user.setInitials(item.getInitials().equals("") ? null : item.getInitials().trim());
+        user.setLastName(item.getName().trim());
+        user.setUserName(item.getUsername());
+        user.setEmail(item.getEmail().trim().equals("") ? null : item.getEmail().trim());
+        
+        user.setWorkPhone((!item.getOfficePhone().trim().equals("null") || !item.getOfficePhone().trim().equals("")) 
+                ? StringUtilities.convertPhoneNumberToString(item.getOfficePhone().trim()) : null);
+        
+        user = seperateName(user);
+        sqlUsers.saveUserInformation(seperateName(user));
+    }
+    
     private static userModel seperateName(userModel item) {
         String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
         
