@@ -135,7 +135,7 @@ public class sqlCMDSCase {
             ps.setString ( 6, item.getNote().trim().equals("") ? null : item.getNote());
             ps.setDate   ( 7, item.getOpenDate());
             ps.setString ( 8, item.getGroupNumber());
-            ps.setString ( 9, item.getAljID());
+            ps.setString ( 9, item.getAljID().equals("0") ? null : item.getAljID());
             ps.setDate   (10, item.getCloseDate());
             ps.setString (11, item.getInventoryStatusLine());
             ps.setDate   (12, item.getInventoryStatusDate());
