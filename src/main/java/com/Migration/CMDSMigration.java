@@ -7,11 +7,14 @@ package com.Migration;
 
 import com.model.CMDSCaseModel;
 import com.model.CMDSHearingModel;
+import com.model.activityModel;
 import com.model.casePartyModel;
 import com.model.oldCMDSCaseModel;
 import com.model.oldCMDSCasePartyModel;
+import com.model.oldCMDSHistoryModel;
 import com.model.oldCMDShearingModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlActivity;
 import com.sql.sqlCMDSCase;
 import com.sql.sqlCMDSCaseParty;
 import com.sql.sqlCMDSHearing;
@@ -50,8 +53,9 @@ public class CMDSMigration {
         List<oldCMDSCasePartyModel> oldCMDScasePartyList = sqlCMDSCaseParty.getParty();
         List<oldCMDSCaseModel> oldCMDScaseList = sqlCMDSCase.getCase();
         List<oldCMDShearingModel> oldCMDSHearingList = sqlCMDSHearing.getHearings();
+        List<oldCMDSHistoryModel> oldCMDSHistoryList = sqlActivity.getCMDSHistory();
         
-        totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size() + oldCMDSHearingList.size();
+        totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size() + oldCMDSHearingList.size() + oldCMDSHistoryList.size();
         
         for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
             migrateCaseParty(item);
@@ -70,6 +74,12 @@ public class CMDSMigration {
             migrateHearings(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
                     item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
+        }
+        
+        for (oldCMDSHistoryModel item : oldCMDSHistoryList) {
+            migrateHistory(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+                    item.getCaseYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber());
         }
 
         long lEndTime = System.currentTimeMillis();
@@ -116,7 +126,7 @@ public class CMDSMigration {
         }
     }
     
-    private static void migrateCase(oldCMDSCaseModel item){
+    private static void migrateCase(oldCMDSCaseModel item) {
         CMDSCaseModel cmds = new CMDSCaseModel();
         
         cmds.setActive(item.getActive() == 1);
@@ -156,7 +166,7 @@ public class CMDSMigration {
         sqlCMDSCase.addCase(cmds);
     }
      
-    private static void migrateHearings(oldCMDShearingModel item){
+    private static void migrateHearings(oldCMDShearingModel item) {
         CMDSHearingModel hearing = new CMDSHearingModel();
                 
         hearing.setActive(item.getActive() == 1);
@@ -178,6 +188,33 @@ public class CMDSMigration {
         }
 
         sqlCMDSHearing.addHearings(hearing);
+    }
+    
+    private static void migrateHistory(oldCMDSHistoryModel old) {
+        String direction = "";
+        if (old.getMailType().equals("I")) {
+            direction = "IN - ";
+        } else if (old.getMailType().equals("O")) {
+            direction = "OUT - ";
+        }
+        
+        activityModel item = new activityModel();
+        item.setCaseYear(old.getCaseYear());
+        item.setCaseType(old.getCaseType());
+        item.setCaseMonth(old.getCaseMonth());
+        item.setCaseNumber(old.getCaseSeqNumber());
+        item.setUserID(StringUtilities.convertUserToID(old.getUserinitials()));
+        item.setDate(old.getEntryDate().equals("") ? null : StringUtilities.convertStringTimeStamp(old.getEntryDate()));
+        item.setAction(!old.getEntryDescription().trim().equals("") ? direction + old.getEntryDescription().trim() : null);
+        item.setFileName(!old.getDocumentLink().trim().equals("") ? old.getDocumentLink().trim() : null);
+        item.setFrom(null);
+        item.setTo(null);
+        item.setType(!old.getEntryType().trim().equals("") ? old.getEntryType().trim() : null);
+        item.setRedacted(0);
+        item.setAwaitingTimeStamp(0);
+        item.setComment(null);
+                
+        sqlActivity.addActivity(item);
     }
     
 }

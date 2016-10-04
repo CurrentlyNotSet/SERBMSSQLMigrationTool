@@ -6,6 +6,7 @@
 package com.sql;
 
 import com.model.activityModel;
+import com.model.oldCMDSHistoryModel;
 import com.model.oldMEDHistoryModel;
 import com.model.oldORGHistoryModel;
 import com.model.oldREPHistoryModel;
@@ -234,6 +235,50 @@ public class sqlActivity {
                 item.setRequested(rs.getString("Requested").trim().equals("null") ? "" : rs.getString("Requested"));
                 item.setRedacted(rs.getString("Redacted").trim().equals("null") ? "" : rs.getString("Redacted"));
                 item.setRedactedHistoryID(rs.getString("RedactedHistoryID"));
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
+    
+    public static List<oldCMDSHistoryModel> getCMDSHistory() {
+        List<oldCMDSHistoryModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "SELECT [case].[month], [case].type, CaseHistory.* "
+                    + "FROM CaseHistory LEFT JOIN [case] ON [case].[year] = CaseHistory.[year] "
+                    + "AND [case].[CaseSeqNumber] = CaseHistory.[CaseSeqNumber]";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                oldCMDSHistoryModel item = new oldCMDSHistoryModel();
+
+                item.setCaseHistoryID(rs.getInt("CaseHistoryID"));
+                item.setActive(rs.getInt("Active"));
+                item.setCaseYear(rs.getString("Year") == null ? "" : rs.getString("Year"));
+                item.setCaseType(rs.getString("Type") == null ? "" : rs.getString("Type"));
+                item.setCaseMonth(rs.getString("Month") == null ? "" : rs.getString("Month"));
+                item.setCaseSeqNumber(rs.getString("CaseSeqNumber"));
+                item.setHistorySeqNumber(rs.getString("HistorySeqNumber"));
+                item.setEntryType(rs.getString("EntryType"));
+                item.setEntryDescription(rs.getString("EntryDescription"));
+                item.setEntryDate(rs.getString("EntryDate").length() < 10 ? "" : rs.getString("EntryDate"));
+                item.setMailType(rs.getString("MailType"));
+                item.setUserinitials(rs.getString("Userinitials"));
+                item.setDocumentLink(rs.getString("DocumentLink"));
+                item.setOrderType(rs.getString("OrderType"));
+                item.setWhichDateField(rs.getString("WhichDateField"));
+                item.setWhatDateB4(rs.getString("WhatDateB4"));
+                item.setWhatDateAfter(rs.getString("WhatDateAfter"));
                 list.add(item);
             }
         } catch (SQLException ex) {
