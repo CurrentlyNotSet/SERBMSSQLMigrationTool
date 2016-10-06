@@ -170,12 +170,12 @@ public class MEDMigration {
             caseNumber = StringUtilities.parseFullCaseNumber(item.getStrikeCaseNumber().trim());
         }
         if (caseNumber != null) {
-//            migrateParties(item, caseNumber);
+            migrateParties(item, caseNumber);
             migrateCaseData(item, caseNumber);
-//            migrateRelatedCases(item, caseNumber);
-//            migrateCaseHistory(caseNumber);
-//            migrateCaseSearch(item, caseNumber);
-//            migrateEmployerCaseSearch(item, caseNumber);
+            migrateRelatedCases(item, caseNumber);
+            migrateCaseHistory(caseNumber);
+            migrateCaseSearch(item, caseNumber);
+            migrateEmployerCaseSearch(item, caseNumber);
         }
     }
 

@@ -146,6 +146,62 @@ public class CMDSMigration {
                 ? null : StringUtilities.convertStringSQLDate(item.getInventoryStatusDate().substring(0,9)));
         cmds.setCaseStatus(item.getStatus().equals("") ? null : item.getStatus().trim());
         cmds.setResult(item.getResult().equals("") ? null : item.getResult().trim());
+        cmds.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getMediator())));
+        cmds.setPbrBox(item.getPBRBoxNumber().equals("") ? null : item.getPBRBoxNumber().trim());
+        cmds.setGroupType(item.getGroupType().equals("") ? null : item.getGroupType().trim());
+        cmds.setReclassCode(item.getReclassCode().equals("") ? null : item.getReclassCode().trim());
+        cmds.setMailedRR(item.getMailedRR().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getMailedRR().substring(0,9)));
+        cmds.setMailedBO(item.getMailedBO().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getMailedBO().substring(0,9)));
+        cmds.setMailedPO1(item.getMailedPO().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getMailedPO().substring(0,9)));
+        cmds.setMailedPO2(item.getMailedPO2().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getMailedPO2().substring(0,9)));
+        cmds.setMailedPO3(item.getMailedPO3().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getMailedPO3().substring(0,9)));
+        cmds.setMailedPO4(item.getMailedPO4().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getMailedPO4().substring(0,9)));
+        cmds.setRemailedRR(item.getRemailedRR().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getRemailedRR().substring(0,9)));
+        cmds.setRemailedBO(item.getRemailedBO().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getRemailedBO().substring(0,9)));
+        cmds.setRemailedPO1(item.getRemailedPO().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getRemailedPO().substring(0,9)));
+        cmds.setRemailedPO2(item.getRemailedPO2().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getRemailedPO2().substring(0,9)));
+        cmds.setRemailedPO3(item.getRemailedPO3().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getRemailedPO3().substring(0,9)));
+        cmds.setRemailedPO4(item.getRemailedPO4().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getRemailedPO4().substring(0,9)));
+        cmds.setReturnReceiptRR(item.getGreenCardSignedRR().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedRR().substring(0,9)));
+        cmds.setReturnReceiptBO(item.getGreenCardSignedBO().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedBO().substring(0,9)));
+        cmds.setReturnReceiptPO1(item.getGreenCardSignedPO().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedPO().substring(0,9)));
+        cmds.setReturnReceiptPO2(item.getGreenCardSignedPO2().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedPO2().substring(0,9)));
+        cmds.setReturnReceiptPO3(item.getGreenCardSignedPO3().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedPO3().substring(0,9)));
+        cmds.setReturnReceiptPO4(item.getGreenCardSignedPO4().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedPO4().substring(0,9)));
+        cmds.setPullDateRR(item.getPullDateRR().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getPullDateRR().substring(0,9)));
+        cmds.setPullDateBO(item.getPullDateBO().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getPullDateBO().substring(0,9)));
+        cmds.setPullDatePO1(item.getPullDatePO().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getPullDatePO().substring(0,9)));
+        cmds.setPullDatePO2(item.getPullDatePO2().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getPullDatePO2().substring(0,9)));
+        cmds.setPullDatePO3(item.getPullDatePO3().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getPullDatePO3().substring(0,9)));
+        cmds.setPullDatePO4(item.getPullDatePO4().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getPullDatePO4().substring(0,9)));
+        cmds.setHearingCompletedDate(item.getHearingCompletedDate().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getHearingCompletedDate().substring(0,9)));
+        cmds.setPostHearingDriefsDue(item.getPostHearingBriefsDueDate().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getPostHearingBriefsDueDate().substring(0,9)));
         
         if(!item.getCaseNote().equals("")){
             cmds.setNote("Case Note: " + item.getCaseNote().trim());

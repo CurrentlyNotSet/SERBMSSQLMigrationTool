@@ -271,7 +271,7 @@ public class sqlActivity {
                 item.setHistorySeqNumber(rs.getString("HistorySeqNumber"));
                 item.setEntryType(rs.getString("EntryType"));
                 item.setEntryDescription(rs.getString("EntryDescription"));
-                item.setEntryDate(rs.getString("EntryDate").length() < 10 ? "" : rs.getString("EntryDate"));
+                item.setEntryDate(rs.getString("EntryDate").length() < 10 ? "" : rs.getString("EntryDate").substring(0, 10));
                 item.setMailType(rs.getString("MailType"));
                 item.setUserinitials(rs.getString("Userinitials"));
                 item.setDocumentLink(rs.getString("DocumentLink"));
