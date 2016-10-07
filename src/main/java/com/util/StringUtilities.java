@@ -126,7 +126,7 @@ public class StringUtilities {
         if (oldDate != null && !"".equals(oldDate) && p.matcher(oldDate).find() == false) {
             dateModel date = dateParseNumbers(oldDate);
 
-            String[] time = oldTime.replaceAll("\\.", "").split(":| ");
+            String[] time = oldTime.replaceAll("\\.", "").split(";|:| ");
 
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.YEAR, Integer.valueOf(date.getYear()));
@@ -136,10 +136,10 @@ public class StringUtilities {
             if (!"".equals(oldTime.trim()) && time.length > 1) {
                 
                 int hour = Integer.valueOf(time[0].replaceAll("\\D+", ""));
-                if (hour < 12) {
-                    cal.set(Calendar.HOUR_OF_DAY, oldTime.replaceAll("[^A-Za-z]", "").equalsIgnoreCase("AM") ? hour : hour + 12);
-                } else {
+                if (7 <= hour && hour <= 12) {
                     cal.set(Calendar.HOUR_OF_DAY, hour);
+                } else {
+                    cal.set(Calendar.HOUR_OF_DAY, hour + 12);
                 }
                 cal.set(Calendar.MINUTE, Integer.valueOf(time[1].replaceAll("\\D+", "")));
             } else {
