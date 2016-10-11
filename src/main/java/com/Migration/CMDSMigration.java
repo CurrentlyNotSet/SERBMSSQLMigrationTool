@@ -57,30 +57,30 @@ public class CMDSMigration {
         
         totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size() + oldCMDSHearingList.size() + oldCMDSHistoryList.size();
         
-        for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
-            migrateCaseParty(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-                    item.getYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber()
-                            + ": " + item.getFirstName() + " " + item.getLastName());
-        }
-        
+//        for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
+//            migrateCaseParty(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+//                    item.getYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber()
+//                            + ": " + item.getFirstName() + " " + item.getLastName());
+//        }
+//        
         for (oldCMDSCaseModel item : oldCMDScaseList) {
             migrateCase(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
                     item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
         }
 
-        for (oldCMDShearingModel item : oldCMDSHearingList) {
-            migrateHearings(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-                    item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
-        }
-        
-        for (oldCMDSHistoryModel item : oldCMDSHistoryList) {
-            migrateHistory(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-                    item.getCaseYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber());
-        }
+//        for (oldCMDShearingModel item : oldCMDSHearingList) {
+//            migrateHearings(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+//                    item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
+//        }
+//        
+//        for (oldCMDSHistoryModel item : oldCMDSHistoryList) {
+//            migrateHistory(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+//                    item.getCaseYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber());
+//        }
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating CMDS Cases: " 
@@ -138,7 +138,7 @@ public class CMDSMigration {
         cmds.setOpenDate(item.getOpenDate().trim().equals("") 
                 ? null : StringUtilities.convertStringSQLDate(item.getOpenDate().substring(0,9)));
         cmds.setGroupNumber(item.getGroupNumber().equals("") ? null : item.getGroupNumber().trim());
-        cmds.setAljID(String.valueOf(StringUtilities.convertUserToID(item.getALJ().trim())));
+        cmds.setAljID(String.valueOf(StringUtilities.convertUserToID(item.getALJ().trim() == null ? "" : item.getALJ())));
         cmds.setCloseDate(item.getCloseDate().trim().equals("") 
                 ? null : StringUtilities.convertStringSQLDate(item.getCloseDate().substring(0,9)));
         cmds.setInventoryStatusLine(item.getInventoryStatusLine().equals("") ? null : item.getInventoryStatusLine().trim());
@@ -146,10 +146,10 @@ public class CMDSMigration {
                 ? null : StringUtilities.convertStringSQLDate(item.getInventoryStatusDate().substring(0,9)));
         cmds.setCaseStatus(item.getStatus().equals("") ? null : item.getStatus().trim());
         cmds.setResult(item.getResult().equals("") ? null : item.getResult().trim());
-        cmds.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getMediator())));
+        cmds.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getMediator() == null ? "" : item.getMediator())));
         cmds.setPbrBox(item.getPBRBoxNumber().equals("") ? null : item.getPBRBoxNumber().trim());
-        cmds.setGroupType(item.getGroupType().equals("") ? null : item.getGroupType().trim());
-        cmds.setReclassCode(item.getReclassCode().equals("") ? null : item.getReclassCode().trim());
+        cmds.setGroupType(item.getGroupType().trim().equals("") ? null : item.getGroupType().trim());
+        cmds.setReclassCode(item.getReclassCode().trim().equals("") ? null : item.getReclassCode().trim());
         cmds.setMailedRR(item.getMailedRR().trim().equals("") 
                 ? null : StringUtilities.convertStringSQLDate(item.getMailedRR().substring(0,9)));
         cmds.setMailedBO(item.getMailedBO().trim().equals("") 

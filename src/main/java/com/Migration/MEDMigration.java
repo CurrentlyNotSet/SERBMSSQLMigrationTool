@@ -67,20 +67,21 @@ public class MEDMigration {
 
         totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size() + oldMediatorsList.size();
 
-//        for (jurisdictionModel item : oldjurisdictionList) {
-//            sqlJurisdiction.addJurisdiction(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getJurisName());
-//        }
-//        
-//        for (factFinderModel item : oldFactFindersList) {
-//            migrateFactFinder(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
-//        }
-//        
-//        for (mediatorsModel item : oldMediatorsList) {
-//            migrateMediator(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
-//        }
+        for (jurisdictionModel item : oldjurisdictionList) {
+            sqlJurisdiction.addJurisdiction(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getJurisName());
+        }
+        
+        for (factFinderModel item : oldFactFindersList) {
+            migrateFactFinder(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
+        }
+        
+        for (mediatorsModel item : oldMediatorsList) {
+            migrateMediator(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
+        }
+        
         newMediatorsList = sqlMediator.getNewMediator();
 
         for (oldMEDCaseModel item : oldMEDCaseList) {

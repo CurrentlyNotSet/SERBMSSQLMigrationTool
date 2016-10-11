@@ -29,9 +29,11 @@ public class sqlCMDSCase {
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT [Case].*, CaseNotes.CaseNote, CaseNotes.InventoryStatusNote, "
-                    + "CaseNotes.OutsideCourtNote FROM [Case] LEFT JOIN "
-                    + "CaseNotes ON [case].[year] = CaseNotes.[year] AND "
+            String sql = "SELECT [Case].*, CaseNotes.CaseNote, CaseNotes.InventoryStatusNote, ALJ.Username AS ALJUser, "
+                    + "med.Username AS MedUser, CaseNotes.OutsideCourtNote FROM [Case] "
+                    + "LEFT JOIN ALJ ON ALJ.Initials = [case].ALJ "
+                    + "LEFT JOIN ALJ as med ON med.Initials = [case].Mediator "
+                    + "LEFT JOIN CaseNotes ON [case].[year] = CaseNotes.[year] AND "
                     + "[case].[CaseSeqNumber] = CaseNotes.[CaseSeqNumber]";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
@@ -46,8 +48,16 @@ public class sqlCMDSCase {
                 item.setType(rs.getString("Type"));
                 item.setGroupNumber(rs.getString("GroupNumber").equals("00000000") ? "" : rs.getString("GroupNumber"));
                 item.setGroupType(rs.getString("GroupType"));
-                item.setALJ(rs.getString("ALJ"));
-                item.setMediator(rs.getString("Mediator"));
+                if (rs.getString("ALJUser") != null){
+                    item.setALJ(rs.getString("ALJUser").equals("") ? rs.getString("ALJ") : rs.getString("ALJUser"));
+                } else {
+                    item.setALJ(rs.getString("ALJ"));
+                }
+                if (rs.getString("MedUser") != null){
+                    item.setALJ(rs.getString("MedUser").equals("") ? rs.getString("Mediator") : rs.getString("MedUser"));
+                } else {
+                    item.setMediator(rs.getString("Mediator"));
+                }
                 item.setOpenDate(rs.getString("OpenDate").length() < 10 ? "" : rs.getString("OpenDate").substring(0, 10));
                 item.setCloseDate(rs.getString("CloseDate").length() < 10 ? "" : rs.getString("CloseDate").substring(0, 10));
                 item.setGreenCardSignedRR(rs.getString("GreenCardSignedRR"));
@@ -171,7 +181,7 @@ public class sqlCMDSCase {
             ps.setDate   (12, item.getInventoryStatusDate());
             ps.setString (13, item.getCaseStatus());
             ps.setString (14, item.getResult());
-            ps.setString (15, item.getMediatorID());
+            ps.setString (15, item.getMediatorID().equals("0") ? null : item.getMediatorID());
             ps.setString (16, item.getPbrBox());
             ps.setString (17, item.getGroupType());
             ps.setString (18, item.getReclassCode());

@@ -15,7 +15,6 @@ import com.sql.sqlActivity;
 import com.sql.sqlCSCCase;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
-import com.sql.sqlCSCHistory;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
@@ -45,7 +44,7 @@ public class CSCMigration {
         int currentRecord = 0;
         
         List<oldCivilServiceCommissionModel> oldORGCaseList = sqlCSCCase.getCases();
-        List<oldCSCHistoryModel> oldCSCHistoryList = sqlCSCHistory.getActivities();
+        List<oldCSCHistoryModel> oldCSCHistoryList = sqlActivity.getCSCHistory();
         
         totalRecordCount = oldORGCaseList.size() + oldCSCHistoryList.size();
                 

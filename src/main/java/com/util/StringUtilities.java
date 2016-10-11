@@ -207,7 +207,10 @@ public class StringUtilities {
                     date.setYear("20" + date.getYear());
                 }
             }
-            return date;
+            if (Integer.parseInt(date.getYear()) > 1752 && Integer.parseInt(date.getYear()) < 9999){
+                return date;
+            }
+            
         }
         return null;
     }
@@ -233,7 +236,9 @@ public class StringUtilities {
                         date.setYear("20" + date.getYear());
                     }
                 }
-                return date;
+                if (Integer.parseInt(date.getYear()) > 1752 && Integer.parseInt(date.getYear()) < 9999) {
+                    return date;
+                }
             }
         }
         return null;
@@ -252,13 +257,6 @@ public class StringUtilities {
         }
         return duration.trim();
     }
-
-//    public static java.sql.Date convertTimeStampToDate(Timestamp time){
-//        if (time != null){
-//            return new java.sql.Date(time.getTime());
-//        }
-//        return null;
-//    }
     
     public static int convertUserToID(String userEntry) {
         if (!"".equals(userEntry.trim())) {
