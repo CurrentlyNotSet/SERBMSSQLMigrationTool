@@ -23,7 +23,13 @@ import org.apache.commons.dbutils.DbUtils;
 public class sqlCaseParty {
     
     public static void savePartyInformation(casePartyModel item){
-        item = ContactNameSeperator.seperateName(item);
+        if (item.getFirstName() == null){
+            item = ContactNameSeperator.seperateName(item);
+        } else if (item.getFirstName() != null){
+            if (item.getFirstName().trim().equals("")){
+                item = ContactNameSeperator.seperateName(item);
+            }
+        }
         Connection conn = null;
         PreparedStatement ps = null;
         try {
