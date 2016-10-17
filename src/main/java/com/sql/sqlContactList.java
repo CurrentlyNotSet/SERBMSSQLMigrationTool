@@ -6,6 +6,7 @@
 package com.sql;
 
 import com.model.casePartyModel;
+import com.model.oldCMDSCasePartyModel;
 import com.util.DBCInfo;
 import com.util.StringUtilities;
 import java.sql.Connection;
@@ -22,7 +23,7 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlContactList {
 
-    public static List<casePartyModel> getMasterList() {
+    public static List<casePartyModel> getSERBMasterList() {
         List<casePartyModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
@@ -684,6 +685,53 @@ public class sqlContactList {
         }
         return list;
     }
+    
+    public static List<oldCMDSCasePartyModel> getPBRMasterList() {
+        List<oldCMDSCasePartyModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "SELECT DISTINCT LastName, FirstName, MiddleInitial, "
+                    + "Title, Address1, Address2, City, State, Zip, OfficePhone, "
+                    + "HomePhone, CellularPhone, Pager, Fax, Email, etalextraname "
+                    + "FROM caseparticipants WHERE "
+                    + "year LIKE ('2010') OR year LIKE ('2011') OR "
+                    + "year LIKE ('2012') OR year LIKE ('2013') OR "
+                    + "year LIKE ('2014') OR year LIKE ('2015') OR "
+                    + "year LIKE ('2016')";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                oldCMDSCasePartyModel item = new oldCMDSCasePartyModel();
+                item.setLastName(rs.getString("LastName"));
+                item.setFirstName(rs.getString("FirstName"));
+                item.setMiddleInitial(rs.getString("MiddleInitial"));
+                item.setEtalextraname(rs.getString("etalextraname"));
+                item.setTitle(rs.getString("Title"));
+                item.setAddress1(rs.getString("Address1"));
+                item.setAddress2(rs.getString("Address2"));
+                item.setCity(rs.getString("city"));
+                item.setState(rs.getString("state"));
+                item.setZip(rs.getString("zip"));
+                item.setOfficePhone(rs.getString("OfficePhone").equals("null") ? "" : rs.getString("OfficePhone"));
+                item.setHomePhone(rs.getString("HomePhone").equals("null") ? "" : rs.getString("HomePhone"));
+                item.setCellularPhone(rs.getString("CellularPhone").equals("null") ? "" : rs.getString("CellularPhone"));
+                item.setPager(rs.getString("Pager"));
+                item.setFax(rs.getString("Fax").trim());
+                item.setEmail(rs.getString("Email"));                
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }    
 
     public static void savePartyInformation(casePartyModel item) {
         Connection conn = null;
