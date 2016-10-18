@@ -438,4 +438,18 @@ public class StringUtilities {
         return name.trim();
     }
         
+    public static String buildFullName(String first, String middle, String last) {
+        String fullName = "";
+        if (!first.equals("")) {
+            fullName += first.trim();
+        }
+        if (!middle.equals("")) {
+            fullName += " " + (middle.trim().length() == 1 ? middle.trim() + "." : middle.trim());
+        }
+        if (!last.equals("")) {
+            fullName += " " + last.trim();
+        }
+        return fullName.trim();
+    }
+    
 }

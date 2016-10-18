@@ -75,4 +75,43 @@ public class sqlCMDSCaseParty {
         return list;
     }
     
+    public static List<oldCMDSCasePartyModel> getPartyByCase(String year, String sequenceNumber) {
+        List<oldCMDSCasePartyModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "SELECT caseparticipants.[year], caseparticipants.caseseqnumber, "
+                    + "caseparticipants.participantType, caseparticipants.firstName, "
+                    + "caseparticipants.middleinitial, caseparticipants.lastname "
+                    + "FROM caseparticipants "
+                    + "WHERE CaseParticipants.ParticipantType NOT LIKE '%Rep%' AND "
+                    + "caseparticipants.active = 1 "
+                    + "AND caseparticipants.[year] = ? "
+                    + "AND caseparticipants.caseseqnumber = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, year);
+            ps.setString(2, sequenceNumber);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                oldCMDSCasePartyModel item = new oldCMDSCasePartyModel();
+                item.setYear(rs.getString("Year"));
+                item.setCaseSeqNumber(rs.getString("CaseSeqNumber"));
+                item.setParticipantType(rs.getString("ParticipantType"));
+                item.setLastName(rs.getString("LastName"));
+                item.setMiddleInitial(rs.getString("MiddleInitial"));        
+                item.setFirstName(rs.getString("FirstName"));                        
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
+    
 }

@@ -6,6 +6,7 @@
 package com.Migration;
 
 import com.model.CMDSCaseModel;
+import com.model.CMDSCaseSearchModel;
 import com.model.CMDSHearingModel;
 import com.model.activityModel;
 import com.model.casePartyModel;
@@ -13,10 +14,12 @@ import com.model.oldCMDSCaseModel;
 import com.model.oldCMDSCasePartyModel;
 import com.model.oldCMDSHistoryModel;
 import com.model.oldCMDShearingModel;
+import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlCMDSCase;
 import com.sql.sqlCMDSCaseParty;
+import com.sql.sqlCMDSCaseSearch;
 import com.sql.sqlCMDSHearing;
 import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
@@ -66,6 +69,7 @@ public class CMDSMigration {
         
         for (oldCMDSCaseModel item : oldCMDScaseList) {
             migrateCase(item);
+            migrateSearch(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
                     item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
         }
@@ -221,7 +225,50 @@ public class CMDSMigration {
         
         sqlCMDSCase.addCase(cmds);
     }
-     
+    
+    private static void migrateSearch(oldCMDSCaseModel item) {
+        int aljID = StringUtilities.convertUserToID(item.getALJ().trim() == null ? "" : item.getALJ());
+        String appellant = "";
+        String appellee = "";
+        String ALJName = "";
+        List<oldCMDSCasePartyModel> partyList = sqlCMDSCaseParty.getPartyByCase(item.getYear(), item.getCaseSeqNumber());
+        
+        for (oldCMDSCasePartyModel person : partyList){
+            if (person.getParticipantType().contains("Appellee")){
+                if (!appellee.trim().equals("")){
+                    appellee += ", ";
+                }
+                appellee += StringUtilities.buildFullName(person.getFirstName(), person.getMiddleInitial(), person.getLastName());
+                
+            } else if (person.getParticipantType().contains("Appellant")) {
+                if (!appellant.trim().equals("")){
+                   appellant += ", ";
+                }
+                appellant += StringUtilities.buildFullName(person.getFirstName(), person.getMiddleInitial(), person.getLastName());
+            }
+        }
+        
+        for (userModel user : Global.getUserList()){
+            if (user.getId() == aljID){
+                ALJName = StringUtilities.buildFullName(user.getFirstName(), user.getMiddleInitial(), user.getLastName());
+            }
+        }        
+        
+        CMDSCaseSearchModel search = new CMDSCaseSearchModel();
+        
+        search.setCaseYear(item.getYear());
+        search.setCaseType(item.getType());
+        search.setCaseMonth(item.getMonth());
+        search.setCaseNumber(item.getCaseSeqNumber());
+        search.setAppellant(appellant.trim().equals("") ? null : appellant);
+        search.setAppellee(appellee.trim().equals("") ? null : appellee);
+        search.setAlj(ALJName.trim().equals("") ? null : ALJName);
+        search.setDateOpened(item.getOpenDate().trim().equals("") 
+                ? null : StringUtilities.convertStringSQLDate(item.getOpenDate().substring(0,9)));
+        
+        sqlCMDSCaseSearch.addRow(search);
+    }
+    
     private static void migrateHearings(oldCMDShearingModel item) {
         CMDSHearingModel hearing = new CMDSHearingModel();
                 

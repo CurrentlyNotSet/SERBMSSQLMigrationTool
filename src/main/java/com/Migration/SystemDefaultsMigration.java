@@ -9,6 +9,8 @@ import com.model.administrationInformationModel;
 import com.model.caseTypeModel;
 import com.model.systemEmailModel;
 import com.model.deptInStateModel;
+import com.model.hearingRoomModel;
+import com.model.hearingTypeModel;
 import com.model.historyTypeModel;
 import com.model.oldCountyModel;
 import com.model.partyTypeModel;
@@ -18,6 +20,7 @@ import com.sql.sqlActivityType;
 import com.sql.sqlAdministrationInformation;
 import com.sql.sqlCaseType;
 import com.sql.sqlDeptInState;
+import com.sql.sqlHearingsInfo;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlPartyType;
 import com.sql.sqlPreFix;
@@ -61,10 +64,13 @@ public class SystemDefaultsMigration {
         List<caseTypeModel> caseTypeList = sqlCaseType.getOldCaseType();
         List<systemExecutiveModel> execList = sqlSystemExecutive.getOldExecutives();
         List<administrationInformationModel> systemInfoList = sqlAdministrationInformation.getOldInfo();
+        List<hearingRoomModel> hearingRoomList = sqlHearingsInfo.getOldHearingRoom();
+        List<hearingTypeModel> hearingTypeList = sqlHearingsInfo.getOldHearingType();
         
         totalRecordCount = oldCountiesList.size() + deptInStateList.size() + systemEmailList.size() 
                 + Global.getNamePrefixList().size() + partyTypesList.size() + activityTypeList.size()
-                + caseTypeList.size() + execList.size() + systemInfoList.size();
+                + caseTypeList.size() + execList.size() + systemInfoList.size() + hearingRoomList.size()
+                + hearingTypeList.size();
         
         for (oldCountyModel item : oldCountiesList){
             item.setActive(("OH".equals(item.getStateCode().trim())) ? 1 : 0);
@@ -110,6 +116,16 @@ public class SystemDefaultsMigration {
         for (administrationInformationModel item : systemInfoList){
             migrateAdministrationInformation(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDepartment());
+        }
+
+        for (hearingRoomModel item : hearingRoomList){
+            sqlHearingsInfo.addHearingRoom(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getRoomName());
+        }
+        
+        for (hearingTypeModel item : hearingTypeList){
+            sqlHearingsInfo.addHearingType(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getHearingDescription());
         }
                 
         long lEndTime = System.currentTimeMillis();
