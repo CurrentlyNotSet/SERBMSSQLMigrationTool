@@ -72,36 +72,36 @@ public class CMDSMigration {
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDescription());
         }
         
-//        for (CMDSResultModel item : cmdsResultList) {
-//            sqlCMDSResult.addCMDSResult(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getResult());
-//        }
-//        
-//        for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
-//            migrateCaseParty(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-//                    item.getYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber()
-//                            + ": " + item.getFirstName() + " " + item.getLastName());
-//        }
-//        
-//        for (oldCMDSCaseModel item : oldCMDScaseList) {
-//            migrateCase(item);
-//            migrateSearch(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-//                    item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
-//        }
-//
-//        for (oldCMDShearingModel item : oldCMDSHearingList) {
-//            migrateHearings(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-//                    item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
-//        }
-//        
-//        for (oldCMDSHistoryModel item : oldCMDSHistoryList) {
-//            migrateHistory(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-//                    item.getCaseYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber());
-//        }
+        for (CMDSResultModel item : cmdsResultList) {
+            sqlCMDSResult.addCMDSResult(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getResult());
+        }
+        
+        for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
+            migrateCaseParty(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+                    item.getYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber()
+                            + ": " + item.getFirstName() + " " + item.getLastName());
+        }
+        
+        for (oldCMDSCaseModel item : oldCMDScaseList) {
+            migrateCase(item);
+            migrateSearch(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+                    item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
+        }
+
+        for (oldCMDShearingModel item : oldCMDSHearingList) {
+            migrateHearings(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+                    item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
+        }
+        
+        for (oldCMDSHistoryModel item : oldCMDSHistoryList) {
+            migrateHistory(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+                    item.getCaseYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber());
+        }
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating CMDS Cases: " 
