@@ -5,7 +5,7 @@
  */
 package com.sql;
 
-import com.model.CMDSStatusTypeModel;
+import com.model.DirectorsModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,24 +19,25 @@ import org.apache.commons.dbutils.DbUtils;
  *
  * @author User
  */
-public class sqlCMDSStatusType {
+public class sqlDirector {
     
-    public static List<CMDSStatusTypeModel> getOldCMDSStatusType() {
-        List<CMDSStatusTypeModel> list = new ArrayList();
+    public static List<DirectorsModel> getoldDirectorList() {
+        List<DirectorsModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT * FROM StatusTypes";
+            String sql = "SELECT * FROM Directors";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                CMDSStatusTypeModel item = new CMDSStatusTypeModel();
-                item.setID(rs.getInt("StatusTypesID"));
+                DirectorsModel item = new DirectorsModel();
+                item.setID(rs.getInt("DirectorsID"));
                 item.setActive(rs.getInt("Active") == 1);
-                item.setStatusCode(rs.getString("Status"));
-                item.setDescription(rs.getString("Description"));               
+                item.setAgency(rs.getString("Agency"));
+                item.setTitle(rs.getString("Title"));
+                item.setName(rs.getString("Name"));
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -48,25 +49,27 @@ public class sqlCMDSStatusType {
         }
         return list;
     }
-        
-    public static void addCMDSStatusType(CMDSStatusTypeModel item) {
+    
+    public static void addDirector(DirectorsModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO CMDSStatusType ("
-                    + "active, "    //01
-                    + "StatusCode, "//02
-                    + "Description "//03
+            String sql = "Insert INTO Director ("
+                    + "Active, "  //01
+                    + "Agency, "  //02
+                    + "Title, "   //03
+                    + "Name "     //04
                     + ") VALUES (";
-                    for(int i=0; i<2; i++){
-                        sql += "?, ";   //01-02
+                    for(int i=0; i<3; i++){
+                        sql += "?, ";   //01-03
                     }
-                     sql += "?)"; //03
+                     sql += "?)"; //04
             ps = conn.prepareStatement(sql);
-            ps.setBoolean(1, item.isActive());
-            ps.setString (2, item.getStatusCode());
-            ps.setString (3, item.getDescription());
+            ps.setBoolean(1, item.isActive());             
+            ps.setString (2, item.getAgency());       
+            ps.setString (3, item.getTitle());       
+            ps.setString (4, item.getName());             
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -75,5 +78,7 @@ public class sqlCMDSStatusType {
             DbUtils.closeQuietly(conn);
         }
     }
+    
+    
     
 }

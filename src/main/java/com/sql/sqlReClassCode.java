@@ -5,7 +5,7 @@
  */
 package com.sql;
 
-import com.model.CMDSStatusTypeModel;
+import com.model.ReClassCodeModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,24 +19,23 @@ import org.apache.commons.dbutils.DbUtils;
  *
  * @author User
  */
-public class sqlCMDSStatusType {
+public class sqlReClassCode {
     
-    public static List<CMDSStatusTypeModel> getOldCMDSStatusType() {
-        List<CMDSStatusTypeModel> list = new ArrayList();
+    public static List<ReClassCodeModel> getoldReclassCodesList() {
+        List<ReClassCodeModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT * FROM StatusTypes";
+            String sql = "SELECT * FROM ReClassCodes where code != ''";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                CMDSStatusTypeModel item = new CMDSStatusTypeModel();
-                item.setID(rs.getInt("StatusTypesID"));
+                ReClassCodeModel item = new ReClassCodeModel();
+                item.setId(rs.getInt("ReclassCodesID"));
                 item.setActive(rs.getInt("Active") == 1);
-                item.setStatusCode(rs.getString("Status"));
-                item.setDescription(rs.getString("Description"));               
+                item.setCode(rs.getString("Code"));
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -48,25 +47,19 @@ public class sqlCMDSStatusType {
         }
         return list;
     }
-        
-    public static void addCMDSStatusType(CMDSStatusTypeModel item) {
+    
+    public static void addReClassCode(ReClassCodeModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO CMDSStatusType ("
-                    + "active, "    //01
-                    + "StatusCode, "//02
-                    + "Description "//03
-                    + ") VALUES (";
-                    for(int i=0; i<2; i++){
-                        sql += "?, ";   //01-02
-                    }
-                     sql += "?)"; //03
+            String sql = "Insert INTO ReClassCode ("
+                    + "Active, "
+                    + "code "  
+                    + ") VALUES (?, ?)";
             ps = conn.prepareStatement(sql);
-            ps.setBoolean(1, item.isActive());
-            ps.setString (2, item.getStatusCode());
-            ps.setString (3, item.getDescription());
+            ps.setBoolean(1, item.isActive());             
+            ps.setString (2, item.getCode());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -75,5 +68,7 @@ public class sqlCMDSStatusType {
             DbUtils.closeQuietly(conn);
         }
     }
+    
+    
     
 }

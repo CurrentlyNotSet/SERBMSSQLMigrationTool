@@ -9,13 +9,15 @@ import com.model.CMDSCaseModel;
 import com.model.CMDSCaseSearchModel;
 import com.model.CMDSHearingModel;
 import com.model.CMDSResultModel;
-import com.model.CMDSStatusType;
+import com.model.CMDSStatusTypeModel;
 import com.model.activityModel;
 import com.model.casePartyModel;
 import com.model.oldCMDSCaseModel;
 import com.model.oldCMDSCasePartyModel;
 import com.model.oldCMDSHistoryModel;
 import com.model.oldCMDShearingModel;
+import com.model.DirectorsModel;
+import com.model.ReClassCodeModel;
 import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
@@ -26,7 +28,10 @@ import com.sql.sqlCMDSHearing;
 import com.sql.sqlCMDSResult;
 import com.sql.sqlCMDSStatusType;
 import com.sql.sqlCaseParty;
+import com.sql.sqlContactList;
+import com.sql.sqlDirector;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlReClassCode;
 import com.sql.sqlUsers;
 import com.util.Global;
 import com.util.SceneUpdater;
@@ -62,12 +67,33 @@ public class CMDSMigration {
         List<oldCMDShearingModel> oldCMDSHearingList = sqlCMDSHearing.getHearings();
         List<oldCMDSHistoryModel> oldCMDSHistoryList = sqlActivity.getCMDSHistory();
         List<CMDSResultModel> cmdsResultList = sqlCMDSResult.getOldCMDSResults();
-        List<CMDSStatusType> cmdsStatusTypeList = sqlCMDSStatusType.getOldCMDSStatusType();
+        List<CMDSStatusTypeModel> cmdsStatusTypeList = sqlCMDSStatusType.getOldCMDSStatusType();
+        List<DirectorsModel> directorList = sqlDirector.getoldDirectorList();
+        List<ReClassCodeModel> reclassCodeList = sqlReClassCode.getoldReclassCodesList();
+        List<casePartyModel> representativeList = sqlContactList.getRepresentativeList();
         
         totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size() 
-                + oldCMDSHearingList.size() + oldCMDSHistoryList.size() + cmdsResultList.size();
+                + oldCMDSHearingList.size() + oldCMDSHistoryList.size() + cmdsResultList.size()
+                + cmdsStatusTypeList.size() + directorList.size() + reclassCodeList.size()
+                + representativeList.size();
         
-        for (CMDSStatusType item : cmdsStatusTypeList) {
+        for (casePartyModel item : representativeList) {
+            sqlContactList.savePartyInformation(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+                    (item.getLastName() != null) ? item.getLastName() : item.getCompanyName());
+        }
+        
+        for (ReClassCodeModel item : reclassCodeList) {
+            sqlReClassCode.addReClassCode(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCode());
+        }
+        
+        for (DirectorsModel item : directorList) {
+            sqlDirector.addDirector(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getAgency());
+        }
+        
+        for (CMDSStatusTypeModel item : cmdsStatusTypeList) {
             sqlCMDSStatusType.addCMDSStatusType(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDescription());
         }

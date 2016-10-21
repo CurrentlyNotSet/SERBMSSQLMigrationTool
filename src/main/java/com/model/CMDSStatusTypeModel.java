@@ -9,7 +9,7 @@ package com.model;
  *
  * @author User
  */
-public class CMDSStatusType {
+public class CMDSStatusTypeModel {
     
     private int ID;
     private boolean Active;

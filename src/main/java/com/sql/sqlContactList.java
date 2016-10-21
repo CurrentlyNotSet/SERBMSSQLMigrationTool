@@ -732,6 +732,59 @@ public class sqlContactList {
         }
         return list;
     }    
+    
+    public static List<casePartyModel> getRepresentativeList() {
+        List<casePartyModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "SELECT * FROM representatives";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                casePartyModel item = new casePartyModel();
+                item.setPrefix(null);
+                item.setFirstName((rs.getString("FirstName") == null) ? null : rs.getString("FirstName").trim());
+                item.setMiddleInitial((rs.getString("MiddleInitial") == null) ? null : rs.getString("MiddleInitial").trim());
+                item.setLastName((rs.getString("LastName") == null) ? null : rs.getString("LastName").trim());
+                item.setSuffix(null);
+                item.setNameTitle(null);
+                item.setJobTitle((rs.getString("Title") == null) ? null : rs.getString("Title").trim());
+                item.setCompanyName((rs.getString("Description") == null) ? null : rs.getString("Description").trim());
+                item.setAddress1((rs.getString("Address1") == null) ? null : rs.getString("Address1").trim());
+                item.setAddress2((rs.getString("Address2") == null) ? null : rs.getString("Address2").trim());
+                item.setAddress3(null);
+                item.setCity((rs.getString("City") == null) ? null : rs.getString("City").trim());
+                item.setState((rs.getString("State") == null) ? null : rs.getString("State").trim());
+                item.setZip((rs.getString("Zip") == null) ? null : rs.getString("Zip").trim());
+                item.setPhoneOne(null);
+                item.setPhoneTwo(null);
+                if (rs.getString("Phone") != null){
+                    item.setPhoneOne(rs.getString("Phone").equals("null") ? null : StringUtilities.convertPhoneNumberToString(rs.getString("Phone")));
+                }
+                if (rs.getString("Fax") != null){
+                    item.setPhoneTwo(rs.getString("Fax").equals("null") ? null : StringUtilities.convertPhoneNumberToString(rs.getString("Fax")));
+                }
+                if (rs.getString("CellPhone") != null){
+                    if (!rs.getString("CellPhone").equals("null") && item.getPhoneTwo() == null){
+                        item.setPhoneTwo(rs.getString("CellPhone").equals("null") ? null : StringUtilities.convertPhoneNumberToString(rs.getString("CellPhone")));
+                    }
+                }
+                item.setEmailAddress((rs.getString("Email") == null) ? null : rs.getString("Email").trim());
+                item.setFax(null);              
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }  
 
     public static void savePartyInformation(casePartyModel item) {
         Connection conn = null;
