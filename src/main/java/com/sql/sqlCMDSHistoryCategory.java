@@ -28,14 +28,14 @@ public class sqlCMDSHistoryCategory {
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT * FROM HistoryType";
+            String sql = "SELECT * FROM Categories";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
                 CMDSHistoryCategoryModel item = new CMDSHistoryCategoryModel();
-                item.setId(rs.getInt("HistoryTypeid"));
+                item.setId(rs.getInt("CategoriesID"));
                 item.setActive(rs.getInt("Active") == 1);
-                item.setEntryType(rs.getString("Type").trim().equals("") ? null : rs.getString("Type").trim());
+                item.setEntryType(rs.getString("EntryType").trim().equals("") ? null : rs.getString("EntryType").trim());
                 item.setDescription(rs.getString("Description").trim().equals("") ? null : rs.getString("Description").trim());               
                 list.add(item);
             }
@@ -54,10 +54,10 @@ public class sqlCMDSHistoryCategory {
         PreparedStatement ps = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO CMDSHistoryDescription ("
+            String sql = "Insert INTO CMDSHistoryCategory ("
                     + "active, "    //01
-                    + "EntryType, "//02
-                    + "description "//03
+                    + "entryType, "//02
+                    + "Description "//03
                     + ") VALUES (";
                     for(int i=0; i<2; i++){
                         sql += "?, ";   //01-02
