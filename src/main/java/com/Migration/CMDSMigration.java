@@ -20,9 +20,11 @@ import com.model.oldCMDSHistoryModel;
 import com.model.oldCMDShearingModel;
 import com.model.DirectorsModel;
 import com.model.ReClassCodeModel;
+import com.model.appealCourtModel;
 import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
+import com.sql.sqlAppealCourt;
 import com.sql.sqlCMDSCase;
 import com.sql.sqlCMDSCaseParty;
 import com.sql.sqlCMDSCaseSearch;
@@ -77,11 +79,19 @@ public class CMDSMigration {
         List<casePartyModel> representativeList = sqlContactList.getRepresentativeList();
         List<CMDSHistoryCategoryModel> historyCategoryList = sqlCMDSHistoryCategory.getOldCMDSHistoryCategory();
         List<CMDSHistoryDescriptionModel> historyDescriptionList = sqlCMDSHistoryDescription.getOldCMDSHistoryDescription();
+        List<appealCourtModel> appealCourtList = sqlAppealCourt.getOldCMDSHistoryDescription();
+        
         
         totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size() 
                 + oldCMDSHearingList.size() + oldCMDSHistoryList.size() + cmdsResultList.size()
                 + cmdsStatusTypeList.size() + directorList.size() + reclassCodeList.size()
-                + representativeList.size() + historyCategoryList.size() + historyDescriptionList.size();
+                + representativeList.size() + historyCategoryList.size() + historyDescriptionList.size()
+                + appealCourtList.size();
+        
+        for (appealCourtModel item : appealCourtList) {
+            sqlAppealCourt.addCMDSHistoryDescription(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCourtName());
+        }
         
         for (CMDSHistoryCategoryModel item : historyCategoryList) {
             sqlCMDSHistoryCategory.addCMDSHistoryCategory(item);
