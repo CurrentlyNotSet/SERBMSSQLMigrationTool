@@ -23,7 +23,10 @@ public class smdsDocumentsModel {
     private String historyDescription;
     private String CHDCHG;
     private String questionsFileName;
-    private String hsitoryQuestionsDescription;
+    private String emailSubject;
+    private String parameters;
+    private String emailBody;
+    private double sortOrder;
 
     public int getId() {
         return id;
@@ -121,13 +124,36 @@ public class smdsDocumentsModel {
         this.questionsFileName = questionsFileName;
     }
 
-    public String getHsitoryQuestionsDescription() {
-        return hsitoryQuestionsDescription;
+    public String getEmailSubject() {
+        return emailSubject;
     }
 
-    public void setHsitoryQuestionsDescription(String hsitoryQuestionsDescription) {
-        this.hsitoryQuestionsDescription = hsitoryQuestionsDescription;
+    public void setEmailSubject(String emailSubject) {
+        this.emailSubject = emailSubject;
     }
-    
+
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
+
+    public String getEmailBody() {
+        return emailBody;
+    }
+
+    public void setEmailBody(String emailBody) {
+        this.emailBody = emailBody;
+    }
+
+    public double getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(double sortOrder) {
+        this.sortOrder = sortOrder;
+    }
     
 }

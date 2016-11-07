@@ -97,7 +97,25 @@ public class DocumentMigration {
         doc.setHistoryDescription(null);
         doc.setCHDCHG(null);
         doc.setQuestionsFileName(null);
-        doc.setHsitoryQuestionsDescription(null);        
+        doc.setEmailSubject(item.getDocumentDescription());
+        doc.setParameters(null);
+        doc.setSortOrder(0);
+        
+        switch (item.getSection()) {
+            case "MED":
+                doc.setEmailBody(Global.getEmailBodyMED());
+                break;
+            case "REP":
+                doc.setEmailBody(Global.getEmailBodyREP());
+                break;
+            case "ULP":
+                doc.setEmailBody(Global.getEmailBodyULP());
+                break;
+            default:
+                doc.setEmailBody(null);
+                break;
+        }        
+        
         if (item.getSection().trim().equalsIgnoreCase("ULP") && item.getType().trim().equalsIgnoreCase("letter")) {
             if (item.getDocumentFileName().contains("IL") || item.getDocumentFileName().contains("ILP")) {
                 doc.setDueDate(21);
@@ -149,7 +167,6 @@ public class DocumentMigration {
         item.setHistoryDescription(list.get(6).toString().trim().equals("NULL") ? null : list.get(6).toString().trim());
         item.setCHDCHG(list.get(7).toString().trim().equals("NULL") ? null : list.get(7).toString().trim());
         item.setQuestionsFileName(list.get(8).toString().trim().equals("NULL") ? null : list.get(8).toString().trim());
-        item.setHsitoryQuestionsDescription(list.get(9).toString().trim().equals("NULL") ? null : list.get(9).toString().trim());
         if (item.getSection() != null) {
             if (item.getSection().trim().equalsIgnoreCase("ULP") && item.getType().trim().equalsIgnoreCase("letter")) {
                 if (item.getFileName().contains("IL") || item.getFileName().contains("ILP")) {
@@ -162,6 +179,21 @@ public class DocumentMigration {
         }
         if(item.getType().equals("Direct")) {
             item.setType("Directive");
+        }
+        
+        switch (item.getSection()) {
+            case "MED":
+                item.setEmailBody(Global.getEmailBodyMED());
+                break;
+            case "REP":
+                item.setEmailBody(Global.getEmailBodyREP());
+                break;
+            case "ULP":
+                item.setEmailBody(Global.getEmailBodyULP());
+                break;
+            default:
+                item.setEmailBody(null);
+                break;
         }
         
         sqlDocument.addSMDSDocument(item);

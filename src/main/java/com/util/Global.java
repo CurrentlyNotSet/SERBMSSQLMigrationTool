@@ -28,6 +28,30 @@ public class Global {
             "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     );
         
+    /**
+     * Email Bodies
+     */
+    
+    private static final String emailBodyMED = "Dear Representative:" + System.lineSeparator() + System.lineSeparator()+ System.lineSeparator()
+            + "Attached is a letter regarding information either for Initial Letter, "
+            + "Mediator Appointment, Fact Finder Panel, Fact Finder Appointment, "
+            + "Conciliation Panel, Conciliation Appointment, Directive or any other correspondence." + System.lineSeparator() + System.lineSeparator()
+            + "If you have any questions, please contact me by email or by telephone."  + System.lineSeparator() + System.lineSeparator() 
+            + "Thank you." + System.lineSeparator() + System.lineSeparator();
+    
+    private static final String emailBodyREP = "Please see the attached documents. "
+            + "Please let me know if you have any questions or are unable to open any of the documents."  + System.lineSeparator() + System.lineSeparator() 
+            + "Thank you." + System.lineSeparator() + System.lineSeparator();
+    
+    private static final String emailBodyULP = "Attached please find a letter, "
+            + "mediation request and information request for the above referenced charge.  "
+            + "Please let me know if you have any questions or are unable to open any of the documents."  + System.lineSeparator() + System.lineSeparator() 
+            + "Thank you." + System.lineSeparator() + System.lineSeparator();
+    
+    /**
+     * Name Section for Parties
+     */
+    
     private static final List<String> namePrefixList = Arrays.asList(
             "Ms.", "Miss.", "Mrs.", "Messr.", "Messrs.", "Mses.", "Mr.", "Rev.",
             "Fr.", "Dr.", "Atty.", "Prof.", "Hon.", "The Honorable", "Pres.", 
@@ -152,4 +176,16 @@ public class Global {
         return debug;
     }
 
+    public static String getEmailBodyMED() {
+        return emailBodyMED;
+    }
+
+    public static String getEmailBodyREP() {
+        return emailBodyREP;
+    }
+
+    public static String getEmailBodyULP() {
+        return emailBodyULP;
+    }
+    
 }

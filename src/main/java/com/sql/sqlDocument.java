@@ -70,17 +70,20 @@ public class sqlDocument {
                 smdsDocumentsModel item = new smdsDocumentsModel();
                 item.setId(rs.getInt("id"));
                 item.setActive(rs.getBoolean("Active"));
-                item.setFileName(rs.getString("Type") == null ? null : rs.getString("Type").trim());
-                item.setFileName(rs.getString("Section") == null ? null : rs.getString("Section").trim());
-                item.setFileName(rs.getString("Description") == null ? null : rs.getString("Description").trim());
+                item.setType(rs.getString("Type") == null ? null : rs.getString("Type").trim());
+                item.setSection(rs.getString("Section") == null ? null : rs.getString("Section").trim());
+                item.setDescription(rs.getString("Description") == null ? null : rs.getString("Description").trim());
                 item.setFileName(rs.getString("FileName") == null ? null : rs.getString("FileName").trim());
-                item.setFileName(rs.getString("dueDate") == null ? null : rs.getString("dueDate").trim());
-                item.setFileName(rs.getString("group") == null ? null : rs.getString("group").trim());
-                item.setFileName(rs.getString("historyFileName") == null ? null : rs.getString("historyFileName").trim());
-                item.setFileName(rs.getString("historyDescription") == null ? null : rs.getString("historyDescription").trim());
-                item.setFileName(rs.getString("CHDCHG") == null ? null : rs.getString("CHDCHG").trim());
-                item.setFileName(rs.getString("questionsFileName") == null ? null : rs.getString("questionsFileName").trim());
-                item.setFileName(rs.getString("historyQuestionsDescription") == null ? null : rs.getString("historyQuestionsDescription").trim());
+                item.setDueDate(rs.getInt("dueDate"));
+                item.setGroup(rs.getString("group") == null ? null : rs.getString("group").trim());
+                item.setHistoryFileName(rs.getString("historyFileName") == null ? null : rs.getString("historyFileName").trim());
+                item.setHistoryDescription(rs.getString("historyDescription") == null ? null : rs.getString("historyDescription").trim());
+                item.setCHDCHG(rs.getString("CHDCHG") == null ? null : rs.getString("CHDCHG").trim());
+                item.setQuestionsFileName(rs.getString("questionsFileName") == null ? null : rs.getString("questionsFileName").trim());
+                item.setEmailSubject(rs.getString("emailSubject") == null ? null : rs.getString("emailSubject").trim());
+                item.setParameters(rs.getString("parameters") == null ? null : rs.getString("parameters").trim());
+                item.setEmailBody(rs.getString("emailBody") == null ? null : rs.getString("emailBody").trim());
+                item.setSortOrder(rs.getDouble("sortOrder"));
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -110,12 +113,15 @@ public class sqlDocument {
                     + "historyDescription, "//09
                     + "CHDCHG, " //10
                     + "questionsFileName, " //11
-                    + "historyQuestionsDescription " //12
+                    + "emailSubject, " //12
+                    + "parameters, " //13
+                    + "emailBody, " //14
+                    + "sortOrder " //15
                     + ") VALUES (";
-            for (int i = 0; i < 11; i++) {
-                sql += "?, ";   //01-11
+            for (int i = 0; i < 14; i++) {
+                sql += "?, ";   //01-14
             }
-            sql += "?)";   //12
+            sql += "?)";   //15
             ps = conn.prepareStatement(sql);
             ps.setString(1, item.getSection());
             ps.setString(2, item.getType());
@@ -132,7 +138,10 @@ public class sqlDocument {
             ps.setString(9, item.getHistoryDescription());
             ps.setString(10, item.getCHDCHG());
             ps.setString(11, item.getQuestionsFileName());
-            ps.setString(12, item.getHsitoryQuestionsDescription());
+            ps.setString(12, item.getEmailSubject());
+            ps.setString(13, item.getParameters());
+            ps.setString(14, item.getEmailBody());
+            ps.setDouble(15, item.getSortOrder());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
