@@ -34,6 +34,7 @@ public class userModel {
     private boolean mediator;
     private boolean REPDocketing;
     private boolean ULPDocketing;
+    private String jobTitle;
 
     public int getId() {
         return id;
@@ -202,7 +203,13 @@ public class userModel {
     public void setULPDocketing(boolean ULPDocketing) {
         this.ULPDocketing = ULPDocketing;
     }
-    
-    
-    
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+        
 }

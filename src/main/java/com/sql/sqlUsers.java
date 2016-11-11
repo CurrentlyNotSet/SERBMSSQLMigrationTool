@@ -56,6 +56,7 @@ public class sqlUsers {
                 item.setMediator(true);
                 item.setREPDocketing(true);
                 item.setULPDocketing(true);
+                item.setJobTitle(null);
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -102,6 +103,7 @@ public class sqlUsers {
                 item.setMediator(true);
                 item.setREPDocketing(true);
                 item.setULPDocketing(true);
+                item.setJobTitle(null);
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -170,10 +172,11 @@ public class sqlUsers {
                     + "ULPCaseWorker, "     //16
                     + "ULPDocketing, "      //17
                     + "REPDocketing, "      //18
-                    + "initials "           //19
+                    + "initials, "          //19
+                    + "jobTitle "           //20
                     + ") VALUES (";
-                    for(int i=0; i<18; i++){
-                        sql += "?, ";   //01-18
+                    for(int i=0; i<19; i++){
+                        sql += "?, ";   //01-19
                     }
                      sql += "?)";   //20
             ps = conn.prepareStatement(sql);
@@ -196,6 +199,7 @@ public class sqlUsers {
             ps.setBoolean  (17, item.isULPDocketing());
             ps.setBoolean  (18, item.isREPDocketing());
             ps.setString   (19, item.getInitials());
+            ps.setString   (20, item.getJobTitle());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

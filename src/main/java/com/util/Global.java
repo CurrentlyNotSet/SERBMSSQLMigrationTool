@@ -32,7 +32,7 @@ public class Global {
      * Email Bodies
      */
     
-    private static final String emailBodyMED = "Dear Representative:" + System.lineSeparator() + System.lineSeparator()+ System.lineSeparator()
+    private static final String emailBodyMED = "Dear Representative:" + System.lineSeparator() + System.lineSeparator()
             + "Attached is a letter regarding information either for Initial Letter, "
             + "Mediator Appointment, Fact Finder Panel, Fact Finder Appointment, "
             + "Conciliation Panel, Conciliation Appointment, Directive or any other correspondence." + System.lineSeparator() + System.lineSeparator()
