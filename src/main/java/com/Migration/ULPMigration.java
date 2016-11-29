@@ -343,6 +343,7 @@ public class ULPMigration {
             search.setCaseStatus(!"".equals(item.getStatus().trim()) ? item.getStatus().trim() : null);
             search.setFileDate(!"".equals(item.getFileDate().trim()) ? StringUtilities.convertStringSQLDate(item.getFileDate()) : null); 
             search.setEmployer(sqlEmployers.getEmployerName(item.getEmployerNum().trim()));
+            search.setEmployerID(item.getEmployerNum().trim());
 
             sqlEmployerCaseSearchData.addEmployer(search);
         }

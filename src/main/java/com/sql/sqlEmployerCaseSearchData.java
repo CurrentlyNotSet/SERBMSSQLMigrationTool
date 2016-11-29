@@ -30,7 +30,8 @@ public class sqlEmployerCaseSearchData {
                     + "caseNumber, " //04
                     + "caseStatus, " //05
                     + "fileDate, "   //06
-                    + "employer "    //07
+                    + "employer, "   //07
+                    + "employerID "  //07
                     + ") VALUES ("
                     + "?,"  //01
                     + "?,"  //02
@@ -38,7 +39,8 @@ public class sqlEmployerCaseSearchData {
                     + "?,"  //04
                     + "?,"  //05
                     + "?,"  //06
-                    + "?)"; //07
+                    + "?,"  //07
+                    + "?)"; //08
             ps = conn.prepareStatement(sql);
             ps.setString(1, item.getCaseYear());             
             ps.setString(2, item.getCaseType());       
@@ -47,6 +49,7 @@ public class sqlEmployerCaseSearchData {
             ps.setString(5, item.getCaseStatus());          
             ps.setDate  (6, item.getFileDate());      
             ps.setString(7, item.getEmployer());
+            ps.setString(8, item.getEmployerID());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

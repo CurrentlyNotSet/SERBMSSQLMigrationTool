@@ -21,6 +21,7 @@ public class employerCaseSearchModel {
     private String caseStatus;
     private Date fileDate;
     private String employer;
+    private String employerID;
 
     public int getId() {
         return id;
@@ -85,6 +86,13 @@ public class employerCaseSearchModel {
     public void setEmployer(String employer) {
         this.employer = employer;
     }
-    
+
+    public String getEmployerID() {
+        return employerID;
+    }
+
+    public void setEmployerID(String employerID) {
+        this.employerID = employerID;
+    }
     
 }

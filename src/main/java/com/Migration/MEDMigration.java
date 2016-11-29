@@ -583,6 +583,7 @@ public class MEDMigration {
             search.setCaseStatus(!"".equals(item.getStatus().trim()) ? item.getStatus().trim() : null);
             search.setFileDate(!"".equals(item.getCaseFileDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getCaseFileDate())) : null);
             search.setEmployer(sqlEmployers.getEmployerName(item.getEmployerIDNumber().trim()));
+            search.setEmployerID(item.getEmployerIDNumber().trim());
 
             sqlEmployerCaseSearchData.addEmployer(search);
         }

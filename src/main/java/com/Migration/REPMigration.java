@@ -1171,6 +1171,7 @@ public class REPMigration {
             search.setCaseStatus(!"".equals(item.getStatus1().trim()) ? item.getStatus1().trim() : null);
             search.setFileDate(!"".equals(item.getFileDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getFileDate())) : null); 
             search.setEmployer(sqlEmployers.getEmployerName(item.getEmployerIDNum().trim()));
+            search.setEmployerID(item.getEmployerIDNum().trim());
 
             sqlEmployerCaseSearchData.addEmployer(search);
         }
