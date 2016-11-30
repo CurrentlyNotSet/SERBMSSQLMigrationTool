@@ -40,6 +40,7 @@ public class sqlMigrationStatus {
                 item.setMigrateContacts(rs.getTimestamp("MigrateContacts"));
                 item.setMigrateUsers(rs.getTimestamp("MigrateUsers"));
                 item.setMigrateDocuments(rs.getTimestamp("MigrateDocuments"));
+                item.setMigrateHearingsCases(rs.getTimestamp("MigrateHearingsCases"));
             } else {
                 item = null;
             }

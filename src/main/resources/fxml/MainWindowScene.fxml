@@ -215,6 +215,16 @@
                                 </Label>
                                 <Label alignment="CENTER" prefHeight="199.0" prefWidth="160.0" text="Completed On" GridPane.columnIndex="7" GridPane.columnSpan="2" />
                                 <ProgressBar fx:id="progressbar" prefHeight="4.0" prefWidth="750.0" progress="0.0" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="BOTTOM" />
+                        <Button fx:id="MigrateHearingsCaseButton" mnemonicParsing="false" onAction="#migrateHearingsButton" prefHeight="33.0" prefWidth="192.0" text="Hearings Cases" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                           <GridPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <TextField fx:id="MigrateHearingsCaseTextField" alignment="CENTER" disable="true" editable="false" maxHeight="1.7976931348623157E308" promptText="Not Completed" GridPane.columnIndex="7" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                           <GridPane.margin>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </GridPane.margin>
+                        </TextField>
                             </children>
                         </GridPane>
                     </center>

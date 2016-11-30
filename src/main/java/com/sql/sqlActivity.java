@@ -11,6 +11,7 @@ import com.model.oldCSCHistoryModel;
 import com.model.oldMEDHistoryModel;
 import com.model.oldORGHistoryModel;
 import com.model.oldREPHistoryModel;
+import com.model.oldSMDSHistoryModel;
 import com.model.oldULPHistoryModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
@@ -338,4 +339,37 @@ public class sqlActivity {
         }
         return list;
     }
+    
+    public static List<oldSMDSHistoryModel> getSMDSHistory() {
+        List<oldSMDSHistoryModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "SELECT * FROM smdshistory WHERE caseNumber != ''";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                oldSMDSHistoryModel item = new oldSMDSHistoryModel();
+                item.setSMDSHistoryID(rs.getInt("SMDSHistoryID"));
+                item.setActive(rs.getInt("Active"));
+                item.setUserName(rs.getString("UserName"));
+                item.setDate(rs.getString("Date"));
+                item.setTime(rs.getString("Time"));
+                item.setAction(rs.getString("Action"));
+                item.setCaseNumber(rs.getString("CaseNumber"));
+                item.setFileName(rs.getString("FileName"));
+                list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
+    
 }

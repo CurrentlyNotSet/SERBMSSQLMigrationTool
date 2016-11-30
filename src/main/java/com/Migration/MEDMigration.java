@@ -65,7 +65,7 @@ public class MEDMigration {
         List<mediatorsModel> oldMediatorsList = sqlMediator.getOldMediator();
         List<jurisdictionModel> oldjurisdictionList = sqlJurisdiction.getOldJurisdiction();
 
-        totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size() + oldMediatorsList.size();
+        totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size() + oldMediatorsList.size() + oldjurisdictionList.size();
 
         for (jurisdictionModel item : oldjurisdictionList) {
             sqlJurisdiction.addJurisdiction(item);

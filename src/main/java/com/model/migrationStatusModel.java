@@ -23,6 +23,7 @@ public class migrationStatusModel {
     private Timestamp MigrateORGCase;
     private Timestamp MigrateUsers;
     private Timestamp MigrateDocuments;
+    private Timestamp MigrateHearingsCases;
 
     public int getId() {
         return id;
@@ -102,6 +103,14 @@ public class migrationStatusModel {
 
     public void setMigrateDocuments(Timestamp MigrateDocuments) {
         this.MigrateDocuments = MigrateDocuments;
+    }
+
+    public Timestamp getMigrateHearingsCases() {
+        return MigrateHearingsCases;
+    }
+
+    public void setMigrateHearingsCases(Timestamp MigrateHearingsCases) {
+        this.MigrateHearingsCases = MigrateHearingsCases;
     }
     
 }
