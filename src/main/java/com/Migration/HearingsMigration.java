@@ -6,13 +6,16 @@
 package com.Migration;
 
 import com.model.HearingsCaseModel;
+import com.model.HearingsMediationModel;
 import com.model.activityModel;
 import com.model.caseNumberModel;
+import com.model.oldHearingsMediationModel;
 import com.model.oldSMDSCaseTrackingModel;
 import com.model.oldSMDSHistoryModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlHearingsCase;
+import com.sql.sqlHearingsMediation;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
 import com.util.SceneUpdater;
@@ -42,18 +45,24 @@ public class HearingsMigration {
         int currentRecord = 0;
         
         List<oldSMDSCaseTrackingModel> oldHearingCaseList = sqlHearingsCase.getCases();
-        List<oldSMDSHistoryModel> oldHearingsHistory = sqlActivity.getSMDSHistory();
+        List<oldSMDSHistoryModel> oldHearingsHistoryList = sqlActivity.getSMDSHistory();
+        List<oldHearingsMediationModel> oldHearingsMediationList = sqlHearingsMediation.getHearingsMediations();
         
-        totalRecordCount = oldHearingCaseList.size() + oldHearingsHistory.size();
+        totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size() + oldHearingsMediationList.size();
                 
-        for (oldSMDSCaseTrackingModel item : oldHearingCaseList) {
-            migrateCase(item);
+//        for (oldSMDSCaseTrackingModel item : oldHearingCaseList) {
+//            migrateCase(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber());
+//        }
+//        
+//        for (oldSMDSHistoryModel item : oldHearingsHistoryList) {
+//            migrateHistory(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getAction());
+//        }
+//        
+        for (oldHearingsMediationModel item : oldHearingsMediationList) {
+            migrateMediations(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber());
-        }
-        
-        for (oldSMDSHistoryModel item : oldHearingsHistory) {
-            migrateHistory(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getAction());
         }
                 
         long lEndTime = System.currentTimeMillis();
@@ -113,6 +122,32 @@ public class HearingsMigration {
 
             sqlActivity.addActivity(item);
         }
+    }
+    
+    private static void migrateMediations(oldHearingsMediationModel old) {
+        
+        caseNumberModel caseNumber = null;
+        if (old.getCaseNumber().trim().length() == 16) {
+            caseNumber = StringUtilities.parseFullCaseNumber(old.getCaseNumber().trim());
+        }
+        
+        if(caseNumber != null){
+            HearingsMediationModel item = new HearingsMediationModel();
+            
+            item.setActive(old.getActive() == 1);
+            item.setCaseYear(caseNumber.getCaseYear());
+            item.setCaseType(caseNumber.getCaseType());
+            item.setCaseMonth(caseNumber.getCaseMonth());
+            item.setCaseNumber(caseNumber.getCaseNumber());
+            item.setPCPreD(old.getPCPreD().equals("") ? null : old.getPCPreD().trim());
+            item.setMediator(StringUtilities.convertUserInitialToID(old.getMediatorInitials()));
+            item.setDateAssigned(StringUtilities.convertStringSQLDate(old.getDateAssigned()));
+            item.setMediationDate(StringUtilities.convertStringSQLDate(old.getMedDate()));
+            item.setOutcome(old.getOutcome().equals("") ? null : old.getOutcome().trim());
+        }
+        
+        
+        
     }
 
 }

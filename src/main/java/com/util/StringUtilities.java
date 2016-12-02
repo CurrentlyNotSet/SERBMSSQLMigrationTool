@@ -272,6 +272,20 @@ public class StringUtilities {
         return 0;
     }
 
+    public static int convertUserInitialToID(String userEntry) {
+        if (!"".equals(userEntry.trim())) {
+            for (userModel usr : Global.getUserList()) {
+                if (usr.getInitials().length() > 0) {
+                    if (userEntry.toLowerCase().trim().startsWith(usr.getInitials().toLowerCase().trim().substring(0, 1))
+                            && userEntry.toLowerCase().trim().endsWith(usr.getInitials().toLowerCase().trim().substring(usr.getInitials().length() - 1))) {
+                        return usr.getId();
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
     private static boolean monthMatch(String month) {
         if (month != null){
             for (String s : Global.getMonthList()) {
