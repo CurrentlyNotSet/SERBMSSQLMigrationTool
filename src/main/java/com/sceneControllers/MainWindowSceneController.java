@@ -57,6 +57,8 @@ public class MainWindowSceneController implements Initializable {
     @FXML
     private Button MigrateUsersButton;
     @FXML
+    private Button MigratePublicRecordsButton;
+    @FXML
     private Button MigrateDocumentsButton;
     @FXML
     private Button MigrateEmployersButton;
@@ -88,6 +90,8 @@ public class MainWindowSceneController implements Initializable {
     private TextField MigrateSystemDefaultsTextField;
     @FXML
     private TextField MigrateEmployersTextField;
+    @FXML
+    private TextField MigratePublicRecordsTextField;
 
     @FXML
     protected void onRectanglePressed(MouseEvent event) {
@@ -168,6 +172,11 @@ public class MainWindowSceneController implements Initializable {
     private void migrateUsersButton() {
         UserMigration.migrateUserData(control);
     }
+    
+    @FXML
+    private void migratePublicRecordsButton() {
+        PublicRecordsMigration.migratePublicRecordsData(control);
+    }
 
     @FXML
     private void migrateDocumentsButton() {
@@ -234,7 +243,10 @@ public class MainWindowSceneController implements Initializable {
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
         MigrateHearingsCaseTextField.setText(((item.getMigrateHearingsCases()== null)
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateHearingsCases())));
-
+        MigratePublicRecordsTextField.setText(((item.getMigrateHearingsCases()== null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigratePublicRecords())));
+        
+        
         MigrateCMDSCaseButton.setDisable(item.getMigrateCMDSCases() != null);
         MigrateContactsButton.setDisable(item.getMigrateContacts() != null);
         MigrateCSCCaseButton.setDisable(item.getMigrateCSCCases() != null);
@@ -247,6 +259,7 @@ public class MainWindowSceneController implements Initializable {
         MigrateEmployersButton.setDisable(item.getMigrateDocuments() != null);
         MigrateSystemDefaultsButton.setDisable(item.getMigrateDocuments() != null);
         MigrateHearingsCaseButton.setDisable(item.getMigrateHearingsCases() != null);
+        MigratePublicRecordsButton.setDisable(item.getMigrateHearingsCases() != null);
     }
 
     private void disableAllButtons() {
@@ -262,6 +275,7 @@ public class MainWindowSceneController implements Initializable {
         MigrateEmployersButton.setDisable(true);
         MigrateSystemDefaultsButton.setDisable(true);
         MigrateHearingsCaseButton.setDisable(true);
+        MigratePublicRecordsButton.setDisable(true);
     }
 
 }
