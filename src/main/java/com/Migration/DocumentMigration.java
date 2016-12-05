@@ -5,9 +5,11 @@
  */
 package com.Migration;
 
+import com.model.CMDSDocumentModel;
 import com.model.oldDocumentModel;
 import com.model.smdsDocumentsModel;
 import com.sceneControllers.MainWindowSceneController;
+import com.sql.sqlCMDSDocuments;
 import com.sql.sqlDocument;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
@@ -44,8 +46,11 @@ public class DocumentMigration {
         int totalRecordCount = 0;
         int currentRecord = 0;
         ArrayList dataHolder = read("Template locations.xlsx");
+        
         List<oldDocumentModel> oldDocumentList = sqlDocument.getOldDocuments();
-        totalRecordCount = oldDocumentList.size() + dataHolder.size();
+        List<CMDSDocumentModel> oldCMDSDocumentList = sqlCMDSDocuments.getOldCMDSDocuments();
+        
+        totalRecordCount = oldDocumentList.size() + dataHolder.size() + oldCMDSDocumentList.size();
 
         for (Iterator iterator = dataHolder.iterator(); iterator.hasNext();) {
             List list = (List) iterator.next();
@@ -75,6 +80,11 @@ public class DocumentMigration {
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getSection() + ": " + item.getDocumentFileName());
         }
 
+        for (CMDSDocumentModel item : oldCMDSDocumentList) {
+            sqlCMDSDocuments.addCMDSDocuments(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, "CMDS: " + item.getLetterName());
+        }
+        
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Documents: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
