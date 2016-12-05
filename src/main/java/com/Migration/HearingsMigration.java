@@ -50,19 +50,19 @@ public class HearingsMigration {
         
         totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size() + oldHearingsMediationList.size();
                 
-//        for (oldSMDSCaseTrackingModel item : oldHearingCaseList) {
-//            migrateCase(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber());
-//        }
-//        
-//        for (oldSMDSHistoryModel item : oldHearingsHistoryList) {
-//            migrateHistory(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getAction());
-//        }
-//        
+        for (oldSMDSCaseTrackingModel item : oldHearingCaseList) {
+            migrateCase(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber());
+        }
+        
+        for (oldSMDSHistoryModel item : oldHearingsHistoryList) {
+            migrateHistory(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getAction());
+        }
+        
         for (oldHearingsMediationModel item : oldHearingsMediationList) {
             migrateMediations(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber());
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
         }
                 
         long lEndTime = System.currentTimeMillis();
@@ -124,8 +124,7 @@ public class HearingsMigration {
         }
     }
     
-    private static void migrateMediations(oldHearingsMediationModel old) {
-        
+    private static void migrateMediations(oldHearingsMediationModel old) {  
         caseNumberModel caseNumber = null;
         if (old.getCaseNumber().trim().length() == 16) {
             caseNumber = StringUtilities.parseFullCaseNumber(old.getCaseNumber().trim());
@@ -139,15 +138,14 @@ public class HearingsMigration {
             item.setCaseType(caseNumber.getCaseType());
             item.setCaseMonth(caseNumber.getCaseMonth());
             item.setCaseNumber(caseNumber.getCaseNumber());
-            item.setPCPreD(old.getPCPreD().equals("") ? null : old.getPCPreD().trim());
+            item.setPCPreD(old.getPCPreD().trim().equals("") ? null : old.getPCPreD().trim());
             item.setMediator(StringUtilities.convertUserInitialToID(old.getMediatorInitials()));
             item.setDateAssigned(StringUtilities.convertStringSQLDate(old.getDateAssigned()));
             item.setMediationDate(StringUtilities.convertStringSQLDate(old.getMedDate()));
             item.setOutcome(old.getOutcome().equals("") ? null : old.getOutcome().trim());
+            
+            sqlHearingsMediation.importOldHearingsMediation(item);
         }
-        
-        
-        
     }
 
 }

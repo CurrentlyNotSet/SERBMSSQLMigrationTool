@@ -82,7 +82,11 @@ public class sqlHearingsMediation {
             ps.setString ( 4, item.getCaseMonth());
             ps.setString ( 5, item.getCaseNumber());
             ps.setString ( 6, item.getPCPreD());
-            ps.setInt    ( 7, item.getMediator());
+            if (item.getMediator() != 0){
+                ps.setInt  ( 7, item.getMediator());
+            } else {
+                ps.setNull ( 7, java.sql.Types.INTEGER);
+            }
             ps.setDate   ( 8, item.getDateAssigned());
             ps.setDate   ( 9, item.getMediationDate());
             ps.setString (10, item.getOutcome());
