@@ -60,6 +60,8 @@ public class CMDSDocumentModel {
     private boolean RequestingPartyC;
     private boolean DateRequested;
     private boolean PurposeOfExtension;
+    private String emailSubject;
+    private String emailBody;
 
     public int getID() {
         return ID;
@@ -451,6 +453,22 @@ public class CMDSDocumentModel {
 
     public void setPurposeOfExtension(boolean PurposeOfExtension) {
         this.PurposeOfExtension = PurposeOfExtension;
+    }
+
+    public String getEmailSubject() {
+        return emailSubject;
+    }
+
+    public void setEmailSubject(String emailSubject) {
+        this.emailSubject = emailSubject;
+    }
+
+    public String getEmailBody() {
+        return emailBody;
+    }
+
+    public void setEmailBody(String emailBody) {
+        this.emailBody = emailBody;
     }
     
 }

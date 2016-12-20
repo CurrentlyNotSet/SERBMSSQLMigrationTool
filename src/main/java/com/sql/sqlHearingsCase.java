@@ -96,12 +96,31 @@ public class sqlHearingsCase {
                     + "caseNumber, "        //04
                     + "openClose, "         //05
                     + "expedited, "         //06
-                    + "boardActionPCDate "  //07
+                    + "boardActionPCDate, " //07
+                    + "boardActionPreDDate, "        //08
+                    + "directiveIssueDate, "         //09
+                    + "complaintDueDate, "           //10
+                    + "draftComplaintToHearingDate, "//11
+                    + "preHearingDate, "        //12
+                    + "proposedRecDueDate, "    //13
+                    + "exceptionFilingDate, "   //14
+                    + "boardActionDate, "       //15
+                    + "otherAction, "           //16
+                    + "aljID, "                 //17
+                    + "complaintIssuedDate, "   //18
+                    + "hearingDate, "           //19
+                    + "proposedRecIssuedDate, " //20
+                    + "responseFilingDate, "    //21
+                    + "issuanceOfOptionOrDirectiveDate, " //22
+                    + "finalResult, "           //23
+                    + "opinion, "               //24
+                    + "companionCases, "        //25
+                    + "caseStatusNotes "        //26
                     + ") VALUES (";
-                    for(int i=0; i<6; i++){
-                        sql += "?, ";   //01-06
+                    for(int i=0; i<25; i++){
+                        sql += "?, ";   //01-25
                     }
-                     sql += "?)";   //07
+                     sql += "?)";   //26
             ps = conn.prepareStatement(sql);
             ps.setString ( 1, item.getCaseYear());
             ps.setString ( 2, item.getCaseType());
@@ -109,7 +128,30 @@ public class sqlHearingsCase {
             ps.setString ( 4, item.getCaseNumber());
             ps.setString ( 5, item.getOpenClose());
             ps.setBoolean( 6, item.isExpedited());
-            ps.setDate   ( 7, item.getBoardActionPCDate());       
+            ps.setDate   ( 7, item.getBoardActionPCDate());
+            ps.setDate   ( 8, item.getBoardActionPreDDate());
+            ps.setDate   ( 9, item.getDirectiveIssueDate());
+            ps.setDate   (10, item.getComplaintDueDate());
+            ps.setDate   (11, item.getDraftComplaintToHearingDate());
+            ps.setDate   (12, item.getPreHearingDate());
+            ps.setDate   (13, item.getProposedRecDueDate());
+            ps.setDate   (14, item.getExceptionFilingDate());
+            ps.setDate   (15, item.getBoardActionDate());
+            ps.setString (16, item.getOtherAction());
+            if (item.getAljID() != 0){
+                ps.setInt  (17, item.getAljID());
+            } else {
+                ps.setNull (17, java.sql.Types.INTEGER);
+            }
+            ps.setDate   (18, item.getComplaintIssuedDate());
+            ps.setDate   (19, item.getHearingDate());
+            ps.setDate   (20, item.getProposedRecIssuedDate());
+            ps.setDate   (21, item.getResponseFilingDate());
+            ps.setDate   (22, item.getIssuanceOfOptionOrDirectiveDate());
+            ps.setString (23, item.getFinalResult());
+            ps.setDate   (24, item.getOpinion());
+            ps.setString (25, item.getCompanionCases());
+            ps.setString (26, item.getCaseStatusNotes());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

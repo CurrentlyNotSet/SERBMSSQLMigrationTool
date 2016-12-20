@@ -82,6 +82,8 @@ public class sqlCMDSDocuments {
                 item.setRequestingPartyC(rs.getString("RequestingPartyC").equalsIgnoreCase("Y"));
                 item.setDateRequested(rs.getString("DateRequested").equalsIgnoreCase("Y"));
                 item.setPurposeOfExtension(rs.getString("PurposeOfExtension").equalsIgnoreCase("Y"));
+                item.setEmailSubject(null);
+                item.setEmailBody(null);
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -147,12 +149,14 @@ public class sqlCMDSDocuments {
                     + "AppealTypeLS, "          //45
                     + "RequestingPartyC, "      //46
                     + "DateRequested, "         //47
-                    + "PurposeOfExtension "     //48
+                    + "PurposeOfExtension, "    //48
+                    + "EmailSubject, "          //49
+                    + "EmailBody "              //50
                     + ") VALUES (";
-                    for(int i=0; i<47; i++){
-                        sql += "?, ";   //01-47
+                    for(int i=0; i<49; i++){
+                        sql += "?, ";   //01-49
                     }
-                     sql += "?)";   //48
+                     sql += "?)";   //50
             ps = conn.prepareStatement(sql);
             ps.setBoolean( 1, item.isActive());
             ps.setString ( 2, item.getMainCategory());
@@ -202,6 +206,8 @@ public class sqlCMDSDocuments {
             ps.setBoolean(46, item.isRequestingPartyC());
             ps.setBoolean(47, item.isDateRequested());
             ps.setBoolean(48, item.isPurposeOfExtension());
+            ps.setString (49, item.getEmailSubject());
+            ps.setString (50, item.getEmailBody());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

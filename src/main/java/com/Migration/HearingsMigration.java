@@ -12,6 +12,7 @@ import com.model.caseNumberModel;
 import com.model.oldHearingsMediationModel;
 import com.model.oldSMDSCaseTrackingModel;
 import com.model.oldSMDSHistoryModel;
+import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlHearingsCase;
@@ -83,6 +84,48 @@ public class HearingsMigration {
         if (old.getCaseNumber().trim().length() == 16) {
             caseNumber = StringUtilities.parseFullCaseNumber(old.getCaseNumber().trim());
             
+            String companionCase = "";
+            int aljID = 0;
+            
+            if (!old.getCompanionCaseNumber1().equals("")){
+                companionCase = old.getCompanionCaseNumber1();
+            }
+            
+            if (!old.getCompanionCaseNumber2().equals("")){
+                if (!companionCase.trim().equals("")){
+                    companionCase += ", ";
+                }
+                companionCase += old.getCompanionCaseNumber2();
+            }
+            
+            if (!old.getCompanionCaseNumber3().equals("")){
+                if (!companionCase.trim().equals("")){
+                    companionCase += ", ";
+                }
+                companionCase += old.getCompanionCaseNumber3();
+            }
+            
+            if (!old.getCompanionCaseNumber4().equals("")){
+                if (!companionCase.trim().equals("")){
+                    companionCase += ", ";
+                }
+                companionCase += old.getCompanionCaseNumber4();
+            }
+            
+            if (!old.getCompanionCaseNumber5().equals("")){
+                if (!companionCase.trim().equals("")){
+                    companionCase += ", ";
+                }
+                companionCase += old.getCompanionCaseNumber5();
+            }
+
+            for (userModel user : Global.getUserList()) {
+                if (user.getLastName().equalsIgnoreCase(old.getALJInitials()) || user.getInitials().equalsIgnoreCase(old.getALJInitials())) {
+                    aljID = user.getId();
+                    break;
+                }
+            }
+
             HearingsCaseModel item = new HearingsCaseModel();
             item.setCaseYear(caseNumber.getCaseYear());
             item.setCaseType(caseNumber.getCaseType());
@@ -91,10 +134,28 @@ public class HearingsMigration {
             item.setOpenClose(old.getOpenYN().equals("Y") ? "Open" : "Closed");
             item.setExpedited(old.getExpeditedYN().equals("Y"));
             item.setBoardActionPCDate(old.getBoardActionPCDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getBoardActionPCDate())));
-
+            item.setBoardActionPreDDate(old.getBrdActionPreDDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getBrdActionPreDDate())));
+            item.setDirectiveIssueDate(old.getDirectiveIssuedDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getDirectiveIssuedDate())));
+            item.setComplaintDueDate(old.getComplaintDueDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getComplaintDueDate())));
+            item.setDraftComplaintToHearingDate(old.getDraftComplaintToHearingDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getComplaintDueDate())));
+            item.setPreHearingDate(old.getPreHearingDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getPreHearingDate())));
+            item.setProposedRecDueDate(old.getProposedRecDueDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getProposedRecDueDate())));
+            item.setExceptionFilingDate(old.getExceptionsFilingDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getExceptionsFilingDate())));
+            item.setBoardActionDate(old.getBoardActionDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getBoardActionDate())));
+            item.setOtherAction(old.getOtherAction().equals("") ? null : old.getOtherAction().trim());
+            item.setAljID(aljID);
+            item.setComplaintIssuedDate(old.getComplaintIssuedDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getComplaintIssuedDate())));
+            item.setHearingDate(old.getHearingDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getComplaintIssuedDate())));
+            item.setProposedRecIssuedDate(old.getProposedRecIssuedDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getComplaintIssuedDate())));
+            item.setResponseFilingDate(old.getResponceFilingDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getResponceFilingDate())));
+            item.setIssuanceOfOptionOrDirectiveDate(old.getIssuanceOfOptionOrDirectiveDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getIssuanceOfOptionOrDirectiveDate())));
+            item.setFinalResult(old.getFinalResult().equals("") ? null : old.getOtherAction().trim());
+            item.setOpinion(old.getOpinion().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getOpinion())));
+            item.setCompanionCases(companionCase.trim().equals("") ? null : companionCase.trim());
+            item.setCaseStatusNotes(null);
+            
             sqlHearingsCase.importOldHearingsCase(item);
         }
-        
     }
 
     private static void migrateHistory(oldSMDSHistoryModel old) {
