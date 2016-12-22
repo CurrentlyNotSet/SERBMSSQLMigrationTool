@@ -5,7 +5,7 @@
  */
 package com.sql;
 
-import com.model.appealCourtModel;
+import com.model.HearingOutcomeModel;
 import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,26 +17,26 @@ import org.apache.commons.dbutils.DbUtils;
 
 /**
  *
- * @author Andrew
+ * @author User
  */
-public class sqlAppealCourt {
+public class sqlHearingOutcome {
     
-    public static List<appealCourtModel> getOldCMDSHistoryDescription() {
-        List<appealCourtModel> list = new ArrayList();
+    public static List<HearingOutcomeModel> getOutcomeList() {
+        List<HearingOutcomeModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT * FROM AppealCourts";
+            String sql = "SELECT * FROM HearingOutcome";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                appealCourtModel item = new appealCourtModel();
-                item.setId(rs.getInt("AppealCourtsID"));
+                HearingOutcomeModel item = new HearingOutcomeModel();
+                item.setId(rs.getInt("HearingOutcomeID"));
                 item.setActive(rs.getInt("Active") == 1);
-                item.setCourtName(rs.getString("CourtName").trim().equals("") ? null : rs.getString("CourtName").trim());
-                item.setType(rs.getString("Type").trim().equals("") ? null : rs.getString("Type").trim());               
+                item.setDescription(rs.getString("Description"));
+                item.setType(rs.getString("Type"));               
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -49,15 +49,15 @@ public class sqlAppealCourt {
         return list;
     }
         
-    public static void addAppealCourt(appealCourtModel item) {
+    public static void addOutcome(HearingOutcomeModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO AppealCourt ("
+            String sql = "Insert INTO HearingOutcome ("
                     + "active, "    //01
-                    + "type, "//02
-                    + "courtName "//03
+                    + "type, "    //02
+                    + "description "//03
                     + ") VALUES (";
                     for(int i=0; i<2; i++){
                         sql += "?, ";   //01-02
@@ -66,7 +66,7 @@ public class sqlAppealCourt {
             ps = conn.prepareStatement(sql);
             ps.setBoolean(1, item.isActive());
             ps.setString (2, item.getType());
-            ps.setString (3, item.getCourtName());
+            ps.setString (3, item.getDescription());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

@@ -11,6 +11,7 @@ import com.model.HearingsMediationModel;
 import com.model.activityModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
+import com.model.HearingOutcomeModel;
 import com.model.oldHearingsMediationModel;
 import com.model.oldSMDSCaseTrackingModel;
 import com.model.oldSMDSHistoryModel;
@@ -18,6 +19,7 @@ import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlCaseParty;
+import com.sql.sqlHearingOutcome;
 import com.sql.sqlHearingsCase;
 import com.sql.sqlHearingsCaseSearch;
 import com.sql.sqlHearingsMediation;
@@ -52,8 +54,9 @@ public class HearingsMigration {
         List<oldSMDSCaseTrackingModel> oldHearingCaseList = sqlHearingsCase.getCases();
         List<oldSMDSHistoryModel> oldHearingsHistoryList = sqlActivity.getSMDSHistory();
         List<oldHearingsMediationModel> oldHearingsMediationList = sqlHearingsMediation.getHearingsMediations();
+        List<HearingOutcomeModel> oldHearingOutcomeList = sqlHearingOutcome.getOutcomeList();
         
-        totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size() + oldHearingsMediationList.size();
+        totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size() + oldHearingsMediationList.size() + oldHearingOutcomeList.size();
                 
         for (oldSMDSCaseTrackingModel item : oldHearingCaseList) {
             migrateCase(item);
@@ -68,6 +71,11 @@ public class HearingsMigration {
         for (oldHearingsMediationModel item : oldHearingsMediationList) {
             migrateMediations(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
+        }
+        
+        for (HearingOutcomeModel item : oldHearingOutcomeList) {
+            sqlHearingOutcome.addOutcome(item);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDescription());
         }
                 
         long lEndTime = System.currentTimeMillis();
@@ -124,10 +132,12 @@ public class HearingsMigration {
             companionCase += old.getCompanionCaseNumber5();
         }
 
-        for (userModel user : Global.getUserList()) {
-            if (user.getLastName().equalsIgnoreCase(old.getALJInitials()) || user.getInitials().equalsIgnoreCase(old.getALJInitials())) {
-                aljID = user.getId();
-                break;
+        if (!old.getALJInitials().trim().equals("")) {
+            for (userModel user : Global.getUserList()) {
+                if (user.getLastName().equalsIgnoreCase(old.getALJInitials()) || user.getInitials().equalsIgnoreCase(old.getALJInitials())) {
+                    aljID = user.getId();
+                    break;
+                }
             }
         }
 
@@ -154,7 +164,7 @@ public class HearingsMigration {
         item.setProposedRecIssuedDate(old.getProposedRecIssuedDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getComplaintIssuedDate())));
         item.setResponseFilingDate(old.getResponceFilingDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getResponceFilingDate())));
         item.setIssuanceOfOptionOrDirectiveDate(old.getIssuanceOfOptionOrDirectiveDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getIssuanceOfOptionOrDirectiveDate())));
-        item.setFinalResult(old.getFinalResult().equals("") ? null : old.getOtherAction().trim());
+        item.setFinalResult(old.getFinalResult().equals("") ? null : old.getFinalResult().trim());
         item.setOpinion(old.getOpinion().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getOpinion())));
         item.setCompanionCases(companionCase.trim().equals("") ? null : companionCase.trim());
         item.setCaseStatusNotes(null);
@@ -220,16 +230,18 @@ public class HearingsMigration {
         String partyNames = "";
         String ALJName = "";
         
-        for (userModel user : Global.getUserList()) {
-            if (user.getLastName().equalsIgnoreCase(old.getALJInitials()) || user.getInitials().equalsIgnoreCase(old.getALJInitials())) {
-                ALJName = StringUtilities.buildFullName(
-                        user.getFirstName() == null ? "" : user.getFirstName(), 
-                        user.getMiddleInitial() == null ? "" : user.getMiddleInitial(), 
-                        user.getLastName() == null ? "" : user.getLastName()
-                );
-                break;
+        if (!old.getALJInitials().trim().equals("")) {
+            for (userModel user : Global.getUserList()) {
+                if (user.getLastName().equalsIgnoreCase(old.getALJInitials()) || user.getInitials().equalsIgnoreCase(old.getALJInitials())) {
+                    ALJName = StringUtilities.buildFullName(
+                            user.getFirstName() == null ? "" : user.getFirstName(), 
+                            user.getMiddleInitial() == null ? "" : user.getMiddleInitial(), 
+                            user.getLastName() == null ? "" : user.getLastName()
+                    );
+                    break;
+                }
             }
-        }        
+        }
 
         for (casePartyModel party : partyList) {
             String partyName = StringUtilities.buildFullName(

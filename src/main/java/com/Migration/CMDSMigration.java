@@ -89,17 +89,19 @@ public class CMDSMigration {
                 + appealCourtList.size();
         
         for (appealCourtModel item : appealCourtList) {
-            sqlAppealCourt.addCMDSHistoryDescription(item);
+            sqlAppealCourt.addAppealCourt(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCourtName());
         }
         
         for (CMDSHistoryCategoryModel item : historyCategoryList) {
             sqlCMDSHistoryCategory.addCMDSHistoryCategory(item);
+            sqlCMDSHistoryCategory.addHearingsHistoryCategory(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDescription());
         }
         
         for (CMDSHistoryDescriptionModel item : historyDescriptionList) {
             sqlCMDSHistoryDescription.addCMDSHistoryDescription(item);
+            sqlCMDSHistoryDescription.addHearingsHistoryDescription(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDescription());
         }
                 
