@@ -236,6 +236,6 @@ public class DocumentMigration {
         item.setActive(true);  //column 4
         item.setSortOrder(-1);
         
-        sqlCMDSReport.addSMDSDocument(item);
+        sqlCMDSReport.addCMDSReport(item);
     }
 }

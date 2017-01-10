@@ -18,7 +18,7 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlCMDSReport {
     
-    public static void addSMDSDocument(CMDSReport item) {
+    public static void addCMDSReport(CMDSReport item) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
