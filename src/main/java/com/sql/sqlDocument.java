@@ -128,7 +128,7 @@ public class sqlDocument {
             ps.setString(3, item.getDescription());
             ps.setString(4, item.getFileName());
             ps.setBoolean(5, item.isActive());
-            if (item.getDueDate() != 0) {
+            if (item.getDueDate() > 0) {
                 ps.setInt(6, item.getDueDate());
             } else {
                 ps.setNull(6, java.sql.Types.INTEGER);
@@ -141,7 +141,11 @@ public class sqlDocument {
             ps.setString(12, item.getEmailSubject());
             ps.setString(13, item.getParameters());
             ps.setString(14, item.getEmailBody());
-            ps.setDouble(15, item.getSortOrder());
+            if (item.getSortOrder() > 0) {
+                ps.setDouble(15, item.getSortOrder());
+            } else {
+                ps.setNull(15, java.sql.Types.DOUBLE);
+            }
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

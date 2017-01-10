@@ -6,10 +6,12 @@
 package com.Migration;
 
 import com.model.CMDSDocumentModel;
+import com.model.CMDSReport;
 import com.model.oldDocumentModel;
 import com.model.smdsDocumentsModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlCMDSDocuments;
+import com.sql.sqlCMDSReport;
 import com.sql.sqlDocument;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
@@ -45,40 +47,50 @@ public class DocumentMigration {
         control.setProgressBarIndeterminate("Documents Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
-        ArrayList dataHolder = read("Template locations.xlsx");
+        ArrayList SMDSDocXLS = read("SMDSDocuments.xlsx");
+        ArrayList CMDSReportXLS = read("CMDSReports.xlsx");
         
-        List<oldDocumentModel> oldDocumentList = sqlDocument.getOldDocuments();
+//        List<oldDocumentModel> oldDocumentList = sqlDocument.getOldDocuments();
         List<CMDSDocumentModel> oldCMDSDocumentList = sqlCMDSDocuments.getOldCMDSDocuments();
         
-        totalRecordCount = oldDocumentList.size() + dataHolder.size() + oldCMDSDocumentList.size();
+        totalRecordCount = SMDSDocXLS.size() + CMDSReportXLS.size() + oldCMDSDocumentList.size();
 
-        for (Iterator iterator = dataHolder.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = SMDSDocXLS.iterator(); iterator.hasNext();) {
             List list = (List) iterator.next();
-            if (list.size() == 10 && !list.get(0).toString().trim().equals("Name")) {
-                sanitizeFromExcel(list);
+            if (list.size() == 15) {
+                sanitizeSMDSDocumentsFromExcel(list);
             }
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount,
-                    (list.size() <= 2 ? "" : list.get(2).toString().trim()) + ": " + (list.size() <= 1 ? "" : list.get(1).toString().trim()));
+                    (list.size() <= 2 ? "" : list.get(0).toString().trim()) + ": " + (list.size() <= 1 ? "" : list.get(2).toString().trim()));
         }
 
-        //get file list from newDB
-        List<smdsDocumentsModel> newDocumentList = sqlDocument.getNewDocuments();
-
-        //import missing old documents
-        for (oldDocumentModel item : oldDocumentList) {
-            boolean exists = false;
-            for (smdsDocumentsModel sqldocs : newDocumentList) {
-                if (sqldocs.getFileName() == null ? item.getDocumentFileName() == null
-                        : sqldocs.getFileName().equals(item.getDocumentFileName())) {
-                    exists = true;
-                    break;
-                }
+        for (Iterator iterator = CMDSReportXLS.iterator(); iterator.hasNext();) {
+            List list = (List) iterator.next();
+            if (list.size() == 5) {
+                sanitizeCMDSReportsFromExcel(list);
             }
-            if (!exists) {
-                migrateDocument(item);
-            }
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getSection() + ": " + item.getDocumentFileName());
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount,
+                    (list.size() <= 2 ? "" : list.get(0).toString().trim()) + ": " + (list.size() <= 1 ? "" : list.get(2).toString().trim()));
         }
+        
+//        //get file list from newDB
+//        List<smdsDocumentsModel> newDocumentList = sqlDocument.getNewDocuments();
+//
+//        //import missing old documents
+//        for (oldDocumentModel item : oldDocumentList) {
+//            boolean exists = false;
+//            for (smdsDocumentsModel sqldocs : newDocumentList) {
+//                if (sqldocs.getFileName() == null ? item.getDocumentFileName() == null
+//                        : sqldocs.getFileName().equals(item.getDocumentFileName())) {
+//                    exists = true;
+//                    break;
+//                }
+//            }
+//            if (!exists) {
+//                migrateDocument(item);
+//            }
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getSection() + ": " + item.getDocumentFileName());
+//        }
 
         for (CMDSDocumentModel item : oldCMDSDocumentList) {
             sqlCMDSDocuments.addCMDSDocuments(item);
@@ -164,19 +176,25 @@ public class DocumentMigration {
         return cellVectorHolder;
     }
 
-    private static void sanitizeFromExcel(List list) {
+    private static void sanitizeSMDSDocumentsFromExcel(List list) {
         smdsDocumentsModel item = new smdsDocumentsModel();
-
-        item.setActive(true);
-        item.setSection(list.get(2).toString().trim().equals("NULL") ? null : list.get(2).toString().trim());
-        item.setType(list.get(3).toString().trim().equals("NULL") ? null : list.get(3).toString().trim());
-        item.setDescription(list.get(0).toString().trim().equals("NULL") ? null : list.get(0).toString().trim());
-        item.setFileName(list.get(1).toString().trim().equals("NULL") ? null : list.get(1).toString().trim());
-        item.setGroup(list.get(4).toString().trim().equals("NULL") ? null : list.get(4).toString().trim());
-        item.setHistoryFileName(list.get(5).toString().trim().equals("NULL") ? null : list.get(5).toString().trim());
-        item.setHistoryDescription(list.get(6).toString().trim().equals("NULL") ? null : list.get(6).toString().trim());
-        item.setCHDCHG(list.get(7).toString().trim().equals("NULL") ? null : list.get(7).toString().trim());
-        item.setQuestionsFileName(list.get(8).toString().trim().equals("NULL") ? null : list.get(8).toString().trim());
+        
+        item.setSection(list.get(0).toString().trim().equals("NULL") ? null : list.get(0).toString().trim());
+        item.setType(list.get(1).toString().trim().equals("NULL") ? null : list.get(1).toString().trim());
+        item.setDescription(list.get(2).toString().trim().equals("NULL") ? null : list.get(2).toString().trim());
+        item.setFileName(list.get(3).toString().trim().equals("NULL") ? null : list.get(3).toString().trim());
+        item.setActive(true);  //column 4
+        item.setDueDate(list.get(5).toString().trim().equals("NULL") ? -1 : Integer.valueOf(list.get(5).toString().trim()));
+        item.setGroup(list.get(6).toString().trim().equals("NULL") ? null : list.get(6).toString().trim());
+        item.setHistoryFileName(list.get(7).toString().trim().equals("NULL") ? null : list.get(7).toString().trim());
+        item.setHistoryDescription(list.get(8).toString().trim().equals("NULL") ? null : list.get(8).toString().trim());
+        item.setCHDCHG(list.get(9).toString().trim().equals("NULL") ? null : list.get(9).toString().trim());
+        item.setQuestionsFileName(list.get(10).toString().trim().equals("NULL") ? null : list.get(10).toString().trim());
+        item.setEmailSubject(list.get(11).toString().trim().equals("NULL") ? null : list.get(11).toString().trim());
+        item.setParameters(list.get(12).toString().trim().equals("NULL") ? null : list.get(12).toString().trim());
+        item.setEmailBody(list.get(13).toString().trim().equals("NULL") ? null : list.get(13).toString().trim());
+        item.setSortOrder(list.get(14).toString().trim().equals("NULL") ? -1 : Double.valueOf(list.get(14).toString().trim()));
+        
         if (item.getSection() != null) {
             if (item.getSection().trim().equalsIgnoreCase("ULP") && item.getType().trim().equalsIgnoreCase("letter")) {
                 if (item.getFileName().contains("IL") || item.getFileName().contains("ILP")) {
@@ -208,5 +226,16 @@ public class DocumentMigration {
         
         sqlDocument.addSMDSDocument(item);
     }
-
+    
+    private static void sanitizeCMDSReportsFromExcel(List list) {
+        CMDSReport item = new CMDSReport();
+        item.setSection(list.get(0).toString().trim().equals("NULL") ? null : list.get(0).toString().trim());
+        item.setDescription(list.get(1).toString().trim().equals("NULL") ? null : list.get(1).toString().trim());
+        item.setFileName(list.get(2).toString().trim().equals("NULL") ? null : list.get(2).toString().trim());
+        item.setParameters(list.get(3).toString().trim().equals("NULL") ? null : list.get(3).toString().trim());
+        item.setActive(true);  //column 4
+        item.setSortOrder(-1);
+        
+        sqlCMDSReport.addSMDSDocument(item);
+    }
 }
