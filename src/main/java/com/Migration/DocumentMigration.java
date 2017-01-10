@@ -66,13 +66,14 @@ public class DocumentMigration {
 
         for (Iterator iterator = CMDSReportXLS.iterator(); iterator.hasNext();) {
             List list = (List) iterator.next();
-            if (list.size() == 5) {
+            if (list.size() == 4) {
                 sanitizeCMDSReportsFromExcel(list);
             }
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount,
                     (list.size() <= 2 ? "" : list.get(0).toString().trim()) + ": " + (list.size() <= 1 ? "" : list.get(2).toString().trim()));
         }
         
+//NO LONGER USED... BAD DATA IN OLD DB        
 //        //get file list from newDB
 //        List<smdsDocumentsModel> newDocumentList = sqlDocument.getNewDocuments();
 //
@@ -233,7 +234,7 @@ public class DocumentMigration {
         item.setDescription(list.get(1).toString().trim().equals("NULL") ? null : list.get(1).toString().trim());
         item.setFileName(list.get(2).toString().trim().equals("NULL") ? null : list.get(2).toString().trim());
         item.setParameters(list.get(3).toString().trim().equals("NULL") ? null : list.get(3).toString().trim());
-        item.setActive(true);  //column 4
+        item.setActive(true); 
         item.setSortOrder(-1);
         
         sqlCMDSReport.addCMDSReport(item);
