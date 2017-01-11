@@ -33,12 +33,18 @@ import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
  * @author Andrew
  */
 public class ULPMigration {
+    
+    private static int totalRecordCount = 0;
+    private static int currentRecord = 0;
+    private static MainWindowSceneController control;
     
     public static void migrateULPData(MainWindowSceneController control){
         Thread ulpThread = new Thread() {
@@ -50,11 +56,11 @@ public class ULPMigration {
         ulpThread.start();        
     }
     
-    private static void ulpThread(MainWindowSceneController control){
+    private static void ulpThread(MainWindowSceneController controlPassed){
+        control = controlPassed;
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("ULP Case Migration");
-        int totalRecordCount = 0;
-        int currentRecord = 0;
+        
         List<ULPRecommendationsModel> oldULPRecsList = sqlULPRecommendations.getOLDULPRecommendations();
         List<oldULPDataModel> oldULPDataList = sqlULPData.getCases();
         totalRecordCount = oldULPDataList.size() + oldULPRecsList.size();
@@ -63,11 +69,26 @@ public class ULPMigration {
             sqlULPRecommendations.addULPRecommendation(item);
             currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCode());
         }
+        System.out.println("finished recommendations");
         
-        for (oldULPDataModel item : oldULPDataList){
-            migrateCase(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() < 1 ? 1 : Runtime.getRuntime().availableProcessors());
+   
+        oldULPDataList.stream().forEach(item -> 
+                executor.submit(() -> 
+                        migrateCase(item)));
+        
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
         }
+        System.out.println("\nFinished all threads");
+      
+// OLD LOOP (NON-THREADED)        
+//        for (oldULPDataModel item : oldULPDataList){
+//            migrateCase(item);
+//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
+//        }
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ULP Cases: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -76,7 +97,7 @@ public class ULPMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateULPCases");
         }
     }
-        
+
     private static void migrateCase(oldULPDataModel item){
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
         ULPMigration.migrateChargingParty(item, caseNumber);
@@ -89,6 +110,7 @@ public class ULPMigration {
         migrateCaseHistory(caseNumber);
         migrateCaseSearch(item, caseNumber);
         migrateEmployerCaseSearch(item, caseNumber);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
     }
     
     private static void migrateChargingParty(oldULPDataModel item, caseNumberModel caseNumber) {
@@ -293,29 +315,39 @@ public class ULPMigration {
     }
 
     private static void migrateCaseHistory(caseNumberModel caseNumber) {
-        List<oldULPHistoryModel> oldULPDataList = sqlActivity.getULPHistoryByCase(StringUtilities.generateFullCaseNumber(caseNumber));
-        
-        for (oldULPHistoryModel old : oldULPDataList){                                                
-            activityModel item = new activityModel();
-            item.setCaseYear(caseNumber.getCaseYear());
-            item.setCaseType(caseNumber.getCaseType());
-            item.setCaseMonth(caseNumber.getCaseMonth());
-            item.setCaseNumber(caseNumber.getCaseNumber());
-            item.setUserID(StringUtilities.convertUserToID(old.getUserInitials()));
-            item.setDate(old.getDate());
-            item.setAction(!"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
-            item.setFileName(!"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
-            item.setFrom(!"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
-            item.setTo(!"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
-            item.setType(null);
-            item.setComment(null);
-            item.setRedacted(0);
-            item.setAwaitingTimeStamp(0);
-            
-            sqlActivity.addActivity(item);
+        List<oldULPHistoryModel> ULPCaseHistory = sqlActivity.getULPHistoryByCase(StringUtilities.generateFullCaseNumber(caseNumber));
+
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() < 1 ? 1 : Runtime.getRuntime().availableProcessors());
+        ULPCaseHistory.stream().forEach(item
+                -> executor.submit(()
+                        -> migrateCaseHistory(caseNumber, item)));
+//        
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
         }
     }
-    
+
+    private static void migrateCaseHistory(caseNumberModel caseNumber, oldULPHistoryModel old) {
+        activityModel item = new activityModel();
+        item.setCaseYear(caseNumber.getCaseYear());
+        item.setCaseType(caseNumber.getCaseType());
+        item.setCaseMonth(caseNumber.getCaseMonth());
+        item.setCaseNumber(caseNumber.getCaseNumber());
+        item.setUserID(StringUtilities.convertUserToID(old.getUserInitials()));
+        item.setDate(old.getDate());
+        item.setAction(!"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
+        item.setFileName(!"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
+        item.setFrom(!"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
+        item.setTo(!"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
+        item.setType(null);
+        item.setComment(null);
+        item.setRedacted(0);
+        item.setAwaitingTimeStamp(0);
+
+        sqlActivity.addActivity(item);
+    }
+
     private static void migrateCaseSearch(oldULPDataModel item, caseNumberModel caseNumber) {
         ULPCaseSearchModel search = new ULPCaseSearchModel();
         
