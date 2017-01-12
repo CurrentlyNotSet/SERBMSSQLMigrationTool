@@ -320,6 +320,7 @@ public class ULPMigration {
 
     private static void migrateRelatedCases(oldULPDataModel item, caseNumberModel caseNumber) {
         if (item.getRelatedCases() != null) {
+            List<relatedCaseModel> list = new ArrayList<>();
             relatedCaseModel relatedCase = new relatedCaseModel();
 
             relatedCase.setCaseYear(caseNumber.getCaseYear());
@@ -332,8 +333,12 @@ public class ULPMigration {
             for (String casenumber : caseNumberArray) {
                 if (!"".equals(casenumber.trim())) {
                     relatedCase.setRelatedCaseNumber(casenumber.trim());
-                    sqlRelatedCase.addRelatedCase(relatedCase);
+                    list.add(relatedCase);
                 }
+            }
+            
+            if (list != null ) {
+                sqlRelatedCase.batchAddRelatedCase(list);
             }
         }
     }

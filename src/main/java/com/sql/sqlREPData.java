@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -554,22 +555,22 @@ public class sqlREPData {
                      sql += "?)";   //129
             ps = conn.prepareStatement(sql);
             ps.setInt      ( 1, item.getActive());
-            ps.setString   ( 2, item.getCaseYear());
-            ps.setString   ( 3, item.getCaseType());
-            ps.setString   ( 4, item.getCaseMonth());
-            ps.setString   ( 5, item.getCaseNumber());
-            ps.setString   ( 6, item.getType());
-            ps.setString   ( 7, item.getStatus1());
-            ps.setString   ( 8, item.getStatus2());
+            ps.setString   ( 2, StringUtils.left(item.getCaseYear(), 4));
+            ps.setString   ( 3, StringUtils.left(item.getCaseType(), 3));
+            ps.setString   ( 4, StringUtils.left(item.getCaseMonth(), 2));
+            ps.setString   ( 5, StringUtils.left(item.getCaseNumber(), 4));
+            ps.setString   ( 6, StringUtils.left(item.getType(), 20));
+            ps.setString   ( 7, StringUtils.left(item.getStatus1(), 20));
+            ps.setString   ( 8, StringUtils.left(item.getStatus2(), 50));
             if (item.getCurrentOwnerID() != 0){
                 ps.setInt  ( 9, item.getCurrentOwnerID());
             } else {
                 ps.setNull ( 9, java.sql.Types.INTEGER);
             }
-            ps.setString   (10, item.getCounty());
-            ps.setString   (11, item.getEmployerIDNumber());
-            ps.setString   (12, item.getDeptInState());
-            ps.setString   (13, item.getBargainingUnitNumber());
+            ps.setString   (10, StringUtils.left(item.getCounty(), 20));
+            ps.setString   (11, StringUtils.left(item.getEmployerIDNumber(), 10));
+            ps.setString   (12, StringUtils.left(item.getDeptInState(), 3));
+            ps.setString   (13, StringUtils.left(item.getBargainingUnitNumber(), 10));
             ps.setInt      (14, item.getBoardCertified());
             ps.setInt      (15, item.getDeemedCertified());
             ps.setInt      (16, item.getCertificationRevoked());
@@ -601,7 +602,7 @@ public class sqlREPData {
             }
             ps.setString   (31, item.getNote());
             ps.setDate     (32, item.getAlphaListDate());
-            ps.setString   (33, item.getFileBy());
+            ps.setString   (33, StringUtils.left(item.getFileBy(), 50));
             ps.setString   (34, item.getBargainingUnitIncluded());
             ps.setString   (35, item.getBargainingUnitExcluded());
             ps.setString   (36, item.getOptInIncluded());
@@ -611,14 +612,14 @@ public class sqlREPData {
             ps.setString   (40, item.getNonProfessionalIncluded());
             ps.setString   (41, item.getNonProfessionalExcluded());
             ps.setString   (42, item.getToReflect());
-            ps.setString   (43, item.getTypeFiledBy());
-            ps.setString   (44, item.getTypeFiledVia());
-            ps.setString   (45, item.getPositionStatementFiledBy());
-            ps.setString   (46, item.getEEONameChangeFrom());
-            ps.setString   (47, item.getEEONameChangeTo());
-            ps.setString   (48, item.getERNameChangeFrom());
-            ps.setString   (49, item.getERNameChangeTo());
-            ps.setString   (50, item.getBoardActionType());
+            ps.setString   (43, StringUtils.left(item.getTypeFiledBy(), 500));
+            ps.setString   (44, StringUtils.left(item.getTypeFiledVia(), 50));
+            ps.setString   (45, StringUtils.left(item.getPositionStatementFiledBy(), 255));
+            ps.setString   (46, StringUtils.left(item.getEEONameChangeFrom(), 255));
+            ps.setString   (47, StringUtils.left(item.getEEONameChangeTo(), 255));
+            ps.setString   (48, StringUtils.left(item.getERNameChangeFrom(), 255));
+            ps.setString   (49, StringUtils.left(item.getERNameChangeTo(), 255));
+            ps.setString   (50, StringUtils.left(item.getBoardActionType(), 25));
             ps.setDate     (51, item.getBoardActionDate());
             if (item.getHearingPersonID() != 0){
                 ps.setInt  (52, item.getHearingPersonID());
@@ -632,9 +633,9 @@ public class sqlREPData {
             } else {
                 ps.setNull (55, java.sql.Types.INTEGER);
             }
-            ps.setString   (56, item.getElectionType1());
-            ps.setString   (57, item.getElectionType2());
-            ps.setString   (58, item.getElectionType3());
+            ps.setString   (56, StringUtils.left(item.getElectionType1(), 200));
+            ps.setString   (57, StringUtils.left(item.getElectionType2(), 200));
+            ps.setString   (58, StringUtils.left(item.getElectionType3(), 200));
             ps.setDate     (59, item.getEligibilityDate());
             ps.setString   (60, item.getBallotOne());
             ps.setString   (61, item.getBallotTwo());
@@ -643,7 +644,7 @@ public class sqlREPData {
             ps.setDate     (64, item.getMailKitDate());
             ps.setDate     (65, item.getPollingStartDate());
             ps.setDate     (66, item.getPollingEndDate());
-            ps.setString   (67, item.getBallotsCountDay());
+            ps.setString   (67, StringUtils.left(item.getBallotsCountDay(), 25));
             ps.setDate     (68, item.getBallotsCountDate());
             ps.setTimestamp(69, item.getBallotsCountTime());
             ps.setDate     (70, item.getEligibilityListDate());
@@ -729,7 +730,7 @@ public class sqlREPData {
             } else {
                 ps.setNull (88, java.sql.Types.INTEGER);
             }
-            ps.setString(89, item.getProfessionalOutcome());
+            ps.setString(89, StringUtils.left(item.getProfessionalOutcome(), 200));
             if (item.getProfessionalVoidBallots() != -1){
                 ps.setInt  (90, item.getProfessionalVoidBallots());
             } else {
@@ -795,7 +796,7 @@ public class sqlREPData {
             } else {
                 ps.setNull (102, java.sql.Types.INTEGER);
             }
-            ps.setString(103, item.getNonprofessionalOutcome());
+            ps.setString(103, StringUtils.left(item.getNonprofessionalOutcome(), 200));
             if (item.getNonprofessionalVoidBallots() != -1){
                 ps.setInt  (104, item.getNonprofessionalVoidBallots());
             } else {
@@ -861,7 +862,7 @@ public class sqlREPData {
             } else {
                 ps.setNull (116, java.sql.Types.INTEGER);
             }
-            ps.setString(117, item.getCombinedOutcome());
+            ps.setString(117, StringUtils.left(item.getCombinedOutcome(), 200));
             if (item.getCombinedVoidBallots() != -1){
                 ps.setInt  (118, item.getCombinedVoidBallots());
             } else {

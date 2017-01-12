@@ -927,6 +927,7 @@ public class REPMigration {
 
     private static void migrateRelatedCases(caseNumberModel caseNumber, String relatedCaseNumbers){
         if (relatedCaseNumbers != null) {
+            List<relatedCaseModel> list = new ArrayList<>();
             relatedCaseModel relatedCase = new relatedCaseModel();
 
             relatedCase.setCaseYear(caseNumber.getCaseYear());
@@ -939,13 +940,18 @@ public class REPMigration {
             for (String casenumber : caseNumberArray) {
                 if (!"".equals(casenumber.trim())) {
                     relatedCase.setRelatedCaseNumber(casenumber.trim());
-                    sqlRelatedCase.addRelatedCase(relatedCase);
+                    list.add(relatedCase);
                 }
+            }
+            
+            if (list != null ) {
+                sqlRelatedCase.batchAddRelatedCase(list);
             }
         }
     }
     
     private static void migrateMediations(oldREPDataModel item, caseNumberModel caseNumber) {
+        List<REPMediationModel> list = new ArrayList<>();
         REPMediationModel mediation = new REPMediationModel();
         
         mediation.setCaseYear(caseNumber.getCaseYear());
@@ -965,7 +971,7 @@ public class REPMigration {
             mediation.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getInternalMediator())));
             mediation.setMediationOutcome(!"".equals(item.getInternaResult().trim()) ? item.getInternaResult().trim() : null);
             
-            sqlREPMediation.addREPMediation(mediation);
+            list.add(mediation);
         }
 
         //30 Day Mediation
@@ -980,7 +986,7 @@ public class REPMigration {
             mediation.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getBoardDirectedMediatior())));
             mediation.setMediationOutcome(!"".equals(item.getBoardDirectedMedResult().trim()) ? item.getBoardDirectedMedResult().trim() : null);
             
-            sqlREPMediation.addREPMediation(mediation);
+            list.add(mediation);
         }
 
         //Post-Directive Mediation
@@ -996,7 +1002,11 @@ public class REPMigration {
             mediation.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getPostDirMediatior())));
             mediation.setMediationOutcome(!"".equals(item.getPostDirMedResult().trim()) ? item.getPostDirMedResult().trim() : null);
             
-            sqlREPMediation.addREPMediation(mediation);
+            list.add(mediation);
+        }
+        
+        if (list != null) {
+            sqlREPMediation.batchAddREPMediation(list);
         }
     }
 
@@ -1055,6 +1065,7 @@ public class REPMigration {
     }
     
     private static void migrateMultiCaseElections(oldREPDataModel item, caseNumberModel caseNumber) {
+        List<REPElectionMultiCaseModel> list = new ArrayList<>();
         REPElectionMultiCaseModel multi = new REPElectionMultiCaseModel();
         
         multi.setActive(item.getActive());
@@ -1065,31 +1076,35 @@ public class REPMigration {
         
         if (!"".equals(item.getElectionCaseNumber1().trim())){
             multi.setMultiCase(item.getElectionCaseNumber1().trim());
-            sqlREPElectionMultiCase.addElectionSite(multi);
+            list.add(multi);
         }
         if (!"".equals(item.getElectionCaseNumber2().trim())){
             multi.setMultiCase(item.getElectionCaseNumber2().trim());
-            sqlREPElectionMultiCase.addElectionSite(multi);
+            list.add(multi);
         }
         if (!"".equals(item.getElectionCaseNumber3().trim())){
             multi.setMultiCase(item.getElectionCaseNumber3().trim());
-            sqlREPElectionMultiCase.addElectionSite(multi);
+            list.add(multi);
         }
         if (!"".equals(item.getElectionCaseNumber4().trim())){
             multi.setMultiCase(item.getElectionCaseNumber4().trim());
-            sqlREPElectionMultiCase.addElectionSite(multi);
+            list.add(multi);
         }
         if (!"".equals(item.getElectionCaseNumber5().trim())){
             multi.setMultiCase(item.getElectionCaseNumber5().trim());
-            sqlREPElectionMultiCase.addElectionSite(multi);
+            list.add(multi);
         }
         if (!"".equals(item.getElectionCaseNumber6().trim())){
             multi.setMultiCase(item.getElectionCaseNumber6().trim());
-            sqlREPElectionMultiCase.addElectionSite(multi);
+            list.add(multi);;
+        }
+        if (list != null) {
+            sqlREPElectionMultiCase.batchAddElectionSite(list);
         }
     }
     
     private static void migrateElectionSiteInfo(oldREPDataModel item, caseNumberModel caseNumber) {
+        List<REPElectionSiteInformationModel> list = new ArrayList<>();
         REPElectionSiteInformationModel site = new REPElectionSiteInformationModel();
         
         site.setActive(item.getActive());
@@ -1107,7 +1122,7 @@ public class REPMigration {
             site.setSiteAddress1(!"".equals(item.getSite1Address1().trim()) ? item.getSite1Address1().trim() : null);
             site.setSiteAddress2(!"".equals(item.getSite1Address2().trim()) ? item.getSite1Address2().trim() : null);
             site.setSiteLocation(!"".equals(item.getSite1Location().trim()) ? item.getSite1Location().trim() : null);
-            sqlREPElectionSiteInformation.addElectionSite(site);
+            list.add(site);
         }
         if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())){
             startTimeEndTimeModel time = StringUtilities.splitTime(item.getSite2Time());
@@ -1119,7 +1134,7 @@ public class REPMigration {
             site.setSiteAddress1(!"".equals(item.getSite2Address1().trim()) ? item.getSite2Address1().trim() : null);
             site.setSiteAddress2(!"".equals(item.getSite2Address2().trim()) ? item.getSite2Address2().trim() : null);
             site.setSiteLocation(!"".equals(item.getSite2Location().trim()) ? item.getSite2Location().trim() : null);
-            sqlREPElectionSiteInformation.addElectionSite(site);
+            list.add(site);
         }
         if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())){
             startTimeEndTimeModel time = StringUtilities.splitTime(item.getSite3Time());
@@ -1130,32 +1145,16 @@ public class REPMigration {
             site.setSiteAddress1(!"".equals(item.getSite2Address1().trim()) ? item.getSite2Address1().trim() : null);
             site.setSiteAddress2(!"".equals(item.getSite2Address2().trim()) ? item.getSite2Address2().trim() : null);
             site.setSiteLocation(!"".equals(item.getSite2Location().trim()) ? item.getSite2Location().trim() : null);
-            sqlREPElectionSiteInformation.addElectionSite(site);
+            list.add(site);
+        }
+        if (list != null) {
+            sqlREPElectionSiteInformation.batchAddElectionSite(list);
         }
     }
        
     private static void migrateCaseHistory(caseNumberModel caseNumber) {
         List<oldREPHistoryModel> oldREPDataList = sqlActivity.getREPHistoryByCase(StringUtilities.generateFullCaseNumber(caseNumber));
-        
-        for (oldREPHistoryModel old : oldREPDataList){                                                
-            activityModel item = new activityModel();
-            item.setCaseYear(caseNumber.getCaseYear());
-            item.setCaseType(caseNumber.getCaseType());
-            item.setCaseMonth(caseNumber.getCaseMonth());
-            item.setCaseNumber(caseNumber.getCaseNumber());
-            item.setUserID(StringUtilities.convertUserToID(old.getUserInitals()));
-            item.setDate(old.getDate());
-            item.setAction(!"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
-            item.setFileName(!"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
-            item.setFrom(!"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
-            item.setTo(!"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
-            item.setType(null);
-            item.setComment(null);
-            item.setRedacted("Y".equals(old.getRedacted().trim()) ? 1 : 0);
-            item.setAwaitingTimeStamp(0);
-            
-            sqlActivity.addActivity(item);
-        }
+        sqlActivity.batchAddREPActivity(oldREPDataList, caseNumber);
     }
         
     private static void migrateCaseSearch(oldREPDataModel item, caseNumberModel caseNumber) {

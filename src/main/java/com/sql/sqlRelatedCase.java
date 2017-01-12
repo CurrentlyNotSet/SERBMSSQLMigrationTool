@@ -10,6 +10,7 @@ import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -45,6 +46,49 @@ public class sqlRelatedCase {
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddRelatedCase(List<relatedCaseModel> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO relatedCase("
+                    + "caseYear, "        //01
+                    + "caseType, "        //02
+                    + "caseMonth, "       //03
+                    + "caseNumber, "      //04
+                    + "relatedCaseNumber "//05
+                    + ") VALUES ("
+                    + "?,"  //01
+                    + "?,"  //02
+                    + "?,"  //03
+                    + "?,"  //04
+                    + "?)"; //05
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (relatedCaseModel item : list) {;
+                ps.setString(1, StringUtils.left(item.getCaseYear(), 4));
+                ps.setString(2, StringUtils.left(item.getCaseType(), 3));
+                ps.setString(3, StringUtils.left(item.getCaseMonth(), 2));
+                ps.setString(4, StringUtils.left(item.getCaseNumber(), 4));
+                ps.setString(5, item.getRelatedCaseNumber());
+                ps.addBatch();
+            }            
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);
