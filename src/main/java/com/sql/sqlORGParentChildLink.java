@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -67,11 +68,48 @@ public class sqlORGParentChildLink {
                     + "?)";
             ps = conn.prepareStatement(sql);
             ps.setBoolean( 1, item.isActive());
-            ps.setString ( 2, item.getParentOrgNumber());
-            ps.setString ( 3, item.getChildOrgNumber());
+            ps.setString ( 2, StringUtils.left(item.getParentOrgNumber(), 10));
+            ps.setString ( 3, StringUtils.left(item.getChildOrgNumber(), 10));
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddOrgParentChildLinks(List<ORGParentChildLinkModel> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "INSERT INTO ORGParentChildLink ("
+                    + "active, "
+                    + "parentOrgNumber, "
+                    + "childOrgNumber "
+                    + ") VALUES ("
+                    + "?, "
+                    + "?, "
+                    + "?)";
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (ORGParentChildLinkModel item : list) {
+                ps.setBoolean( 1, item.isActive());
+                ps.setString ( 2, StringUtils.left(item.getParentOrgNumber(), 10));
+                ps.setString ( 3, StringUtils.left(item.getChildOrgNumber(), 10));
+                ps.addBatch();
+            }            
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

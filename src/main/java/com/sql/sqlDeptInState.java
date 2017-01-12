@@ -55,9 +55,9 @@ public class sqlDeptInState {
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
             String sql = "Insert INTO DeptInState ("
-                    + "Active, "              //01
-                    + "DeptInStateCode, "     //02
-                    + "DeptInStateDescription"//03
+                    + "Active, "    //01
+                    + "code, "      //02
+                    + "description" //03
                     + ") VALUES ("
                     + "?,"  //01
                     + "?,"  //02

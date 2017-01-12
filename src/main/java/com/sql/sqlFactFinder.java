@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -87,21 +88,116 @@ public class sqlFactFinder {
                      sql += "?)";   //13
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, item.getStatus());
-            ps.setString( 3, item.getFirstName());
-            ps.setString( 4, item.getMiddleName());
-            ps.setString( 5, item.getLastName());
-            ps.setString( 6, item.getAddress1());
-            ps.setString( 7, item.getAddress2());
-            ps.setString( 8, item.getAddress3());
-            ps.setString( 9, item.getCity());
-            ps.setString(10, item.getState());
-            ps.setString(11, item.getZip());
-            ps.setString(12, item.getEmail());
-            ps.setString(13, item.getPhoneNumber());
+            ps.setString( 2, StringUtils.left(item.getStatus(), 1));
+            ps.setString( 3, StringUtils.left(item.getFirstName(), 100));
+            ps.setString( 4, StringUtils.left(item.getMiddleName(), 100));
+            ps.setString( 5, StringUtils.left(item.getLastName(), 200));
+            ps.setString( 6, StringUtils.left(item.getAddress1(), 200));
+            ps.setString( 7, StringUtils.left(item.getAddress2(), 200));
+            ps.setString( 8, StringUtils.left(item.getAddress3(), 200));
+            ps.setString( 9, StringUtils.left(item.getCity(), 100));
+            ps.setString(10, StringUtils.left(item.getState(), 2));
+            ps.setString(11, StringUtils.left(item.getZip(), 15));
+            ps.setString(12, StringUtils.left(item.getEmail(), 200));
+            ps.setString(13, StringUtils.left(item.getPhoneNumber(), 255));
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddFactFinder(List<factFinderModel> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try { 
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO FactFinder ("
+                    + "active, "    //01
+                    + "status, "    //02
+                    + "firstName, " //03
+                    + "middleName, "//04
+                    + "lastName, "  //05
+                    + "address1, "  //06
+                    + "address2, "  //07
+                    + "address3, "  //08
+                    + "city, "      //09
+                    + "state, "     //10
+                    + "zip, "       //11
+                    + "email, "     //12
+                    + "phone "      //13
+                    + ") VALUES (";
+                    for(int i=0; i<12; i++){
+                        sql += "?, ";   //01-12
+                    }
+                     sql += "?)";   //13
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (factFinderModel item : list) {
+                String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
+
+                switch (nameSplit.length) {
+                    case 2:
+                        item.setFirstName(nameSplit[0].trim());
+                        item.setMiddleName(null);
+                        item.setLastName(nameSplit[1].trim());
+                        break;
+                    case 3:
+                        item.setFirstName(nameSplit[0].trim());
+                        item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
+                        item.setLastName(nameSplit[2].trim());
+                        break;
+                    case 4:
+                        item.setFirstName(nameSplit[0].trim());
+                        item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
+                        item.setLastName(nameSplit[2].trim() + ", " + nameSplit[3].trim());
+                        break;
+                    default:
+                        break;
+                }
+                if (item.getCity() != null) {
+                    String[] cityStateZipSplit = item.getCity().split(",", 2);
+                    item.setCity("".equals(cityStateZipSplit[0]) ? null : cityStateZipSplit[0].trim().replaceAll(",", ""));
+
+                    String[] stateZipSplit = cityStateZipSplit[1].trim().split(" ");
+                    item.setState("".equals(stateZipSplit[0]) ? null : stateZipSplit[0].trim().replaceAll("[^A-Za-z]", ""));
+                    item.setZip("".equals(stateZipSplit[1]) ? null : stateZipSplit[1].trim().replaceAll(",", ""));
+                }
+
+                if ("Ohio".equals(item.getState())) {
+                    item.setState("OH");
+                } else if ("Kentucky".equals(item.getState())) {
+                    item.setState("KY");
+                }
+                
+                
+                ps.setInt   ( 1, item.getActive());
+                ps.setString( 2, StringUtils.left(item.getStatus(), 1));
+                ps.setString( 3, StringUtils.left(item.getFirstName(), 100));
+                ps.setString( 4, StringUtils.left(item.getMiddleName(), 100));
+                ps.setString( 5, StringUtils.left(item.getLastName(), 200));
+                ps.setString( 6, StringUtils.left(item.getAddress1(), 200));
+                ps.setString( 7, StringUtils.left(item.getAddress2(), 200));
+                ps.setString( 8, StringUtils.left(item.getAddress3(), 200));
+                ps.setString( 9, StringUtils.left(item.getCity(), 100));
+                ps.setString(10, StringUtils.left(item.getState(), 2));
+                ps.setString(11, StringUtils.left(item.getZip(), 15));
+                ps.setString(12, StringUtils.left(item.getEmail(), 200));
+                ps.setString(13, StringUtils.left(item.getPhoneNumber(), 255));
+                ps.addBatch();
+            }            
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

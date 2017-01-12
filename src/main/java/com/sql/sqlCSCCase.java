@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -135,30 +136,30 @@ public class sqlCSCCase {
                      sql += "?)";   //25
             ps = conn.prepareStatement(sql);
             ps.setBoolean( 1, item.isActive());
-            ps.setString ( 2, item.getName());
-            ps.setString ( 3, item.getType());
-            ps.setString ( 4, item.getCscNumber());
-            ps.setString ( 5, item.getAddress1());
-            ps.setString ( 6, item.getAddress2());
-            ps.setString ( 7, item.getCity());
-            ps.setString ( 8, item.getState());
-            ps.setString ( 9, item.getZipCode());
-            ps.setString (10, item.getPhone1().equals("") ? null : item.getPhone1());
-            ps.setString (11, item.getPhone2().equals("") ? null : item.getPhone2());
-            ps.setString (12, item.getFax().equals("") ? null : item.getFax());
-            ps.setString (13, item.getEmail());
+            ps.setString ( 2, StringUtils.left(item.getName(), 500));
+            ps.setString ( 3, StringUtils.left(item.getType(), 50));
+            ps.setString ( 4, StringUtils.left(item.getCscNumber(), 10));
+            ps.setString ( 5, StringUtils.left(item.getAddress1(), 255));
+            ps.setString ( 6, StringUtils.left(item.getAddress2(), 255));
+            ps.setString ( 7, StringUtils.left(item.getCity(), 255));
+            ps.setString ( 8, StringUtils.left(item.getState(), 4));
+            ps.setString ( 9, StringUtils.left(item.getZipCode(), 10));
+            ps.setString (10, StringUtils.left(item.getPhone1().equals("") ? null : item.getPhone1(), 20));
+            ps.setString (11, StringUtils.left(item.getPhone2().equals("") ? null : item.getPhone2(), 20));
+            ps.setString (12, StringUtils.left(item.getFax().equals("") ? null : item.getFax(), 20));
+            ps.setString (13, StringUtils.left(item.getEmail(), 255));
             ps.setBoolean(14, item.isStatutory());
             ps.setBoolean(15, item.isCharter());
-            ps.setString (16, item.getFiscalYearEnding());
-            ps.setString (17, item.getLastNotification());
+            ps.setString (16, StringUtils.left(item.getFiscalYearEnding(), 20));
+            ps.setString (17, StringUtils.left(item.getLastNotification(), 255));
             ps.setDate   (18, item.getActivityLastFiled());
             ps.setDate   (19, item.getPreviousFileDate());
-            ps.setString (20, item.getDueDate());
+            ps.setString (20, StringUtils.left(item.getDueDate(), 20));
             ps.setDate   (21, item.getFiled());
             ps.setBoolean(22, item.isValid());
             ps.setString (23, item.getNote());
-            ps.setString (24, item.getAlsoknownas());
-            ps.setString (25, item.getCounty());
+            ps.setString (24, StringUtils.left(item.getAlsoknownas(), 255));
+            ps.setString (25, StringUtils.left(item.getCounty(), 100));
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

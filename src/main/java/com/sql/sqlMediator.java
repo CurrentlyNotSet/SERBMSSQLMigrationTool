@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -53,8 +54,7 @@ public class sqlMediator {
         }
         return list;
     }
-    
-    
+        
     public static void addMediator(mediatorsModel item) {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -84,6 +84,74 @@ public class sqlMediator {
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddMediator(List<mediatorsModel> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try { 
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO Mediator ("
+                    + "active, "    //01
+                    + "type, "      //02
+                    + "firstName, " //03
+                    + "middleName, "//04
+                    + "lastName, "  //05
+                    + "phone, "     //06
+                    + "email "      //07
+                    + ") VALUES (";
+                    for(int i=0; i<6; i++){
+                        sql += "?, ";   //01-06
+                    }
+                     sql += "?)";   //07
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (mediatorsModel item : list) {       
+                String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
+
+                switch (nameSplit.length) {
+                    case 2:
+                        item.setFirstName(nameSplit[0].trim());
+                        item.setMiddleName(null);
+                        item.setLastName(nameSplit[1].trim());
+                        break;
+                    case 3:
+                        item.setFirstName(nameSplit[0].trim());
+                        item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
+                        item.setLastName(nameSplit[2].trim());
+                        break;
+                    case 4:
+                        item.setFirstName(nameSplit[0].trim());
+                        item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
+                        item.setLastName(nameSplit[2].trim() + ", " + nameSplit[3].trim());
+                        break;
+                    default:
+                        break;
+                }
+                
+                ps.setBoolean(1, item.isActive());
+                ps.setString (2, StringUtils.left(item.getType(), 5));
+                ps.setString (3, StringUtils.left(item.getFirstName(), 100));
+                ps.setString (4, StringUtils.left(item.getMiddleName(), 100));
+                ps.setString (5, StringUtils.left(item.getLastName(), 100));
+                ps.setString (6, StringUtils.left(item.getPhone(), 20));
+                ps.setString (7, StringUtils.left(item.getEmail(), 200));
+                ps.addBatch();
+            }            
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

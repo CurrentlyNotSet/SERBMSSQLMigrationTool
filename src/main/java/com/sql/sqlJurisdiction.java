@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -75,4 +76,39 @@ public class sqlJurisdiction {
         }
     }
     
+    public static void batchAddJurisdiction(List<jurisdictionModel> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try { 
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO Jurisdiction ("
+                    + "active, "      //01
+                    + "jurisCode, "   //02
+                    + "employerType, "//03
+                    + "jurisName "    //04
+                    + ") VALUES (?, ?, ?, ?)";
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (jurisdictionModel item : list) {
+                ps.setBoolean(1, item.isActive());
+                ps.setString (2, StringUtils.left(item.getJurisCode(), 4));
+                ps.setString (3, StringUtils.left(item.getEmployerType(), 4));
+                ps.setString (4, StringUtils.left(item.getJurisName(), 150));
+                ps.addBatch();
+            }            
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
 }

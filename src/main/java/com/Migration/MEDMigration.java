@@ -7,7 +7,6 @@ package com.Migration;
 
 import com.model.MEDCaseModel;
 import com.model.MEDCaseSearchModel;
-import com.model.activityModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
 import com.model.employerCaseSearchModel;
@@ -34,7 +33,10 @@ import com.sql.sqlRelatedCase;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
@@ -43,6 +45,9 @@ import java.util.List;
 public class MEDMigration {
 
     private static List<mediatorsModel> newMediatorsList;
+    private static int totalRecordCount = 0;
+    private static int currentRecord = 0;
+    private static MainWindowSceneController control;
 
     public static void migrateMEDData(final MainWindowSceneController control) {
         Thread medThread = new Thread() {
@@ -54,11 +59,13 @@ public class MEDMigration {
         medThread.start();
     }
 
-    private static void medThread(MainWindowSceneController control) {
+    private static void medThread(MainWindowSceneController controlPassed) {
         long lStartTime = System.currentTimeMillis();
+        control = controlPassed;
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         control.setProgressBarIndeterminate("MED Case Migration");
-        int totalRecordCount = 0;
-        int currentRecord = 0;
+        totalRecordCount = 0;
+        currentRecord = 0;
 
         List<oldMEDCaseModel> oldMEDCaseList = sqlMEDData.getCases();
         List<factFinderModel> oldFactFindersList = sqlFactFinder.getOldFactFinders();
@@ -67,29 +74,28 @@ public class MEDMigration {
 
         totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size() + oldMediatorsList.size() + oldjurisdictionList.size();
 
-        for (jurisdictionModel item : oldjurisdictionList) {
-            sqlJurisdiction.addJurisdiction(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getJurisName());
-        }
+        sqlFactFinder.batchAddFactFinder(oldFactFindersList);
+        currentRecord = SceneUpdater.listItemFinished(control, oldFactFindersList.size(), totalRecordCount, "Fact Finders Finished");
         
-        for (factFinderModel item : oldFactFindersList) {
-            migrateFactFinder(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
-        }
+        sqlJurisdiction.batchAddJurisdiction(oldjurisdictionList);
+        currentRecord = SceneUpdater.listItemFinished(control, oldjurisdictionList.size(), totalRecordCount, "Jurisdictions Finished");
         
-        for (mediatorsModel item : oldMediatorsList) {
-            migrateMediator(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName().trim() + " " + item.getLastName().trim());
-        }
+        sqlMediator.batchAddMediator(oldMediatorsList);
+        currentRecord = SceneUpdater.listItemFinished(control, oldMediatorsList.size(), totalRecordCount, "Mediators Finished");
         
         newMediatorsList = sqlMediator.getNewMediator();
 
-        for (oldMEDCaseModel item : oldMEDCaseList) {
-            migrateCase(item);
-            String caseNumber = item.getCaseNumber().trim().equals("") ? item.getStrikeCaseNumber() : item.getCaseNumber().trim();
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, caseNumber);
+        //Insert MED Case Data
+        oldMEDCaseList.stream().forEach(item -> 
+                executor.submit(() -> 
+                        migrateCase(item)));
+        
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
         }
-
+        System.out.println("\nFinished all threads");
+        
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating MED Cases: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -98,71 +104,7 @@ public class MEDMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateMEDCases");
         }
     }
-
-    private static void migrateFactFinder(factFinderModel item) {
-        String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
-
-        switch (nameSplit.length) {
-            case 2:
-                item.setFirstName(nameSplit[0].trim());
-                item.setMiddleName(null);
-                item.setLastName(nameSplit[1].trim());
-                break;
-            case 3:
-                item.setFirstName(nameSplit[0].trim());
-                item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
-                item.setLastName(nameSplit[2].trim());
-                break;
-            case 4:
-                item.setFirstName(nameSplit[0].trim());
-                item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
-                item.setLastName(nameSplit[2].trim() + ", " + nameSplit[3].trim());
-                break;
-            default:
-                break;
-        }
-        if (item.getCity() != null) {
-            String[] cityStateZipSplit = item.getCity().split(",", 2);
-            item.setCity("".equals(cityStateZipSplit[0]) ? null : cityStateZipSplit[0].trim().replaceAll(",", ""));
-
-            String[] stateZipSplit = cityStateZipSplit[1].trim().split(" ");
-            item.setState("".equals(stateZipSplit[0]) ? null : stateZipSplit[0].trim().replaceAll("[^A-Za-z]", ""));
-            item.setZip("".equals(stateZipSplit[1]) ? null : stateZipSplit[1].trim().replaceAll(",", ""));
-        }
-
-        if ("Ohio".equals(item.getState())) {
-            item.setState("OH");
-        } else if ("Kentucky".equals(item.getState())) {
-            item.setState("KY");
-        }
-        sqlFactFinder.addFactFinder(item);
-    }
-
-    private static void migrateMediator(mediatorsModel item) {
-        String[] nameSplit = item.getLastName().replaceAll(", ", " ").split(" ");
-
-        switch (nameSplit.length) {
-            case 2:
-                item.setFirstName(nameSplit[0].trim());
-                item.setMiddleName(null);
-                item.setLastName(nameSplit[1].trim());
-                break;
-            case 3:
-                item.setFirstName(nameSplit[0].trim());
-                item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
-                item.setLastName(nameSplit[2].trim());
-                break;
-            case 4:
-                item.setFirstName(nameSplit[0].trim());
-                item.setMiddleName(nameSplit[1].replaceAll("\\.", "").trim());
-                item.setLastName(nameSplit[2].trim() + ", " + nameSplit[3].trim());
-                break;
-            default:
-                break;
-        }
-        sqlMediator.addMediator(item);
-    }
-
+    
     private static void migrateCase(oldMEDCaseModel item) {
         caseNumberModel caseNumber = null;
         if (item.getCaseNumber().trim().length() == 16) {
@@ -177,17 +119,26 @@ public class MEDMigration {
             migrateCaseHistory(caseNumber);
             migrateCaseSearch(item, caseNumber);
             migrateEmployerCaseSearch(item, caseNumber);
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
+                    item.getCaseNumber().trim().equals("") ? item.getStrikeCaseNumber().trim() : item.getCaseNumber().trim());
         }
+        
     }
 
     private static void migrateParties(oldMEDCaseModel item, caseNumberModel caseNumber) {
-        migrateEmployer(item, caseNumber);
-        migrateEmployerREP(item, caseNumber);
-        migrateEmployeeORG(item, caseNumber);
-        migrateEmployeeORGREP(item, caseNumber);
+        List<casePartyModel> list = new ArrayList<>();
+        
+        list = migrateEmployer(item, caseNumber, list);
+        list = migrateEmployerREP(item, caseNumber, list);
+        list = migrateEmployeeORG(item, caseNumber, list);
+        list = migrateEmployeeORGREP(item, caseNumber, list);
+        
+        if (list != null){
+            sqlCaseParty.batchAddPartyInformation(list);
+        }
     }
 
-    private static void migrateEmployer(oldMEDCaseModel item, caseNumberModel caseNumber) {
+    private static List<casePartyModel> migrateEmployer(oldMEDCaseModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -205,11 +156,12 @@ public class MEDMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            sqlCaseParty.savePartyInformation(party);
+            list.add(party);
         }
+        return list;
     }
 
-    private static void migrateEmployerREP(oldMEDCaseModel item, caseNumberModel caseNumber) {
+    private static List<casePartyModel> migrateEmployerREP(oldMEDCaseModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -228,11 +180,12 @@ public class MEDMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            sqlCaseParty.savePartyInformation(party);
+            list.add(party);
         }
+        return list;
     }
 
-    private static void migrateEmployeeORG(oldMEDCaseModel item, caseNumberModel caseNumber) {
+    private static List<casePartyModel> migrateEmployeeORG(oldMEDCaseModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -250,11 +203,12 @@ public class MEDMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            sqlCaseParty.savePartyInformation(party);
+            list.add(party);
         }
+        return list;
     }
 
-    private static void migrateEmployeeORGREP(oldMEDCaseModel item, caseNumberModel caseNumber) {
+    private static List<casePartyModel> migrateEmployeeORGREP(oldMEDCaseModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -273,8 +227,9 @@ public class MEDMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            sqlCaseParty.savePartyInformation(party);
+            list.add(party);
         }
+        return list;
     }
 
     private static void migrateCaseData(oldMEDCaseModel item, caseNumberModel caseNumber) {
@@ -503,6 +458,7 @@ public class MEDMigration {
     }
 
     private static void migrateRelatedCases(oldMEDCaseModel item, caseNumberModel caseNumber) {
+        List<relatedCaseModel> list = new ArrayList<>();
         relatedCaseModel relatedCase = new relatedCaseModel();
 
         relatedCase.setCaseYear(caseNumber.getCaseYear());
@@ -512,48 +468,33 @@ public class MEDMigration {
 
         if (!item.getCaseNumber2().trim().equals("")) {
             relatedCase.setRelatedCaseNumber(item.getCaseNumber2().trim());
-            sqlRelatedCase.addRelatedCase(relatedCase);
+            list.add(relatedCase);
         }
         if (!item.getCaseNumber3().trim().equals("")) {
             relatedCase.setRelatedCaseNumber(item.getCaseNumber3().trim());
-            sqlRelatedCase.addRelatedCase(relatedCase);
+            list.add(relatedCase);
         }
         if (!item.getCaseNumber4().trim().equals("")) {
             relatedCase.setRelatedCaseNumber(item.getCaseNumber4().trim());
-            sqlRelatedCase.addRelatedCase(relatedCase);
+            list.add(relatedCase);
         }
         if (!item.getCaseNumber5().trim().equals("")) {
             relatedCase.setRelatedCaseNumber(item.getCaseNumber5().trim());
-            sqlRelatedCase.addRelatedCase(relatedCase);
+            list.add(relatedCase);
         }
         if (!item.getCaseNumber6().trim().equals("")) {
             relatedCase.setRelatedCaseNumber(item.getCaseNumber6().trim());
-            sqlRelatedCase.addRelatedCase(relatedCase);
+            list.add(relatedCase);
+        }
+
+        if (list != null) {
+            sqlRelatedCase.batchAddRelatedCase(list);
         }
     }
 
     private static void migrateCaseHistory(caseNumberModel caseNumber) {
         List<oldMEDHistoryModel> oldMEDCaseList = sqlActivity.getMEDHistoryByCase(StringUtilities.generateFullCaseNumber(caseNumber));
-
-        for (oldMEDHistoryModel old : oldMEDCaseList) {
-            activityModel item = new activityModel();
-            item.setCaseYear(caseNumber.getCaseYear());
-            item.setCaseType(caseNumber.getCaseType());
-            item.setCaseMonth(caseNumber.getCaseMonth());
-            item.setCaseNumber(caseNumber.getCaseNumber());
-            item.setUserID(StringUtilities.convertUserToID(old.getUserInitals()));
-            item.setDate(old.getDate());
-            item.setAction(!"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
-            item.setFileName(!"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
-            item.setFrom(!"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
-            item.setTo(!"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
-            item.setType(null);
-            item.setComment(null);
-            item.setRedacted("Y".equals(old.getRedacted().trim()) ? 1 : 0);
-            item.setAwaitingTimeStamp(0);
-
-            sqlActivity.addActivity(item);
-        }
+        sqlActivity.batchAddMEDActivity(oldMEDCaseList, caseNumber);
     }
 
     private static void migrateCaseSearch(oldMEDCaseModel item, caseNumberModel caseNumber) {

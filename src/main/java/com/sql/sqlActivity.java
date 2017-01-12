@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
@@ -84,6 +85,142 @@ public class sqlActivity {
         }
     }
     
+    public static void batchAddORGActivity(List<oldORGHistoryModel> ORGCaseHistory) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO Activity ("
+                    + "caseYear, "        //01
+                    + "caseType, "        //02
+                    + "caseMonth, "       //03
+                    + "caseNumber, "      //04
+                    + "userID, "          //05
+                    + "date, "            //06
+                    + "action, "          //07
+                    + "fileName, "        //08
+                    + "[from], "          //09
+                    + "[to], "            //10
+                    + "type, "            //11
+                    + "comment, "         //12
+                    + "redacted, "        //13
+                    + "awaitingTimeStamp "//14
+                    + ") VALUES (";
+                    for(int i=0; i<13; i++){
+                        sql += "?, ";   //01-13
+                    }
+                     sql += "?)"; //14
+            ps = conn.prepareStatement(sql);
+            
+            for (oldORGHistoryModel old : ORGCaseHistory){
+                int userID = StringUtilities.convertUserToID(old.getUserInitials());
+
+                ps.setString   ( 1, null);
+                ps.setString   ( 2, "ORG");
+                ps.setString   ( 3, null);
+                ps.setString   ( 4, StringUtils.left(old.getOrgNum(), 8));
+                if (userID != 0){
+                    ps.setInt  ( 5, userID);
+                } else {
+                    ps.setNull ( 5, java.sql.Types.INTEGER);
+                }
+                ps.setTimestamp( 6, new Timestamp(old.getDateTimeMillis()));
+                ps.setString   ( 7, !"".equals(old.getDescription().trim()) ? old.getDescription().trim() : null);
+                ps.setString   ( 8, !"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
+                ps.setString   ( 9, !"".equals(old.getSrc().trim()) ? old.getSrc().trim() : null);
+                ps.setString   (10, !"".equals(old.getDest().trim()) ? old.getDest().trim() : null);
+                ps.setString   (11, !old.getFileAttrib().trim().equals("") ? old.getFileAttrib().trim() : null);
+                ps.setString   (12, old.getNote() != null ? old.getNote().trim() : null);
+                ps.setInt      (13, "Y".equals(old.getRedacted().trim()) ? 1 : 0);
+                ps.setInt      (14, 0);
+                ps.addBatch();
+            }
+            
+            ps.executeBatch();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddCSCActivity(List<oldCSCHistoryModel> CSCCaseHistory) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO Activity ("
+                    + "caseYear, "        //01
+                    + "caseType, "        //02
+                    + "caseMonth, "       //03
+                    + "caseNumber, "      //04
+                    + "userID, "          //05
+                    + "date, "            //06
+                    + "action, "          //07
+                    + "fileName, "        //08
+                    + "[from], "          //09
+                    + "[to], "            //10
+                    + "type, "            //11
+                    + "comment, "         //12
+                    + "redacted, "        //13
+                    + "awaitingTimeStamp "//14
+                    + ") VALUES (";
+                    for(int i=0; i<13; i++){
+                        sql += "?, ";   //01-13
+                    }
+                     sql += "?)"; //14
+            ps = conn.prepareStatement(sql);
+            
+            for (oldCSCHistoryModel old : CSCCaseHistory){
+                int userID = StringUtilities.convertUserToID(old.getInitials());
+                
+                String comment = !old.getNote().trim().equals("null") ? old.getNote().trim() : "";
+                if (!comment.trim().equals("")) {
+                    comment += "/n/n";
+                }
+                comment += !old.getNote().trim().equals("null") ? old.getNote().trim() : "";
+
+                ps.setString   ( 1, null);
+                ps.setString   ( 2, "CSC");
+                ps.setString   ( 3, null);
+                ps.setString   ( 4, StringUtils.left(old.getCSCNumber(), 8));
+                if (userID != 0){
+                    ps.setInt  ( 5, userID);
+                } else {
+                    ps.setNull ( 5, java.sql.Types.INTEGER);
+                }
+                ps.setTimestamp( 6, new Timestamp(old.getDateTimeMillis()));
+                ps.setString   ( 7, !"".equals(old.getDescription().trim()) ? old.getDescription().trim() : null);
+                ps.setString   ( 8, !"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
+                ps.setString   ( 9, null);
+                ps.setString   (10, null);
+                ps.setString   (11, !old.getFileAttrib().trim().equals("") ? old.getFileAttrib().trim() : null);
+                ps.setString   (12, comment.trim().equals("") ? null : comment);
+                ps.setInt      (13, 0);
+                ps.setInt      (14, 0);
+                ps.addBatch();
+            }
+            
+            ps.executeBatch();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
     public static void batchAddULPActivity(List<oldULPHistoryModel> ULPCaseHistory , caseNumberModel caseNumber) {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -113,6 +250,71 @@ public class sqlActivity {
             
             for (oldULPHistoryModel old : ULPCaseHistory){
                 int userID = StringUtilities.convertUserToID(old.getUserInitials());
+
+                ps.setString   ( 1, StringUtils.left(caseNumber.getCaseYear(), 4));
+                ps.setString   ( 2, StringUtils.left(caseNumber.getCaseType(), 3));
+                ps.setString   ( 3, StringUtils.left(caseNumber.getCaseMonth(), 2));
+                ps.setString   ( 4, StringUtils.left(caseNumber.getCaseNumber(), 8));
+                if (userID != 0){
+                    ps.setInt  ( 5, userID);
+                } else {
+                    ps.setNull ( 5, java.sql.Types.INTEGER);
+                }
+                ps.setTimestamp( 6, old.getDate());
+                ps.setString   ( 7, !"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
+                ps.setString   ( 8, !"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
+                ps.setString   ( 9, !"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
+                ps.setString   (10, !"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
+                ps.setString   (11, null);
+                ps.setString   (12, null);
+                ps.setInt      (13, 0);
+                ps.setInt      (14, 0);
+                ps.addBatch();
+            }
+            
+            ps.executeBatch();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddMEDActivity(List<oldMEDHistoryModel> oldMEDCaseList , caseNumberModel caseNumber) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO Activity ("
+                    + "caseYear, "        //01
+                    + "caseType, "        //02
+                    + "caseMonth, "       //03
+                    + "caseNumber, "      //04
+                    + "userID, "          //05
+                    + "date, "            //06
+                    + "action, "          //07
+                    + "fileName, "        //08
+                    + "[from], "          //09
+                    + "[to], "            //10
+                    + "type, "            //11
+                    + "comment, "         //12
+                    + "redacted, "        //13
+                    + "awaitingTimeStamp "//14
+                    + ") VALUES (";
+                    for(int i=0; i<13; i++){
+                        sql += "?, ";   //01-13
+                    }
+                     sql += "?)"; //14
+            ps = conn.prepareStatement(sql);
+            
+            for (oldMEDHistoryModel old : oldMEDCaseList){
+                int userID = StringUtilities.convertUserToID(old.getUserInitals());
 
                 ps.setString   ( 1, StringUtils.left(caseNumber.getCaseYear(), 4));
                 ps.setString   ( 2, StringUtils.left(caseNumber.getCaseType(), 3));

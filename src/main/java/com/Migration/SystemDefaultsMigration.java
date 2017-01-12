@@ -140,17 +140,21 @@ public class SystemDefaultsMigration {
     private static void migrateExec(systemExecutiveModel item) {
         String[] nameSplit = item.getLastName().split(" ");
         
-        if (nameSplit.length == 2){
-            item.setFirstName(nameSplit[0]);
-            item.setLastName(nameSplit[1]);
-        } else if (nameSplit.length == 3) {
-            item.setFirstName(nameSplit[0]);
-            item.setMiddleName(nameSplit[1]);
-            item.setLastName(nameSplit[2]);
-        } else {
-            item.setFirstName(null);
-            item.setMiddleName(null);
-            item.setLastName(null);
+        switch (nameSplit.length) {
+            case 2:
+                item.setFirstName(nameSplit[0]);
+                item.setLastName(nameSplit[1]);
+                break;
+            case 3:
+                item.setFirstName(nameSplit[0]);
+                item.setMiddleName(nameSplit[1]);
+                item.setLastName(nameSplit[2]);
+                break;
+            default:
+                item.setFirstName(null);
+                item.setMiddleName(null);
+                item.setLastName(null);
+                break;
         }
         
         
