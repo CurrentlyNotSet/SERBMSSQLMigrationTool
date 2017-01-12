@@ -61,23 +61,17 @@ public class ULPMigration {
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("ULP Case Migration");
         
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() < 1 ? 1 : (Runtime.getRuntime().availableProcessors() / 2) + 1);
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() < 1 ? 1 : (Runtime.getRuntime().availableProcessors()) - 1);
         
         List<ULPRecommendationsModel> oldULPRecsList = sqlULPRecommendations.getOLDULPRecommendations();
         List<oldULPDataModel> oldULPDataList = sqlULPData.getCases();
         totalRecordCount = oldULPDataList.size() + oldULPRecsList.size();
         
-//        for (ULPRecommendationsModel item : oldULPRecsList){
-//            sqlULPRecommendations.addULPRecommendation(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCode());
-//        }
-
-        oldULPRecsList.stream().forEach(item -> 
-                executor.submit(() -> 
-                        ulprecommendation(item)));
-
-        System.out.println("finished recommendations");
+        //Insert ULP Recommendations
+        sqlULPRecommendations.batchAddULPRecommendation(oldULPRecsList);
+        currentRecord = SceneUpdater.listItemFinished(control, oldULPRecsList.size(), totalRecordCount, "ULP Recommendations Finished");
         
+        //Insert ULP Case Data
         oldULPDataList.stream().forEach(item -> 
                 executor.submit(() -> 
                         migrateCase(item)));
@@ -87,12 +81,6 @@ public class ULPMigration {
         while (!executor.isTerminated()) {
         }
         System.out.println("\nFinished all threads");
-      
-// OLD LOOP (NON-THREADED)        
-//        for (oldULPDataModel item : oldULPDataList){
-//            migrateCase(item);
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
-//        }
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ULP Cases: " 
@@ -326,23 +314,11 @@ public class ULPMigration {
 
     private static void migrateCaseHistory(caseNumberModel caseNumber) {
         List<oldULPHistoryModel> ULPCaseHistory = sqlActivity.getULPHistoryByCase(StringUtilities.generateFullCaseNumber(caseNumber));
-//
-//        ExecutorService executor = Executors.newFixedThreadPool(2);
-//        ULPCaseHistory.stream().forEach(item
-//                -> executor.submit(()
-//                        -> migrateCaseHistory(caseNumber, item)));
-////        
-//        executor.shutdown();
-//        // Wait until all threads are finish
-//        while (!executor.isTerminated()) {
-//        }
-
-        for (oldULPHistoryModel item : ULPCaseHistory){
-            migrateCaseHistory(caseNumber, item);
-        }
+        sqlActivity.batchAddULPActivity(ULPCaseHistory, caseNumber);
     }
 
-    private static void migrateCaseHistory(caseNumberModel caseNumber, oldULPHistoryModel old) {
+    @Deprecated
+    private static void migrateCaseHistoryItem(caseNumberModel caseNumber, oldULPHistoryModel old) {
         activityModel item = new activityModel();
         item.setCaseYear(caseNumber.getCaseYear());
         item.setCaseType(caseNumber.getCaseType());

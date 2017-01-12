@@ -6,6 +6,7 @@
 package com.sql;
 
 import com.model.activityModel;
+import com.model.caseNumberModel;
 import com.model.oldCMDSHistoryModel;
 import com.model.oldCSCHistoryModel;
 import com.model.oldMEDHistoryModel;
@@ -14,6 +15,7 @@ import com.model.oldREPHistoryModel;
 import com.model.oldSMDSHistoryModel;
 import com.model.oldULPHistoryModel;
 import com.util.DBCInfo;
+import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -80,7 +82,72 @@ public class sqlActivity {
             DbUtils.closeQuietly(conn);
         }
     }
-        
+    
+    public static void batchAddULPActivity(List<oldULPHistoryModel> ULPCaseHistory , caseNumberModel caseNumber) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO Activity ("
+                    + "caseYear, "        //01
+                    + "caseType, "        //02
+                    + "caseMonth, "       //03
+                    + "caseNumber, "      //04
+                    + "userID, "          //05
+                    + "date, "            //06
+                    + "action, "          //07
+                    + "fileName, "        //08
+                    + "[from], "          //09
+                    + "[to], "            //10
+                    + "type, "            //11
+                    + "comment, "         //12
+                    + "redacted, "        //13
+                    + "awaitingTimeStamp "//14
+                    + ") VALUES (";
+                    for(int i=0; i<13; i++){
+                        sql += "?, ";   //01-13
+                    }
+                     sql += "?)"; //14
+            ps = conn.prepareStatement(sql);
+            
+            for (oldULPHistoryModel old : ULPCaseHistory){
+                int userID = StringUtilities.convertUserToID(old.getUserInitials());
+
+                ps.setString   ( 1, caseNumber.getCaseYear());
+                ps.setString   ( 2, caseNumber.getCaseType());
+                ps.setString   ( 3, caseNumber.getCaseMonth());
+                ps.setString   ( 4, caseNumber.getCaseNumber());
+                if (userID != 0){
+                    ps.setInt  ( 5, userID);
+                } else {
+                    ps.setNull ( 5, java.sql.Types.INTEGER);
+                }
+                ps.setTimestamp( 6, old.getDate());
+                ps.setString   ( 7, !"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
+                ps.setString   ( 8, !"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
+                ps.setString   ( 9, !"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
+                ps.setString   (10, !"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
+                ps.setString   (11, null);
+                ps.setString   (12, null);
+                ps.setInt      (13, 0);
+                ps.setInt      (14, 0);
+                ps.addBatch();
+            }
+            
+            ps.executeBatch();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
     public static List<oldULPHistoryModel> getULPHistoryByCase(String caseNumber) {
         List<oldULPHistoryModel> list = new ArrayList();
         Connection conn = null;
