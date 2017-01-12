@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -67,12 +68,52 @@ public class sqlREPCaseType {
                     + "?)"; //04
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, item.getTypeAbbrevation());
-            ps.setString( 3, item.getTypeName());
+            ps.setString( 2, StringUtils.left(item.getTypeAbbrevation(), 15));
+            ps.setString( 3, StringUtils.left(item.getTypeName(), 200));
             ps.setString( 4, item.getDescription());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddREPCaseType(List<REPCaseTypeModel> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO REPCaseType ("
+                    + "active, "         //01
+                    + "typeAbbrevation, "//02
+                    + "typeName, "       //03
+                    + "description "     //04
+                    + ") VALUES ("
+                    + "?, " //01
+                    + "?, " //02
+                    + "?, " //03
+                    + "?)"; //04
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (REPCaseTypeModel item : list) {
+                ps.setInt   ( 1, item.getActive());
+                ps.setString( 2, StringUtils.left(item.getTypeAbbrevation(), 15));
+                ps.setString( 3, StringUtils.left(item.getTypeName(), 200));
+                ps.setString( 4, item.getDescription());
+                ps.addBatch();
+            }            
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

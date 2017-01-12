@@ -8,7 +8,6 @@ package com.Migration;
 import com.model.ULPCaseModel;
 import com.model.ULPCaseSearchModel;
 import com.model.ULPRecommendationsModel;
-import com.model.activityModel;
 import com.model.boardMeetingModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
@@ -343,28 +342,7 @@ public class ULPMigration {
         List<oldULPHistoryModel> ULPCaseHistory = sqlActivity.getULPHistoryByCase(StringUtilities.generateFullCaseNumber(caseNumber));
         sqlActivity.batchAddULPActivity(ULPCaseHistory, caseNumber);
     }
-
-    @Deprecated
-    private static void migrateCaseHistoryItem(caseNumberModel caseNumber, oldULPHistoryModel old) {
-        activityModel item = new activityModel();
-        item.setCaseYear(caseNumber.getCaseYear());
-        item.setCaseType(caseNumber.getCaseType());
-        item.setCaseMonth(caseNumber.getCaseMonth());
-        item.setCaseNumber(caseNumber.getCaseNumber());
-        item.setUserID(StringUtilities.convertUserToID(old.getUserInitials()));
-        item.setDate(old.getDate());
-        item.setAction(!"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
-        item.setFileName(!"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
-        item.setFrom(!"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
-        item.setTo(!"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
-        item.setType(null);
-        item.setComment(null);
-        item.setRedacted(0);
-        item.setAwaitingTimeStamp(0);
-
-        sqlActivity.addActivity(item);
-    }
-
+    
     private static void migrateCaseSearch(oldULPDataModel item, caseNumberModel caseNumber) {
         ULPCaseSearchModel search = new ULPCaseSearchModel();
         

@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -64,11 +65,48 @@ public class sqlBoardActionType {
                     + "?)"; //03
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, item.getShort());
-            ps.setString( 3, item.getMeaning());
+            ps.setString( 2, StringUtils.left(item.getShort(), 50));
+            ps.setString( 3, StringUtils.left(item.getMeaning(), 255));
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddREPBoardActionType(List<boardAcionTypeModel> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO REPBoardActionType ("
+                    + "Active, "          //01
+                    + "shortDescription, "//02
+                    + "longDescription "  //03
+                    + ") VALUES ("
+                    + "?,"  //01
+                    + "?,"  //02
+                    + "?)"; //03
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (boardAcionTypeModel item : list) {
+                ps.setInt   ( 1, item.getActive());
+                ps.setString( 2, StringUtils.left(item.getShort(), 50));
+                ps.setString( 3, StringUtils.left(item.getMeaning(), 255));
+                ps.addBatch();
+            }            
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

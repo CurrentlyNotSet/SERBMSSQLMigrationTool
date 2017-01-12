@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -64,11 +65,49 @@ public class sqlREPRecommendation {
                     + "?)"; //03
             ps = conn.prepareStatement(sql);
             ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, item.getType());
+            ps.setString( 2, StringUtils.left(item.getType(), 20));
             ps.setString( 3, item.getRecommendation());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddREPRecommendation(List<REPRecommendationModel> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO REPRecommendation ("
+                    + "Active, "        //01
+                    + "Type, "          //02
+                    + "Recommendation " //03
+                    + ") VALUES ("
+                    + "?, " //01
+                    + "?, " //02
+                    + "?)"; //03
+            ps = conn.prepareStatement(sql);
+
+            conn.setAutoCommit(false);
+
+            for (REPRecommendationModel item : list) {
+                ps.setInt(1, item.getActive());
+                ps.setString(2, StringUtils.left(item.getType(), 20));
+                ps.setString(3, item.getRecommendation());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);
