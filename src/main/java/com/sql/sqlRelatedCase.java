@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -36,10 +37,10 @@ public class sqlRelatedCase {
                     + "?,"  //04
                     + "?)"; //05
             ps = conn.prepareStatement(sql);
-            ps.setString(1, item.getCaseYear());
-            ps.setString(2, item.getCaseType());
-            ps.setString(3, item.getCaseMonth());
-            ps.setString(4, item.getCaseNumber());
+            ps.setString(1, StringUtils.left(item.getCaseYear(), 4));
+            ps.setString(2, StringUtils.left(item.getCaseType(), 3));
+            ps.setString(3, StringUtils.left(item.getCaseMonth(), 2));
+            ps.setString(4, StringUtils.left(item.getCaseNumber(), 4));
             ps.setString(5, item.getRelatedCaseNumber());
             ps.executeUpdate();
         } catch (SQLException ex) {

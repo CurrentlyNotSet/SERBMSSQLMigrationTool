@@ -32,6 +32,7 @@ import com.sql.sqlULPRecommendations;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -61,7 +62,7 @@ public class ULPMigration {
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("ULP Case Migration");
         
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() < 1 ? 1 : (Runtime.getRuntime().availableProcessors()) - 1);
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         
         List<ULPRecommendationsModel> oldULPRecsList = sqlULPRecommendations.getOLDULPRecommendations();
         List<oldULPDataModel> oldULPDataList = sqlULPData.getCases();
@@ -91,17 +92,9 @@ public class ULPMigration {
         }
     }
     
-    private static void ulprecommendation(ULPRecommendationsModel item) {
-        sqlULPRecommendations.addULPRecommendation(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCode());
-    }
-
     private static void migrateCase(oldULPDataModel item){
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
-        ULPMigration.migrateChargingParty(item, caseNumber);
-        ULPMigration.migrateChargingPartyRep(item, caseNumber);
-        ULPMigration.migrateChargedParty(item, caseNumber);
-        ULPMigration.migrateChargedPartyRep(item, caseNumber);
+        casePartyMigration(item, caseNumber);
         ULPMigration.migrateCaseData(item, caseNumber);
         ULPMigration.migrateBoardMeetings(item, caseNumber);
         migrateRelatedCases(item, caseNumber);
@@ -111,7 +104,32 @@ public class ULPMigration {
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
     }
     
-    private static void migrateChargingParty(oldULPDataModel item, caseNumberModel caseNumber) {
+    
+    private static void casePartyMigration(oldULPDataModel item, caseNumberModel caseNumber) {
+        List<casePartyModel> list = new ArrayList<>();
+        casePartyModel party = null;
+        
+        party = ULPMigration.migrateChargingParty(item, caseNumber);
+        if (party != null){
+            list.add(party);
+        }
+        party = ULPMigration.migrateChargingPartyRep(item, caseNumber);
+        if (party != null){
+            list.add(party);
+        }
+        party = ULPMigration.migrateChargedParty(item, caseNumber);
+        if (party != null){
+            list.add(party);
+        }
+        party = ULPMigration.migrateChargedPartyRep(item, caseNumber);
+        if (party != null){
+            list.add(party);
+        }
+        sqlCaseParty.batchAddPartyInformation(list);
+    }
+    
+    
+    private static casePartyModel migrateChargingParty(oldULPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -130,11 +148,12 @@ public class ULPMigration {
         party.setFax(null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
-            sqlCaseParty.savePartyInformation(party);
+            return party;
         }
+        return null;
     }
     
-    private static void migrateChargingPartyRep(oldULPDataModel item, caseNumberModel caseNumber) {        
+    private static casePartyModel migrateChargingPartyRep(oldULPDataModel item, caseNumberModel caseNumber) {        
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -153,11 +172,12 @@ public class ULPMigration {
         party.setFax(null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
-            sqlCaseParty.savePartyInformation(party);
+            return party;
         }
+        return null;
     }
     
-    private static void migrateChargedParty(oldULPDataModel item, caseNumberModel caseNumber) {
+    private static casePartyModel migrateChargedParty(oldULPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -176,11 +196,12 @@ public class ULPMigration {
         party.setFax(null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
-            sqlCaseParty.savePartyInformation(party);
+            return party;
         }
+        return null;
     }
     
-    private static void migrateChargedPartyRep(oldULPDataModel item, caseNumberModel caseNumber) {
+    private static casePartyModel migrateChargedPartyRep(oldULPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -199,8 +220,9 @@ public class ULPMigration {
         party.setFax(null);
         
         if (!"".equals(party.getLastName()) || !"".equals(party.getAddress1()) || !"".equals(party.getEmailAddress()) || !"".equals(party.getPhoneOne())) {
-            sqlCaseParty.savePartyInformation(party);
+            return party;
         }
+        return null;
     }
     
     private static void migrateCaseData(oldULPDataModel item, caseNumberModel caseNumber) {
@@ -262,8 +284,9 @@ public class ULPMigration {
     }
     
     private static void migrateBoardMeetings(oldULPDataModel item, caseNumberModel caseNumber) {
+        List<boardMeetingModel> list = new ArrayList<>();
         boardMeetingModel meeting = new boardMeetingModel();
-        
+                
         meeting.setCaseYear(caseNumber.getCaseYear());
         meeting.setCaseType(caseNumber.getCaseType());
         meeting.setCaseMonth(caseNumber.getCaseMonth());
@@ -274,21 +297,25 @@ public class ULPMigration {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem().trim()) ? item.getAgendaItem().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation().trim()) ? item.getRecommendation().trim() : null);
-            sqlBoardMeeting.addBoardMeeting(meeting);
+            list.add(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate1().trim()) || !"".equals(item.getAgendaItem1().trim()) || !"".equals(item.getRecommendation1().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem1().trim()) ? item.getAgendaItem1().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate1()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate1()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation1().trim()) ? item.getRecommendation1().trim() : null);
-            sqlBoardMeeting.addBoardMeeting(meeting);
+            list.add(meeting);
         }
         
         if (!"".equals(item.getBoardMeetingDate2().trim()) || !"".equals(item.getAgendaItem2().trim()) || !"".equals(item.getRecommendation2().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem2().trim()) ? item.getAgendaItem2().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate2()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate2()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation2().trim()) ? item.getRecommendation2().trim() : null);
-            sqlBoardMeeting.addBoardMeeting(meeting);
+            list.add(meeting);
+        }
+        
+        if (list != null) {
+            sqlBoardMeeting.batchAddBoardMeeting(list);
         }
     }
 

@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -56,10 +57,10 @@ public class sqlActivity {
                     }
                      sql += "?)"; //14
             ps = conn.prepareStatement(sql);
-            ps.setString   ( 1, item.getCaseYear());
-            ps.setString   ( 2, item.getCaseType());
-            ps.setString   ( 3, item.getCaseMonth());
-            ps.setString   ( 4, item.getCaseNumber());
+            ps.setString   ( 1, StringUtils.left(item.getCaseYear(), 4));
+            ps.setString   ( 2, StringUtils.left(item.getCaseType(), 3));
+            ps.setString   ( 3, StringUtils.left(item.getCaseMonth(), 2));
+            ps.setString   ( 4, StringUtils.left(item.getCaseNumber(), 8));
             if (item.getUserID() != 0){
                 ps.setInt  ( 5, item.getUserID());
             } else {
@@ -113,10 +114,10 @@ public class sqlActivity {
             for (oldULPHistoryModel old : ULPCaseHistory){
                 int userID = StringUtilities.convertUserToID(old.getUserInitials());
 
-                ps.setString   ( 1, caseNumber.getCaseYear());
-                ps.setString   ( 2, caseNumber.getCaseType());
-                ps.setString   ( 3, caseNumber.getCaseMonth());
-                ps.setString   ( 4, caseNumber.getCaseNumber());
+                ps.setString   ( 1, StringUtils.left(caseNumber.getCaseYear(), 4));
+                ps.setString   ( 2, StringUtils.left(caseNumber.getCaseType(), 3));
+                ps.setString   ( 3, StringUtils.left(caseNumber.getCaseMonth(), 2));
+                ps.setString   ( 4, StringUtils.left(caseNumber.getCaseNumber(), 8));
                 if (userID != 0){
                     ps.setInt  ( 5, userID);
                 } else {

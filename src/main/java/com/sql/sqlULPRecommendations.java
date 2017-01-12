@@ -6,9 +6,7 @@
 package com.sql;
 
 import com.model.ULPRecommendationsModel;
-import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
-import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,6 +16,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -67,9 +66,9 @@ public class sqlULPRecommendations {
                     + "?,"  //02
                     + "?)"; //03
             ps = conn.prepareStatement(sql);
-            ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, item.getCode());
-            ps.setString( 3, item.getDescription());
+            ps.setInt   (1, item.getActive());
+            ps.setString(2, StringUtils.left(item.getCode(), 50));
+            ps.setString(3, item.getDescription());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -98,8 +97,8 @@ public class sqlULPRecommendations {
             conn.setAutoCommit(false);
             
             for (ULPRecommendationsModel item : oldULPRecsList) {
-                ps.setInt(1, item.getActive());
-                ps.setString(2, item.getCode());
+                ps.setInt   (1, item.getActive());
+                ps.setString(2, StringUtils.left(item.getCode(), 50));
                 ps.setString(3, item.getDescription());
                 ps.addBatch();
             }            
@@ -110,7 +109,7 @@ public class sqlULPRecommendations {
             try {
                 conn.rollback();
             } catch (SQLException ex1) {
-                Logger.getLogger(sqlULPRecommendations.class.getName()).log(Level.SEVERE, null, ex1);
+                ex1.printStackTrace();
             }
         } finally {
             DbUtils.closeQuietly(ps);

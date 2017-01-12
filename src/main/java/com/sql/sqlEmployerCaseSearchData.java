@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -42,11 +43,11 @@ public class sqlEmployerCaseSearchData {
                     + "?,"  //07
                     + "?)"; //08
             ps = conn.prepareStatement(sql);
-            ps.setString(1, item.getCaseYear());             
-            ps.setString(2, item.getCaseType());       
-            ps.setString(3, item.getCaseMonth());       
-            ps.setString(4, item.getCaseNumber());             
-            ps.setString(5, item.getCaseStatus());          
+            ps.setString(1, StringUtils.left(item.getCaseYear(), 4));             
+            ps.setString(2, StringUtils.left(item.getCaseType(), 5));       
+            ps.setString(3, StringUtils.left(item.getCaseMonth(), 2));       
+            ps.setString(4, StringUtils.left(item.getCaseNumber(), 4));             
+            ps.setString(5, StringUtils.left(item.getCaseStatus(), 25));          
             ps.setDate  (6, item.getFileDate());      
             ps.setString(7, item.getEmployer());
             ps.setString(8, item.getEmployerID());

@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -160,16 +161,16 @@ public class sqlULPData {
                     }
                      sql += "?)";   //31
             ps = conn.prepareStatement(sql);
-            ps.setString   ( 1, item.getCaseYear());
-            ps.setString   ( 2, item.getCaseType());
-            ps.setString   ( 3, item.getCaseMonth());
-            ps.setString   ( 4, item.getCaseNumber());
-            ps.setString   ( 5, item.getEmployerIDNumber());
-            ps.setString   ( 6, item.getDeptInState());
-            ps.setString   ( 7, item.getBarginingUnitNo());
-            ps.setString   ( 8, item.getEONumber());
-            ps.setString   ( 9, item.getAllegation());
-            ps.setString   (10, item.getCurrentStatus());
+            ps.setString   ( 1, StringUtils.left(item.getCaseYear(), 4));
+            ps.setString   ( 2, StringUtils.left(item.getCaseType(), 3));
+            ps.setString   ( 3, StringUtils.left(item.getCaseMonth(), 2));
+            ps.setString   ( 4, StringUtils.left(item.getCaseNumber(), 16));
+            ps.setString   ( 5, StringUtils.left(item.getEmployerIDNumber(), 5));
+            ps.setString   ( 6, StringUtils.left(item.getDeptInState(), 10));
+            ps.setString   ( 7, StringUtils.left(item.getBarginingUnitNo(), 15));
+            ps.setString   ( 8, StringUtils.left(item.getEONumber(), 10));
+            ps.setString   ( 9, StringUtils.left(item.getAllegation(), 255));
+            ps.setString   (10, StringUtils.left(item.getCurrentStatus(), 255));
             ps.setBoolean  (11, item.isPriority());
             ps.setTimestamp(12, item.getAssignedDate());
             ps.setTimestamp(13, item.getTurnInDate());
@@ -180,10 +181,10 @@ public class sqlULPData {
             ps.setBoolean  (18, item.isProbableCause());
             ps.setTimestamp(19, item.getAppealDateReceived());
             ps.setTimestamp(20, item.getAppealDateSent());
-            ps.setString   (21, item.getCourtName());
-            ps.setString   (22, item.getCourtCaseNumber());
-            ps.setString   (23, item.getSERBCaseNumber());
-            ps.setString   (24, item.getFinalDispositionStatus());
+            ps.setString   (21, StringUtils.left(item.getCourtName(), 255));
+            ps.setString   (22, StringUtils.left(item.getCourtCaseNumber(), 50));
+            ps.setString   (23, StringUtils.left(item.getSERBCaseNumber(), 50));
+            ps.setString   (24, StringUtils.left(item.getFinalDispositionStatus(), 255));
             if (item.getInvestigatorID() != 0){
                 ps.setInt  (25, item.getInvestigatorID());
             } else {
