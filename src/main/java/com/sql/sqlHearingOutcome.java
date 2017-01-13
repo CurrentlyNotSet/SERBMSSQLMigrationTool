@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.HearingOutcomeModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,6 +71,48 @@ public class sqlHearingOutcome {
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddOutcome(List<HearingOutcomeModel> list) {
+        int count = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO HearingOutcome ("
+                    + "active, "    //01
+                    + "type, "    //02
+                    + "description "//03
+                    + ") VALUES (";
+                    for(int i=0; i<2; i++){
+                        sql += "?, ";   //01-02
+                    }
+                     sql += "?)"; //03
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+
+            for (HearingOutcomeModel item : list) {
+                ps.setBoolean(1, item.isActive());
+                ps.setString (2, item.getType());
+                ps.setString (3, item.getDescription());
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            };
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

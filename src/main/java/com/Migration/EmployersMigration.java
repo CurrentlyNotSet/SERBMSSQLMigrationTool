@@ -21,6 +21,7 @@ import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -35,6 +36,7 @@ public class EmployersMigration {
     private static int totalRecordCount = 0;
     private static int currentRecord = 0;
     private static MainWindowSceneController control;
+    private static final List<barginingUnitModel> BUList = new ArrayList<>();
 
     public static void migrateEmployers(final MainWindowSceneController control) {
         Thread employersThread = new Thread() {
@@ -70,16 +72,20 @@ public class EmployersMigration {
         sqlEmployers.batchAddEmployer(employersList, types);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + employerTypeList.size(), totalRecordCount, "Employers Finished");
         
+        control.setProgressBarIndeterminateCleaning("Bargining Units");
         unionList.stream().forEach(item -> 
                 executor.submit(() -> 
-                        migrateBarginingUnitUnions(item)));
+                        batchMigrateBarginingUnitUnions(item)));
         
         executor.shutdown();
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
         System.out.println("\nFinished all threads");
-
+        
+        sqlBarginingUnit.batchAddBarginingUnit(BUList, control, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + BUList.size(), totalRecordCount, "Bargining Units Finished");
+        
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Employers: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -88,8 +94,8 @@ public class EmployersMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateEmployers");
         }
     }
-    
-    private static void migrateBarginingUnitUnions(oldBarginingUnitNewModel old) {
+        
+    private static void batchMigrateBarginingUnitUnions(oldBarginingUnitNewModel old) {
         barginingUnitModel item = new barginingUnitModel();
         
         item.setCaseRefYear(null);
@@ -155,7 +161,9 @@ public class EmployersMigration {
                 item.setCaseRefSequence(caseNumber[3]);
             }
         }
-        sqlBarginingUnit.addBarginingUnit(item);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getBUEmployerName());
+        if (Global.isDebug()){
+            System.out.println("Cleaned BU: " + item.getBUEmployerName());
+        }
+        BUList.add(item);
     }
 }

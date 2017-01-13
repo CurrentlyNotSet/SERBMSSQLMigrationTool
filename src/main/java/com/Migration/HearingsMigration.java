@@ -7,8 +7,6 @@ package com.Migration;
 
 import com.model.HearingsCaseModel;
 import com.model.HearingsCaseSearchModel;
-import com.model.HearingsMediationModel;
-import com.model.activityModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
 import com.model.HearingOutcomeModel;
@@ -28,12 +26,18 @@ import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
  * @author Andrew
  */
 public class HearingsMigration {
+    
+    private static int totalRecordCount = 0;
+    private static int currentRecord = 0;
+    private static MainWindowSceneController control;
     
     public static void migrateHearingsData(final MainWindowSceneController control){
         Thread hearingThread = new Thread() {
@@ -45,11 +49,13 @@ public class HearingsMigration {
         hearingThread.start();        
     }
     
-    private static void hearingsThread(MainWindowSceneController control){
+    private static void hearingsThread(MainWindowSceneController controlPassed){
         long lStartTime = System.currentTimeMillis();
+        control = controlPassed;
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         control.setProgressBarIndeterminate("Hearings Case Migration");
-        int totalRecordCount = 0;
-        int currentRecord = 0;
+        totalRecordCount = 0;
+        currentRecord = 0;
         
         List<oldSMDSCaseTrackingModel> oldHearingCaseList = sqlHearingsCase.getCases();
         List<oldSMDSHistoryModel> oldHearingsHistoryList = sqlActivity.getSMDSHistory();
@@ -57,27 +63,26 @@ public class HearingsMigration {
         List<HearingOutcomeModel> oldHearingOutcomeList = sqlHearingOutcome.getOutcomeList();
         
         totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size() + oldHearingsMediationList.size() + oldHearingOutcomeList.size();
-                
-        for (oldSMDSCaseTrackingModel item : oldHearingCaseList) {
-            migrateCase(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber());
-        }
         
-        for (oldSMDSHistoryModel item : oldHearingsHistoryList) {
-            migrateHistory(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getAction());
-        }
+        sqlHearingOutcome.batchAddOutcome(oldHearingOutcomeList);
+        currentRecord = SceneUpdater.listItemFinished(control, oldHearingOutcomeList.size() + currentRecord, totalRecordCount, "Hearing Outcomes Finished");
         
-        for (oldHearingsMediationModel item : oldHearingsMediationList) {
-            migrateMediations(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
-        }
+        sqlActivity.batchAddHearingsActivity(oldHearingsHistoryList);
+        currentRecord = SceneUpdater.listItemFinished(control, oldHearingsHistoryList.size() + currentRecord, totalRecordCount, "Hearing Outcomes Finished");
         
-        for (HearingOutcomeModel item : oldHearingOutcomeList) {
-            sqlHearingOutcome.addOutcome(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDescription());
+        sqlHearingsMediation.batchAddOldHearingsMediation(oldHearingsMediationList);
+        currentRecord = SceneUpdater.listItemFinished(control, oldHearingsMediationList.size() + currentRecord, totalRecordCount, "Hearing Mediations Finished");
+        
+        oldHearingCaseList.stream().forEach(item -> 
+                executor.submit(() -> 
+                        migrateCase(item)));
+        
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
         }
-                
+        System.out.println("\nFinished all threads");
+             
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Hearings Cases: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -94,6 +99,7 @@ public class HearingsMigration {
             migrateCaseData(item, caseNumber);
             migrateSearchData(item, caseNumber);
         }
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber());
     }
 
     private static void migrateCaseData(oldSMDSCaseTrackingModel old, caseNumberModel caseNumber) {
@@ -171,58 +177,7 @@ public class HearingsMigration {
 
         sqlHearingsCase.importOldHearingsCase(item);
     }
-
-    private static void migrateHistory(oldSMDSHistoryModel old) {
-        caseNumberModel caseNumber = null;
-        if (old.getCaseNumber().trim().length() == 16) {
-            caseNumber = StringUtilities.parseFullCaseNumber(old.getCaseNumber().trim());
-        }
-        
-        if(caseNumber != null){
-            activityModel item = new activityModel();
-            item.setCaseYear(caseNumber.getCaseYear());
-            item.setCaseType(caseNumber.getCaseType());
-            item.setCaseMonth(caseNumber.getCaseMonth());
-            item.setCaseNumber(caseNumber.getCaseNumber());
-            item.setUserID(StringUtilities.convertUserToID(old.getUserName()));
-            item.setDate(StringUtilities.convertStringDateAndTime(old.getDate(), old.getTime()));
-            item.setAction(!"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
-            item.setFileName(!"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
-            item.setFrom(null);
-            item.setTo(null);
-            item.setType(null);
-            item.setComment(null);
-            item.setRedacted(0);
-            item.setAwaitingTimeStamp(0);
-
-            sqlActivity.addActivity(item);
-        }
-    }
     
-    private static void migrateMediations(oldHearingsMediationModel old) {  
-        caseNumberModel caseNumber = null;
-        if (old.getCaseNumber().trim().length() == 16) {
-            caseNumber = StringUtilities.parseFullCaseNumber(old.getCaseNumber().trim());
-        }
-        
-        if(caseNumber != null){
-            HearingsMediationModel item = new HearingsMediationModel();
-            
-            item.setActive(old.getActive() == 1);
-            item.setCaseYear(caseNumber.getCaseYear());
-            item.setCaseType(caseNumber.getCaseType());
-            item.setCaseMonth(caseNumber.getCaseMonth());
-            item.setCaseNumber(caseNumber.getCaseNumber());
-            item.setPCPreD(old.getPCPreD().trim().equals("") ? null : old.getPCPreD().trim());
-            item.setMediator(StringUtilities.convertUserInitialToID(old.getMediatorInitials()));
-            item.setDateAssigned(StringUtilities.convertStringSQLDate(old.getDateAssigned()));
-            item.setMediationDate(StringUtilities.convertStringSQLDate(old.getMedDate()));
-            item.setOutcome(old.getOutcome().equals("") ? null : old.getOutcome().trim());
-            
-            sqlHearingsMediation.importOldHearingsMediation(item);
-        }
-    }
-
     private static void migrateSearchData(oldSMDSCaseTrackingModel old, caseNumberModel caseNumber) {
         HearingsCaseSearchModel item = new HearingsCaseSearchModel();
         List<casePartyModel> partyList = sqlCaseParty.getCasePartyFromParties(

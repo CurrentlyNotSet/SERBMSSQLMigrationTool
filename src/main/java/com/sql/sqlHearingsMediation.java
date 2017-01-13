@@ -6,8 +6,11 @@
 package com.sql;
 
 import com.model.HearingsMediationModel;
+import com.model.caseNumberModel;
 import com.model.oldHearingsMediationModel;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -99,4 +102,73 @@ public class sqlHearingsMediation {
         }
     }
     
+    
+    public static void batchAddOldHearingsMediation(List<oldHearingsMediationModel> list) {
+        int count = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "INSERT INTO HearingsMediation ("
+                    + "active, "        //01
+                    + "caseYear, "      //02
+                    + "caseType, "      //03
+                    + "caseMonth, "     //04
+                    + "caseNumber, "    //05
+                    + "PCPreD, "        //06
+                    + "mediator, "      //07
+                    + "DateAssigned, "  //08
+                    + "MediationDate, " //09
+                    + "Outcome "        //10
+                    + ") VALUES (";
+                    for(int i=0; i<9; i++){
+                        sql += "?, ";   //01-00
+                    }
+                     sql += "?)";   //10
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+
+            for (oldHearingsMediationModel item : list) {
+                caseNumberModel caseNumber = null;
+                if (item.getCaseNumber().trim().length() == 16) {
+                    caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
+                }
+
+                if(caseNumber != null){
+                    int mediatorID = StringUtilities.convertUserInitialToID(item.getMediatorInitials());
+                                        
+                    ps.setBoolean( 1, item.getActive() == 1);
+                    ps.setString ( 2, caseNumber.getCaseYear());
+                    ps.setString ( 3, caseNumber.getCaseType());
+                    ps.setString ( 4, caseNumber.getCaseMonth());
+                    ps.setString ( 5, caseNumber.getCaseNumber());
+                    ps.setString ( 6, item.getPCPreD().trim().equals("") ? null : item.getPCPreD().trim());
+                    if (mediatorID != 0){
+                        ps.setInt  ( 7, mediatorID);
+                    } else {
+                        ps.setNull ( 7, java.sql.Types.INTEGER);
+                    }
+                    ps.setDate   ( 8, StringUtilities.convertStringSQLDate(item.getDateAssigned()));
+                    ps.setDate   ( 9, StringUtilities.convertStringSQLDate(item.getMedDate()));
+                    ps.setString (10, item.getOutcome().equals("") ? null : item.getOutcome().trim());
+                    ps.addBatch();
+                    if (++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                    }
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
 }

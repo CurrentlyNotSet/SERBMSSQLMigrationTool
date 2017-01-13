@@ -10,6 +10,7 @@ import com.model.migrationStatusModel;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlUsers;
 import com.util.Global;
+import com.util.StringUtilities;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -127,6 +128,24 @@ public class MainWindowSceneController implements Initializable {
     private void MenuExit() {
         System.exit(0);
     }
+    
+    @FXML
+    private void BatchPhaseOneMenuButton() {
+        long lStartTime = System.currentTimeMillis();
+        
+        SystemDefaultsMigration.migrateSystemData(control);
+        UserMigration.migrateUserData(control);
+        DocumentMigration.migrateDocuments(control);
+        ContactsMigration.migrateContacts(control);
+        EmployersMigration.migrateEmployers(control);
+        PublicRecordsMigration.migratePublicRecordsData(control);
+        
+        checkButtonStatus();
+        
+        long lEndTime = System.currentTimeMillis();
+        String finishedText = "Finished Phase 1 Migration in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+        control.setProgressBarDisable(finishedText);
+    }
 
     @FXML
     private void migrateULPButton() {
@@ -201,6 +220,14 @@ public class MainWindowSceneController implements Initializable {
         });
     }
 
+    public void setProgressBarIndeterminateCleaning(final String text) {
+        Platform.runLater(() -> {
+            progressBarLabel.setText("Cleaning : " + text + " Records");
+            progressbar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+            disableAllButtons();
+        });
+    }
+    
     public void updateProgressBar(final double currentValue, final double maxValue) {
         Platform.runLater(() -> {
             progressBarLabel.setText("Processing Record: " + (int) currentValue + "/" + (int) maxValue);
