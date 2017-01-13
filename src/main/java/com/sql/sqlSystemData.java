@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.oldCountyModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,7 +51,8 @@ public class sqlSystemData {
         return list;
     }
     
-    public static void addCounty(oldCountyModel item) {
+    public static void batchAddCounty(List<oldCountyModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -62,20 +64,34 @@ public class sqlSystemData {
                     + "countyCode, "//04
                     + "countyName " //05
                     + ") VALUES ("
-                    + "?,"  //01
-                    + "?,"  //02
-                    + "?,"  //03
-                    + "?,"  //04
+                    + "?," //01
+                    + "?," //02
+                    + "?," //03
+                    + "?," //04
                     + "?)"; //05
             ps = conn.prepareStatement(sql);
-            ps.setInt   (1, item.getActive());
-            ps.setString(2, item.getStateCode());
-            ps.setString(3, item.getRegionCode());
-            ps.setString(4, item.getCountyCode());
-            ps.setString(5, item.getName());
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+
+            for (oldCountyModel item : list) {
+                ps.setInt(1, "OH".equals(item.getStateCode().trim()) ? 1 : 0);
+                ps.setString(2, item.getStateCode());
+                ps.setString(3, item.getRegionCode());
+                ps.setString(4, item.getCountyCode());
+                ps.setString(5, item.getName());
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

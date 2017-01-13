@@ -171,8 +171,7 @@ public class sqlFactFinder {
                     item.setState("OH");
                 } else if ("Kentucky".equals(item.getState())) {
                     item.setState("KY");
-                }
-                
+                }                
                 
                 ps.setInt   ( 1, item.getActive());
                 ps.setString( 2, StringUtils.left(item.getStatus(), 1));

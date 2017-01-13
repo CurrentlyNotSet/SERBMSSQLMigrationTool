@@ -17,17 +17,24 @@ import com.sql.sqlBlobFile;
 import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
+import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
  * @author Andrew
  */
 public class EmployersMigration {
+    
+    private static int totalRecordCount = 0;
+    private static int currentRecord = 0;
+    private static MainWindowSceneController control;
 
     public static void migrateEmployers(final MainWindowSceneController control) {
         Thread employersThread = new Thread() {
@@ -39,49 +46,40 @@ public class EmployersMigration {
         employersThread.start();
     }
 
-    private static void employersThread(MainWindowSceneController control) {
+    private static void employersThread(MainWindowSceneController controlPassed) {
         long lStartTime = System.currentTimeMillis();
+        control = controlPassed;
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         control.setProgressBarIndeterminate("Employers Migration");
-        int totalRecordCount = 0;
-        int currentRecord = 0;
+        totalRecordCount = 0;
+        currentRecord = 0;
         
-        List<oldPartyModel> employersList = sqlEmployers.getOldEmployers();
-        List<oldBarginingUnitNewModel> unionList = sqlBarginingUnit.getOldBarginingUnits();
+        //Add in EmployerTypes
         List<String> employerTypeList = Arrays.asList(
                 "Attorney", "Employer", "FCMS Mediator", "Individual", "Rep", "State Mediator", "Union"
         );
-
-        totalRecordCount = employersList.size() + unionList.size() + employerTypeList.size();
-
-        for (String type : employerTypeList) {
-            sqlEmployers.addEmployerType(type);
-            currentRecord++;
-            if (Global.isDebug()) {
-                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + type + ")");
-            }
-            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
-        }
-
+        sqlEmployers.batchAddEmployerType(employerTypeList);
         List<employerTypeModel> types = sqlEmployers.getEmployerType();
-        
-        for (oldPartyModel item : employersList) {
-            migrateEmployers(item, types);
-            currentRecord++;
-            if (Global.isDebug()) {
-                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getLastName().trim() + ")");
-            }
-            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
-        }
 
-        for (oldBarginingUnitNewModel item : unionList){
-            migrateBarginingUnitUnions(item);
-            currentRecord++;
-            if (Global.isDebug()){
-                System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + item.getBUEmployerName().trim() + ")");
-            }
-            control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
-        }
+        //Get Lists
+        List<employersModel> employersList = sqlEmployers.getOldEmployers(types);
+        List<oldBarginingUnitNewModel> unionList = sqlBarginingUnit.getOldBarginingUnits();
+
+        totalRecordCount = employersList.size() + unionList.size();
         
+        sqlEmployers.batchAddEmployer(employersList, types);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + employerTypeList.size(), totalRecordCount, "Employers Finished");
+        
+        unionList.stream().forEach(item -> 
+                executor.submit(() -> 
+                        migrateBarginingUnitUnions(item)));
+        
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
+        }
+        System.out.println("\nFinished all threads");
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Employers: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -91,50 +89,6 @@ public class EmployersMigration {
         }
     }
     
-    private static void migrateEmployers(oldPartyModel old, List<employerTypeModel> typeList) {
-        int typeID = 0;
-        for (employerTypeModel type : typeList){
-            if (type.getType().equals(old.getPartyType())){
-                typeID = type.getId();
-                break;
-            }
-        }      
-        
-        employersModel item = new employersModel();
-        item.setActive(old.getActive());
-        item.setEmployerType(typeID);
-        item.setEmployerName(!"".equals(old.getBusinessName().trim()) ? old.getBusinessName().trim() : null);
-        item.setPrefix(!"".equals(old.getPrefix().trim()) ? old.getPrefix().trim() : null);
-        item.setFirstName(!"".equals(old.getFirstName().trim()) ? old.getFirstName().trim() : null);
-        item.setMiddleInitial(!"".equals(old.getMiddleInitial().trim()) ? old.getMiddleInitial().trim() : null);
-        item.setLastName(!"".equals(old.getLastName().trim()) ? old.getLastName().trim() : null);
-        item.setSuffix(!"".equals(old.getSuffix().trim()) ? old.getSuffix().trim() : null);   
-        item.setTitle(!"".equals(old.getTitle().trim()) ? old.getTitle().trim() : null);       
-        item.setAddress1(!"".equals(old.getAddress1().trim()) ? old.getAddress1().trim() : null);
-        item.setAddress2(!"".equals(old.getAddress2().trim()) ? old.getAddress2().trim() : null);
-        item.setAddress3(null);
-        item.setCity(!"".equals(old.getCity().trim()) ? old.getCity().trim() : null);
-        item.setState(!"".equals(old.getState().trim()) ? old.getState().trim() : null);
-        item.setZipCode(!"".equals(old.getZipPlusFive().trim()) ? old.getZipPlusFive().trim() : null);
-        item.setPhone1(!"".equals(StringUtilities.convertPhoneNumberToString(old.getWorkPhone().trim())) ? StringUtilities.convertPhoneNumberToString(old.getWorkPhone().trim()) : null);
-        item.setPhone2(!"".equals(StringUtilities.convertPhoneNumberToString(old.getCellPhone().trim())) ? StringUtilities.convertPhoneNumberToString(old.getCellPhone().trim()) : null);
-        item.setFax(!"".equals(StringUtilities.convertPhoneNumberToString(old.getFax().trim())) ? StringUtilities.convertPhoneNumberToString(old.getFax().trim()) : null);
-        item.setEmailAddress(!"".equals(old.getEMail().trim()) ? old.getEMail().trim() : null);
-        item.setEmployerIDNumber(!"".equals(old.getPartyField1().trim()) ? old.getPartyField1().trim() : null);
-        item.setEmployerTypeCode(!"".equals(old.getPartyField2().trim()) ? old.getPartyField2().trim() : null);
-        item.setJurisdiction(!"".equals(old.getPartyField3().trim()) ? old.getPartyField3().trim() : null);
-        item.setRegion(!"".equals(old.getPartyField4().trim()) ? old.getPartyField4().trim() : null);
-        item.setAssistantFirstName(!"".equals(old.getAssistantFirstName().trim()) ? old.getAssistantFirstName().trim() : null);
-        item.setAssistantMiddleInitial(!"".equals(old.getAssistantMiddleInitial().trim()) ? old.getAssistantMiddleInitial().trim() : null);
-        item.setAssistantLastName(!"".equals(old.getAssistantLastName().trim()) ? old.getAssistantLastName().trim() : null);
-        item.setAssistantEmail(!"".equals(old.getAssistantEMail().trim()) ? old.getAssistantEMail().trim() : null);
-        item.setCounty(!"".equals(old.getCounty().trim()) ? old.getCounty().trim() : null);
-        item.setPopulation(!"".equals(old.getPopulation().trim()) ? old.getPopulation().trim() : null);
-        item.setEmployerIRN(!"".equals(old.getEmployerIRN().trim()) ? old.getEmployerIRN().trim() : null);
-
-        sqlEmployers.addEmployer(item);
-    }
-
     private static void migrateBarginingUnitUnions(oldBarginingUnitNewModel old) {
         barginingUnitModel item = new barginingUnitModel();
         
@@ -202,5 +156,6 @@ public class EmployersMigration {
             }
         }
         sqlBarginingUnit.addBarginingUnit(item);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getBUEmployerName());
     }
 }

@@ -11,10 +11,14 @@ import com.model.oldCMDSHistoryModel;
 import com.model.oldCSCHistoryModel;
 import com.model.oldMEDHistoryModel;
 import com.model.oldORGHistoryModel;
+import com.model.oldPublicRecordsModel;
 import com.model.oldREPHistoryModel;
 import com.model.oldSMDSHistoryModel;
 import com.model.oldULPHistoryModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,13 +28,14 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  *
  * @author Andrew
  */
-public class sqlActivity {    
+public class sqlActivity {
     
     public static void addActivity(activityModel item) {
         Connection conn = null;
@@ -85,6 +90,103 @@ public class sqlActivity {
         }
     }
     
+    public static void batchAddPublicRecordActivity(List<oldPublicRecordsModel> list, MainWindowSceneController control) {
+        int totalRecordCount = list.size();
+        int count = 0;
+        
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO Activity ("
+                    + "caseYear, "        //01
+                    + "caseType, "        //02
+                    + "caseMonth, "       //03
+                    + "caseNumber, "      //04
+                    + "userID, "          //05
+                    + "date, "            //06
+                    + "action, "          //07
+                    + "fileName, "        //08
+                    + "[from], "          //09
+                    + "[to], "            //10
+                    + "type, "            //11
+                    + "comment, "         //12
+                    + "redacted, "        //13
+                    + "awaitingTimeStamp "//14
+                    + ") VALUES (";
+                    for(int i=0; i<13; i++){
+                        sql += "?, ";   //01-13
+                    }
+                     sql += "?)"; //14
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (oldPublicRecordsModel item : list) {
+                caseNumberModel caseNumber = null;
+                if (item.getCaseNumber().trim().length() == 16) {
+                    caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
+                } else if (item.getCaseNumber().trim().length() == 4){
+                    caseNumber = new caseNumberModel();
+                    caseNumber.setCaseYear(null);
+                    caseNumber.setCaseType("ORG");
+                    caseNumber.setCaseMonth(null);
+                    caseNumber.setCaseNumber(item.getCaseNumber());
+                }
+
+                if(caseNumber != null){
+                    Timestamp date = null;
+                    if (item.getDateTime().length() > 10){
+                        String[] dateTime = item.getDateTime().split(" ", 2);
+
+                        date = StringUtilities.convertStringDateAndTime(dateTime[0].replaceAll(" ", "").trim(), dateTime[1].replaceAll(" ", "").trim());
+                    } else if (item.getDateTime().length() < 10 && item.getDateTime().length() > 1){
+                        date = StringUtilities.convertStringTimeStamp(item.getDateTime() + " 00:00:00.000");
+                    }
+
+                    String Comment = "";
+                    if (!item.getBody().trim().equals("")){
+                        Comment += "Body: " + item.getBody();
+                    }
+                    if (!item.getNotes().trim().equals("")){
+                        Comment += System.lineSeparator() + System.lineSeparator() + "Notes: " + item.getNotes();
+                    }
+                    
+                    ps.setString   ( 1, caseNumber.getCaseYear());
+                    ps.setString   ( 2, caseNumber.getCaseType());
+                    ps.setString   ( 3, caseNumber.getCaseMonth());
+                    ps.setString   ( 4, StringUtils.left(caseNumber.getCaseNumber(), 8));
+                    ps.setNull     ( 5, java.sql.Types.INTEGER);
+                    ps.setTimestamp( 6, date);
+                    ps.setString   ( 7, !"".equals(item.getDocumentName().trim()) ? item.getDocumentName().trim() : null);
+                    ps.setString   ( 8, !"".equals(item.getFileName().trim()) ? FilenameUtils.getName(item.getFileName().trim()) : null);
+                    ps.setString   ( 9, null);
+                    ps.setString   (10, !"".equals(item.getEmailAddress().trim()) ? item.getEmailAddress().trim() : null);
+                    ps.setString   (11, null);
+                    ps.setString   (12, Comment.trim().equals("") ? null : Comment.trim());
+                    ps.setInt      (13, 0);
+                    ps.setInt      (14, 0);
+                    ps.addBatch();
+                    if(++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                        SceneUpdater.listItemFinished(control, count, totalRecordCount, count + " imported");
+                    }
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
     public static void batchAddORGActivity(List<oldORGHistoryModel> ORGCaseHistory) {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -111,6 +213,7 @@ public class sqlActivity {
                     }
                      sql += "?)"; //14
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
             
             for (oldORGHistoryModel old : ORGCaseHistory){
                 int userID = StringUtilities.convertUserToID(old.getUserInitials());
@@ -137,6 +240,7 @@ public class sqlActivity {
             }
             
             ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
             try {
@@ -176,6 +280,7 @@ public class sqlActivity {
                     }
                      sql += "?)"; //14
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
             
             for (oldCSCHistoryModel old : CSCCaseHistory){
                 int userID = StringUtilities.convertUserToID(old.getInitials());
@@ -208,6 +313,7 @@ public class sqlActivity {
             }
             
             ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
             try {
@@ -247,6 +353,7 @@ public class sqlActivity {
                     }
                      sql += "?)"; //14
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
             
             for (oldULPHistoryModel old : ULPCaseHistory){
                 int userID = StringUtilities.convertUserToID(old.getUserInitials());
@@ -273,6 +380,7 @@ public class sqlActivity {
             }
             
             ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
             try {
@@ -312,6 +420,7 @@ public class sqlActivity {
                     }
                      sql += "?)"; //14
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
             
             for (oldMEDHistoryModel old : oldMEDCaseList){
                 int userID = StringUtilities.convertUserToID(old.getUserInitals());
@@ -338,6 +447,7 @@ public class sqlActivity {
             }
             
             ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
             try {
@@ -377,6 +487,7 @@ public class sqlActivity {
                     }
                      sql += "?)"; //14
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
             
             for (oldREPHistoryModel old : REPCaseHistory){
                 int userID = StringUtilities.convertUserToID(old.getUserInitals());
@@ -403,6 +514,7 @@ public class sqlActivity {
             }
             
             ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
             try {

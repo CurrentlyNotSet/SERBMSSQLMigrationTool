@@ -10,6 +10,7 @@ import com.util.DBCInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 
 /**
@@ -45,6 +46,50 @@ public class sqlCMDSReport {
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddCMDSReport(List<CMDSReport> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO CMDSReport ("
+                    + "section, "    //01
+                    + "description, "//02
+                    + "fileName, "   //03
+                    + "parameters, " //04
+                    + "active, "     //05
+                    + "sortOrder "   //06
+                    + ") VALUES (";
+            for (int i = 0; i < 05; i++) {
+                sql += "?, ";   //01-05
+            }
+            sql += "?)";   //06
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (CMDSReport item : list){
+                ps.setString (1, item.getSection());
+                ps.setString (2, item.getDescription());
+                ps.setString (3, item.getFileName());
+                ps.setString (4, item.getParameters());
+                ps.setBoolean(5, item.isActive());
+                ps.setNull   (6, java.sql.Types.DOUBLE);
+                ps.addBatch();
+            }            
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

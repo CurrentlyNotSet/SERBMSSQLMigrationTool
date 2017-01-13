@@ -28,30 +28,24 @@ public class PublicRecordsMigration {
         Thread hearingThread = new Thread() {
             @Override
             public void run() {
-                hearingsThread(control);
+                publicRecordsThread(control);
             }
         };
         hearingThread.start();        
     }
     
-    private static void hearingsThread(MainWindowSceneController control){
+    private static void publicRecordsThread(MainWindowSceneController control){
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("Public Records Migration");
-        int totalRecordCount = 0;
-        int currentRecord = 0;
         
         List<oldPublicRecordsModel> oldPublicRecords = sqlPublicRecords.getOldPublicRecords();
-        
-        totalRecordCount = oldPublicRecords.size();
                    
-        for (oldPublicRecordsModel item : oldPublicRecords) {
-            migrateHistory(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber() + ": " + item.getDocumentName());
-        }
-                
+        sqlActivity.batchAddPublicRecordActivity(oldPublicRecords, control);
+        SceneUpdater.listItemFinished(control, oldPublicRecords.size(), oldPublicRecords.size(), "Public Records Finished");
+   
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Public Records: " 
-                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+                + oldPublicRecords.size() + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
         control.setProgressBarDisable(finishedText);
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigratePublicRecords");

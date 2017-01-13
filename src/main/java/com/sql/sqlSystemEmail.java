@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.systemEmailModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -59,7 +60,8 @@ public class sqlSystemEmail {
         return list;
     }
         
-    public static void addSystemEmail(systemEmailModel item) {
+    public static void addSystemEmail(List<systemEmailModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -84,22 +86,36 @@ public class sqlSystemEmail {
                     }
                      sql += "?)";   //13
             ps = conn.prepareStatement(sql);
-            ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, item.getSection());
-            ps.setString( 3, item.getEmailAddress());
-            ps.setString( 4, item.getUsername());
-            ps.setString( 5, item.getPassword());
-            ps.setString( 6, item.getIncomingURL());
-            ps.setString( 7, item.getIncomingProtocol());
-            ps.setInt   ( 8, item.getIncomingPort());
-            ps.setString( 9, item.getIncomingFolder());
-            ps.setString(10, item.getOutgoingURL());
-            ps.setString(11, item.getOutgoingProtocol());
-            ps.setInt   (12, item.getOutgoingPort());
-            ps.setString(13, item.getOutgoingFolder());
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+
+            for (systemEmailModel item : list) {
+                ps.setInt(1, item.getActive());
+                ps.setString(2, item.getSection());
+                ps.setString(3, item.getEmailAddress());
+                ps.setString(4, item.getUsername());
+                ps.setString(5, item.getPassword());
+                ps.setString(6, item.getIncomingURL());
+                ps.setString(7, item.getIncomingProtocol());
+                ps.setInt(8, item.getIncomingPort());
+                ps.setString(9, item.getIncomingFolder());
+                ps.setString(10, item.getOutgoingURL());
+                ps.setString(11, item.getOutgoingProtocol());
+                ps.setInt(12, item.getOutgoingPort());
+                ps.setString(13, item.getOutgoingFolder());
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

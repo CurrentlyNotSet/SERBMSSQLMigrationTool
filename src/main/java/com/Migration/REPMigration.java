@@ -87,16 +87,16 @@ public class REPMigration {
                 + REPCaseTypeList.size() + REPCaseStatusList.size() + REPrecList.size();
 
         sqlREPRecommendation.batchAddREPRecommendation(REPrecList);
-        currentRecord = SceneUpdater.listItemFinished(control, REPrecList.size(), totalRecordCount, "REP Recommendations Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPrecList.size(), totalRecordCount, "REP Recommendations Finished");
         
         sqlREPCaseType.batchAddREPCaseType(REPCaseTypeList);
-        currentRecord = SceneUpdater.listItemFinished(control, REPCaseTypeList.size(), totalRecordCount, "REP Case Types Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseTypeList.size(), totalRecordCount, "REP Case Types Finished");
         
         sqlREPCaseStatus.batchAddREPCaseStatus(REPCaseStatusList);
-        currentRecord = SceneUpdater.listItemFinished(control, REPCaseStatusList.size(), totalRecordCount, "REP Case Status Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseStatusList.size(), totalRecordCount, "REP Case Status Finished");
         
         sqlBoardActionType.batchAddREPBoardActionType(REPBoardActionList);
-        currentRecord = SceneUpdater.listItemFinished(control, REPBoardActionList.size(), totalRecordCount, "REP Board Actions Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPBoardActionList.size(), totalRecordCount, "REP Board Actions Finished");
         
         //Insert REP Case Data
         oldREPDataList.stream().forEach(item -> 

@@ -7,7 +7,11 @@ package com.sql;
 
 import com.model.casePartyModel;
 import com.model.oldCMDSCasePartyModel;
+import com.sceneControllers.MainWindowSceneController;
+import com.util.ContactNameSeperator;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -686,8 +691,55 @@ public class sqlContactList {
         return list;
     }
     
-    public static List<oldCMDSCasePartyModel> getPBRMasterList() {
-        List<oldCMDSCasePartyModel> list = new ArrayList();
+//    public static List<oldCMDSCasePartyModel> getPBRMasterList() {
+//        List<oldCMDSCasePartyModel> list = new ArrayList();
+//        Connection conn = null;
+//        PreparedStatement ps = null;
+//        ResultSet rs = null;
+//        try {
+//            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+//            String sql = "SELECT DISTINCT LastName, FirstName, MiddleInitial, "
+//                    + "Title, Address1, Address2, City, State, Zip, OfficePhone, "
+//                    + "HomePhone, CellularPhone, Pager, Fax, Email, etalextraname "
+//                    + "FROM caseparticipants WHERE "
+//                    + "year LIKE ('2010') OR year LIKE ('2011') OR "
+//                    + "year LIKE ('2012') OR year LIKE ('2013') OR "
+//                    + "year LIKE ('2014') OR year LIKE ('2015') OR "
+//                    + "year LIKE ('2016')";
+//            ps = conn.prepareStatement(sql);
+//            rs = ps.executeQuery();
+//            while (rs.next()) {
+//                oldCMDSCasePartyModel item = new oldCMDSCasePartyModel();
+//                item.setLastName(rs.getString("LastName"));
+//                item.setFirstName(rs.getString("FirstName"));
+//                item.setMiddleInitial(rs.getString("MiddleInitial"));
+//                item.setEtalextraname(rs.getString("etalextraname"));
+//                item.setTitle(rs.getString("Title"));
+//                item.setAddress1(rs.getString("Address1"));
+//                item.setAddress2(rs.getString("Address2"));
+//                item.setCity(rs.getString("city"));
+//                item.setState(rs.getString("state"));
+//                item.setZip(rs.getString("zip"));
+//                item.setOfficePhone(rs.getString("OfficePhone").equals("null") ? "" : rs.getString("OfficePhone"));
+//                item.setHomePhone(rs.getString("HomePhone").equals("null") ? "" : rs.getString("HomePhone"));
+//                item.setCellularPhone(rs.getString("CellularPhone").equals("null") ? "" : rs.getString("CellularPhone"));
+//                item.setPager(rs.getString("Pager"));
+//                item.setFax(rs.getString("Fax").trim());
+//                item.setEmail(rs.getString("Email"));                
+//                list.add(item);
+//            }
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//        } finally {
+//            DbUtils.closeQuietly(conn);
+//            DbUtils.closeQuietly(ps);
+//            DbUtils.closeQuietly(rs);
+//        }
+//        return list;
+//    }    
+    
+    public static List<casePartyModel> getPBRMasterList() {
+        List<casePartyModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -704,23 +756,29 @@ public class sqlContactList {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                oldCMDSCasePartyModel item = new oldCMDSCasePartyModel();
+                casePartyModel item = new casePartyModel();
                 item.setLastName(rs.getString("LastName"));
                 item.setFirstName(rs.getString("FirstName"));
                 item.setMiddleInitial(rs.getString("MiddleInitial"));
-                item.setEtalextraname(rs.getString("etalextraname"));
-                item.setTitle(rs.getString("Title"));
+                item.setNameTitle(rs.getString("etalextraname"));
+                item.setJobTitle(rs.getString("Title"));
                 item.setAddress1(rs.getString("Address1"));
                 item.setAddress2(rs.getString("Address2"));
                 item.setCity(rs.getString("city"));
                 item.setState(rs.getString("state"));
                 item.setZip(rs.getString("zip"));
-                item.setOfficePhone(rs.getString("OfficePhone").equals("null") ? "" : rs.getString("OfficePhone"));
-                item.setHomePhone(rs.getString("HomePhone").equals("null") ? "" : rs.getString("HomePhone"));
-                item.setCellularPhone(rs.getString("CellularPhone").equals("null") ? "" : rs.getString("CellularPhone"));
-                item.setPager(rs.getString("Pager"));
+                item.setPhoneOne(rs.getString("OfficePhone").equals("null") ? "" : rs.getString("OfficePhone"));
+                item.setPhoneTwo(rs.getString("HomePhone").equals("null") ? "" : rs.getString("HomePhone"));
+                
+                
+                if (!rs.getString("HomePhone").equals("")){
+                    item.setPhoneOne(!rs.getString("HomePhone").trim().equals("") ? StringUtilities.convertPhoneNumberToString(rs.getString("HomePhone").trim()) : null);
+                } else if (!rs.getString("HomePhone").equals("")){
+                    item.setPhoneTwo(!rs.getString("HomePhone").trim().equals("") ? StringUtilities.convertPhoneNumberToString(rs.getString("HomePhone").trim()) : null);
+                }
+
                 item.setFax(rs.getString("Fax").trim());
-                item.setEmail(rs.getString("Email"));                
+                item.setEmailAddress(rs.getString("Email"));                
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -731,7 +789,7 @@ public class sqlContactList {
             DbUtils.closeQuietly(rs);
         }
         return list;
-    }    
+    } 
     
     public static List<casePartyModel> getRepresentativeList() {
         List<casePartyModel> list = new ArrayList();
@@ -837,6 +895,81 @@ public class sqlContactList {
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddPartyInformation(List<casePartyModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        int count = 0;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "INSERT INTO Party ("
+                    + "prefix, "        //01
+                    + "firstName, "     //02
+                    + "middleInitial, " //03
+                    + "lastName, "      //04
+                    + "suffix, "        //05
+                    + "nameTitle, "     //06
+                    + "jobTitle, "      //07
+                    + "companyName, "   //08
+                    + "address1, "      //09
+                    + "address2, "      //10
+                    + "address3, "      //11
+                    + "city, "          //12
+                    + "stateCode, "     //13
+                    + "zipCode, "       //14
+                    + "phone1, "        //15
+                    + "phone2, "        //16
+                    + "emailAddress, "  //17
+                    + "fax  "           //18
+                    + ") VALUES (";
+                    for(int i=0; i<17; i++){
+                        sql += "?, ";   //01-17
+                    }
+                     sql += "?)"; //18
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (casePartyModel item : list) {
+                item = ContactNameSeperator.seperateName(item);
+                
+                ps.setString( 1, StringUtils.left(item.getPrefix(), 50));
+                ps.setString( 2, StringUtils.left(item.getFirstName(), 100));
+                ps.setString( 3, StringUtils.left(item.getMiddleInitial(), 2));
+                ps.setString( 4, StringUtils.left(item.getLastName(), 255));
+                ps.setString( 5, StringUtils.left(item.getSuffix(), 50));
+                ps.setString( 6, StringUtils.left(item.getNameTitle(), 100));
+                ps.setString( 7, StringUtils.left(item.getJobTitle(), 150));
+                ps.setString( 8, StringUtils.left(item.getCompanyName(), 200));
+                ps.setString( 9, StringUtils.left(item.getAddress1(), 150));
+                ps.setString(10, StringUtils.left(item.getAddress2(), 150));
+                ps.setString(11, StringUtils.left(item.getAddress3(), 150));
+                ps.setString(12, StringUtils.left(item.getCity(), 150));
+                ps.setString(13, StringUtils.left(item.getState(), 2));
+                ps.setString(14, StringUtils.left(item.getZip(), 10));
+                ps.setString(15, StringUtils.left(item.getPhoneOne(), 20));
+                ps.setString(16, StringUtils.left(item.getPhoneTwo(), 20));
+                ps.setString(17, StringUtils.left(item.getEmailAddress(), 200));
+                ps.setString(18, StringUtils.left(item.getFax(), 20));
+                ps.addBatch();
+                    if(++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                        currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE(), totalCount, count + " imported");
+                    }
+            }
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

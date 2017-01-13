@@ -93,7 +93,6 @@ public class sqlULPRecommendations {
                     + "?,"  //02
                     + "?)"; //03
             ps = conn.prepareStatement(sql);
-            
             conn.setAutoCommit(false);
             
             for (ULPRecommendationsModel item : oldULPRecsList) {

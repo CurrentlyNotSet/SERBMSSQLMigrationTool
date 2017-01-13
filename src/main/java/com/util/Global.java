@@ -17,6 +17,8 @@ import java.util.List;
 public class Global {
 
     private static final boolean debug = true;
+    
+    private static final int BATCH_SIZE = 1000;
 
     private static final SimpleDateFormat mmddyyyyhhmmssa = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
     
@@ -186,6 +188,10 @@ public class Global {
 
     public static String getEmailBodyULP() {
         return emailBodyULP;
+    }
+
+    public static int getBATCH_SIZE() {
+        return BATCH_SIZE;
     }
     
 }

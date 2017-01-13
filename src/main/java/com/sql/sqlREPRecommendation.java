@@ -90,7 +90,6 @@ public class sqlREPRecommendation {
                     + "?, " //02
                     + "?)"; //03
             ps = conn.prepareStatement(sql);
-
             conn.setAutoCommit(false);
 
             for (REPRecommendationModel item : list) {

@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.administrationInformationModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -67,7 +68,8 @@ public class sqlAdministrationInformation {
         return list;
     }    
     
-    public static void addInfo(administrationInformationModel item) {
+    public static void addInfo(List<administrationInformationModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try { 
@@ -92,22 +94,38 @@ public class sqlAdministrationInformation {
                     }
                      sql += "?)";    //013
             ps = conn.prepareStatement(sql);
-            ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, item.getDepartment());
-            ps.setString( 3, item.getGovernorName());
-            ps.setString( 4, item.getLtGovernorName());
-            ps.setString( 5, item.getAddress1());
-            ps.setString( 6, item.getAddress2());
-            ps.setString( 7, item.getCity());
-            ps.setString( 8, item.getState());
-            ps.setString( 9, item.getZip());
-            ps.setString(10, item.getUrl());
-            ps.setString(11, item.getPhone());
-            ps.setString(12, item.getFax());
-            ps.setString(13, item.getFooter());
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+
+            for (administrationInformationModel item : list) {
+                String[] cityStateZipSplit = item.getCity().replaceAll("  ", " ").split(" ");
+                
+                ps.setInt   ( 1, item.getActive());
+                ps.setString( 2, item.getDepartment());
+                ps.setString( 3, "".equals(item.getGovernorName()) ? null : item.getGovernorName());
+                ps.setString( 4, "".equals(item.getLtGovernorName()) ? null : item.getLtGovernorName());
+                ps.setString( 5, "".equals(item.getAddress1()) ? null : item.getAddress1());
+                ps.setString( 6, item.getAddress2());
+                ps.setString( 7, "".equals(cityStateZipSplit[0]) ? null : cityStateZipSplit[0].trim());
+                ps.setString( 8, "".equals(cityStateZipSplit[1]) ? null : cityStateZipSplit[1].trim());
+                ps.setString( 9, "".equals(cityStateZipSplit[2]) ? null : cityStateZipSplit[2].trim());
+                ps.setString(10, "".equals(item.getUrl()) ? null : item.getUrl());
+                ps.setString(11, "".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""));
+                ps.setString(12, "".equals(item.getFax().replaceAll("[^0-9]", "")) ? null : item.getFax().replaceAll("[^0-9]", ""));
+                ps.setString(13, "".equals(item.getFooter()) ? null : item.getFooter());
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

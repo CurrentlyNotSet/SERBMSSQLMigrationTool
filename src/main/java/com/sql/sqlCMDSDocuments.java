@@ -219,4 +219,138 @@ public class sqlCMDSDocuments {
         }
     }
     
+    public static void batchAddCMDSDocuments(List<CMDSDocumentModel> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO CMDSDocuments("
+                    + "Active, "                //01
+                    + "MainCategory, "          //02
+                    + "SubCategory, "           //03
+                    + "LetterName, "            //04
+                    + "Location, "              //05
+                    + "MultiplePrint, "         //06
+                    + "ResponseDue, "           //07
+                    + "ActionAppealed, "        //08
+                    + "ClassificationTitle, "   //09
+                    + "ClassificationNumber, "  //10
+                    + "BarginingUnit, "         //11
+                    + "AppelantAppointed, "     //12
+                    + "ProbitionaryPeriod, "    //13
+                    + "HearingDate, "           //14
+                    + "HearingTime, "           //15
+                    + "HearingServed, "         //16
+                    + "MemorandumContra, "      //17
+                    + "Gender, "                //18
+                    + "AddressBlock, "          //19
+                    + "FirstLetterSent, "       //20
+                    + "CodeSection, "           //21
+                    + "CountyName, "            //22
+                    + "StayDate, "              //23
+                    + "CasePendingResolution, " //24
+                    + "LastUpdate, "            //25
+                    + "DateGranted, "           //26
+                    + "MatterContinued, "       //27
+                    + "SettlementDue, "         //28
+                    + "FilingParty, "           //29
+                    + "RespondingParty, "       //30
+                    + "RequestingParty, "       //31
+                    + "Deposition, "            //32
+                    + "RepHimOrHer, "           //33
+                    + "TypeOfAction, "          //34
+                    + "CodeSectionFillIn, "     //35
+                    + "DocumentName, "          //36
+                    + "DateFiled, "             //37
+                    + "InfoRedacted, "          //38
+                    + "RedactorName, "          //39
+                    + "RedactorTitle, "         //40
+                    + "DatePOSent, "            //41
+                    + "AppealType, "            //42
+                    + "AppealType2, "           //43
+                    + "AppealTypeUF, "          //44
+                    + "AppealTypeLS, "          //45
+                    + "RequestingPartyC, "      //46
+                    + "DateRequested, "         //47
+                    + "PurposeOfExtension, "    //48
+                    + "EmailSubject, "          //49
+                    + "EmailBody, "             //50
+                    + "sortOrder "              //51
+                    + ") VALUES (";
+                    for(int i=0; i<50; i++){
+                        sql += "?, ";   //01-50
+                    }
+                     sql += "?)";   //51
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (CMDSDocumentModel item : list){
+                ps.setBoolean( 1, item.isActive());
+                ps.setString ( 2, item.getMainCategory());
+                ps.setString ( 3, item.getSubCategory());
+                ps.setString ( 4, item.getLetterName());
+                ps.setString ( 5, item.getLocation());
+                ps.setBoolean( 6, item.isMultiplePrint());
+                ps.setBoolean( 7, item.isResponseDue());
+                ps.setBoolean( 8, item.isActionAppealed());
+                ps.setBoolean( 9, item.isClassificationTitle());
+                ps.setBoolean(10, item.isClassificationNumber());
+                ps.setBoolean(11, item.isBarginingUnit());
+                ps.setBoolean(12, item.isAppelantAppointed());
+                ps.setBoolean(13, item.isProbitionaryPeriod());
+                ps.setBoolean(14, item.isHearingDate());
+                ps.setBoolean(15, item.isHearingTime());
+                ps.setBoolean(16, item.isHearingServed());
+                ps.setBoolean(17, item.isMemorandumContra());
+                ps.setBoolean(18, item.isGender());
+                ps.setBoolean(19, item.isAddressBlock());
+                ps.setBoolean(20, item.isFirstLetterSent());
+                ps.setBoolean(21, item.isCodeSection());
+                ps.setBoolean(22, item.isCountyName());
+                ps.setBoolean(23, item.isStayDate());
+                ps.setBoolean(24, item.isCasePendingResolution());
+                ps.setBoolean(25, item.isLastUpdate());
+                ps.setBoolean(26, item.isDateGranted());
+                ps.setBoolean(27, item.isMatterContinued());
+                ps.setBoolean(28, item.isSettlementDue());
+                ps.setBoolean(29, item.isFilingParty());
+                ps.setBoolean(30, item.isRespondingParty());
+                ps.setBoolean(31, item.isRequestingParty());
+                ps.setBoolean(32, item.isDeposition());
+                ps.setBoolean(33, item.isRepHimOrHer());
+                ps.setBoolean(34, item.isTypeOfAction());
+                ps.setBoolean(35, item.isCodeSectionFillIn());
+                ps.setBoolean(36, item.isDocumentName());
+                ps.setBoolean(37, item.isDateFiled());
+                ps.setBoolean(38, item.isInfoRedacted());
+                ps.setBoolean(39, item.isRedactorName());
+                ps.setBoolean(40, item.isRedactorTitle());
+                ps.setBoolean(41, item.isDatePOSent());
+                ps.setBoolean(42, item.isAppealType());
+                ps.setBoolean(43, item.isAppealType2());
+                ps.setBoolean(44, item.isAppealTypeUF());
+                ps.setBoolean(45, item.isAppealTypeLS());
+                ps.setBoolean(46, item.isRequestingPartyC());
+                ps.setBoolean(47, item.isDateRequested());
+                ps.setBoolean(48, item.isPurposeOfExtension());
+                ps.setString (49, item.getEmailSubject());
+                ps.setString (50, item.getEmailBody());
+                ps.setNull   (51, java.sql.Types.DOUBLE);
+                ps.addBatch();
+            }            
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
 }

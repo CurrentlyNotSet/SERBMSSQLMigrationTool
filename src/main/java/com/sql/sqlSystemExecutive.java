@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.systemExecutiveModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -56,7 +57,8 @@ public class sqlSystemExecutive {
         return list;
     }    
     
-    public static void addExecutive(systemExecutiveModel item) {
+    public static void addExecutive(List<systemExecutiveModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try { 
@@ -76,17 +78,50 @@ public class sqlSystemExecutive {
                     }
                      sql += "?)";    //08
             ps = conn.prepareStatement(sql);
-            ps.setInt   (1, item.getActive());
-            ps.setString(2, item.getDepartment());
-            ps.setString(3, item.getPosition());
-            ps.setString(4, item.getFirstName());
-            ps.setString(5, item.getMiddleName());
-            ps.setString(6, item.getLastName());
-            ps.setString(7, item.getPhone());
-            ps.setString(8, item.getEmail());
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+
+            for (systemExecutiveModel item : list) {
+                String[] nameSplit = item.getLastName().split(" ");
+
+                switch (nameSplit.length) {
+                    case 2:
+                        item.setFirstName(nameSplit[0]);
+                        item.setLastName(nameSplit[1]);
+                        break;
+                    case 3:
+                        item.setFirstName(nameSplit[0]);
+                        item.setMiddleName(nameSplit[1]);
+                        item.setLastName(nameSplit[2]);
+                        break;
+                    default:
+                        item.setFirstName(null);
+                        item.setMiddleName(null);
+                        item.setLastName(null);
+                        break;
+                }
+
+                ps.setInt(1, item.getActive());
+                ps.setString(2, item.getDepartment());
+                ps.setString(3, "".equals(item.getPosition()) ? null : item.getPosition());
+                ps.setString(4, item.getFirstName());
+                ps.setString(5, item.getMiddleName());
+                ps.setString(6, item.getLastName());
+                ps.setString(7, "".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""));
+                ps.setString(8, "".equals(item.getEmail()) ? null : item.getEmail());
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

@@ -72,62 +72,40 @@ public class SystemDefaultsMigration {
                 + caseTypeList.size() + execList.size() + systemInfoList.size() + hearingRoomList.size()
                 + hearingTypeList.size();
         
-        for (oldCountyModel item : oldCountiesList){
-            item.setActive(("OH".equals(item.getStateCode().trim())) ? 1 : 0);
-            sqlSystemData.addCounty(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCountyCode().trim());
-        }
+        //import
+        sqlSystemData.batchAddCounty(oldCountiesList);
+        currentRecord = SceneUpdater.listItemFinished(control, oldCountiesList.size() + currentRecord, totalRecordCount, "Counties Finished");
         
-        for (partyTypeModel item : partyTypesList){
-            sqlPartyType.addPartyType(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getSection() + ": " + item.getName());
-        }
+        sqlPartyType.batchAddPartyType(partyTypesList);
+        currentRecord = SceneUpdater.listItemFinished(control, partyTypesList.size() + currentRecord, totalRecordCount, "Party Type Finished");
         
-        for (deptInStateModel item : deptInStateList){
-            sqlDeptInState.addDeptInState(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getStateCode().trim());
-        }
+        sqlDeptInState.batchAddDeptInState(deptInStateList);
+        currentRecord = SceneUpdater.listItemFinished(control, deptInStateList.size() + currentRecord, totalRecordCount, "Dept In State Finished");
         
-        for (systemEmailModel item : systemEmailList){
-            sqlSystemEmail.addSystemEmail(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getEmailAddress());
-        }
+        sqlSystemEmail.addSystemEmail(systemEmailList);
+        currentRecord = SceneUpdater.listItemFinished(control, systemEmailList.size() + currentRecord, totalRecordCount, "System Email Finished");
         
-        for (String item : Global.getNamePrefixList()){
-            sqlPreFix.addNamePrefix(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item);
-        }
+        sqlPreFix.addNamePrefix(Global.getNamePrefixList());
+        currentRecord = SceneUpdater.listItemFinished(control, Global.getNamePrefixList().size() + currentRecord, totalRecordCount, "PreFixes Finished");
         
-        for (historyTypeModel item : activityTypeList){
-            sqlActivityType.addActivtyType(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFileAttrib());
-        }
+        sqlActivityType.addActivtyType(activityTypeList);
+        currentRecord = SceneUpdater.listItemFinished(control, activityTypeList.size() + currentRecord, totalRecordCount, "Activity Types Finished");
         
-        for (caseTypeModel item : caseTypeList){
-            sqlCaseType.addCaseType(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseType());
-        }
+        sqlCaseType.addCaseType(caseTypeList);
+        currentRecord = SceneUpdater.listItemFinished(control, caseTypeList.size() + currentRecord, totalRecordCount, "Case Types Finished");
         
-        for (systemExecutiveModel item : execList){
-            migrateExec(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getFirstName() + " " + item.getLastName());
-        }
+        sqlHearingsInfo.addHearingRoom(hearingRoomList);
+        currentRecord = SceneUpdater.listItemFinished(control, hearingRoomList.size() + currentRecord, totalRecordCount, "Hearing Rooms Finished");
         
-        for (administrationInformationModel item : systemInfoList){
-            migrateAdministrationInformation(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDepartment());
-        }
-
-        for (hearingRoomModel item : hearingRoomList){
-            sqlHearingsInfo.addHearingRoom(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getRoomName());
-        }
+        sqlHearingsInfo.addHearingType(hearingTypeList);
+        currentRecord = SceneUpdater.listItemFinished(control, hearingTypeList.size() + currentRecord, totalRecordCount, "Hearing Types Finished");
         
-        for (hearingTypeModel item : hearingTypeList){
-            sqlHearingsInfo.addHearingType(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getHearingDescription());
-        }
-                
+        sqlSystemExecutive.addExecutive(execList);
+        currentRecord = SceneUpdater.listItemFinished(control, execList.size() + currentRecord, totalRecordCount, "Execs Finished");
+        
+        sqlAdministrationInformation.addInfo(systemInfoList);
+        currentRecord = SceneUpdater.listItemFinished(control, systemInfoList.size() + currentRecord, totalRecordCount, "Admin Finished");
+               
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating System Defaults: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -162,7 +140,7 @@ public class SystemDefaultsMigration {
         item.setPhone("".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""));
         item.setEmail("".equals(item.getEmail()) ? null : item.getEmail());
                 
-        sqlSystemExecutive.addExecutive(item);
+//        sqlSystemExecutive.addExecutive(item);
     }
     
     private static void migrateAdministrationInformation(administrationInformationModel item) {
@@ -179,7 +157,7 @@ public class SystemDefaultsMigration {
         item.setFax("".equals(item.getFax().replaceAll("[^0-9]", "")) ? null : item.getFax().replaceAll("[^0-9]", ""));
         item.setFooter("".equals(item.getFooter()) ? null : item.getFooter());
         
-        sqlAdministrationInformation.addInfo(item);
+//        sqlAdministrationInformation.addInfo(item);
     }
     
 }

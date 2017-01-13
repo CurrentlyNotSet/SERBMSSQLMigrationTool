@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.deptInStateModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,7 +50,8 @@ public class sqlDeptInState {
         return list;
     }
         
-    public static void addDeptInState(deptInStateModel item) {
+    public static void batchAddDeptInState(List<deptInStateModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -63,12 +65,26 @@ public class sqlDeptInState {
                     + "?,"  //02
                     + "?)"; //03
             ps = conn.prepareStatement(sql);
-            ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, item.getStateCode());
-            ps.setString( 3, item.getDescription());
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+
+            for (deptInStateModel item : list) {
+                ps.setInt(1, item.getActive());
+                ps.setString(2, item.getStateCode());
+                ps.setString(3, item.getDescription());
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

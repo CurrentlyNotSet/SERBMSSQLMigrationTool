@@ -77,7 +77,6 @@ public class sqlBoardMeeting {
                     }
                      sql += "?)"; //08
             ps = conn.prepareStatement(sql);
-            
             conn.setAutoCommit(false);
             
             for (boardMeetingModel item : list) {

@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.historyTypeModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,7 +53,8 @@ public class sqlActivityType {
     }
     
     
-    public static void addActivtyType(historyTypeModel item) {
+    public static void addActivtyType(List<historyTypeModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try { 
@@ -68,13 +70,27 @@ public class sqlActivityType {
                     + "?,"  //03
                     + "?)"; //04
             ps = conn.prepareStatement(sql);
-            ps.setInt   (1, item.getActive());
-            ps.setString(2, item.getSection());
-            ps.setString(3, item.getFileAttrib());
-            ps.setString(4, item.getHistoryDescription());
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+
+            for (historyTypeModel item : list) {
+                ps.setInt   (1, item.getActive());
+                ps.setString(2, item.getSection());
+                ps.setString(3, item.getFileAttrib());
+                ps.setString(4, item.getHistoryDescription());
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

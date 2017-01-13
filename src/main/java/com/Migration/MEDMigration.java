@@ -75,13 +75,13 @@ public class MEDMigration {
         totalRecordCount = oldMEDCaseList.size() + oldFactFindersList.size() + oldMediatorsList.size() + oldjurisdictionList.size();
 
         sqlFactFinder.batchAddFactFinder(oldFactFindersList);
-        currentRecord = SceneUpdater.listItemFinished(control, oldFactFindersList.size(), totalRecordCount, "Fact Finders Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldFactFindersList.size(), totalRecordCount, "Fact Finders Finished");
         
         sqlJurisdiction.batchAddJurisdiction(oldjurisdictionList);
-        currentRecord = SceneUpdater.listItemFinished(control, oldjurisdictionList.size(), totalRecordCount, "Jurisdictions Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldjurisdictionList.size(), totalRecordCount, "Jurisdictions Finished");
         
         sqlMediator.batchAddMediator(oldMediatorsList);
-        currentRecord = SceneUpdater.listItemFinished(control, oldMediatorsList.size(), totalRecordCount, "Mediators Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldMediatorsList.size(), totalRecordCount, "Mediators Finished");
         
         newMediatorsList = sqlMediator.getNewMediator();
 

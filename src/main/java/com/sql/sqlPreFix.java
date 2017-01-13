@@ -6,9 +6,11 @@
 package com.sql;
 
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 
 /**
@@ -17,17 +19,32 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlPreFix {
     
-    public static void addNamePrefix(String item) {
+    public static void addNamePrefix(List<String> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
             String sql = "Insert INTO NamePrefix(active, prefix) VALUES (1, ?)";
             ps = conn.prepareStatement(sql);
-            ps.setString(1, item);
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+
+            for (String item : list) {
+                ps.setString(1, item);
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

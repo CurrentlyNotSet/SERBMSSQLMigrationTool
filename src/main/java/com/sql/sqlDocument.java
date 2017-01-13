@@ -155,4 +155,75 @@ public class sqlDocument {
         }
     }
 
+    public static void batchAddSMDSDocument(List<smdsDocumentsModel> list) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO SMDSDocuments ("
+                    + "section, " //01
+                    + "type, " //02
+                    + "description, " //03
+                    + "fileName, " //04
+                    + "active, " //05
+                    + "dueDate, " //06
+                    + "[group], " //07
+                    + "historyFileName, " //08
+                    + "historyDescription, "//09
+                    + "CHDCHG, " //10
+                    + "questionsFileName, " //11
+                    + "emailSubject, " //12
+                    + "parameters, " //13
+                    + "emailBody, " //14
+                    + "sortOrder " //15
+                    + ") VALUES (";
+            for (int i = 0; i < 14; i++) {
+                sql += "?, ";   //01-14
+            }
+            sql += "?)";   //15
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (smdsDocumentsModel item : list){
+                ps.setString(1, item.getSection());
+                ps.setString(2, item.getType());
+                ps.setString(3, item.getDescription());
+                ps.setString(4, item.getFileName());
+                ps.setBoolean(5, item.isActive());
+                if (item.getDueDate() > 0) {
+                    ps.setInt(6, item.getDueDate());
+                } else {
+                    ps.setNull(6, java.sql.Types.INTEGER);
+                }
+                ps.setString(7, item.getGroup());
+                ps.setString(8, item.getHistoryFileName());
+                ps.setString(9, item.getHistoryDescription());
+                ps.setString(10, item.getCHDCHG());
+                ps.setString(11, item.getQuestionsFileName());
+                ps.setString(12, item.getEmailSubject());
+                ps.setString(13, item.getParameters());
+                ps.setString(14, item.getEmailBody());
+                if (item.getSortOrder() > 0) {
+                    ps.setDouble(15, item.getSortOrder());
+                } else {
+                    ps.setNull(15, java.sql.Types.DOUBLE);
+                }
+                ps.addBatch();
+            }
+            
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
 }

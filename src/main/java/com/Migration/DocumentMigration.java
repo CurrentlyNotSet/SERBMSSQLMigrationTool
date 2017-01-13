@@ -52,26 +52,40 @@ public class DocumentMigration {
         
 //        List<oldDocumentModel> oldDocumentList = sqlDocument.getOldDocuments();
         List<CMDSDocumentModel> oldCMDSDocumentList = sqlCMDSDocuments.getOldCMDSDocuments();
+        List<smdsDocumentsModel> cleanedSMDSDocsList = new ArrayList<>();
+        List<CMDSReport> cleanedCMDSReport = new ArrayList<>();
         
         totalRecordCount = SMDSDocXLS.size() + CMDSReportXLS.size() + oldCMDSDocumentList.size();
 
         for (Iterator iterator = SMDSDocXLS.iterator(); iterator.hasNext();) {
             List list = (List) iterator.next();
             if (list.size() == 15) {
-                sanitizeSMDSDocumentsFromExcel(list);
+                cleanedSMDSDocsList.add(sanitizeSMDSDocumentsFromExcel(list));
             }
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount,
-                    (list.size() <= 2 ? "" : list.get(0).toString().trim()) + ": " + (list.size() <= 1 ? "" : list.get(2).toString().trim()));
         }
-
+        
         for (Iterator iterator = CMDSReportXLS.iterator(); iterator.hasNext();) {
             List list = (List) iterator.next();
             if (list.size() == 4) {
-                sanitizeCMDSReportsFromExcel(list);
+                cleanedCMDSReport.add(sanitizeCMDSReportsFromExcel(list));
             }
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount,
-                    (list.size() <= 2 ? "" : list.get(0).toString().trim()) + ": " + (list.size() <= 1 ? "" : list.get(2).toString().trim()));
         }
+        
+        if (cleanedSMDSDocsList != null){
+            sqlDocument.batchAddSMDSDocument(cleanedSMDSDocsList);
+            currentRecord = SceneUpdater.listItemFinished(control, cleanedSMDSDocsList.size() + currentRecord, totalRecordCount, "SMDSDocuments Added");
+        }
+        
+        
+        if (cleanedCMDSReport != null){
+            sqlCMDSReport.batchAddCMDSReport(cleanedCMDSReport);
+            currentRecord = SceneUpdater.listItemFinished(control, cleanedCMDSReport.size() + currentRecord, totalRecordCount, "CMDSReport Added");
+        }
+        
+
+        sqlCMDSDocuments.batchAddCMDSDocuments(oldCMDSDocumentList);
+        currentRecord = SceneUpdater.listItemFinished(control, oldCMDSDocumentList.size() + currentRecord, totalRecordCount, "CMDSDocuments Added");
+        
         
 //NO LONGER USED... BAD DATA IN OLD DB        
 //        //get file list from newDB
@@ -93,10 +107,7 @@ public class DocumentMigration {
 //            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getSection() + ": " + item.getDocumentFileName());
 //        }
 
-        for (CMDSDocumentModel item : oldCMDSDocumentList) {
-            sqlCMDSDocuments.addCMDSDocuments(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, "CMDS: " + item.getLetterName());
-        }
+        
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Documents: "
@@ -177,7 +188,7 @@ public class DocumentMigration {
         return cellVectorHolder;
     }
 
-    private static void sanitizeSMDSDocumentsFromExcel(List list) {
+    private static smdsDocumentsModel sanitizeSMDSDocumentsFromExcel(List list) {
         smdsDocumentsModel item = new smdsDocumentsModel();
         
         item.setSection(list.get(0).toString().trim().equals("NULL") ? null : list.get(0).toString().trim());
@@ -225,10 +236,10 @@ public class DocumentMigration {
                 break;
         }
         
-        sqlDocument.addSMDSDocument(item);
+        return item;
     }
     
-    private static void sanitizeCMDSReportsFromExcel(List list) {
+    private static CMDSReport sanitizeCMDSReportsFromExcel(List list) {
         CMDSReport item = new CMDSReport();
         item.setSection(list.get(0).toString().trim().equals("NULL") ? null : list.get(0).toString().trim());
         item.setDescription(list.get(1).toString().trim().equals("NULL") ? null : list.get(1).toString().trim());
@@ -237,6 +248,6 @@ public class DocumentMigration {
         item.setActive(true); 
         item.setSortOrder(-1);
         
-        sqlCMDSReport.addCMDSReport(item);
+        return item;
     }
 }

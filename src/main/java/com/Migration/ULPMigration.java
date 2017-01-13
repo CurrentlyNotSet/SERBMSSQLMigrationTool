@@ -69,7 +69,7 @@ public class ULPMigration {
         
         //Insert ULP Recommendations
         sqlULPRecommendations.batchAddULPRecommendation(oldULPRecsList);
-        currentRecord = SceneUpdater.listItemFinished(control, oldULPRecsList.size(), totalRecordCount, "ULP Recommendations Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldULPRecsList.size(), totalRecordCount, "ULP Recommendations Finished");
         
         //Insert ULP Case Data
         oldULPDataList.stream().forEach(item -> 

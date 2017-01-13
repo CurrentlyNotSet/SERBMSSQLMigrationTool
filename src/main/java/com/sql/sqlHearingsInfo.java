@@ -5,9 +5,11 @@
  */
 package com.sql;
 
+import com.model.caseTypeModel;
 import com.model.hearingRoomModel;
 import com.model.hearingTypeModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -80,7 +82,8 @@ public class sqlHearingsInfo {
         return list;
     }
         
-    public static void addHearingRoom(hearingRoomModel item) {
+    public static void addHearingRoom(List<hearingRoomModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try { 
@@ -92,20 +95,35 @@ public class sqlHearingsInfo {
                     + "roomEmail "        //04
                     + ") VALUES (?, ?, ?, ?)";
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+
+            for (hearingRoomModel item : list) {
             ps.setBoolean(1, item.isActive());
             ps.setString (2, item.getRoomAbbreviation());
             ps.setString (3, item.getRoomName());
             ps.setString (4, item.getRoomEmail());
-            ps.executeUpdate();
+            ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);
         }
     }    
     
-    public static void addHearingType(hearingTypeModel item) {
+    public static void addHearingType(List<hearingTypeModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try { 
@@ -117,13 +135,27 @@ public class sqlHearingsInfo {
                     + "hearingDescription " //04
                     + ") VALUES (?, ?, ?, ?)";
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+
+            for (hearingTypeModel item : list) {
             ps.setBoolean(1, item.isActive());
             ps.setString (2, item.getSection());
             ps.setString (3, item.getHearingType());
             ps.setString (4, item.getHearingDescription());
-            ps.executeUpdate();
+            ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);
