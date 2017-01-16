@@ -48,10 +48,10 @@ public class SystemDefaultsMigration {
                 sysThread(control);
             }
         };
-        sysThread.start();        
+        sysThread.start();
     }
     
-    private static void sysThread(MainWindowSceneController control){
+    public static void sysThread(MainWindowSceneController control){
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("System Migration");
         int totalRecordCount = 0;

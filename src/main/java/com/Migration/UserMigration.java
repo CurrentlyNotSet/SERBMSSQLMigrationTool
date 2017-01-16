@@ -40,7 +40,7 @@ public class UserMigration {
         userThread.start();        
     }
     
-    private static void userThread(MainWindowSceneController controlPassed){
+    public static void userThread(MainWindowSceneController controlPassed){
         long lStartTime = System.currentTimeMillis();
         control = controlPassed;
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -79,7 +79,6 @@ public class UserMigration {
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
-        System.out.println("\nFinished all threads");
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Users: " 

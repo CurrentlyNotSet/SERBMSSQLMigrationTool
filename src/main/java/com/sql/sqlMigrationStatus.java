@@ -42,6 +42,8 @@ public class sqlMigrationStatus {
                 item.setMigrateDocuments(rs.getTimestamp("MigrateDocuments"));
                 item.setMigrateHearingsCases(rs.getTimestamp("MigrateHearingsCases"));
                 item.setMigratePublicRecords(rs.getTimestamp("MigratePublicRecords"));
+                item.setMigrateEmployers(rs.getTimestamp("MigrateEmployers"));
+                item.setMigrateSystemDefaults(rs.getTimestamp("MigrateSystemDefaults"));
             } else {
                 item = null;
             }

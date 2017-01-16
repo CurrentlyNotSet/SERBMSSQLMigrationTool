@@ -42,7 +42,7 @@ public class DocumentMigration {
         docThread.start();
     }
 
-    private static void docThread(MainWindowSceneController control) {
+    public static void docThread(MainWindowSceneController control) {
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("Documents Migration");
         int totalRecordCount = 0;

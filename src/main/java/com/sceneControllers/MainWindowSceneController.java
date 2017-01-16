@@ -13,6 +13,8 @@ import com.util.Global;
 import com.util.StringUtilities;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -131,20 +133,25 @@ public class MainWindowSceneController implements Initializable {
     
     @FXML
     private void BatchPhaseOneMenuButton() {
-        long lStartTime = System.currentTimeMillis();
-        
-        SystemDefaultsMigration.migrateSystemData(control);
-        UserMigration.migrateUserData(control);
-        DocumentMigration.migrateDocuments(control);
-        ContactsMigration.migrateContacts(control);
-        EmployersMigration.migrateEmployers(control);
-        PublicRecordsMigration.migratePublicRecordsData(control);
-        
-        checkButtonStatus();
-        
-        long lEndTime = System.currentTimeMillis();
-        String finishedText = "Finished Phase 1 Migration in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
-        control.setProgressBarDisable(finishedText);
+        Thread phase1Thread = new Thread() {
+            @Override
+            public void run() {
+                long lStartTime = System.currentTimeMillis();
+                SystemDefaultsMigration.sysThread(control);
+                UserMigration.userThread(control);
+                DocumentMigration.docThread(control);
+                ContactsMigration.contactsThread(control);
+                EmployersMigration.employersThread(control);
+                PublicRecordsMigration.publicRecordsThread(control);
+                long lEndTime = System.currentTimeMillis();
+                String finishedText = "Finished Phase 1 Migration in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+                System.out.println(finishedText);
+                control.setProgressBarDisable(finishedText);
+
+//                checkButtonStatus();
+            }
+        };
+        phase1Thread.start();
     }
 
     @FXML
@@ -264,13 +271,13 @@ public class MainWindowSceneController implements Initializable {
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateUsers())));
         MigrateDocumentsTextField.setText(((item.getMigrateDocuments() == null)
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
-        MigrateEmployersTextField.setText(((item.getMigrateDocuments() == null)
-                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
-        MigrateSystemDefaultsTextField.setText(((item.getMigrateDocuments() == null)
-                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateDocuments())));
+        MigrateEmployersTextField.setText(((item.getMigrateEmployers() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateEmployers())));
+        MigrateSystemDefaultsTextField.setText(((item.getMigrateSystemDefaults() == null)
+                ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateSystemDefaults())));
         MigrateHearingsCaseTextField.setText(((item.getMigrateHearingsCases()== null)
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateHearingsCases())));
-        MigratePublicRecordsTextField.setText(((item.getMigrateHearingsCases()== null)
+        MigratePublicRecordsTextField.setText(((item.getMigratePublicRecords()== null)
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigratePublicRecords())));
         
         
@@ -286,7 +293,7 @@ public class MainWindowSceneController implements Initializable {
         MigrateEmployersButton.setDisable(item.getMigrateDocuments() != null);
         MigrateSystemDefaultsButton.setDisable(item.getMigrateDocuments() != null);
         MigrateHearingsCaseButton.setDisable(item.getMigrateHearingsCases() != null);
-        MigratePublicRecordsButton.setDisable(item.getMigrateHearingsCases() != null);
+        MigratePublicRecordsButton.setDisable(item.getMigratePublicRecords()!= null);
     }
 
     private void disableAllButtons() {

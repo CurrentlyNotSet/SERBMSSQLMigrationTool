@@ -26,6 +26,9 @@ public class migrationStatusModel {
     private Timestamp MigrateHearingsCases;
     private Timestamp MigratePublicRecords;
     
+    private Timestamp MigrateEmployers;
+    private Timestamp MigrateSystemDefaults;
+    
     public int getId() {
         return id;
     }
@@ -120,6 +123,22 @@ public class migrationStatusModel {
 
     public void setMigratePublicRecords(Timestamp MigratePublicRecords) {
         this.MigratePublicRecords = MigratePublicRecords;
+    }
+
+    public Timestamp getMigrateEmployers() {
+        return MigrateEmployers;
+    }
+
+    public void setMigrateEmployers(Timestamp MigrateEmployers) {
+        this.MigrateEmployers = MigrateEmployers;
+    }
+
+    public Timestamp getMigrateSystemDefaults() {
+        return MigrateSystemDefaults;
+    }
+
+    public void setMigrateSystemDefaults(Timestamp MigrateSystemDefaults) {
+        this.MigrateSystemDefaults = MigrateSystemDefaults;
     }
     
 }

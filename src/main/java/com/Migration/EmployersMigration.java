@@ -10,7 +10,6 @@ import com.model.employerTypeModel;
 import com.model.employersModel;
 import com.model.oldBarginingUnitNewModel;
 import com.model.oldBlobFileModel;
-import com.model.oldPartyModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlBarginingUnit;
 import com.sql.sqlBlobFile;
@@ -48,7 +47,7 @@ public class EmployersMigration {
         employersThread.start();
     }
 
-    private static void employersThread(MainWindowSceneController controlPassed) {
+    public static void employersThread(MainWindowSceneController controlPassed) {
         long lStartTime = System.currentTimeMillis();
         control = controlPassed;
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -81,7 +80,6 @@ public class EmployersMigration {
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
-        System.out.println("\nFinished all threads");
         
         sqlBarginingUnit.batchAddBarginingUnit(BUList, control, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + BUList.size(), totalRecordCount, "Bargining Units Finished");

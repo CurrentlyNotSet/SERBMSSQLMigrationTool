@@ -25,16 +25,16 @@ import org.apache.commons.io.FilenameUtils;
 public class PublicRecordsMigration {
     
     public static void migratePublicRecordsData(final MainWindowSceneController control){
-        Thread hearingThread = new Thread() {
+        Thread pRecordsThread = new Thread() {
             @Override
             public void run() {
                 publicRecordsThread(control);
             }
         };
-        hearingThread.start();        
+        pRecordsThread.start();
     }
     
-    private static void publicRecordsThread(MainWindowSceneController control){
+    public static void publicRecordsThread(MainWindowSceneController control){
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("Public Records Migration");
         

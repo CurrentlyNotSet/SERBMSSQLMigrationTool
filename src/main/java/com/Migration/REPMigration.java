@@ -107,7 +107,6 @@ public class REPMigration {
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
-        System.out.println("\nFinished all threads");
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating REP Cases: "

@@ -6,11 +6,9 @@
 package com.Migration;
 
 import com.model.casePartyModel;
-import com.model.oldCMDSCasePartyModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlContactList;
 import com.sql.sqlMigrationStatus;
-import com.util.ContactNameSeperator;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
@@ -29,10 +27,10 @@ public class ContactsMigration {
                 contactsThread(control);
             }
         };
-        contactsThread.start();        
+        contactsThread.start();
     }
     
-    private static void contactsThread(MainWindowSceneController control){
+    public static void contactsThread(MainWindowSceneController control){
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("Contact Migration");
         int totalRecordCount = 0;
