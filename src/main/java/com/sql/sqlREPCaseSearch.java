@@ -5,7 +5,7 @@
  */
 package com.sql;
 
-import com.model.repCaseSearchModel;
+import com.model.REPCaseSearchModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;
@@ -22,7 +22,7 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlREPCaseSearch {
     
-    public static void addREPCaseSearchCase(List<repCaseSearchModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+    public static void addREPCaseSearchCase(List<REPCaseSearchModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -48,7 +48,7 @@ public class sqlREPCaseSearch {
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
             
-            for (repCaseSearchModel item : list){
+            for (REPCaseSearchModel item : list){
                 ps.setString( 1, item.getCaseYear());
                 ps.setString( 2, item.getCaseType());
                 ps.setString( 3, item.getCaseMonth());

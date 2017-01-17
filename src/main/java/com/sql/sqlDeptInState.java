@@ -6,8 +6,10 @@
 package com.sql;
 
 import com.model.deptInStateModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,7 +52,7 @@ public class sqlDeptInState {
         return list;
     }
         
-    public static void batchAddDeptInState(List<deptInStateModel> list) {
+    public static void batchAddDeptInState(List<deptInStateModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -73,6 +75,7 @@ public class sqlDeptInState {
                 ps.setString(3, item.getDescription());
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
                     ps.executeBatch();
                 }
             }

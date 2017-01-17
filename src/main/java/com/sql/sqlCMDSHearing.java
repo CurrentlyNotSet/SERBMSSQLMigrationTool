@@ -6,7 +6,6 @@
 package com.sql;
 
 import com.model.CMDSHearingModel;
-import com.model.oldCMDShearingModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;

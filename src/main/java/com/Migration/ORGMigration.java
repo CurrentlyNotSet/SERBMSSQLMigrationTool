@@ -7,11 +7,11 @@ package com.Migration;
 
 import com.model.ORGCaseModel;
 import com.model.ORGParentChildLinkModel;
+import com.model.activityModel;
 import com.model.casePartyModel;
 import com.model.employersModel;
 import com.model.oldBlobFileModel;
 import com.model.oldEmployeeOrgModel;
-import com.model.oldORGHistoryModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
@@ -37,6 +37,8 @@ public class ORGMigration {
     private static int totalRecordCount = 0;
     private static int currentRecord = 0;
     private static MainWindowSceneController control;
+    private static final List<casePartyModel> casePartyList = new ArrayList<>();
+    private static final List<ORGCaseModel> orgCaseList = new ArrayList<>();
 
     public static void migrateORGData(final MainWindowSceneController control) {
         Thread orgThread = new Thread() {
@@ -57,27 +59,36 @@ public class ORGMigration {
         currentRecord = 0;
 
         List<oldEmployeeOrgModel> oldORGCaseList = sqlORGCase.getCases();
-        List<oldORGHistoryModel> oldORGHistoryList = sqlActivity.getORGHistory();
+        List<activityModel> oldORGHistoryList = sqlActivity.getORGHistory();
         List<ORGParentChildLinkModel> ORGParentChildLinkList = sqlORGParentChildLink.getOldLink();
         List<employersModel> employerReference = sqlEmployers.getEmployersForReference();
         
-        totalRecordCount = oldORGCaseList.size() + oldORGHistoryList.size() + ORGParentChildLinkList.size();
-        
-        sqlActivity.batchAddORGActivity(oldORGHistoryList);
-        currentRecord = SceneUpdater.listItemFinished(control, oldORGHistoryList.size(), totalRecordCount, "History Finished");
+        //Clean ORG Case Data
+        control.setProgressBarIndeterminateCleaning("ORG Case");
+        totalRecordCount = oldORGCaseList.size();
+        oldORGCaseList.stream().forEach(item
+                -> executor.submit(()
+                        -> migrateCase(item, employerReference)));
 
-        sqlORGParentChildLink.batchAddOrgParentChildLinks(ORGParentChildLinkList);
-        currentRecord = SceneUpdater.listItemFinished(control, ORGParentChildLinkList.size(), totalRecordCount, "Parent/Child Link Finished");
-        
-        //Insert ORG Case Data
-        oldORGCaseList.stream().forEach(item -> 
-                executor.submit(() -> 
-                        migrateCase(item, employerReference)));
-        
         executor.shutdown();
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
+                
+        currentRecord = 0;
+        totalRecordCount = orgCaseList.size() + oldORGHistoryList.size() + ORGParentChildLinkList.size() + casePartyList.size();
+        
+        sqlORGCase.batchAddEmployeeOrgCase(orgCaseList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Cases Finished");
+        
+        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Parties Finished");
+        
+        sqlActivity.batchAddActivity(oldORGHistoryList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, oldORGHistoryList.size(), totalRecordCount, "History Finished");
+
+        sqlORGParentChildLink.batchAddOrgParentChildLinks(ORGParentChildLinkList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, ORGParentChildLinkList.size(), totalRecordCount, "Parent/Child Link Finished");
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ORG Cases: "
@@ -89,20 +100,13 @@ public class ORGMigration {
     }
 
     private static void migrateCase(oldEmployeeOrgModel item, List<employersModel> employerReference) {
-        List<casePartyModel> list = new ArrayList<>();
-        
-        list = migrateRepresentative(item, list);
-        list = migrateOfficers(item, list);
-        
-        if (list != null){
-            sqlCaseParty.batchAddPartyInformation(list);
-        }
-        
+        migrateRepresentative(item);
+        migrateOfficers(item);
         migrateCaseData(item, employerReference);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getOrgNumber() + ": " + item.getOrgName());
+        currentRecord = SceneUpdater.listItemCleaned(control, currentRecord, totalRecordCount, item.getOrgName().trim());
     }
 
-    private static List<casePartyModel> migrateRepresentative(oldEmployeeOrgModel item, List<casePartyModel> list) {
+    private static void migrateRepresentative(oldEmployeeOrgModel item) {
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(null);
         party.setCaseType("ORG");
@@ -132,12 +136,11 @@ public class ORGMigration {
         party.setEmailAddress(item.getRepEMail().trim().equals("") ? null : item.getRepEMail().trim());
                 
         if (!item.getRepLastName().trim().equals("")){             
-            list.add(party);
+            casePartyList.add(party);
         }
-        return list;
     }
     
-    private static List<casePartyModel> migrateOfficers(oldEmployeeOrgModel item, List<casePartyModel> list) {
+    private static void migrateOfficers(oldEmployeeOrgModel item) {
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(null);
         party.setCaseType("ORG");
@@ -159,7 +162,7 @@ public class ORGMigration {
             party.setLastName(item.getOfficer1().trim().equals("") ? null : item.getOfficer1().trim());
             party.setJobTitle(item.getOfficer1Title().trim().equals("") ? null : item.getOfficer1Title().trim());
                         
-            list.add(party);
+            casePartyList.add(party);
         }
         
         if (!item.getOfficer2().trim().equals("")){
@@ -168,7 +171,7 @@ public class ORGMigration {
             party.setLastName(item.getOfficer2().trim().equals("") ? null : item.getOfficer2().trim());
             party.setJobTitle(item.getOfficer2Title().trim().equals("") ? null : item.getOfficer2Title().trim());
                         
-            list.add(party);
+            casePartyList.add(party);
         }
         
         if (!item.getOfficer3().trim().equals("")){
@@ -177,7 +180,7 @@ public class ORGMigration {
             party.setLastName(item.getOfficer3().trim().equals("") ? null : item.getOfficer3().trim());
             party.setJobTitle(item.getOfficer3Title().trim().equals("") ? null : item.getOfficer3Title().trim());
                         
-            list.add(party);
+            casePartyList.add(party);
         }
         
         if (!item.getOfficer4().trim().equals("")){
@@ -186,9 +189,8 @@ public class ORGMigration {
             party.setLastName(item.getOfficer4().trim().equals("") ? null : item.getOfficer4().trim());
             party.setJobTitle(item.getOfficer4Title().trim().equals("") ? null : item.getOfficer4Title().trim());
                         
-            list.add(party);
+            casePartyList.add(party);
         }
-        return list;
     }
     
     private static void migrateCaseData(oldEmployeeOrgModel item, List<employersModel> employerReference) {
@@ -307,8 +309,7 @@ public class ORGMigration {
                 }
             }
         }
-        
-        sqlORGCase.importOldEmployeeOrgCase(org);
+        orgCaseList.add(org);
     }
 
 }

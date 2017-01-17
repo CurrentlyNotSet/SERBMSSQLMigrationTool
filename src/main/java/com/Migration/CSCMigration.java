@@ -6,8 +6,8 @@
 package com.Migration;
 
 import com.model.CSCCaseModel;
+import com.model.activityModel;
 import com.model.casePartyModel;
-import com.model.oldCSCHistoryModel;
 import com.model.oldCivilServiceCommissionModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
@@ -31,6 +31,8 @@ public class CSCMigration {
     private static int totalRecordCount = 0;
     private static int currentRecord = 0;
     private static MainWindowSceneController control;
+    private static final List<casePartyModel> casePartyList = new ArrayList<>();
+    private static final List<CSCCaseModel> cscCaseList = new ArrayList<>();
     
     public static void migrateCSCData(final MainWindowSceneController control){
         Thread cscThread = new Thread() {
@@ -51,14 +53,11 @@ public class CSCMigration {
         currentRecord = 0;
         
         List<oldCivilServiceCommissionModel> oldCSCCaseList = sqlCSCCase.getCases();
-        List<oldCSCHistoryModel> oldCSCHistoryList = sqlActivity.getCSCHistory();
+        List<activityModel> oldCSCHistoryList = sqlActivity.getCSCHistory();
         
-        totalRecordCount = oldCSCCaseList.size() + oldCSCHistoryList.size();
-        
-        sqlActivity.batchAddCSCActivity(oldCSCHistoryList);
-        currentRecord = SceneUpdater.listItemFinished(control, oldCSCHistoryList.size(), totalRecordCount, "History Finished");
-        
-        //Insert ORG Case Data
+        //Insert CSC Case Data
+        control.setProgressBarIndeterminateCleaning("CSC Case");
+        totalRecordCount = oldCSCCaseList.size();
         oldCSCCaseList.stream().forEach(item -> 
                 executor.submit(() -> 
                         migrateCase(item)));
@@ -67,6 +66,17 @@ public class CSCMigration {
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
+        
+        totalRecordCount = cscCaseList.size() + oldCSCHistoryList.size();
+        
+        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "CSC Parties Finished");
+        
+        sqlActivity.batchAddActivity(oldCSCHistoryList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, oldCSCHistoryList.size(), totalRecordCount, "History Finished");
+        
+        sqlCSCCase.BatchAddCSCCase(cscCaseList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, oldCSCHistoryList.size(), totalRecordCount, "CSC Case Finished");
                 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating CSC Cases: " 
@@ -78,20 +88,13 @@ public class CSCMigration {
     }
         
     private static void migrateCase(oldCivilServiceCommissionModel item) {
-        List<casePartyModel> list = new ArrayList<>();
-        
-        list = migrateRepresentative(item, list);
-        list = migrateOfficers(item, list);
-        
-        if (list != null){
-            sqlCaseParty.batchAddPartyInformation(list);
-        }        
-        
+        migrateRepresentative(item);
+        migrateOfficers(item);
         migrateCaseData(item);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCSCNumber()+ ": " + item.getCSCName());
     }
 
-    private static List<casePartyModel> migrateRepresentative(oldCivilServiceCommissionModel item, List<casePartyModel> list) {
+    private static void migrateRepresentative(oldCivilServiceCommissionModel item) {
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(null);
         party.setCaseType("CSC");
@@ -122,12 +125,11 @@ public class CSCMigration {
         party.setEmailAddress(item.getRepEmail().trim().equals("") ? null : item.getRepEmail().trim());
                 
         if (!item.getRepLastName().trim().equals("")){             
-            list.add(party);
+            casePartyList.add(party);
         }
-        return list;
     }
     
-    private static List<casePartyModel> migrateOfficers(oldCivilServiceCommissionModel item, List<casePartyModel> list) {
+    private static void migrateOfficers(oldCivilServiceCommissionModel item) {
         casePartyModel party = new  casePartyModel();
         party.setCaseYear(null);
         party.setCaseType("CSC");
@@ -149,7 +151,7 @@ public class CSCMigration {
             party.setLastName(item.getChairman1().trim().equals("") ? null : item.getChairman1().trim());
             party.setJobTitle(item.getChairman1Title().trim().equals("") ? null : item.getChairman1Title().trim());
                         
-            list.add(party);
+            casePartyList.add(party);
         }
         
         if (!item.getChairman2().trim().equals("")){
@@ -158,7 +160,7 @@ public class CSCMigration {
             party.setLastName(item.getChairman2().trim().equals("") ? null : item.getChairman2().trim());
             party.setJobTitle(item.getChairman2Title().trim().equals("") ? null : item.getChairman2Title().trim());
                         
-            list.add(party);
+            casePartyList.add(party);
         }
         
         if (!item.getChairman3().trim().equals("")){
@@ -167,7 +169,7 @@ public class CSCMigration {
             party.setLastName(item.getChairman3().trim().equals("") ? null : item.getChairman3().trim());
             party.setJobTitle(item.getChairman3Title().trim().equals("") ? null : item.getChairman3Title().trim());
                         
-            list.add(party);
+            casePartyList.add(party);
         }
         
         if (!item.getChairman4().trim().equals("")){
@@ -176,9 +178,8 @@ public class CSCMigration {
             party.setLastName(item.getChairman4().trim().equals("") ? null : item.getChairman4().trim());
             party.setJobTitle(item.getChairman4Title().trim().equals("") ? null : item.getChairman4Title().trim());
                         
-            list.add(party);
+            casePartyList.add(party);
         }
-        return list;
     }
     
     private static void migrateCaseData(oldCivilServiceCommissionModel item) {
@@ -215,7 +216,7 @@ public class CSCMigration {
         org.setNote(!item.getDescription2().trim().equals("") ? item.getDescription2().trim() : null);
         org.setAlsoknownas(!item.getDescription1().trim().equals("") ? item.getDescription1().trim() : null);
         
-        sqlCSCCase.importOldCSCCase(org);
+        cscCaseList.add(org);
     }
       
 }

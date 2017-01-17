@@ -12,6 +12,7 @@ import com.sql.sqlMigrationStatus;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,20 +37,15 @@ public class ContactsMigration {
         int totalRecordCount = 0;
         int currentRecord = 0;
         
-        List<casePartyModel> masterSERBList = sqlContactList.getSERBMasterList();
-        List<casePartyModel> masterPBRList = sqlContactList.getPBRMasterList();
-        List<casePartyModel> representativeList = sqlContactList.getRepresentativeList();
-        totalRecordCount = masterSERBList.size() + masterPBRList.size() + representativeList.size();
+        List<casePartyModel> masterContactList = new ArrayList<>();
+        masterContactList.addAll(sqlContactList.getSERBMasterList());
+        masterContactList.addAll(sqlContactList.getPBRMasterList());
+        masterContactList.addAll(sqlContactList.getRepresentativeList());
+        totalRecordCount = masterContactList.size();
         
-        sqlContactList.batchAddPartyInformation(masterSERBList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, masterSERBList.size(), totalRecordCount, "SERB Contacts Finished");
-        
-        sqlContactList.batchAddPartyInformation(masterPBRList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + masterPBRList.size(), totalRecordCount, "SPBR Contacts Finished");
-
-        sqlContactList.batchAddPartyInformation(representativeList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + representativeList.size(), totalRecordCount, "Representatives Finished");
-        
+        sqlContactList.batchAddPartyInformation(masterContactList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, masterContactList.size(), totalRecordCount, "Contacts Finished");
+                
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Contacts: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);

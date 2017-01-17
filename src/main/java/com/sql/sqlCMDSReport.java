@@ -6,7 +6,10 @@
 package com.sql;
 
 import com.model.CMDSReport;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -52,7 +55,8 @@ public class sqlCMDSReport {
         }
     }
     
-    public static void batchAddCMDSReport(List<CMDSReport> list) {
+    public static void batchAddCMDSReport(List<CMDSReport> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -80,7 +84,11 @@ public class sqlCMDSReport {
                 ps.setBoolean(5, item.isActive());
                 ps.setNull   (6, java.sql.Types.DOUBLE);
                 ps.addBatch();
-            }            
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
             ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {

@@ -9,7 +9,7 @@ package com.model;
  *
  * @author Andrew
  */
-public class smdsDocumentsModel {
+public class SMDSDocumentsModel {
     
     private int id;
     private boolean active;

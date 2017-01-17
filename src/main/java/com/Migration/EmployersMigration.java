@@ -57,21 +57,18 @@ public class EmployersMigration {
         
         //Add in EmployerTypes
         List<String> employerTypeList = Arrays.asList(
-                "Attorney", "Employer", "FCMS Mediator", "Individual", "Rep", "State Mediator", "Union"
+                "Attorney", "Employer", "FCMS Mediator", "Individual", 
+                "Rep", "State Mediator", "Union"
         );
         sqlEmployers.batchAddEmployerType(employerTypeList);
-        List<employerTypeModel> types = sqlEmployers.getEmployerType();
-
+        
         //Get Lists
+        List<employerTypeModel> types = sqlEmployers.getEmployerType();
         List<employersModel> employersList = sqlEmployers.getOldEmployers(types);
         List<oldBarginingUnitNewModel> unionList = sqlBarginingUnit.getOldBarginingUnits();
 
-        totalRecordCount = employersList.size() + unionList.size();
-        
-        sqlEmployers.batchAddEmployer(employersList, types);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + employerTypeList.size(), totalRecordCount, "Employers Finished");
-        
         control.setProgressBarIndeterminateCleaning("Bargining Units");
+        totalRecordCount = unionList.size();
         unionList.stream().forEach(item -> 
                 executor.submit(() -> 
                         batchMigrateBarginingUnitUnions(item)));
@@ -80,8 +77,14 @@ public class EmployersMigration {
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
+                
+        currentRecord = 0;
+        totalRecordCount = employersList.size() + unionList.size();
+                
+        sqlEmployers.batchAddEmployer(employersList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + employerTypeList.size(), totalRecordCount, "Employers Finished");
         
-        sqlBarginingUnit.batchAddBarginingUnit(BUList, control, totalRecordCount);
+        sqlBarginingUnit.batchAddBarginingUnit(BUList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + BUList.size(), totalRecordCount, "Bargining Units Finished");
         
         long lEndTime = System.currentTimeMillis();
@@ -163,5 +166,6 @@ public class EmployersMigration {
             System.out.println("Cleaned BU: " + item.getBUEmployerName());
         }
         BUList.add(item);
+        currentRecord = SceneUpdater.listItemCleaned(control, currentRecord, totalRecordCount, item.getBUEmployerName().trim());
     }
 }

@@ -7,7 +7,10 @@ package com.sql;
 
 import com.model.ORGCaseModel;
 import com.model.oldEmployeeOrgModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -106,7 +109,8 @@ public class sqlORGCase {
         return list;
     }
         
-    public static void importOldEmployeeOrgCase(ORGCaseModel item) {
+    public static void batchAddEmployeeOrgCase(List<ORGCaseModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -152,43 +156,58 @@ public class sqlORGCase {
                     }
                      sql += "?)";   //34
             ps = conn.prepareStatement(sql);
-            ps.setInt    ( 1, item.getActive());
-            ps.setString ( 2, StringUtils.left(item.getOrgName(), 500));
-            ps.setString ( 3, StringUtils.left(item.getOrgNumber(), 10));
-            ps.setString ( 4, StringUtils.left(item.getFiscalYearEnding(), 20));
-            ps.setString ( 5, StringUtils.left(item.getFilingDueDate(), 20));
-            ps.setDate   ( 6, item.getAnnualReport());
-            ps.setDate   ( 7, item.getFinancialReport());
-            ps.setDate   ( 8, item.getRegistrationReport());
-            ps.setDate   ( 9, item.getConstructionAndByLaws());
-            ps.setBoolean(10, item.isFiledByParent());
-            ps.setString (11, item.getNote());
-            ps.setString (12, StringUtils.left(item.getAlsoKnownAs().trim().equals("") ? null : item.getAlsoKnownAs(), 500));
-            ps.setString (13, StringUtils.left(item.getOrgType().trim().equals("") ? null : item.getOrgType(), 50));
-            ps.setString (14, StringUtils.left(item.getOrgPhone1().trim().equals("") ? null : item.getOrgPhone1(), 15));
-            ps.setString (15, StringUtils.left(item.getOrgPhone2().trim().equals("") ? null : item.getOrgPhone2(), 15));
-            ps.setString (16, StringUtils.left(item.getOrgFax().trim().equals("") ? null : item.getOrgFax(), 15));
-            ps.setString (17, StringUtils.left(item.getEmployerID().trim().equals("") ? null : item.getEmployerID(), 10));
-            ps.setString (18, StringUtils.left(item.getOrgAddress1().trim().equals("") ? null : item.getOrgAddress1(), 255));
-            ps.setString (19, StringUtils.left(item.getOrgAddress2().trim().equals("") ? null : item.getOrgAddress2(), 255));
-            ps.setString (20, StringUtils.left(item.getOrgCity().trim().equals("") ? null : item.getOrgCity(), 150));
-            ps.setString (21, StringUtils.left(item.getOrgState().trim().equals("") ? null : item.getOrgState(), 50));
-            ps.setString (22, StringUtils.left(item.getOrgZip().trim().equals("") ? null : item.getOrgZip(), 10));
-            ps.setString (23, StringUtils.left(item.getOrgCounty().trim().equals("") ? null : item.getOrgCounty(), 100));
-            ps.setString (24, StringUtils.left(item.getOrgEmail().trim().equals("") ? null : item.getOrgEmail(), 255));
-            ps.setString (25, StringUtils.left(item.getLastNotification().trim().equals("") ? null : item.getLastNotification(), 50));
-            ps.setBoolean(26, item.isDeemedCertified());
-            ps.setBoolean(27, item.isBoardCertified());
-            ps.setBoolean(28, item.isValid());
-            ps.setString (29, StringUtils.left(item.getParent1().trim().equals("") ? null : item.getParent1(), 255));
-            ps.setString (30, StringUtils.left(item.getParent2().trim().equals("") ? null : item.getParent2(), 255));
-            ps.setString (31, StringUtils.left(item.getOutsideCase().trim().equals("") ? null : item.getOutsideCase(), 100));
-            ps.setDate   (32, item.getDateFiled());
-            ps.setDate   (33, item.getRegistrationLetterSent());
-            ps.setDate   (34, item.getExtensionDate());            
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+            
+            for (ORGCaseModel item : list) {
+                ps.setInt    ( 1, item.getActive());
+                ps.setString ( 2, StringUtils.left(item.getOrgName(), 500));
+                ps.setString ( 3, StringUtils.left(item.getOrgNumber(), 10));
+                ps.setString ( 4, StringUtils.left(item.getFiscalYearEnding(), 20));
+                ps.setString ( 5, StringUtils.left(item.getFilingDueDate(), 20));
+                ps.setDate   ( 6, item.getAnnualReport());
+                ps.setDate   ( 7, item.getFinancialReport());
+                ps.setDate   ( 8, item.getRegistrationReport());
+                ps.setDate   ( 9, item.getConstructionAndByLaws());
+                ps.setBoolean(10, item.isFiledByParent());
+                ps.setString (11, item.getNote());
+                ps.setString (12, StringUtils.left(item.getAlsoKnownAs().trim().equals("") ? null : item.getAlsoKnownAs(), 500));
+                ps.setString (13, StringUtils.left(item.getOrgType().trim().equals("") ? null : item.getOrgType(), 50));
+                ps.setString (14, StringUtils.left(item.getOrgPhone1().trim().equals("") ? null : item.getOrgPhone1(), 15));
+                ps.setString (15, StringUtils.left(item.getOrgPhone2().trim().equals("") ? null : item.getOrgPhone2(), 15));
+                ps.setString (16, StringUtils.left(item.getOrgFax().trim().equals("") ? null : item.getOrgFax(), 15));
+                ps.setString (17, StringUtils.left(item.getEmployerID().trim().equals("") ? null : item.getEmployerID(), 10));
+                ps.setString (18, StringUtils.left(item.getOrgAddress1().trim().equals("") ? null : item.getOrgAddress1(), 255));
+                ps.setString (19, StringUtils.left(item.getOrgAddress2().trim().equals("") ? null : item.getOrgAddress2(), 255));
+                ps.setString (20, StringUtils.left(item.getOrgCity().trim().equals("") ? null : item.getOrgCity(), 150));
+                ps.setString (21, StringUtils.left(item.getOrgState().trim().equals("") ? null : item.getOrgState(), 50));
+                ps.setString (22, StringUtils.left(item.getOrgZip().trim().equals("") ? null : item.getOrgZip(), 10));
+                ps.setString (23, StringUtils.left(item.getOrgCounty().trim().equals("") ? null : item.getOrgCounty(), 100));
+                ps.setString (24, StringUtils.left(item.getOrgEmail().trim().equals("") ? null : item.getOrgEmail(), 255));
+                ps.setString (25, StringUtils.left(item.getLastNotification().trim().equals("") ? null : item.getLastNotification(), 50));
+                ps.setBoolean(26, item.isDeemedCertified());
+                ps.setBoolean(27, item.isBoardCertified());
+                ps.setBoolean(28, item.isValid());
+                ps.setString (29, StringUtils.left(item.getParent1().trim().equals("") ? null : item.getParent1(), 255));
+                ps.setString (30, StringUtils.left(item.getParent2().trim().equals("") ? null : item.getParent2(), 255));
+                ps.setString (31, StringUtils.left(item.getOutsideCase().trim().equals("") ? null : item.getOutsideCase(), 100));
+                ps.setDate   (32, item.getDateFiled());
+                ps.setDate   (33, item.getRegistrationLetterSent());
+                ps.setDate   (34, item.getExtensionDate());            
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

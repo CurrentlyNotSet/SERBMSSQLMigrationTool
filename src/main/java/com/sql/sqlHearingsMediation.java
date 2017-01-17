@@ -7,8 +7,10 @@ package com.sql;
 
 import com.model.caseNumberModel;
 import com.model.oldHearingsMediationModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;
+import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -56,7 +58,7 @@ public class sqlHearingsMediation {
         return list;
     }
                 
-    public static void batchAddOldHearingsMediation(List<oldHearingsMediationModel> list) {
+    public static void batchAddOldHearingsMediation(List<oldHearingsMediationModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -107,6 +109,7 @@ public class sqlHearingsMediation {
                     ps.addBatch();
                     if (++count % Global.getBATCH_SIZE() == 0) {
                         ps.executeBatch();
+                        currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
                     }
                 }
             }

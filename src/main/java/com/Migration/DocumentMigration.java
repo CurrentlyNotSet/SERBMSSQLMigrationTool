@@ -7,8 +7,7 @@ package com.Migration;
 
 import com.model.CMDSDocumentModel;
 import com.model.CMDSReport;
-import com.model.oldDocumentModel;
-import com.model.smdsDocumentsModel;
+import com.model.SMDSDocumentsModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlCMDSDocuments;
 import com.sql.sqlCMDSReport;
@@ -18,6 +17,7 @@ import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +51,7 @@ public class DocumentMigration {
         ArrayList CMDSReportXLS = read("CMDSReports.xlsx");
         
         List<CMDSDocumentModel> oldCMDSDocumentList = sqlCMDSDocuments.getOldCMDSDocuments();
-        List<smdsDocumentsModel> cleanedSMDSDocsList = new ArrayList<>();
+        List<SMDSDocumentsModel> cleanedSMDSDocsList = new ArrayList<>();
         List<CMDSReport> cleanedCMDSReport = new ArrayList<>();
         
         totalRecordCount = SMDSDocXLS.size() + CMDSReportXLS.size() + oldCMDSDocumentList.size();
@@ -71,18 +71,16 @@ public class DocumentMigration {
         }
         
         if (cleanedSMDSDocsList != null){
-            sqlDocument.batchAddSMDSDocument(cleanedSMDSDocsList);
+            sqlDocument.batchAddSMDSDocument(cleanedSMDSDocsList, control, currentRecord, totalRecordCount);
             currentRecord = SceneUpdater.listItemFinished(control, cleanedSMDSDocsList.size() + currentRecord, totalRecordCount, "SMDSDocuments Added");
-        }
-        
+        }        
         
         if (cleanedCMDSReport != null){
-            sqlCMDSReport.batchAddCMDSReport(cleanedCMDSReport);
+            sqlCMDSReport.batchAddCMDSReport(cleanedCMDSReport, control, currentRecord, totalRecordCount);
             currentRecord = SceneUpdater.listItemFinished(control, cleanedCMDSReport.size() + currentRecord, totalRecordCount, "CMDSReport Added");
-        }
-        
+        }        
 
-        sqlCMDSDocuments.batchAddCMDSDocuments(oldCMDSDocumentList);
+        sqlCMDSDocuments.batchAddCMDSDocuments(oldCMDSDocumentList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldCMDSDocumentList.size() + currentRecord, totalRecordCount, "CMDSDocuments Added");
         
         long lEndTime = System.currentTimeMillis();
@@ -111,14 +109,14 @@ public class DocumentMigration {
                 }
                 cellVectorHolder.add(list);
             }
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
         return cellVectorHolder;
     }
 
-    private static smdsDocumentsModel sanitizeSMDSDocumentsFromExcel(List list) {
-        smdsDocumentsModel item = new smdsDocumentsModel();
+    private static SMDSDocumentsModel sanitizeSMDSDocumentsFromExcel(List list) {
+        SMDSDocumentsModel item = new SMDSDocumentsModel();
         
         item.setSection(list.get(0).toString().trim().equals("NULL") ? null : list.get(0).toString().trim());
         item.setType(list.get(1).toString().trim().equals("NULL") ? null : list.get(1).toString().trim());

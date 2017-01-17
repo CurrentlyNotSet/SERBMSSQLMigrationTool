@@ -6,8 +6,10 @@
 package com.sql;
 
 import com.model.oldCountyModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,7 +54,7 @@ public class sqlSystemData {
         return list;
     }
     
-    public static void batchAddCounty(List<oldCountyModel> list) {
+    public static void batchAddCounty(List<oldCountyModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -81,6 +83,7 @@ public class sqlSystemData {
                 ps.setString(5, item.getName());
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
                     ps.executeBatch();
                 }
             }

@@ -10,9 +10,9 @@ import com.model.HearingsCaseSearchModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
 import com.model.HearingOutcomeModel;
+import com.model.activityModel;
 import com.model.oldHearingsMediationModel;
 import com.model.oldSMDSCaseTrackingModel;
-import com.model.oldSMDSHistoryModel;
 import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
@@ -58,19 +58,19 @@ public class HearingsMigration {
         currentRecord = 0;
         
         List<oldSMDSCaseTrackingModel> oldHearingCaseList = sqlHearingsCase.getCases();
-        List<oldSMDSHistoryModel> oldHearingsHistoryList = sqlActivity.getSMDSHearingHistory();
+        List<activityModel> oldHearingsHistoryList = sqlActivity.getHearingsHistory();
         List<oldHearingsMediationModel> oldHearingsMediationList = sqlHearingsMediation.getHearingsMediations();
         List<HearingOutcomeModel> oldHearingOutcomeList = sqlHearingOutcome.getOutcomeList();
         
         totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size() + oldHearingsMediationList.size() + oldHearingOutcomeList.size();
         
-        sqlHearingOutcome.batchAddOutcome(oldHearingOutcomeList);
+        sqlHearingOutcome.batchAddOutcome(oldHearingOutcomeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldHearingOutcomeList.size() + currentRecord, totalRecordCount, "Hearing Outcomes Finished");
         
-        sqlActivity.batchAddHearingsActivity(oldHearingsHistoryList);
-        currentRecord = SceneUpdater.listItemFinished(control, oldHearingsHistoryList.size() + currentRecord, totalRecordCount, "Hearing Outcomes Finished");
+        sqlActivity.batchAddActivity(oldHearingsHistoryList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, oldHearingsHistoryList.size() + currentRecord, totalRecordCount, "Hearing Activities Finished");
         
-        sqlHearingsMediation.batchAddOldHearingsMediation(oldHearingsMediationList);
+        sqlHearingsMediation.batchAddOldHearingsMediation(oldHearingsMediationList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldHearingsMediationList.size() + currentRecord, totalRecordCount, "Hearing Mediations Finished");
         
         oldHearingCaseList.stream().forEach(item -> 

@@ -7,7 +7,10 @@ package com.sql;
 
 import com.model.CSCCaseModel;
 import com.model.oldCivilServiceCommissionModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -98,7 +101,8 @@ public class sqlCSCCase {
         return list;
     }
         
-    public static void importOldCSCCase(CSCCaseModel item) {
+    public static void BatchAddCSCCase(List<CSCCaseModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -135,6 +139,9 @@ public class sqlCSCCase {
                     }
                      sql += "?)";   //25
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (CSCCaseModel item : list){
             ps.setBoolean( 1, item.isActive());
             ps.setString ( 2, StringUtils.left(item.getName(), 500));
             ps.setString ( 3, StringUtils.left(item.getType(), 50));
@@ -160,9 +167,21 @@ public class sqlCSCCase {
             ps.setString (23, item.getNote());
             ps.setString (24, StringUtils.left(item.getAlsoknownas(), 255));
             ps.setString (25, StringUtils.left(item.getCounty(), 100));
-            ps.executeUpdate();
+            ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

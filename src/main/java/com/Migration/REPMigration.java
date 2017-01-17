@@ -21,7 +21,7 @@ import com.model.employerCaseSearchModel;
 import com.model.oldBlobFileModel;
 import com.model.oldREPDataModel;
 import com.model.relatedCaseModel;
-import com.model.repCaseSearchModel;
+import com.model.REPCaseSearchModel;
 import com.model.startTimeEndTimeModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
@@ -65,7 +65,7 @@ public class REPMigration {
     private static final List<REPElectionMultiCaseModel> multiCaseElectionsList = new ArrayList<>();
     private static final List<REPElectionSiteInformationModel> electionSiteInfoList = new ArrayList<>();
     private static final List<employerCaseSearchModel> EmployerSearchList = new ArrayList<>();
-    private static final List<repCaseSearchModel> REPCaseSearchList = new ArrayList<>();
+    private static final List<REPCaseSearchModel> REPCaseSearchList = new ArrayList<>();
     private static final List<REPCaseModel> REPCaseList = new ArrayList<>();
     
     public static void migrateREPData(final MainWindowSceneController control) {
@@ -154,23 +154,23 @@ public class REPMigration {
         sqlREPMediation.batchAddREPMediation(mediationsList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + mediationsList.size() - 1, totalRecordCount, "REP Mediations Finished");
         
-        sqlREPElectionMultiCase.batchAddElectionSite(multiCaseElectionsList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + multiCaseElectionsList.size() - 1, totalRecordCount, "REP Mediations Finished");
+        sqlREPElectionMultiCase.batchAddMultiCaseElection(multiCaseElectionsList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + multiCaseElectionsList.size() - 1, totalRecordCount, "REP Multi Case Finished");
         
-        sqlREPElectionSiteInformation.batchAddElectionSite(electionSiteInfoList);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + multiCaseElectionsList.size() - 1, totalRecordCount, "REP Election Sites Finished");
+        sqlREPElectionSiteInformation.batchAddElectionSite(electionSiteInfoList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + electionSiteInfoList.size() - 1, totalRecordCount, "REP Election Sites Finished");
         
         sqlCaseParty.batchAddPartyInformation(CasePartyList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + CasePartyList.size() - 1, totalRecordCount, "REP Case Parties Finished");
         
-        sqlEmployerCaseSearchData.batchAddEmployer(EmployerSearchList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "RE Employer Search Finished");
+        sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "REP Employer Search Finished");
                 
         sqlREPCaseSearch.addREPCaseSearchCase(REPCaseSearchList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "REP Case Search Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseSearchList.size() - 1, totalRecordCount, "REP Case Search Finished");
                 
         sqlREPData.batchAddREPCase(REPCaseList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "REP Case Search Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseList.size() - 1, totalRecordCount, "REP Case Finished");
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating REP Cases: "
@@ -1231,7 +1231,7 @@ public class REPMigration {
         
         List<oldBlobFileModel>oldBlobFileList = sqlBlobFile.getOldBlobDataBUDectioption(bunnum);
         
-        repCaseSearchModel search = new repCaseSearchModel();
+        REPCaseSearchModel search = new REPCaseSearchModel();
         search.setCaseYear(caseNumber.getCaseYear());
         search.setCaseType(caseNumber.getCaseType());
         search.setCaseMonth(caseNumber.getCaseMonth());

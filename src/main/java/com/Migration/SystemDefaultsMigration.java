@@ -73,37 +73,37 @@ public class SystemDefaultsMigration {
                 + hearingTypeList.size();
         
         //import
-        sqlSystemData.batchAddCounty(oldCountiesList);
+        sqlSystemData.batchAddCounty(oldCountiesList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldCountiesList.size() + currentRecord, totalRecordCount, "Counties Finished");
         
-        sqlPartyType.batchAddPartyType(partyTypesList);
+        sqlPartyType.batchAddPartyType(partyTypesList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, partyTypesList.size() + currentRecord, totalRecordCount, "Party Type Finished");
         
-        sqlDeptInState.batchAddDeptInState(deptInStateList);
+        sqlDeptInState.batchAddDeptInState(deptInStateList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, deptInStateList.size() + currentRecord, totalRecordCount, "Dept In State Finished");
         
-        sqlSystemEmail.batchAddSystemEmail(systemEmailList);
+        sqlSystemEmail.batchAddSystemEmail(systemEmailList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, systemEmailList.size() + currentRecord, totalRecordCount, "System Email Finished");
         
-        sqlPreFix.addNamePrefix(Global.getNamePrefixList());
+        sqlPreFix.batchAddNamePrefix(Global.getNamePrefixList(), control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, Global.getNamePrefixList().size() + currentRecord, totalRecordCount, "PreFixes Finished");
         
-        sqlActivityType.batchAddActivtyType(activityTypeList);
+        sqlActivityType.batchAddActivtyType(activityTypeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, activityTypeList.size() + currentRecord, totalRecordCount, "Activity Types Finished");
         
-        sqlCaseType.batchAddCaseType(caseTypeList);
+        sqlCaseType.batchAddCaseType(caseTypeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, caseTypeList.size() + currentRecord, totalRecordCount, "Case Types Finished");
         
-        sqlHearingsInfo.batchAddHearingRoom(hearingRoomList);
+        sqlHearingsInfo.batchAddHearingRoom(hearingRoomList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, hearingRoomList.size() + currentRecord, totalRecordCount, "Hearing Rooms Finished");
         
-        sqlHearingsInfo.batchAddHearingType(hearingTypeList);
+        sqlHearingsInfo.batchAddHearingType(hearingTypeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, hearingTypeList.size() + currentRecord, totalRecordCount, "Hearing Types Finished");
         
-        sqlSystemExecutive.batchAddExecutive(execList);
+        sqlSystemExecutive.batchAddExecutive(execList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, execList.size() + currentRecord, totalRecordCount, "Execs Finished");
         
-        sqlAdministrationInformation.batchAddAdminInfo(systemInfoList);
+        sqlAdministrationInformation.batchAddAdminInfo(systemInfoList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, systemInfoList.size() + currentRecord, totalRecordCount, "Admin Finished");
                
         long lEndTime = System.currentTimeMillis();
@@ -113,51 +113,6 @@ public class SystemDefaultsMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateSystemDefaults");
         }
-    }
-
-    private static void migrateExec(systemExecutiveModel item) {
-        String[] nameSplit = item.getLastName().split(" ");
-        
-        switch (nameSplit.length) {
-            case 2:
-                item.setFirstName(nameSplit[0]);
-                item.setLastName(nameSplit[1]);
-                break;
-            case 3:
-                item.setFirstName(nameSplit[0]);
-                item.setMiddleName(nameSplit[1]);
-                item.setLastName(nameSplit[2]);
-                break;
-            default:
-                item.setFirstName(null);
-                item.setMiddleName(null);
-                item.setLastName(null);
-                break;
-        }
-        
-        
-        item.setPosition("".equals(item.getPosition()) ? null : item.getPosition());
-        item.setPhone("".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""));
-        item.setEmail("".equals(item.getEmail()) ? null : item.getEmail());
-                
-//        sqlSystemExecutive.batchAddExecutive(item);
-    }
-    
-    private static void migrateAdministrationInformation(administrationInformationModel item) {
-        String[] cityStateZipSplit = item.getCity().replaceAll("  ", " ").split(" ");
-                
-        item.setGovernorName("".equals(item.getGovernorName()) ? null : item.getGovernorName());
-        item.setLtGovernorName("".equals(item.getLtGovernorName()) ? null : item.getLtGovernorName());
-        item.setAddress1("".equals(item.getAddress1()) ? null : item.getAddress1());
-        item.setCity("".equals(cityStateZipSplit[0]) ? null : cityStateZipSplit[0].trim());
-        item.setState("".equals(cityStateZipSplit[1]) ? null : cityStateZipSplit[1].trim());
-        item.setZip("".equals(cityStateZipSplit[2]) ? null : cityStateZipSplit[2].trim());
-        item.setUrl("".equals(item.getUrl()) ? null : item.getUrl());
-        item.setPhone("".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""));
-        item.setFax("".equals(item.getFax().replaceAll("[^0-9]", "")) ? null : item.getFax().replaceAll("[^0-9]", ""));
-        item.setFooter("".equals(item.getFooter()) ? null : item.getFooter());
-        
-//        sqlAdministrationInformation.batchAddAdminInfo(item);
     }
     
 }

@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class sqlEmployerCaseSearchData {
         
-    public static void batchAddEmployer(List<employerCaseSearchModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+    public static void batchAddEmployerSearch(List<employerCaseSearchModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

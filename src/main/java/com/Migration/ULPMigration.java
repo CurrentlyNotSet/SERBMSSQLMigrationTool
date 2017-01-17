@@ -92,7 +92,7 @@ public class ULPMigration {
                 + EmployerSearchList.size() + ULPCaseHistoryList.size();
 
         //Insert ULP Recommendations
-        sqlULPRecommendations.batchAddULPRecommendation(oldULPRecsList);
+        sqlULPRecommendations.batchAddULPRecommendation(oldULPRecsList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldULPRecsList.size() - 1, totalRecordCount, "ULP Recommendations Finished");
 
         sqlActivity.batchAddActivity(ULPCaseHistoryList, control, currentRecord, totalRecordCount);
@@ -102,7 +102,7 @@ public class ULPMigration {
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + casePartyList.size() - 1, totalRecordCount, "ULP Case Parties Finished");
 
         sqlULPData.batchImportULPCase(ULPCaseList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + ULPCaseList.size() - 1, totalRecordCount, "ULP Case Parties Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + ULPCaseList.size() - 1, totalRecordCount, "ULP Case Finished");
 
         sqlBoardMeeting.batchAddBoardMeeting(boardMeetingList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + boardMeetingList.size() - 1, totalRecordCount, "ULP Board Meetings Finished");
@@ -113,7 +113,7 @@ public class ULPMigration {
         sqlULPCaseSearch.batchAddULPCaseSearchCase(caseSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + caseSearchList.size() - 1, totalRecordCount, "ULP Case Search Finished");
 
-        sqlEmployerCaseSearchData.batchAddEmployer(EmployerSearchList, control, currentRecord, totalRecordCount);
+        sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "ULP Employer Search Finished");
 
         long lEndTime = System.currentTimeMillis();

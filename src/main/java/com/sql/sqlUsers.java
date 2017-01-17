@@ -6,8 +6,10 @@
 package com.sql;
 
 import com.model.userModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -147,69 +149,8 @@ public class sqlUsers {
             DbUtils.closeQuietly(rs);
         }
     }
-    
-    public static void saveUserInformation(userModel item){
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "INSERT INTO Users ("
-                    + "active, "       //01
-                    + "firstName, "    //02
-                    + "middleInitial, "//03
-                    + "lastName, "     //04
-                    + "username, "     //05
-                    + "emailAddress, " //06
-                    + "workPhone, "    //07
-                    + "passwordSalt, "      //08
-                    + "password, "          //09
-                    + "lastLoginDateTime, " //10
-                    + "lastLoginPCName, "   //11
-                    + "activeLogin, "       //12
-                    + "passwordReset, "     //13
-                    + "applicationVersion, "//14
-                    + "defaultSection, "    //15
-                    + "ULPCaseWorker, "     //16
-                    + "ULPDocketing, "      //17
-                    + "REPDocketing, "      //18
-                    + "initials, "          //19
-                    + "jobTitle "           //20
-                    + ") VALUES (";
-                    for(int i=0; i<19; i++){
-                        sql += "?, ";   //01-19
-                    }
-                     sql += "?)";   //20
-            ps = conn.prepareStatement(sql);
-                ps.setInt      ( 1, item.getActive());
-                ps.setString   ( 2, item.getFirstName());
-                ps.setString   ( 3, item.getMiddleInitial());
-                ps.setString   ( 4, item.getLastName());
-                ps.setString   ( 5, item.getUserName());
-                ps.setString   ( 6, item.getEmail());
-                ps.setString   ( 7, item.getWorkPhone());
-                ps.setInt      ( 8, item.getPasswordSalt());
-                ps.setString   ( 9, item.getPassword());
-                ps.setTimestamp(10, item.getLastLoginDateTime());
-                ps.setString   (11, item.getLastLoginPCName());
-                ps.setBoolean  (12, item.isActiveLogin());
-                ps.setBoolean  (13, item.isPasswordReset());
-                ps.setString   (14, item.getApplicationVersion());
-                ps.setString   (15, item.getDefaultSection());
-                ps.setBoolean  (16, item.isULPCaseWorker());
-                ps.setBoolean  (17, item.isULPDocketing());
-                ps.setBoolean  (18, item.isREPDocketing());
-                ps.setString   (19, item.getInitials());
-                ps.setString   (20, item.getJobTitle());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
-    public static void batchAddUserInformation(List<userModel> list){
+        
+    public static void batchAddUserInformation(List<userModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -272,6 +213,7 @@ public class sqlUsers {
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
                 }
             }
             ps.executeBatch();

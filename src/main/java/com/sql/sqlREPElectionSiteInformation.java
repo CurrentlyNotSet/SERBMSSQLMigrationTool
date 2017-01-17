@@ -6,7 +6,10 @@
 package com.sql;
 
 import com.model.REPElectionSiteInformationModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -20,7 +23,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class sqlREPElectionSiteInformation {
         
-    public static void batchAddElectionSite(List<REPElectionSiteInformationModel> list) {
+    public static void batchAddElectionSite(List<REPElectionSiteInformationModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -60,7 +64,11 @@ public class sqlREPElectionSiteInformation {
                 ps.setString(11, StringUtils.left(item.getSiteAddress2(), 200));
                 ps.setString(12, StringUtils.left(item.getSiteLocation(), 200));
                 ps.addBatch();
-            }            
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
             ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {

@@ -12,14 +12,11 @@ import com.model.CMDSHistoryCategoryModel;
 import com.model.CMDSHistoryDescriptionModel;
 import com.model.CMDSResultModel;
 import com.model.CMDSStatusTypeModel;
-import com.model.activityModel;
 import com.model.casePartyModel;
-import com.model.oldCMDSCaseModel;
 import com.model.oldCMDSCasePartyModel;
-import com.model.oldCMDSHistoryModel;
-import com.model.oldCMDShearingModel;
 import com.model.DirectorsModel;
 import com.model.ReClassCodeModel;
+import com.model.activityModel;
 import com.model.appealCourtModel;
 import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
@@ -80,7 +77,7 @@ public class CMDSMigration {
         List<casePartyModel> oldCMDScasePartyList = sqlCMDSCaseParty.getPartyList();
         List<CMDSCaseModel> oldCMDScaseList = sqlCMDSCase.getCaseList();
         List<CMDSHearingModel> oldCMDSHearingList = sqlCMDSHearing.getHearingsList();
-        List<oldCMDSHistoryModel> oldCMDSHistoryList = sqlActivity.getCMDSHistory();
+        List<activityModel> oldCMDSHistoryList = sqlActivity.getCMDSHistory();
         List<CMDSResultModel> cmdsResultList = sqlCMDSResult.getOldCMDSResults();
         List<CMDSStatusTypeModel> cmdsStatusTypeList = sqlCMDSStatusType.getOldCMDSStatusType();
         List<DirectorsModel> directorList = sqlDirector.getoldDirectorList();
@@ -109,27 +106,27 @@ public class CMDSMigration {
         sqlCMDSCaseSearch.batchAddCaseSearch(CMDSCaseSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + CMDSCaseSearchList.size(), totalRecordCount, "CMDS Case Search Finished");
         
-        sqlAppealCourt.batchAddAppealCourt(appealCourtList);
+        sqlAppealCourt.batchAddAppealCourt(appealCourtList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + appealCourtList.size(), totalRecordCount, "Appeal Courts Finished");
         
-        sqlCMDSHistoryCategory.batchAddCMDSHistoryCategory(historyCategoryList);
-        sqlCMDSHistoryCategory.batchAddHearingsHistoryCategory(historyCategoryList);
+        sqlCMDSHistoryCategory.batchAddCMDSHistoryCategory(historyCategoryList, control, currentRecord, totalRecordCount);
+        sqlCMDSHistoryCategory.batchAddHearingsHistoryCategory(historyCategoryList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + historyCategoryList.size(), totalRecordCount, "History Category Finished");
         
-        sqlCMDSHistoryDescription.batchAddCMDSHistoryDescription(historyDescriptionList);
-        sqlCMDSHistoryDescription.batchAddHearingsHistoryDescription(historyDescriptionList);
+        sqlCMDSHistoryDescription.batchAddCMDSHistoryDescription(historyDescriptionList, control, currentRecord, totalRecordCount);
+        sqlCMDSHistoryDescription.batchAddHearingsHistoryDescription(historyDescriptionList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + historyDescriptionList.size(), totalRecordCount, "History Description Finished");
         
-        sqlReClassCode.batchAddReClassCode(reclassCodeList);
+        sqlReClassCode.batchAddReClassCode(reclassCodeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + reclassCodeList.size(), totalRecordCount, "ReClass Codes Finished");
         
-        sqlDirector.batchAddDirector(directorList);
+        sqlDirector.batchAddDirector(directorList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + directorList.size(), totalRecordCount, "Directors Finished");
         
-        sqlCMDSStatusType.batchAddCMDSStatusType(cmdsStatusTypeList);
+        sqlCMDSStatusType.batchAddCMDSStatusType(cmdsStatusTypeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + cmdsStatusTypeList.size(), totalRecordCount, "CMDS Status Types Finished");
         
-        sqlCMDSResult.batchAddCMDSResult(cmdsResultList);
+        sqlCMDSResult.batchAddCMDSResult(cmdsResultList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + cmdsResultList.size(), totalRecordCount, "CMDS Results Finished");
                 
         sqlCaseParty.batchAddPartyInformation(oldCMDScasePartyList, control, currentRecord, totalRecordCount);
@@ -138,7 +135,7 @@ public class CMDSMigration {
         sqlCMDSHearing.batchAddHearings(oldCMDSHearingList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Hearings Finished");
         
-        sqlActivity.batchAddCMDSActivity(oldCMDSHistoryList, control, currentRecord, totalRecordCount);
+        sqlActivity.batchAddActivity(oldCMDSHistoryList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Activity Finished");
         
         sqlCMDSCase.batchAddCase(oldCMDScaseList, control, currentRecord, totalRecordCount);
@@ -193,6 +190,7 @@ public class CMDSMigration {
         search.setDateOpened(item.getOpenDate() == null ? null : item.getOpenDate());
         
         CMDSCaseSearchList.add(search);
+        currentRecord = SceneUpdater.listItemCleaned(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
     }
         
 }

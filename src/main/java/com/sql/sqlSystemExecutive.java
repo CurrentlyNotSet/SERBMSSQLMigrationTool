@@ -6,8 +6,10 @@
 package com.sql;
 
 import com.model.systemExecutiveModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,7 +59,7 @@ public class sqlSystemExecutive {
         return list;
     }    
     
-    public static void batchAddExecutive(List<systemExecutiveModel> list) {
+    public static void batchAddExecutive(List<systemExecutiveModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -111,6 +113,7 @@ public class sqlSystemExecutive {
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
                 }
             }
             ps.executeBatch();

@@ -22,7 +22,7 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlREPElectionMultiCase {
     
-    public static void batchAddElectionSite(List<REPElectionMultiCaseModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+    public static void batchAddMultiCaseElection(List<REPElectionMultiCaseModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

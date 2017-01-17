@@ -5,11 +5,10 @@
  */
 package com.Migration;
 
-import com.model.oldPublicRecordsModel;
+import com.model.activityModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlMigrationStatus;
-import com.sql.sqlPublicRecords;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
@@ -35,9 +34,9 @@ public class PublicRecordsMigration {
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("Public Records Migration");
         
-        List<oldPublicRecordsModel> oldPublicRecords = sqlPublicRecords.getOldPublicRecords();
+        List<activityModel> oldPublicRecords = sqlActivity.getPublicRecords();
                    
-        sqlActivity.batchAddPublicRecordActivity(oldPublicRecords, control);
+        sqlActivity.batchAddActivity(oldPublicRecords, control, 0, oldPublicRecords.size());
         SceneUpdater.listItemFinished(control, oldPublicRecords.size(), oldPublicRecords.size(), "Public Records Finished");
    
         long lEndTime = System.currentTimeMillis();

@@ -65,7 +65,7 @@ public class sqlBarginingUnit {
         return list;
     }
     
-    public static void batchAddBarginingUnit(List<barginingUnitModel> list, MainWindowSceneController control, int totalRecordCount) {
+    public static void batchAddBarginingUnit(List<barginingUnitModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -122,7 +122,7 @@ public class sqlBarginingUnit {
                 ps.addBatch();
                     if(++count % Global.getBATCH_SIZE() == 0) {
                         ps.executeBatch();
-                        SceneUpdater.listItemFinished(control, count - 1, totalRecordCount, count + " imported");
+                        currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
                     }
                 }
             ps.executeBatch();

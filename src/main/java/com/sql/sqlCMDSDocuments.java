@@ -6,7 +6,10 @@
 package com.sql;
 
 import com.model.CMDSDocumentModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -219,7 +222,8 @@ public class sqlCMDSDocuments {
         }
     }
     
-    public static void batchAddCMDSDocuments(List<CMDSDocumentModel> list) {
+    public static void batchAddCMDSDocuments(List<CMDSDocumentModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -337,7 +341,11 @@ public class sqlCMDSDocuments {
                 ps.setString (50, item.getEmailBody());
                 ps.setNull   (51, java.sql.Types.DOUBLE);
                 ps.addBatch();
-            }            
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
             ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {

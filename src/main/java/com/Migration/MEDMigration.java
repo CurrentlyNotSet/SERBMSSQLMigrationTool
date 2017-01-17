@@ -131,12 +131,12 @@ public class MEDMigration {
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + casePartyList.size() - 1, totalRecordCount, "MED Case Parties Finished");
         
         sqlMEDData.batchAddMEDCase(caseList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + caseList.size() - 1, totalRecordCount, "MED Case Parties Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + caseList.size() - 1, totalRecordCount, "MED Case Finished");
         
         sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "MED Related Cases Finished");
         
-        sqlEmployerCaseSearchData.batchAddEmployer(EmployerSearchList, control, currentRecord, totalRecordCount);
+        sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "MED Employer Search Finished");
         
         sqlMEDCaseSearch.batchAddMEDCaseSearchCase(caseSearchList, control, currentRecord, totalRecordCount);

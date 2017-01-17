@@ -6,8 +6,10 @@
 package com.sql;
 
 import com.model.partyTypeModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -60,7 +62,7 @@ public class sqlPartyType {
         return list;
     }
 
-    public static void batchAddPartyType(List<partyTypeModel> list) {
+    public static void batchAddPartyType(List<partyTypeModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -82,6 +84,7 @@ public class sqlPartyType {
                 ps.setString(2, item.getName());
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
                     ps.executeBatch();
                 }
             }

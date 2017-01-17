@@ -6,8 +6,10 @@
 package com.sql;
 
 import com.model.caseTypeModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -54,7 +56,7 @@ public class sqlCaseType {
         return list;
     }
         
-    public static void batchAddCaseType(List<caseTypeModel> list) {
+    public static void batchAddCaseType(List<caseTypeModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -78,6 +80,7 @@ public class sqlCaseType {
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
                 }
             }
             ps.executeBatch();

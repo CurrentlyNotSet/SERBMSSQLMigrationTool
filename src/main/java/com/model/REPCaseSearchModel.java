@@ -9,7 +9,7 @@ package com.model;
  *
  * @author Andrew
  */
-public class repCaseSearchModel {
+public class REPCaseSearchModel {
     
     private int id;
     private String caseYear;

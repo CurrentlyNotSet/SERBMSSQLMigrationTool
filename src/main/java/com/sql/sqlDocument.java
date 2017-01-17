@@ -5,8 +5,11 @@
  */
 package com.sql;
 
-import com.model.smdsDocumentsModel;
+import com.model.SMDSDocumentsModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,8 +24,8 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlDocument {
 
-    public static List<smdsDocumentsModel> getNewDocuments() {
-        List<smdsDocumentsModel> list = new ArrayList();
+    public static List<SMDSDocumentsModel> getNewDocuments() {
+        List<SMDSDocumentsModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -32,7 +35,7 @@ public class sqlDocument {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                smdsDocumentsModel item = new smdsDocumentsModel();
+                SMDSDocumentsModel item = new SMDSDocumentsModel();
                 item.setId(rs.getInt("id"));
                 item.setActive(rs.getBoolean("Active"));
                 item.setType(rs.getString("Type") == null ? null : rs.getString("Type").trim());
@@ -61,7 +64,8 @@ public class sqlDocument {
         return list;
     }
 
-    public static void batchAddSMDSDocument(List<smdsDocumentsModel> list) {
+    public static void batchAddSMDSDocument(List<SMDSDocumentsModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -90,7 +94,7 @@ public class sqlDocument {
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
             
-            for (smdsDocumentsModel item : list){
+            for (SMDSDocumentsModel item : list){
                 ps.setString(1, item.getSection());
                 ps.setString(2, item.getType());
                 ps.setString(3, item.getDescription());
@@ -115,8 +119,11 @@ public class sqlDocument {
                     ps.setNull(15, java.sql.Types.DOUBLE);
                 }
                 ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
             }
-            
             ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {
