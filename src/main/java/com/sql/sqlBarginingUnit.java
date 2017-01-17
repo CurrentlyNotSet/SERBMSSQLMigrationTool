@@ -185,7 +185,7 @@ public class sqlBarginingUnit {
                 ps.addBatch();
                     if(++count % Global.getBATCH_SIZE() == 0) {
                         ps.executeBatch();
-                        SceneUpdater.listItemFinished(control, count, totalRecordCount, count + " imported");
+                        SceneUpdater.listItemFinished(control, count - 1, totalRecordCount, count + " imported");
                     }
                 }
             ps.executeBatch();

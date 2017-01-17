@@ -958,7 +958,7 @@ public class sqlContactList {
                 ps.addBatch();
                     if(++count % Global.getBATCH_SIZE() == 0) {
                         ps.executeBatch();
-                        currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE(), totalCount, count + " imported");
+                        currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
                     }
             }
             ps.executeBatch();

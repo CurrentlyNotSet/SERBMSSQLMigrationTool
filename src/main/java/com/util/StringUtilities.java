@@ -33,11 +33,15 @@ public class StringUtilities {
         caseNumberModel item = new caseNumberModel();
 
         String[] parsedCaseNumber = fullCaseNumber.split("-");
-        item.setCaseYear(parsedCaseNumber[0]);
-        item.setCaseType(parsedCaseNumber[1]);
-        item.setCaseMonth(parsedCaseNumber[2]);
-        item.setCaseNumber(parsedCaseNumber[3]);
-        return item;
+        if (parsedCaseNumber.length == 4){
+            item.setCaseYear(parsedCaseNumber[0]);
+            item.setCaseType(parsedCaseNumber[1]);
+            item.setCaseMonth(parsedCaseNumber[2]);
+            item.setCaseNumber(parsedCaseNumber[3]);
+            return item;
+        } else {
+            return null;
+        }
     }
 
     public static String generateFullCaseNumber(caseNumberModel caseNumber) {

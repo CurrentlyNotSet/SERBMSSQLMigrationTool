@@ -38,7 +38,8 @@ public class ContactsMigration {
         
         List<casePartyModel> masterSERBList = sqlContactList.getSERBMasterList();
         List<casePartyModel> masterPBRList = sqlContactList.getPBRMasterList();
-        totalRecordCount = masterSERBList.size() + masterPBRList.size();
+        List<casePartyModel> representativeList = sqlContactList.getRepresentativeList();
+        totalRecordCount = masterSERBList.size() + masterPBRList.size() + representativeList.size();
         
         sqlContactList.batchAddPartyInformation(masterSERBList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, masterSERBList.size(), totalRecordCount, "SERB Contacts Finished");
@@ -46,6 +47,9 @@ public class ContactsMigration {
         sqlContactList.batchAddPartyInformation(masterPBRList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + masterPBRList.size(), totalRecordCount, "SPBR Contacts Finished");
 
+        sqlContactList.batchAddPartyInformation(representativeList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + representativeList.size(), totalRecordCount, "Representatives Finished");
+        
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Contacts: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);

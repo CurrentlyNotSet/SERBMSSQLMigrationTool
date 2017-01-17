@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.CMDSResultModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,7 +50,8 @@ public class sqlCMDSResult {
         return list;
     }
         
-    public static void addCMDSResult(CMDSResultModel item) {
+    public static void addCMDSResult(List<CMDSResultModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -64,12 +66,26 @@ public class sqlCMDSResult {
                     }
                      sql += "?)"; //03
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+
+            for (CMDSResultModel item : list) {
             ps.setBoolean(1, item.isActive());
             ps.setString (2, item.getResult());
             ps.setString (3, item.getDescription());
-            ps.executeUpdate();
+            ps.addBatch();
+                    if (++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                    }
+                }
+                ps.executeBatch();
+                conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

@@ -6,10 +6,14 @@
 package com.sql;
 
 import com.model.CMDSCaseSearchModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 
 /**
@@ -56,4 +60,56 @@ public class sqlCMDSCaseSearch {
     }
     
     
+    public static void batchAddddRow(List<CMDSCaseSearchModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO CMDSCaseSearch ("
+                    + "caseYear, "  //01
+                    + "caseType, "  //02
+                    + "caseMonth, " //03
+                    + "caseNumber, "//04
+                    + "appellant, " //05
+                    + "appellee, "  //06
+                    + "alj, "       //07
+                    + "dateOpened " //08
+                    + ") VALUES (";
+                    for(int i=0; i<7; i++){
+                        sql += "?, ";   //01-07
+                    }
+                     sql += "?)"; //08
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (CMDSCaseSearchModel item : list){
+            ps.setString(1, item.getCaseYear());
+            ps.setString(2, item.getCaseType());
+            ps.setString(3, item.getCaseMonth());
+            ps.setString(4, item.getCaseNumber());
+            ps.setString(5, item.getAppellant());
+            ps.setString(6, item.getAppellee());
+            ps.setString(7, item.getAlj());
+            ps.setDate  (8, item.getDateOpened());
+            ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
 }

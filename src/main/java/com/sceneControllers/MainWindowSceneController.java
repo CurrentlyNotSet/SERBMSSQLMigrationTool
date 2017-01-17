@@ -147,8 +147,6 @@ public class MainWindowSceneController implements Initializable {
                 String finishedText = "Finished Phase 1 Migration in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
                 System.out.println(finishedText);
                 control.setProgressBarDisable(finishedText);
-
-//                checkButtonStatus();
             }
         };
         phase1Thread.start();
@@ -235,13 +233,20 @@ public class MainWindowSceneController implements Initializable {
         });
     }
     
-    public void updateProgressBar(final double currentValue, final double maxValue) {
+    public void updateProgressBarProcessing(final double currentValue, final double maxValue) {
         Platform.runLater(() -> {
             progressBarLabel.setText("Processing Record: " + (int) currentValue + "/" + (int) maxValue);
             progressbar.setProgress(currentValue / maxValue);
         });
     }
 
+    public void updateProgressBarCleaning(final double currentValue, final double maxValue) {
+        Platform.runLater(() -> {
+            progressBarLabel.setText("Cleaning Record: " + (int) currentValue + "/" + (int) maxValue);
+            progressbar.setProgress(currentValue / maxValue);
+        });
+    }
+    
     public void setProgressBarDisable(final String text) {
         Platform.runLater(() -> {
             progressBarLabel.setText(text);

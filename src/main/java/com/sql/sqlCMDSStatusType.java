@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.CMDSStatusTypeModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,7 +50,8 @@ public class sqlCMDSStatusType {
         return list;
     }
         
-    public static void addCMDSStatusType(CMDSStatusTypeModel item) {
+    public static void addCMDSStatusType(List<CMDSStatusTypeModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -64,12 +66,26 @@ public class sqlCMDSStatusType {
                     }
                      sql += "?)"; //03
             ps = conn.prepareStatement(sql);
-            ps.setBoolean(1, item.isActive());
-            ps.setString (2, item.getStatusCode());
-            ps.setString (3, item.getDescription());
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+
+            for (CMDSStatusTypeModel item : list) {
+                ps.setBoolean(1, item.isActive());
+                ps.setString (2, item.getStatusCode());
+                ps.setString (3, item.getDescription());
+                ps.addBatch();
+                    if (++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                    }
+                }
+                ps.executeBatch();
+                conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

@@ -487,7 +487,7 @@ public class MEDMigration {
         }
 
         if (list != null) {
-            sqlRelatedCase.batchAddRelatedCase(list);
+            sqlRelatedCase.batchAddRelatedCase(list, control, currentRecord, totalRecordCount);
         }
     }
 

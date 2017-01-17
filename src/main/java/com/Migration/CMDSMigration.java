@@ -34,7 +34,6 @@ import com.sql.sqlCMDSHistoryDescription;
 import com.sql.sqlCMDSResult;
 import com.sql.sqlCMDSStatusType;
 import com.sql.sqlCaseParty;
-import com.sql.sqlContactList;
 import com.sql.sqlDirector;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlReClassCode;
@@ -42,13 +41,21 @@ import com.sql.sqlUsers;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *
  * @author Andrew
  */
 public class CMDSMigration {
+    
+    private static int totalRecordCount = 0;
+    private static int currentRecord = 0;
+    private static MainWindowSceneController control;
+    private static List<CMDSCaseSearchModel> CMDSCaseSearchList = new ArrayList<>();
     
     public static void migrateCMDSData(final MainWindowSceneController control){
         Thread cmdsThread = new Thread() {
@@ -60,103 +67,84 @@ public class CMDSMigration {
         cmdsThread.start();        
     }
     
-    private static void cmdsThread(MainWindowSceneController control){
+    private static void cmdsThread(MainWindowSceneController controlPassed){
         long lStartTime = System.currentTimeMillis();
+        control = controlPassed;
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         control.setProgressBarIndeterminate("CMDS Case Migration");
-        int totalRecordCount = 0;
-        int currentRecord = 0;
+        totalRecordCount = 0;
+        currentRecord = 0;
         
         sqlUsers.getNewDBUsers();
         
-        List<oldCMDSCasePartyModel> oldCMDScasePartyList = sqlCMDSCaseParty.getParty();
-        List<oldCMDSCaseModel> oldCMDScaseList = sqlCMDSCase.getCase();
-        List<oldCMDShearingModel> oldCMDSHearingList = sqlCMDSHearing.getHearings();
+        List<casePartyModel> oldCMDScasePartyList = sqlCMDSCaseParty.getPartyList();
+//        List<oldCMDSCaseModel> oldCMDScaseList = sqlCMDSCase.getCase();
+        List<CMDSCaseModel> oldCMDScaseList = sqlCMDSCase.getCaseList();
+        List<CMDSHearingModel> oldCMDSHearingList = sqlCMDSHearing.getHearingsList();
         List<oldCMDSHistoryModel> oldCMDSHistoryList = sqlActivity.getCMDSHistory();
         List<CMDSResultModel> cmdsResultList = sqlCMDSResult.getOldCMDSResults();
         List<CMDSStatusTypeModel> cmdsStatusTypeList = sqlCMDSStatusType.getOldCMDSStatusType();
         List<DirectorsModel> directorList = sqlDirector.getoldDirectorList();
         List<ReClassCodeModel> reclassCodeList = sqlReClassCode.getoldReclassCodesList();
-        List<casePartyModel> representativeList = sqlContactList.getRepresentativeList();
+        
         List<CMDSHistoryCategoryModel> historyCategoryList = sqlCMDSHistoryCategory.getOldCMDSHistoryCategory();
         List<CMDSHistoryDescriptionModel> historyDescriptionList = sqlCMDSHistoryDescription.getOldCMDSHistoryDescription();
         List<appealCourtModel> appealCourtList = sqlAppealCourt.getOldCMDSHistoryDescription();
-        
-        
+                
         totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size() 
                 + oldCMDSHearingList.size() + oldCMDSHistoryList.size() + cmdsResultList.size()
                 + cmdsStatusTypeList.size() + directorList.size() + reclassCodeList.size()
-                + representativeList.size() + historyCategoryList.size() + historyDescriptionList.size()
-                + appealCourtList.size();
+                + historyCategoryList.size() + historyDescriptionList.size() + appealCourtList.size();
         
-        for (appealCourtModel item : appealCourtList) {
-            sqlAppealCourt.addAppealCourt(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCourtName());
+        control.setProgressBarIndeterminateCleaning("CMDS Search");
+        //Insert CMDS Case Data
+        oldCMDScaseList.stream().forEach(item -> 
+                executor.submit(() -> 
+                        migrateSearch(item)));
+        
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
         }
         
-        for (CMDSHistoryCategoryModel item : historyCategoryList) {
-            sqlCMDSHistoryCategory.addCMDSHistoryCategory(item);
-            sqlCMDSHistoryCategory.addHearingsHistoryCategory(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDescription());
-        }
+        sqlCMDSCaseSearch.batchAddddRow(CMDSCaseSearchList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + CMDSCaseSearchList.size(), totalRecordCount, "CMDS Case Search Finished");
         
-        for (CMDSHistoryDescriptionModel item : historyDescriptionList) {
-            sqlCMDSHistoryDescription.addCMDSHistoryDescription(item);
-            sqlCMDSHistoryDescription.addHearingsHistoryDescription(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDescription());
-        }
+        sqlAppealCourt.batchAddAppealCourt(appealCourtList);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + appealCourtList.size(), totalRecordCount, "Appeal Courts Finished");
+        
+        sqlCMDSHistoryCategory.addCMDSHistoryCategory(historyCategoryList);
+        sqlCMDSHistoryCategory.addHearingsHistoryCategory(historyCategoryList);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + historyCategoryList.size(), totalRecordCount, "History Category Finished");
+        
+        sqlCMDSHistoryDescription.addCMDSHistoryDescription(historyDescriptionList);
+        sqlCMDSHistoryDescription.addHearingsHistoryDescription(historyDescriptionList);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + historyDescriptionList.size(), totalRecordCount, "History Description Finished");
+        
+        sqlReClassCode.addReClassCode(reclassCodeList);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + reclassCodeList.size(), totalRecordCount, "ReClass Codes Finished");
+        
+        sqlDirector.addDirector(directorList);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + directorList.size(), totalRecordCount, "Directors Finished");
+        
+        sqlCMDSStatusType.addCMDSStatusType(cmdsStatusTypeList);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + cmdsStatusTypeList.size(), totalRecordCount, "CMDS Status Types Finished");
+        
+        sqlCMDSResult.addCMDSResult(cmdsResultList);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + cmdsResultList.size(), totalRecordCount, "CMDS Results Finished");
                 
-        for (casePartyModel item : representativeList) {
-            sqlContactList.savePartyInformation(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-                    (item.getLastName() != null) ? item.getLastName() : item.getCompanyName());
-        }
+        sqlCaseParty.batchAddPartyInformation(oldCMDScasePartyList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Case Parties Finished");
         
-        for (ReClassCodeModel item : reclassCodeList) {
-            sqlReClassCode.addReClassCode(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCode());
-        }
+        sqlCMDSHearing.batchAddHearings(oldCMDSHearingList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Hearings Finished");
         
-        for (DirectorsModel item : directorList) {
-            sqlDirector.addDirector(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getAgency());
-        }
+        sqlActivity.batchAddCMDSActivity(oldCMDSHistoryList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Activity Finished");
         
-        for (CMDSStatusTypeModel item : cmdsStatusTypeList) {
-            sqlCMDSStatusType.addCMDSStatusType(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getDescription());
-        }
+        sqlCMDSCase.batchAddCase(oldCMDScaseList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Case Finished");
         
-        for (CMDSResultModel item : cmdsResultList) {
-            sqlCMDSResult.addCMDSResult(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getResult());
-        }
-        
-        for (oldCMDSCasePartyModel item : oldCMDScasePartyList) {
-            migrateCaseParty(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-                    item.getYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber()
-                            + ": " + item.getFirstName() + " " + item.getLastName());
-        }
-        
-        for (oldCMDSCaseModel item : oldCMDScaseList) {
-            migrateCase(item);
-            migrateSearch(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-                    item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
-        }
-
-        for (oldCMDShearingModel item : oldCMDSHearingList) {
-            migrateHearings(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-                    item.getYear() + "-" + item.getType() + "-" + item.getMonth() + "-" + item.getCaseSeqNumber());
-        }
-        
-        for (oldCMDSHistoryModel item : oldCMDSHistoryList) {
-            migrateHistory(item);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, 
-                    item.getCaseYear() + "-" + item.getCaseType() + "-" + item.getCaseMonth() + "-" + item.getCaseSeqNumber());
-        }
-
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating CMDS Cases: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -166,143 +154,12 @@ public class CMDSMigration {
         }
     }
     
-    private static void migrateCaseParty(oldCMDSCasePartyModel item) {
-        casePartyModel party = new  casePartyModel();
-        
-        party.setCaseYear(item.getYear());
-        party.setCaseType(item.getCaseType());
-        party.setCaseMonth(item.getCaseMonth());
-        party.setCaseNumber(item.getCaseSeqNumber());
-        party.setCaseRelation(item.getParticipantType());
-        party.setFirstName(item.getFirstName().trim().equals("") ? null : item.getFirstName().trim());
-        party.setMiddleInitial(item.getMiddleInitial().trim().equals("") ? null : item.getMiddleInitial().trim());
-        party.setLastName(item.getLastName().trim().equals("") ? null : item.getLastName().trim());
-        party.setJobTitle(item.getTitle().trim().equals("") ? null : item.getTitle().trim());
-        party.setNameTitle(item.getEtalextraname().trim().equals("") ? null : item.getEtalextraname().trim());
-        party.setAddress1(item.getAddress1().trim().equals("") ? null : item.getAddress1().trim());
-        party.setAddress2(item.getAddress2().trim().equals("") ? null : item.getAddress2().trim());
-        party.setCity(item.getCity().trim().equals("") ? null : item.getCity().trim());
-        party.setState(item.getState().trim().equals("") ? null : item.getState().trim());
-        party.setZip(item.getZip().trim().equals("") ? null : item.getZip().trim());
-        party.setFax((!item.getFax().trim().equals("null") || !item.getFax().trim().equals("")) 
-                ? StringUtilities.convertPhoneNumberToString(item.getFax().trim()) : null);  
-        party.setEmailAddress(item.getEmail().trim().equals("") ? null : item.getEmail().trim());
-        party.setPhoneOne(!item.getOfficePhone().trim().equals("") ? StringUtilities.convertPhoneNumberToString(item.getOfficePhone().trim()) : null);
-        party.setPhoneTwo(!item.getCellularPhone().trim().equals("") ? StringUtilities.convertPhoneNumberToString(item.getCellularPhone().trim()) : null);
-        
-        if (party.getPhoneOne() == null && !item.getHomePhone().equals("")){
-            party.setPhoneOne(!item.getHomePhone().trim().equals("") ? StringUtilities.convertPhoneNumberToString(item.getHomePhone().trim()) : null);
-        } else if (party.getPhoneTwo() == null && !item.getHomePhone().equals("")){
-            party.setPhoneTwo(!item.getHomePhone().trim().equals("") ? StringUtilities.convertPhoneNumberToString(item.getHomePhone().trim()) : null);
-        }
-                
-        if (item.getActive() == 1){
-            sqlCaseParty.savePartyInformation(party);
-        }
-    }
-    
-    private static void migrateCase(oldCMDSCaseModel item) {
-        CMDSCaseModel cmds = new CMDSCaseModel();
-        
-        cmds.setActive(item.getActive() == 1);
-        cmds.setCaseYear(item.getYear());
-        cmds.setCaseType(item.getType());
-        cmds.setCaseMonth(item.getMonth());
-        cmds.setCaseNumber(item.getCaseSeqNumber());
-        cmds.setNote("");
-        cmds.setOpenDate(item.getOpenDate().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getOpenDate().substring(0,9)));
-        cmds.setGroupNumber(item.getGroupNumber().equals("") ? null : item.getGroupNumber().trim());
-        cmds.setAljID(String.valueOf(StringUtilities.convertUserToID(item.getALJ().trim() == null ? "" : item.getALJ())));
-        cmds.setCloseDate(item.getCloseDate().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getCloseDate().substring(0,9)));
-        cmds.setInventoryStatusLine(item.getInventoryStatusLine().equals("") ? null : item.getInventoryStatusLine().trim());
-        cmds.setInventoryStatusDate(item.getInventoryStatusDate().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getInventoryStatusDate().substring(0,9)));
-        cmds.setCaseStatus(item.getStatus().equals("") ? null : item.getStatus().trim());
-        cmds.setResult(item.getResult().equals("") ? null : item.getResult().trim());
-        cmds.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getMediator() == null ? "" : item.getMediator())));
-        cmds.setPbrBox(item.getPBRBoxNumber().equals("") ? null : item.getPBRBoxNumber().trim());
-        cmds.setGroupType(item.getGroupType().trim().equals("") ? null : item.getGroupType().trim());
-        cmds.setReclassCode(item.getReclassCode().trim().equals("") ? null : item.getReclassCode().trim());
-        cmds.setMailedRR(item.getMailedRR().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getMailedRR().substring(0,9)));
-        cmds.setMailedBO(item.getMailedBO().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getMailedBO().substring(0,9)));
-        cmds.setMailedPO1(item.getMailedPO().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getMailedPO().substring(0,9)));
-        cmds.setMailedPO2(item.getMailedPO2().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getMailedPO2().substring(0,9)));
-        cmds.setMailedPO3(item.getMailedPO3().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getMailedPO3().substring(0,9)));
-        cmds.setMailedPO4(item.getMailedPO4().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getMailedPO4().substring(0,9)));
-        cmds.setRemailedRR(item.getRemailedRR().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getRemailedRR().substring(0,9)));
-        cmds.setRemailedBO(item.getRemailedBO().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getRemailedBO().substring(0,9)));
-        cmds.setRemailedPO1(item.getRemailedPO().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getRemailedPO().substring(0,9)));
-        cmds.setRemailedPO2(item.getRemailedPO2().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getRemailedPO2().substring(0,9)));
-        cmds.setRemailedPO3(item.getRemailedPO3().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getRemailedPO3().substring(0,9)));
-        cmds.setRemailedPO4(item.getRemailedPO4().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getRemailedPO4().substring(0,9)));
-        cmds.setReturnReceiptRR(item.getGreenCardSignedRR().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedRR().substring(0,9)));
-        cmds.setReturnReceiptBO(item.getGreenCardSignedBO().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedBO().substring(0,9)));
-        cmds.setReturnReceiptPO1(item.getGreenCardSignedPO().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedPO().substring(0,9)));
-        cmds.setReturnReceiptPO2(item.getGreenCardSignedPO2().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedPO2().substring(0,9)));
-        cmds.setReturnReceiptPO3(item.getGreenCardSignedPO3().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedPO3().substring(0,9)));
-        cmds.setReturnReceiptPO4(item.getGreenCardSignedPO4().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getGreenCardSignedPO4().substring(0,9)));
-        cmds.setPullDateRR(item.getPullDateRR().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getPullDateRR().substring(0,9)));
-        cmds.setPullDateBO(item.getPullDateBO().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getPullDateBO().substring(0,9)));
-        cmds.setPullDatePO1(item.getPullDatePO().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getPullDatePO().substring(0,9)));
-        cmds.setPullDatePO2(item.getPullDatePO2().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getPullDatePO2().substring(0,9)));
-        cmds.setPullDatePO3(item.getPullDatePO3().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getPullDatePO3().substring(0,9)));
-        cmds.setPullDatePO4(item.getPullDatePO4().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getPullDatePO4().substring(0,9)));
-        cmds.setHearingCompletedDate(item.getHearingCompletedDate().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getHearingCompletedDate().substring(0,9)));
-        cmds.setPostHearingDriefsDue(item.getPostHearingBriefsDueDate().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getPostHearingBriefsDueDate().substring(0,9)));
-        
-        if(!item.getCaseNote().equals("")){
-            cmds.setNote("Case Note: " + item.getCaseNote().trim());
-        }
-        if (!item.getInventoryStatusNote().equals("")){
-            if (cmds.getNote().equals("")){
-                cmds.setNote(cmds.getNote() + System.lineSeparator() + System.lineSeparator() + "Inventory Status Note: " + item.getInventoryStatusNote().trim());
-            }
-            cmds.setNote(cmds.getNote() + "Inventory Status Note: " + item.getInventoryStatusNote().trim());
-        }
-        if (!item.getOutsideCourtNote().equals("")){
-            if (cmds.getNote().equals("")){
-                cmds.setNote(cmds.getNote() + System.lineSeparator() + System.lineSeparator() + "Outside Court Note: " + item.getOutsideCourtNote().trim());
-            }
-            cmds.setNote(cmds.getNote() + "Outside Court Note: " + item.getOutsideCourtNote().trim());
-        }
-        
-        sqlCMDSCase.addCase(cmds);
-    }
-    
-    private static void migrateSearch(oldCMDSCaseModel item) {
-        int aljID = StringUtilities.convertUserToID(item.getALJ().trim() == null ? "" : item.getALJ());
+    private static void migrateSearch(CMDSCaseModel item) {
+        int aljID = StringUtilities.convertUserToID(item.getAljID().trim() == null ? "" : item.getAljID());
         String appellant = "";
         String appellee = "";
         String ALJName = "";
-        List<oldCMDSCasePartyModel> partyList = sqlCMDSCaseParty.getPartyByCase(item.getYear(), item.getCaseSeqNumber());
+        List<oldCMDSCasePartyModel> partyList = sqlCMDSCaseParty.getPartyByCase(item.getCaseYear(), item.getCaseNumber());
         
         for (oldCMDSCasePartyModel person : partyList){
             if (person.getParticipantType().contains("Appellee")){
@@ -327,68 +184,22 @@ public class CMDSMigration {
         
         CMDSCaseSearchModel search = new CMDSCaseSearchModel();
         
-        search.setCaseYear(item.getYear());
-        search.setCaseType(item.getType());
-        search.setCaseMonth(item.getMonth());
-        search.setCaseNumber(item.getCaseSeqNumber());
+        search.setCaseYear(item.getCaseYear() == null ? "" : item.getCaseYear());
+        search.setCaseType(item.getCaseType() == null ? "" : item.getCaseType());
+        search.setCaseMonth(item.getCaseMonth() == null ? "" : item.getCaseMonth());
+        search.setCaseNumber(item.getCaseNumber() == null ? "" : item.getCaseNumber());
         search.setAppellant(appellant.trim().equals("") ? null : appellant);
         search.setAppellee(appellee.trim().equals("") ? null : appellee);
         search.setAlj(ALJName.trim().equals("") ? null : ALJName);
-        search.setDateOpened(item.getOpenDate().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getOpenDate().substring(0,9)));
+        search.setDateOpened(item.getOpenDate() == null ? null : item.getOpenDate());
         
-        sqlCMDSCaseSearch.addRow(search);
-    }
-    
-    private static void migrateHearings(oldCMDShearingModel item) {
-        CMDSHearingModel hearing = new CMDSHearingModel();
-                
-        hearing.setActive(item.getActive() == 1);
-        hearing.setCaseYear(item.getYear().equals("") ? null : item.getYear().trim());
-        hearing.setCaseType(item.getType().equals("") ? null : item.getType().trim());
-        hearing.setCaseMonth(item.getMonth().equals("") ? null : item.getMonth().trim());
-        hearing.setCaseNumber(item.getCaseSeqNumber().equals("") ? null : item.getCaseSeqNumber().trim());
-        hearing.setEntryDate(item.getEntryDate().trim().equals("") 
-                ? null : StringUtilities.convertStringSQLDate(item.getEntryDate().substring(0,9)));
-        hearing.setHearingType(item.getHearingtype().equals("") ? null : item.getHearingtype().trim());
-        hearing.setRoom(item.getRoom().trim().equals("") ? null : item.getRoom().trim());
-
-        if (!item.getHearingDate().equals("") && !item.getHearingTime().equals("")){
-            hearing.setHearingDateTime(item.getEntryDate().trim().equals("") 
-                ? null : StringUtilities.convertStringDateAndTime(
-                        item.getHearingDate().substring(0,9).trim(), 
-                        item.getHearingTime().trim())
-            );
-        }
-
-        sqlCMDSHearing.addHearings(hearing);
-    }
-    
-    private static void migrateHistory(oldCMDSHistoryModel old) {
-        String direction = "";
-        if (old.getMailType().equals("I")) {
-            direction = "IN - ";
-        } else if (old.getMailType().equals("O")) {
-            direction = "OUT - ";
-        }
+        CMDSCaseSearchList.add(search);
         
-        activityModel item = new activityModel();
-        item.setCaseYear(old.getCaseYear());
-        item.setCaseType(old.getCaseType());
-        item.setCaseMonth(old.getCaseMonth());
-        item.setCaseNumber(old.getCaseSeqNumber());
-        item.setUserID(StringUtilities.convertUserToID(old.getUserinitials()));
-        item.setDate(old.getEntryDate().equals("") ? null : StringUtilities.convertStringTimeStamp(old.getEntryDate()));
-        item.setAction(!old.getEntryDescription().trim().equals("") ? direction + old.getEntryDescription().trim() : null);
-        item.setFileName(!old.getDocumentLink().trim().equals("") ? old.getDocumentLink().trim() : null);
-        item.setFrom(null);
-        item.setTo(null);
-        item.setType(!old.getEntryType().trim().equals("") ? old.getEntryType().trim() : null);
-        item.setRedacted(0);
-        item.setAwaitingTimeStamp(0);
-        item.setComment(null);
-                
-        sqlActivity.addActivity(item);
+        if (Global.isDebug()) {
+            System.out.println("Cleaned Case: " 
+                    + search.getCaseYear() + "-" + search.getCaseType() + "-" 
+                    + search.getCaseMonth() + "-" + search.getCaseNumber());
+        }
     }
-    
+        
 }

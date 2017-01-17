@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.CMDSHistoryDescriptionModel;
 import com.util.DBCInfo;
+import com.util.Global;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,7 +50,8 @@ public class sqlCMDSHistoryDescription {
         return list;
     }
         
-    public static void addCMDSHistoryDescription(CMDSHistoryDescriptionModel item) {
+    public static void addCMDSHistoryDescription(List<CMDSHistoryDescriptionModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -64,19 +66,35 @@ public class sqlCMDSHistoryDescription {
                     }
                      sql += "?)"; //03
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+
+            for (CMDSHistoryDescriptionModel item : list) {
             ps.setBoolean(1, item.isActive());
             ps.setString (2, item.getCategory());
             ps.setString (3, item.getDescription());
-            ps.executeUpdate();
+            ps.addBatch();
+                    if (++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                    }
+                }
+                ps.executeBatch();
+                conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);
         }
     }
     
-    public static void addHearingsHistoryDescription(CMDSHistoryDescriptionModel item) {
+    
+    public static void addHearingsHistoryDescription(List<CMDSHistoryDescriptionModel> list) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -91,12 +109,26 @@ public class sqlCMDSHistoryDescription {
                     }
                      sql += "?)"; //03
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+
+            for (CMDSHistoryDescriptionModel item : list) {
             ps.setBoolean(1, item.isActive());
             ps.setString (2, item.getCategory());
             ps.setString (3, item.getDescription());
-            ps.executeUpdate();
+            ps.addBatch();
+                    if (++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                    }
+                }
+                ps.executeBatch();
+                conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

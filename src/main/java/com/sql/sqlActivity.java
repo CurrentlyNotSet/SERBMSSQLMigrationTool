@@ -36,8 +36,9 @@ import org.apache.commons.lang3.StringUtils;
  * @author Andrew
  */
 public class sqlActivity {
-    
-    public static void addActivity(activityModel item) {
+        
+    public static void batchAddActivity(List<activityModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -63,6 +64,11 @@ public class sqlActivity {
                     }
                      sql += "?)"; //14
             ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (activityModel item : list){
+            System.out.println("Activity Entry #: " + count);
+
             ps.setString   ( 1, StringUtils.left(item.getCaseYear(), 4));
             ps.setString   ( 2, StringUtils.left(item.getCaseType(), 3));
             ps.setString   ( 3, StringUtils.left(item.getCaseMonth(), 2));
@@ -81,9 +87,21 @@ public class sqlActivity {
             ps.setString   (12, item.getComment());
             ps.setInt      (13, item.getRedacted());
             ps.setInt      (14, item.getAwaitingTimeStamp());
-            ps.executeUpdate();
+            ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);
@@ -168,7 +186,7 @@ public class sqlActivity {
                     ps.addBatch();
                     if(++count % Global.getBATCH_SIZE() == 0) {
                         ps.executeBatch();
-                        SceneUpdater.listItemFinished(control, count, totalRecordCount, count + " imported");
+                        SceneUpdater.listItemFinished(control, count - 1, totalRecordCount, count + " imported");
                     }
                 }
             }
@@ -188,6 +206,7 @@ public class sqlActivity {
     }
     
     public static void batchAddORGActivity(List<oldORGHistoryModel> ORGCaseHistory) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -237,6 +256,9 @@ public class sqlActivity {
                 ps.setInt      (13, "Y".equals(old.getRedacted().trim()) ? 1 : 0);
                 ps.setInt      (14, 0);
                 ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
             }
             
             ps.executeBatch();
@@ -332,6 +354,7 @@ public class sqlActivity {
     }
     
     public static void batchAddCSCActivity(List<oldCSCHistoryModel> CSCCaseHistory) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -387,6 +410,9 @@ public class sqlActivity {
                 ps.setInt      (13, 0);
                 ps.setInt      (14, 0);
                 ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
             }
             
             ps.executeBatch();
@@ -404,7 +430,8 @@ public class sqlActivity {
         }
     }
     
-    public static void batchAddULPActivity(List<oldULPHistoryModel> ULPCaseHistory , caseNumberModel caseNumber) {
+    public static void batchAddULPActivity(List<oldULPHistoryModel> ULPCaseHistory, caseNumberModel caseNumber) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -454,6 +481,9 @@ public class sqlActivity {
                 ps.setInt      (13, 0);
                 ps.setInt      (14, 0);
                 ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
             }
             
             ps.executeBatch();
@@ -471,7 +501,8 @@ public class sqlActivity {
         }
     }
     
-    public static void batchAddMEDActivity(List<oldMEDHistoryModel> oldMEDCaseList , caseNumberModel caseNumber) {
+    public static void batchAddMEDActivity(List<oldMEDHistoryModel> oldMEDCaseList, caseNumberModel caseNumber) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -521,6 +552,9 @@ public class sqlActivity {
                 ps.setInt      (13, 0);
                 ps.setInt      (14, 0);
                 ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
             }
             
             ps.executeBatch();
@@ -538,7 +572,8 @@ public class sqlActivity {
         }
     }
     
-    public static void batchAddREPActivity(List<oldREPHistoryModel> REPCaseHistory , caseNumberModel caseNumber) {
+    public static void batchAddREPActivity(List<oldREPHistoryModel> REPCaseHistory, caseNumberModel caseNumber) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -588,8 +623,88 @@ public class sqlActivity {
                 ps.setInt      (13, "Y".equals(old.getRedacted().trim()) ? 1 : 0);
                 ps.setInt      (14, 0);
                 ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                }
             }
             
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void batchAddCMDSActivity(List<oldCMDSHistoryModel> CMDSCaseHistory, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "Insert INTO Activity ("
+                    + "caseYear, "        //01
+                    + "caseType, "        //02
+                    + "caseMonth, "       //03
+                    + "caseNumber, "      //04
+                    + "userID, "          //05
+                    + "date, "            //06
+                    + "action, "          //07
+                    + "fileName, "        //08
+                    + "[from], "          //09
+                    + "[to], "            //10
+                    + "type, "            //11
+                    + "comment, "         //12
+                    + "redacted, "        //13
+                    + "awaitingTimeStamp "//14
+                    + ") VALUES (";
+                    for(int i=0; i<13; i++){
+                        sql += "?, ";   //01-13
+                    }
+                     sql += "?)"; //14
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+            
+            for (oldCMDSHistoryModel old : CMDSCaseHistory){
+                String direction = "";
+                if (old.getMailType().equals("I")) {
+                    direction = "IN - ";
+                } else if (old.getMailType().equals("O")) {
+                    direction = "OUT - ";
+                }
+                int userID = StringUtilities.convertUserToID(old.getUserinitials());
+
+                ps.setString   ( 1, StringUtils.left(old.getCaseYear(), 4));
+                ps.setString   ( 2, StringUtils.left(old.getCaseType(), 3));
+                ps.setString   ( 3, StringUtils.left(old.getCaseMonth(), 2));
+                ps.setString   ( 4, StringUtils.left(old.getCaseSeqNumber(), 8));
+                if (userID != 0){
+                    ps.setInt  ( 5, userID);
+                } else {
+                    ps.setNull ( 5, java.sql.Types.INTEGER);
+                }
+                ps.setTimestamp( 6, old.getEntryDate().equals("") ? null : StringUtilities.convertStringTimeStamp(old.getEntryDate()));
+                ps.setString   ( 7, !old.getEntryDescription().trim().equals("") ? direction + old.getEntryDescription().trim() : null);
+                ps.setString   ( 8, !old.getDocumentLink().trim().equals("") ? old.getDocumentLink().trim() : null);
+                ps.setString(9, null);
+                ps.setString(10, null);
+                ps.setString(11, !old.getEntryType().trim().equals("") ? old.getEntryType().trim() : null);
+                ps.setString(12, null);
+                ps.setInt   (13, 0);
+                ps.setInt   (14, 0);
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
             ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {
@@ -634,6 +749,47 @@ public class sqlActivity {
                 item.setRedacted(rs.getString("Redacted"));
                 item.setRedactedHistoryID(rs.getString("RedactedHistoryID"));
                 list.add(item);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
+    
+    public static List<activityModel> getULPHistory() {
+        List<activityModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "Select *, CAST(date AS datetime) AS Date2 FROM ULPHistory WHERE LEN(CaseNumber) = 16";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                activityModel item = new activityModel();
+                caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(rs.getString("CaseNumber").trim());
+                if (caseNumber != null){
+                    item.setCaseYear(caseNumber.getCaseYear());
+                    item.setCaseType(caseNumber.getCaseType());
+                    item.setCaseMonth(caseNumber.getCaseMonth());
+                    item.setCaseNumber(caseNumber.getCaseNumber());
+                    item.setUserID(StringUtilities.convertUserToID(rs.getString("UserInitals")));
+                    item.setDate(rs.getTimestamp("Date2"));
+                    item.setAction(rs.getString("Action").trim().equals("") ? null : rs.getString("Action").trim());
+                    item.setFileName(rs.getString("FileName").trim().equals("") ? null : rs.getString("FileName").trim());
+                    item.setFrom(rs.getString("EmailFrom").trim().equals("") ? null : rs.getString("EmailFrom").trim());
+                    item.setTo(rs.getString("EmailTo").trim().equals("") ? null : rs.getString("EmailTo").trim());
+                    item.setType(null);
+                    item.setComment(null);
+                    item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
+                    item.setAwaitingTimeStamp(0);
+                    list.add(item);
+                }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

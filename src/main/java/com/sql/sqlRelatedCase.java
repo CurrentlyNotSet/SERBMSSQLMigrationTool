@@ -6,7 +6,10 @@
 package com.sql;
 
 import com.model.relatedCaseModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -52,7 +55,8 @@ public class sqlRelatedCase {
         }
     }
     
-    public static void batchAddRelatedCase(List<relatedCaseModel> list) {
+    public static void batchAddRelatedCase(List<relatedCaseModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -72,16 +76,20 @@ public class sqlRelatedCase {
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
             
-            for (relatedCaseModel item : list) {;
+            for (relatedCaseModel item : list) {
                 ps.setString(1, StringUtils.left(item.getCaseYear(), 4));
                 ps.setString(2, StringUtils.left(item.getCaseType(), 3));
                 ps.setString(3, StringUtils.left(item.getCaseMonth(), 2));
                 ps.setString(4, StringUtils.left(item.getCaseNumber(), 4));
                 ps.setString(5, item.getRelatedCaseNumber());
                 ps.addBatch();
-            }            
-            ps.executeBatch();
-            conn.commit();
+                    if (++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                        currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                    }
+                }
+                ps.executeBatch();
+                conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
             try {

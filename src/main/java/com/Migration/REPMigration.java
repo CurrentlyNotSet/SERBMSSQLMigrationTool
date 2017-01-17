@@ -943,7 +943,7 @@ public class REPMigration {
             }
             
             if (list != null ) {
-                sqlRelatedCase.batchAddRelatedCase(list);
+                sqlRelatedCase.batchAddRelatedCase(list, control, currentRecord, totalRecordCount);
             }
         }
     }
@@ -1058,7 +1058,7 @@ public class REPMigration {
         }
         
         if (list != null) {
-            sqlBoardMeeting.batchAddBoardMeeting(list);
+            sqlBoardMeeting.batchAddBoardMeeting(list, control, currentRecord, totalRecordCount);
         }       
     }
     

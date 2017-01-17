@@ -18,7 +18,16 @@ public class SceneUpdater {
         if (Global.isDebug()) {
             System.out.println("Current Record Number Finished:  " + currentRecord + "  (" + printoutText + ")");
         }
-        control.updateProgressBar(Double.valueOf(currentRecord), totalRecordCount);
+        control.updateProgressBarProcessing(Double.valueOf(currentRecord), totalRecordCount);
+        return currentRecord;
+    }
+    
+    public static int listItemCleaned(MainWindowSceneController control, int currentRecord, int totalRecordCount, String printoutText) {
+        currentRecord++;
+        if (Global.isDebug()) {
+            System.out.println("Current Record Number Cleaned:  " + currentRecord + "  (" + printoutText + ")");
+        }
+        control.updateProgressBarCleaning(Double.valueOf(currentRecord), totalRecordCount);
         return currentRecord;
     }
     
