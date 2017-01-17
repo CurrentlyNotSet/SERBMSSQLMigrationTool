@@ -67,27 +67,25 @@ public class sqlActivity {
             conn.setAutoCommit(false);
             
             for (activityModel item : list){
-            System.out.println("Activity Entry #: " + count);
-
-            ps.setString   ( 1, StringUtils.left(item.getCaseYear(), 4));
-            ps.setString   ( 2, StringUtils.left(item.getCaseType(), 3));
-            ps.setString   ( 3, StringUtils.left(item.getCaseMonth(), 2));
-            ps.setString   ( 4, StringUtils.left(item.getCaseNumber(), 8));
-            if (item.getUserID() != 0){
-                ps.setInt  ( 5, item.getUserID());
-            } else {
-                ps.setNull ( 5, java.sql.Types.INTEGER);
-            }
-            ps.setTimestamp( 6, item.getDate());
-            ps.setString   ( 7, item.getAction());
-            ps.setString   ( 8, item.getFileName());
-            ps.setString   ( 9, item.getFrom());
-            ps.setString   (10, item.getTo());
-            ps.setString   (11, item.getType());
-            ps.setString   (12, item.getComment());
-            ps.setInt      (13, item.getRedacted());
-            ps.setInt      (14, item.getAwaitingTimeStamp());
-            ps.addBatch();
+                ps.setString   ( 1, StringUtils.left(item.getCaseYear(), 4));
+                ps.setString   ( 2, StringUtils.left(item.getCaseType(), 3));
+                ps.setString   ( 3, StringUtils.left(item.getCaseMonth(), 2));
+                ps.setString   ( 4, StringUtils.left(item.getCaseNumber(), 8));
+                if (item.getUserID() != 0){
+                    ps.setInt  ( 5, item.getUserID());
+                } else {
+                    ps.setNull ( 5, java.sql.Types.INTEGER);
+                }
+                ps.setTimestamp( 6, item.getDate());
+                ps.setString   ( 7, item.getAction());
+                ps.setString   ( 8, item.getFileName());
+                ps.setString   ( 9, item.getFrom());
+                ps.setString   (10, item.getTo());
+                ps.setString   (11, item.getType());
+                ps.setString   (12, item.getComment());
+                ps.setInt      (13, item.getRedacted());
+                ps.setInt      (14, item.getAwaitingTimeStamp());
+                ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
                     currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
@@ -767,7 +765,48 @@ public class sqlActivity {
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "Select *, CAST(date AS datetime) AS Date2 FROM ULPHistory WHERE LEN(CaseNumber) = 16";
+            String sql = "SELECT *, CAST(date AS datetime) AS Date2 FROM ULPHistory WHERE LEN(CaseNumber) = 16";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                activityModel item = new activityModel();
+                caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(rs.getString("CaseNumber").trim());
+                if (caseNumber != null){
+                    item.setCaseYear(caseNumber.getCaseYear());
+                    item.setCaseType(caseNumber.getCaseType());
+                    item.setCaseMonth(caseNumber.getCaseMonth());
+                    item.setCaseNumber(caseNumber.getCaseNumber());
+                    item.setUserID(StringUtilities.convertUserToID(rs.getString("UserInitals")));
+                    item.setDate(rs.getTimestamp("Date2"));
+                    item.setAction(rs.getString("Action").trim().equals("") ? null : rs.getString("Action").trim());
+                    item.setFileName(rs.getString("FileName").trim().equals("") ? null : rs.getString("FileName").trim());
+                    item.setFrom(rs.getString("EmailFrom").trim().equals("") ? null : rs.getString("EmailFrom").trim());
+                    item.setTo(rs.getString("EmailTo").trim().equals("") ? null : rs.getString("EmailTo").trim());
+                    item.setType(null);
+                    item.setComment(null);
+                    item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
+                    item.setAwaitingTimeStamp(0);
+                    list.add(item);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        return list;
+    }
+    
+    public static List<activityModel> getREPHistory() {
+        List<activityModel> list = new ArrayList();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
+            String sql = "SELECT *, CAST(date AS datetime) AS Date2 FROM REPHistory WHERE LEN(CaseNumber) = 16";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {

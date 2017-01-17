@@ -6,7 +6,10 @@
 package com.sql;
 
 import com.model.REPCaseTypeModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -80,7 +83,8 @@ public class sqlREPCaseType {
         }
     }
     
-    public static void batchAddREPCaseType(List<REPCaseTypeModel> list) {
+    public static void batchAddREPCaseType(List<REPCaseTypeModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -104,7 +108,11 @@ public class sqlREPCaseType {
                 ps.setString( 3, StringUtils.left(item.getTypeName(), 200));
                 ps.setString( 4, item.getDescription());
                 ps.addBatch();
-            }            
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
             ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {

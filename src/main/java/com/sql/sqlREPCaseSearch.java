@@ -6,10 +6,14 @@
 package com.sql;
 
 import com.model.repCaseSearchModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
 
 /**
@@ -18,7 +22,8 @@ import org.apache.commons.dbutils.DbUtils;
  */
 public class sqlREPCaseSearch {
     
-    public static void addREPCaseSearchCase(repCaseSearchModel item) {
+    public static void addREPCaseSearchCase(List<repCaseSearchModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try { 
@@ -41,20 +46,35 @@ public class sqlREPCaseSearch {
                     }
                      sql += "?)";   //11
             ps = conn.prepareStatement(sql);
-            ps.setString( 1, item.getCaseYear());
-            ps.setString( 2, item.getCaseType());
-            ps.setString( 3, item.getCaseMonth());
-            ps.setString( 4, item.getCaseNumber());
-            ps.setString( 5, item.getEmployerName());
-            ps.setString( 6, item.getBunNumber());
-            ps.setString( 7, item.getDescription());
-            ps.setString( 8, item.getCounty());
-            ps.setString( 9, item.getBoardDeemed());
-            ps.setString(10, item.getEmployeeOrg());
-            ps.setString(11, item.getIncumbent());
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+            
+            for (repCaseSearchModel item : list){
+                ps.setString( 1, item.getCaseYear());
+                ps.setString( 2, item.getCaseType());
+                ps.setString( 3, item.getCaseMonth());
+                ps.setString( 4, item.getCaseNumber());
+                ps.setString( 5, item.getEmployerName());
+                ps.setString( 6, item.getBunNumber());
+                ps.setString( 7, item.getDescription());
+                ps.setString( 8, item.getCounty());
+                ps.setString( 9, item.getBoardDeemed());
+                ps.setString(10, item.getEmployeeOrg());
+                ps.setString(11, item.getIncumbent());
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

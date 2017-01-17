@@ -6,7 +6,10 @@
 package com.sql;
 
 import com.model.boardAcionTypeModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -76,7 +79,8 @@ public class sqlBoardActionType {
         }
     }
     
-    public static void batchAddREPBoardActionType(List<boardAcionTypeModel> list) {
+    public static void batchAddREPBoardActionType(List<boardAcionTypeModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -97,7 +101,11 @@ public class sqlBoardActionType {
                 ps.setString( 2, StringUtils.left(item.getShort(), 50));
                 ps.setString( 3, StringUtils.left(item.getMeaning(), 255));
                 ps.addBatch();
-            }            
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
             ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {

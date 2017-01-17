@@ -6,7 +6,10 @@
 package com.sql;
 
 import com.model.REPMediationModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -59,7 +62,8 @@ public class sqlREPMediation {
         }
     }
     
-    public static void batchAddREPMediation(List<REPMediationModel> list) {
+    public static void batchAddREPMediation(List<REPMediationModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -93,6 +97,10 @@ public class sqlREPMediation {
                 ps.setString   (8, StringUtils.left(item.getMediatorID(), 5));
                 ps.setString   (9, StringUtils.left(item.getMediationOutcome(), 100));
                 ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
             }            
             ps.executeBatch();
             conn.commit();

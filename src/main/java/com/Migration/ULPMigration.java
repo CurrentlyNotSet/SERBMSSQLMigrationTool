@@ -110,10 +110,10 @@ public class ULPMigration {
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "ULP Related Cases Finished");
 
         sqlULPCaseSearch.batchAddULPCaseSearchCase(caseSearchList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "ULP Case Search Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + caseSearchList.size() - 1, totalRecordCount, "ULP Case Search Finished");
 
         sqlEmployerCaseSearchData.batchAddEmployer(EmployerSearchList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "ULP Employer Search Finished");
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "ULP Employer Search Finished");
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ULP Cases: "
