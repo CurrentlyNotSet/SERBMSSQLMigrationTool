@@ -68,7 +68,7 @@ public class sqlAdministrationInformation {
         return list;
     }    
     
-    public static void addInfo(List<administrationInformationModel> list) {
+    public static void batchAddAdminInfo(List<administrationInformationModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

@@ -50,7 +50,7 @@ public class sqlCMDSHistoryDescription {
         return list;
     }
         
-    public static void addCMDSHistoryDescription(List<CMDSHistoryDescriptionModel> list) {
+    public static void batchAddCMDSHistoryDescription(List<CMDSHistoryDescriptionModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -91,9 +91,8 @@ public class sqlCMDSHistoryDescription {
             DbUtils.closeQuietly(conn);
         }
     }
-    
-    
-    public static void addHearingsHistoryDescription(List<CMDSHistoryDescriptionModel> list) {
+        
+    public static void batchAddHearingsHistoryDescription(List<CMDSHistoryDescriptionModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

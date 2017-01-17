@@ -50,7 +50,7 @@ public class sqlCMDSHistoryCategory {
         return list;
     }
         
-    public static void addCMDSHistoryCategory(List<CMDSHistoryCategoryModel> list) {
+    public static void batchAddCMDSHistoryCategory(List<CMDSHistoryCategoryModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -92,7 +92,7 @@ public class sqlCMDSHistoryCategory {
         }
     }
     
-    public static void addHearingsHistoryCategory(List<CMDSHistoryCategoryModel> list) {
+    public static void batchAddHearingsHistoryCategory(List<CMDSHistoryCategoryModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

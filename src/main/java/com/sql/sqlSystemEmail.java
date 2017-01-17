@@ -60,7 +60,7 @@ public class sqlSystemEmail {
         return list;
     }
         
-    public static void addSystemEmail(List<systemEmailModel> list) {
+    public static void batchAddSystemEmail(List<systemEmailModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

@@ -51,7 +51,7 @@ public class sqlDirector {
         return list;
     }
     
-    public static void addDirector(List<DirectorsModel> list) {
+    public static void batchAddDirector(List<DirectorsModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -94,7 +94,5 @@ public class sqlDirector {
             DbUtils.closeQuietly(conn);
         }
     }
-    
-    
-    
+   
 }

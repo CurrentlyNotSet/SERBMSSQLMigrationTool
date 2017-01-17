@@ -6,7 +6,10 @@
 package com.sql;
 
 import com.model.jurisdictionModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,33 +53,9 @@ public class sqlJurisdiction {
         }
         return list;
     }
-        
-    public static void addJurisdiction(jurisdictionModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try { 
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO Jurisdiction ("
-                    + "active, "      //01
-                    + "jurisCode, "   //02
-                    + "employerType, "//03
-                    + "jurisName "    //04
-                    + ") VALUES (?, ?, ?, ?)";
-            ps = conn.prepareStatement(sql);
-            ps.setBoolean(1, item.isActive());
-            ps.setString (2, item.getJurisCode());
-            ps.setString (3, item.getEmployerType());
-            ps.setString (4, item.getJurisName());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
-    public static void batchAddJurisdiction(List<jurisdictionModel> list) {
+            
+    public static void batchAddJurisdiction(List<jurisdictionModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try { 
@@ -96,8 +75,12 @@ public class sqlJurisdiction {
                 ps.setString (3, StringUtils.left(item.getEmployerType(), 4));
                 ps.setString (4, StringUtils.left(item.getJurisName(), 150));
                 ps.addBatch();
-            }            
-            ps.executeBatch();
+                    if (++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                        currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                    }
+                }
+                ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();

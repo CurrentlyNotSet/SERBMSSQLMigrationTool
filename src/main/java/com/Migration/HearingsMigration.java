@@ -58,7 +58,7 @@ public class HearingsMigration {
         currentRecord = 0;
         
         List<oldSMDSCaseTrackingModel> oldHearingCaseList = sqlHearingsCase.getCases();
-        List<oldSMDSHistoryModel> oldHearingsHistoryList = sqlActivity.getSMDSHistory();
+        List<oldSMDSHistoryModel> oldHearingsHistoryList = sqlActivity.getSMDSHearingHistory();
         List<oldHearingsMediationModel> oldHearingsMediationList = sqlHearingsMediation.getHearingsMediations();
         List<HearingOutcomeModel> oldHearingOutcomeList = sqlHearingOutcome.getOutcomeList();
         

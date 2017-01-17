@@ -57,7 +57,7 @@ public class sqlSystemExecutive {
         return list;
     }    
     
-    public static void addExecutive(List<systemExecutiveModel> list) {
+    public static void batchAddExecutive(List<systemExecutiveModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

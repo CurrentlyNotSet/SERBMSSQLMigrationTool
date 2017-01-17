@@ -6,7 +6,10 @@
 package com.sql;
 
 import com.model.mediatorsModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -54,43 +57,9 @@ public class sqlMediator {
         }
         return list;
     }
-        
-    public static void addMediator(mediatorsModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try { 
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO Mediator ("
-                    + "active, "    //01
-                    + "type, "      //02
-                    + "firstName, " //03
-                    + "middleName, "//04
-                    + "lastName, "  //05
-                    + "phone, "     //06
-                    + "email "      //07
-                    + ") VALUES (";
-                    for(int i=0; i<6; i++){
-                        sql += "?, ";   //01-06
-                    }
-                     sql += "?)";   //07
-            ps = conn.prepareStatement(sql);            
-            ps.setBoolean(1, item.isActive());
-            ps.setString (2, item.getType());
-            ps.setString (3, item.getFirstName());
-            ps.setString (4, item.getMiddleName());
-            ps.setString (5, item.getLastName());
-            ps.setString (6, item.getPhone());
-            ps.setString (7, item.getEmail());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
     
-    public static void batchAddMediator(List<mediatorsModel> list) {
+    public static void batchAddMediator(List<mediatorsModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try { 
@@ -142,8 +111,12 @@ public class sqlMediator {
                 ps.setString (6, StringUtils.left(item.getPhone(), 20));
                 ps.setString (7, StringUtils.left(item.getEmail(), 200));
                 ps.addBatch();
-            }            
-            ps.executeBatch();
+                    if (++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                        currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                    }
+                }
+                ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();

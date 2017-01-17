@@ -5,10 +5,8 @@
  */
 package com.sql;
 
-import com.model.caseNumberModel;
 import com.model.oldBlobFileModel;
 import com.util.DBCInfo;
-import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

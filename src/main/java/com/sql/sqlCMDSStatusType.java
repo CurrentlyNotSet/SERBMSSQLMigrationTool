@@ -50,7 +50,7 @@ public class sqlCMDSStatusType {
         return list;
     }
         
-    public static void addCMDSStatusType(List<CMDSStatusTypeModel> list) {
+    public static void batchAddCMDSStatusType(List<CMDSStatusTypeModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

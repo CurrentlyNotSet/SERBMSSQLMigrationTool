@@ -13,8 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,32 +50,6 @@ public class sqlULPRecommendations {
         return list;
     }
         
-    public static void addULPRecommendation(ULPRecommendationsModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO ULPRecommendation ("
-                    + "active, "    //01
-                    + "code, "      //02
-                    + "description "//03
-                    + ") VALUES ("
-                    + "?,"  //01
-                    + "?,"  //02
-                    + "?)"; //03
-            ps = conn.prepareStatement(sql);
-            ps.setInt   (1, item.getActive());
-            ps.setString(2, StringUtils.left(item.getCode(), 50));
-            ps.setString(3, item.getDescription());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
     public static void batchAddULPRecommendation(List<ULPRecommendationsModel> oldULPRecsList) {
         Connection conn = null;
         PreparedStatement ps = null;

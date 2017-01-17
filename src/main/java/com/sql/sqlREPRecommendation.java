@@ -52,33 +52,7 @@ public class sqlREPRecommendation {
         }
         return list;
     }
-        
-    public static void addREPRecommendation(REPRecommendationModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO REPRecommendation ("
-                    + "Active, "        //01
-                    + "Type, "          //02
-                    + "Recommendation " //03
-                    + ") VALUES ("
-                    + "?, " //01
-                    + "?, " //02
-                    + "?)"; //03
-            ps = conn.prepareStatement(sql);
-            ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, StringUtils.left(item.getType(), 20));
-            ps.setString( 3, item.getRecommendation());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
+            
     public static void batchAddREPRecommendation(List<REPRecommendationModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;

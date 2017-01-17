@@ -7,7 +7,10 @@ package com.sql;
 
 import com.model.MEDCaseModel;
 import com.model.oldMEDCaseModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -226,8 +229,9 @@ public class sqlMEDData {
         }
         return list;
     }
-        
-    public static void importOldMEDCase(MEDCaseModel item) {
+            
+    public static void batchAddMEDCase(List<MEDCaseModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -340,113 +344,129 @@ public class sqlMEDData {
                     }
                      sql += "?)";   //101
             ps = conn.prepareStatement(sql);
-            ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, StringUtils.left(item.getCaseYear(), 4));
-            ps.setString( 3, StringUtils.left(item.getCaseType(), 3));
-            ps.setString( 4, StringUtils.left(item.getCaseMonth(), 2));
-            ps.setString( 5, StringUtils.left(item.getCaseNumber(), 4));
-            ps.setString( 6, item.getNote());
-            ps.setDate  ( 7, item.getFileDate());
-            ps.setDate  ( 8, item.getConcilList1OrderDate());
-            ps.setDate  ( 9, item.getConcilList1SelectionDueDate());
-            ps.setString(10, StringUtils.left(item.getConcilList1Name1(), 200));
-            ps.setString(11, StringUtils.left(item.getConcilList1Name2(), 200));
-            ps.setString(12, StringUtils.left(item.getConcilList1Name3(), 200));
-            ps.setString(13, StringUtils.left(item.getConcilList1Name4(), 200));
-            ps.setString(14, StringUtils.left(item.getConcilList1Name5(), 200));
-            ps.setDate  (15, item.getConcilAppointmentDate());
-            ps.setString(16, StringUtils.left(item.getConcilType(), 100));
-            ps.setString(17, StringUtils.left(item.getConcilSelection(), 100));
-            ps.setString(18, StringUtils.left(item.getConcilReplacement(), 255));
-            ps.setString(19, StringUtils.left(item.getConcilOriginalConciliator(), 255));
-            ps.setDate  (20, item.getConcilOriginalConcilDate());
-            ps.setDate  (21, item.getConcilList2OrderDate());
-            ps.setDate  (22, item.getConcilList2SelectionDueDate());
-            ps.setString(23, StringUtils.left(item.getConcilList2Name1(), 200));
-            ps.setString(24, StringUtils.left(item.getConcilList2Name2(), 200));
-            ps.setString(25, StringUtils.left(item.getConcilList2Name3(), 200));
-            ps.setString(26, StringUtils.left(item.getConcilList2Name4(), 200));
-            ps.setString(27, StringUtils.left(item.getConcilList2Name5(), 200));
-            ps.setDate  (28, item.getFFList1OrderDate());
-            ps.setDate  (29, item.getFFList1SelectionDueDate());
-            ps.setString(30, StringUtils.left(item.getFFList1Name1(), 200));
-            ps.setString(31, StringUtils.left(item.getFFList1Name2(), 200));
-            ps.setString(32, StringUtils.left(item.getFFList1Name3(), 200));
-            ps.setString(33, StringUtils.left(item.getFFList1Name4(), 200));
-            ps.setString(34, StringUtils.left(item.getFFList1Name5(), 200));
-            ps.setDate  (35, item.getFFAppointmentDate());
-            ps.setString(36, StringUtils.left(item.getFFType(), 100));
-            ps.setString(37, StringUtils.left(item.getFFSelection(), 100));
-            ps.setString(38, StringUtils.left(item.getFFReplacement(), 255));
-            ps.setString(39, StringUtils.left(item.getFFOriginalFactFinder(), 255));
-            ps.setDate  (40, item.getFFOriginalFactFinderDate());
-            ps.setInt   (41, item.getAsAgreedToByParties());
-            ps.setDate  (42, item.getFFList2OrderDate());
-            ps.setDate  (43, item.getFFList2SelectionDueDate());
-            ps.setString(44, StringUtils.left(item.getFFList2Name1(), 200));
-            ps.setString(45, StringUtils.left(item.getFFList2Name2(), 200));
-            ps.setString(46, StringUtils.left(item.getFFList2Name3(), 200));
-            ps.setString(47, StringUtils.left(item.getFFList2Name4(), 200));
-            ps.setString(48, StringUtils.left(item.getFFList2Name5(), 200));
-            ps.setString(49, StringUtils.left(item.getFFEmployerType(), 200));
-            ps.setString(50, StringUtils.left(item.getFFEmployeeType(), 200));
-            ps.setDate  (51, item.getFFReportIssueDate());
-            ps.setInt   (52, item.getFFMediatedSettlement());
-            ps.setString(53, StringUtils.left(item.getFFAcceptedBy(), 200));
-            ps.setString(54, StringUtils.left(item.getFFDeemedAcceptedBy(), 200));
-            ps.setString(55, StringUtils.left(item.getFFRejectedBy(), 200));
-            ps.setString(56, StringUtils.left(item.getFFOverallResult(), 200));
-            ps.setString(57, item.getFFNote());
-            ps.setString(58, StringUtils.left(item.getEmployerIDNumber(), 10));
-            ps.setString(59, StringUtils.left(item.getBargainingUnitNumber(), 10));
-            ps.setString(60, StringUtils.left(item.getApproxNumberOfEmployees(), 4));
-            ps.setString(61, StringUtils.left(item.getDuplicateCaseNumber(), 20));
-            ps.setString(62, StringUtils.left(item.getRelatedCaseNumber(), 20));
-            ps.setString(63, StringUtils.left(item.getNegotiationType(), 75));
-            ps.setDate   (64, item.getExpirationDate());
-            ps.setString (65, StringUtils.left(item.getNTNFiledBy(), 50));
-            ps.setString (66, StringUtils.left(item.getNegotiationPeriod(), 3));
-            ps.setBoolean(67, item.isMultiunitBargainingRequested());
-            ps.setDate   (68, item.getMediatorAppointedDate());
-            ps.setBoolean(69, item.isMediatorReplacement());
-            ps.setString (70, StringUtils.left(item.getStateMediatorAppointedID(), 10));
-            ps.setString (71, StringUtils.left(item.getFMCSMediatorAppointedID(), 10));
-            ps.setDate   (72, item.getSettlementDate());
-            ps.setString (73, StringUtils.left(item.getCaseStatus(), 50));
-            ps.setBoolean(74, item.isSendToBoardToClose());
-            ps.setDate   (75, item.getBoardFinalDate());
-            ps.setDate   (76, item.getRetentionTicklerDate());
-            ps.setBoolean(77, item.isLateFiling());
-            ps.setBoolean(78, item.isImpasse());
-            ps.setBoolean(79, item.isSettled());
-            ps.setBoolean(80, item.isTA());
-            ps.setBoolean(81, item.isMAD());
-            ps.setBoolean(82, item.isWithdrawl());
-            ps.setBoolean(83, item.isMotion());
-            ps.setBoolean(84, item.isDismissed());
-            ps.setDate   (85, item.getStrikeFileDate());
-            ps.setString (86, StringUtils.left(item.getUnitDescription(), 100));
-            ps.setString (87, StringUtils.left(item.getUnitSize(), 10));
-            ps.setBoolean(88, item.isUnauthorizedStrike());
-            ps.setBoolean(89, item.isNoticeOfIntentToStrikeOnly());
-            ps.setDate   (90, item.getIntendedDateStrike());
-            ps.setBoolean(91, item.isNoticeOfIntentToPicketOnly());
-            ps.setDate   (92, item.getIntendedDatePicket());
-            ps.setBoolean(93, item.isInformational());
-            ps.setBoolean(94, item.isNoticeOfIntentToStrikeAndPicket());
-            ps.setString (95, StringUtils.left(item.getStrikeOccured(), 20));
-            ps.setString (96, StringUtils.left(item.getStrikeStatus(), 100));
-            ps.setDate   (97, item.getStrikeBegan());
-            ps.setDate   (98, item.getStrikeEnded());
-            ps.setString (99, StringUtils.left(item.getTotalNumberOfDays(), 10));
-            ps.setString (100, StringUtils.left(item.getStrikeMediatorAppointedID(), 10));
-            ps.setString (101, item.getStrikeNote());
-            ps.executeUpdate();
+            conn.setAutoCommit(false);
+            
+            for (MEDCaseModel item : list) {
+                ps.setInt   ( 1, item.getActive());
+                ps.setString( 2, StringUtils.left(item.getCaseYear(), 4));
+                ps.setString( 3, StringUtils.left(item.getCaseType(), 3));
+                ps.setString( 4, StringUtils.left(item.getCaseMonth(), 2));
+                ps.setString( 5, StringUtils.left(item.getCaseNumber(), 4));
+                ps.setString( 6, item.getNote());
+                ps.setDate  ( 7, item.getFileDate());
+                ps.setDate  ( 8, item.getConcilList1OrderDate());
+                ps.setDate  ( 9, item.getConcilList1SelectionDueDate());
+                ps.setString(10, StringUtils.left(item.getConcilList1Name1(), 200));
+                ps.setString(11, StringUtils.left(item.getConcilList1Name2(), 200));
+                ps.setString(12, StringUtils.left(item.getConcilList1Name3(), 200));
+                ps.setString(13, StringUtils.left(item.getConcilList1Name4(), 200));
+                ps.setString(14, StringUtils.left(item.getConcilList1Name5(), 200));
+                ps.setDate  (15, item.getConcilAppointmentDate());
+                ps.setString(16, StringUtils.left(item.getConcilType(), 100));
+                ps.setString(17, StringUtils.left(item.getConcilSelection(), 100));
+                ps.setString(18, StringUtils.left(item.getConcilReplacement(), 255));
+                ps.setString(19, StringUtils.left(item.getConcilOriginalConciliator(), 255));
+                ps.setDate  (20, item.getConcilOriginalConcilDate());
+                ps.setDate  (21, item.getConcilList2OrderDate());
+                ps.setDate  (22, item.getConcilList2SelectionDueDate());
+                ps.setString(23, StringUtils.left(item.getConcilList2Name1(), 200));
+                ps.setString(24, StringUtils.left(item.getConcilList2Name2(), 200));
+                ps.setString(25, StringUtils.left(item.getConcilList2Name3(), 200));
+                ps.setString(26, StringUtils.left(item.getConcilList2Name4(), 200));
+                ps.setString(27, StringUtils.left(item.getConcilList2Name5(), 200));
+                ps.setDate  (28, item.getFFList1OrderDate());
+                ps.setDate  (29, item.getFFList1SelectionDueDate());
+                ps.setString(30, StringUtils.left(item.getFFList1Name1(), 200));
+                ps.setString(31, StringUtils.left(item.getFFList1Name2(), 200));
+                ps.setString(32, StringUtils.left(item.getFFList1Name3(), 200));
+                ps.setString(33, StringUtils.left(item.getFFList1Name4(), 200));
+                ps.setString(34, StringUtils.left(item.getFFList1Name5(), 200));
+                ps.setDate  (35, item.getFFAppointmentDate());
+                ps.setString(36, StringUtils.left(item.getFFType(), 100));
+                ps.setString(37, StringUtils.left(item.getFFSelection(), 100));
+                ps.setString(38, StringUtils.left(item.getFFReplacement(), 255));
+                ps.setString(39, StringUtils.left(item.getFFOriginalFactFinder(), 255));
+                ps.setDate  (40, item.getFFOriginalFactFinderDate());
+                ps.setInt   (41, item.getAsAgreedToByParties());
+                ps.setDate  (42, item.getFFList2OrderDate());
+                ps.setDate  (43, item.getFFList2SelectionDueDate());
+                ps.setString(44, StringUtils.left(item.getFFList2Name1(), 200));
+                ps.setString(45, StringUtils.left(item.getFFList2Name2(), 200));
+                ps.setString(46, StringUtils.left(item.getFFList2Name3(), 200));
+                ps.setString(47, StringUtils.left(item.getFFList2Name4(), 200));
+                ps.setString(48, StringUtils.left(item.getFFList2Name5(), 200));
+                ps.setString(49, StringUtils.left(item.getFFEmployerType(), 200));
+                ps.setString(50, StringUtils.left(item.getFFEmployeeType(), 200));
+                ps.setDate  (51, item.getFFReportIssueDate());
+                ps.setInt   (52, item.getFFMediatedSettlement());
+                ps.setString(53, StringUtils.left(item.getFFAcceptedBy(), 200));
+                ps.setString(54, StringUtils.left(item.getFFDeemedAcceptedBy(), 200));
+                ps.setString(55, StringUtils.left(item.getFFRejectedBy(), 200));
+                ps.setString(56, StringUtils.left(item.getFFOverallResult(), 200));
+                ps.setString(57, item.getFFNote());
+                ps.setString(58, StringUtils.left(item.getEmployerIDNumber(), 10));
+                ps.setString(59, StringUtils.left(item.getBargainingUnitNumber(), 10));
+                ps.setString(60, StringUtils.left(item.getApproxNumberOfEmployees(), 4));
+                ps.setString(61, StringUtils.left(item.getDuplicateCaseNumber(), 20));
+                ps.setString(62, StringUtils.left(item.getRelatedCaseNumber(), 20));
+                ps.setString(63, StringUtils.left(item.getNegotiationType(), 75));
+                ps.setDate   (64, item.getExpirationDate());
+                ps.setString (65, StringUtils.left(item.getNTNFiledBy(), 50));
+                ps.setString (66, StringUtils.left(item.getNegotiationPeriod(), 3));
+                ps.setBoolean(67, item.isMultiunitBargainingRequested());
+                ps.setDate   (68, item.getMediatorAppointedDate());
+                ps.setBoolean(69, item.isMediatorReplacement());
+                ps.setString (70, StringUtils.left(item.getStateMediatorAppointedID(), 10));
+                ps.setString (71, StringUtils.left(item.getFMCSMediatorAppointedID(), 10));
+                ps.setDate   (72, item.getSettlementDate());
+                ps.setString (73, StringUtils.left(item.getCaseStatus(), 50));
+                ps.setBoolean(74, item.isSendToBoardToClose());
+                ps.setDate   (75, item.getBoardFinalDate());
+                ps.setDate   (76, item.getRetentionTicklerDate());
+                ps.setBoolean(77, item.isLateFiling());
+                ps.setBoolean(78, item.isImpasse());
+                ps.setBoolean(79, item.isSettled());
+                ps.setBoolean(80, item.isTA());
+                ps.setBoolean(81, item.isMAD());
+                ps.setBoolean(82, item.isWithdrawl());
+                ps.setBoolean(83, item.isMotion());
+                ps.setBoolean(84, item.isDismissed());
+                ps.setDate   (85, item.getStrikeFileDate());
+                ps.setString (86, StringUtils.left(item.getUnitDescription(), 100));
+                ps.setString (87, StringUtils.left(item.getUnitSize(), 10));
+                ps.setBoolean(88, item.isUnauthorizedStrike());
+                ps.setBoolean(89, item.isNoticeOfIntentToStrikeOnly());
+                ps.setDate   (90, item.getIntendedDateStrike());
+                ps.setBoolean(91, item.isNoticeOfIntentToPicketOnly());
+                ps.setDate   (92, item.getIntendedDatePicket());
+                ps.setBoolean(93, item.isInformational());
+                ps.setBoolean(94, item.isNoticeOfIntentToStrikeAndPicket());
+                ps.setString (95, StringUtils.left(item.getStrikeOccured(), 20));
+                ps.setString (96, StringUtils.left(item.getStrikeStatus(), 100));
+                ps.setDate   (97, item.getStrikeBegan());
+                ps.setDate   (98, item.getStrikeEnded());
+                ps.setString (99, StringUtils.left(item.getTotalNumberOfDays(), 10));
+                ps.setString (100, StringUtils.left(item.getStrikeMediatorAppointedID(), 10));
+                ps.setString (101, item.getStrikeNote());
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
+                ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);
         }
     }
+    
 }

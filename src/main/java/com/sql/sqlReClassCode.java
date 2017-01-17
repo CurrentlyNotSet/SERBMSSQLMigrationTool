@@ -49,7 +49,7 @@ public class sqlReClassCode {
         return list;
     }
     
-    public static void addReClassCode(List<ReClassCodeModel> list) {
+    public static void batchAddReClassCode(List<ReClassCodeModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -84,7 +84,5 @@ public class sqlReClassCode {
             DbUtils.closeQuietly(conn);
         }
     }
-    
-    
     
 }

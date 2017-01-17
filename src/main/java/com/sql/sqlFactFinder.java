@@ -6,7 +6,10 @@
 package com.sql;
 
 import com.model.factFinderModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -61,55 +64,8 @@ public class sqlFactFinder {
         return list;
     }
     
-    
-    public static void addFactFinder(factFinderModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try { 
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO FactFinder ("
-                    + "active, "    //01
-                    + "status, "    //02
-                    + "firstName, " //03
-                    + "middleName, "//04
-                    + "lastName, "  //05
-                    + "address1, "  //06
-                    + "address2, "  //07
-                    + "address3, "  //08
-                    + "city, "      //09
-                    + "state, "     //10
-                    + "zip, "       //11
-                    + "email, "     //12
-                    + "phone "      //13
-                    + ") VALUES (";
-                    for(int i=0; i<12; i++){
-                        sql += "?, ";   //01-12
-                    }
-                     sql += "?)";   //13
-            ps = conn.prepareStatement(sql);
-            ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, StringUtils.left(item.getStatus(), 1));
-            ps.setString( 3, StringUtils.left(item.getFirstName(), 100));
-            ps.setString( 4, StringUtils.left(item.getMiddleName(), 100));
-            ps.setString( 5, StringUtils.left(item.getLastName(), 200));
-            ps.setString( 6, StringUtils.left(item.getAddress1(), 200));
-            ps.setString( 7, StringUtils.left(item.getAddress2(), 200));
-            ps.setString( 8, StringUtils.left(item.getAddress3(), 200));
-            ps.setString( 9, StringUtils.left(item.getCity(), 100));
-            ps.setString(10, StringUtils.left(item.getState(), 2));
-            ps.setString(11, StringUtils.left(item.getZip(), 15));
-            ps.setString(12, StringUtils.left(item.getEmail(), 200));
-            ps.setString(13, StringUtils.left(item.getPhoneNumber(), 255));
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
-    public static void batchAddFactFinder(List<factFinderModel> list) {
+    public static void batchAddFactFinder(List<factFinderModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try { 
@@ -187,8 +143,12 @@ public class sqlFactFinder {
                 ps.setString(12, StringUtils.left(item.getEmail(), 200));
                 ps.setString(13, StringUtils.left(item.getPhoneNumber(), 255));
                 ps.addBatch();
-            }            
-            ps.executeBatch();
+                    if (++count % Global.getBATCH_SIZE() == 0) {
+                        ps.executeBatch();
+                        currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                    }
+                }
+                ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();

@@ -110,10 +110,9 @@ public class REPMigration {
         if (Global.isDebug()){
             System.out.println("Gathered REP History");
         }
-        
-        
+                
         //Clean REP Case Data
-        control.setProgressBarIndeterminateCleaning("ULP Case");
+        control.setProgressBarIndeterminateCleaning("REP Case");
         totalRecordCount = oldREPDataList.size();
         oldREPDataList.stream().forEach(item -> 
                 executor.submit(() -> 
@@ -124,14 +123,12 @@ public class REPMigration {
         while (!executor.isTerminated()) {
         }
         
+        currentRecord = 0;
         totalRecordCount = oldREPDataList.size() + REPBoardActionList.size() 
                 + REPCaseTypeList.size() + REPCaseStatusList.size() + REPrecList.size()
                 + REPCaseHistoryList.size() + REPCaseList.size() + REPCaseSearchList.size() 
                 + EmployerSearchList.size() + electionSiteInfoList.size() + multiCaseElectionsList.size() 
                 + mediationsList.size() + relatedCaseList.size() + boardMeetingList.size() + CasePartyList.size();
-        
-        
-        
         
         sqlREPRecommendation.batchAddREPRecommendation(REPrecList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPrecList.size() - 1, totalRecordCount, "REP Recommendations Finished");
@@ -174,10 +171,6 @@ public class REPMigration {
                 
         sqlREPData.batchAddREPCase(REPCaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "REP Case Search Finished");
-        
-        
-        
-        
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating REP Cases: "

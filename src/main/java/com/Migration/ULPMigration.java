@@ -85,6 +85,7 @@ public class ULPMigration {
         while (!executor.isTerminated()) {
         }
 
+        currentRecord = 0;
         totalRecordCount = oldULPRecsList.size() + casePartyList.size()
                 + ULPCaseList.size() + boardMeetingList.size()
                 + relatedCaseList.size() + caseSearchList.size()

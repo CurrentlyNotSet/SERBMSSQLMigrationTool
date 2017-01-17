@@ -50,7 +50,6 @@ public class DocumentMigration {
         ArrayList SMDSDocXLS = read("SMDSDocuments.xlsx");
         ArrayList CMDSReportXLS = read("CMDSReports.xlsx");
         
-//        List<oldDocumentModel> oldDocumentList = sqlDocument.getOldDocuments();
         List<CMDSDocumentModel> oldCMDSDocumentList = sqlCMDSDocuments.getOldCMDSDocuments();
         List<smdsDocumentsModel> cleanedSMDSDocsList = new ArrayList<>();
         List<CMDSReport> cleanedCMDSReport = new ArrayList<>();
@@ -86,29 +85,6 @@ public class DocumentMigration {
         sqlCMDSDocuments.batchAddCMDSDocuments(oldCMDSDocumentList);
         currentRecord = SceneUpdater.listItemFinished(control, oldCMDSDocumentList.size() + currentRecord, totalRecordCount, "CMDSDocuments Added");
         
-        
-//NO LONGER USED... BAD DATA IN OLD DB        
-//        //get file list from newDB
-//        List<smdsDocumentsModel> newDocumentList = sqlDocument.getNewDocuments();
-//
-//        //import missing old documents
-//        for (oldDocumentModel item : oldDocumentList) {
-//            boolean exists = false;
-//            for (smdsDocumentsModel sqldocs : newDocumentList) {
-//                if (sqldocs.getFileName() == null ? item.getDocumentFileName() == null
-//                        : sqldocs.getFileName().equals(item.getDocumentFileName())) {
-//                    exists = true;
-//                    break;
-//                }
-//            }
-//            if (!exists) {
-//                migrateDocument(item);
-//            }
-//            currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getSection() + ": " + item.getDocumentFileName());
-//        }
-
-        
-        
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Documents: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -116,53 +92,6 @@ public class DocumentMigration {
         if (Global.isDebug() == false) {
             sqlMigrationStatus.updateTimeCompleted("MigrateDocuments");
         }
-    }
-
-    private static void migrateDocument(oldDocumentModel item) {
-        smdsDocumentsModel doc = new smdsDocumentsModel();
-
-        doc.setActive(item.getActive() == 1);
-        doc.setSection(item.getSection());
-        doc.setType(item.getType());
-        doc.setDescription(item.getDocumentDescription());
-        doc.setFileName(item.getDocumentFileName());
-        doc.setGroup(null);
-        doc.setHistoryFileName(null);
-        doc.setHistoryDescription(null);
-        doc.setCHDCHG(null);
-        doc.setQuestionsFileName(null);
-        doc.setEmailSubject(item.getDocumentDescription());
-        doc.setParameters(null);
-        doc.setSortOrder(0);
-        
-        switch (item.getSection()) {
-            case "MED":
-                doc.setEmailBody(Global.getEmailBodyMED());
-                break;
-            case "REP":
-                doc.setEmailBody(Global.getEmailBodyREP());
-                break;
-            case "ULP":
-                doc.setEmailBody(Global.getEmailBodyULP());
-                break;
-            default:
-                doc.setEmailBody(null);
-                break;
-        }        
-        
-        if (item.getSection().trim().equalsIgnoreCase("ULP") && item.getType().trim().equalsIgnoreCase("letter")) {
-            if (item.getDocumentFileName().contains("IL") || item.getDocumentFileName().contains("ILP")) {
-                doc.setDueDate(21);
-            } else if (item.getDocumentFileName().contains("FR") || item.getDocumentFileName().contains("LTR")
-                    || item.getDocumentFileName().contains("RECON") || item.getDocumentFileName().contains("Suf")) {
-                doc.setDueDate(7);
-            }
-        }
-        if(item.getType().equals("Direct")) {
-            item.setType("Directive");
-        }
-
-        sqlDocument.addSMDSDocument(doc);
     }
 
     public static ArrayList read(String fileName) {

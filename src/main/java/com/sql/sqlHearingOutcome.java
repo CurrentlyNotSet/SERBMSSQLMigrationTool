@@ -49,33 +49,6 @@ public class sqlHearingOutcome {
         }
         return list;
     }
-        
-    public static void addOutcome(HearingOutcomeModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO HearingOutcome ("
-                    + "active, "    //01
-                    + "type, "    //02
-                    + "description "//03
-                    + ") VALUES (";
-                    for(int i=0; i<2; i++){
-                        sql += "?, ";   //01-02
-                    }
-                     sql += "?)"; //03
-            ps = conn.prepareStatement(sql);
-            ps.setBoolean(1, item.isActive());
-            ps.setString (2, item.getType());
-            ps.setString (3, item.getDescription());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
     
     public static void batchAddOutcome(List<HearingOutcomeModel> list) {
         int count = 0;

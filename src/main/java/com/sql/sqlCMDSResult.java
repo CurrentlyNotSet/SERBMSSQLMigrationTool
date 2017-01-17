@@ -50,7 +50,7 @@ public class sqlCMDSResult {
         return list;
     }
         
-    public static void addCMDSResult(List<CMDSResultModel> list) {
+    public static void batchAddCMDSResult(List<CMDSResultModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

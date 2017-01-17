@@ -23,43 +23,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class sqlBoardMeeting {
     
-    public static void addBoardMeeting(boardMeetingModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO BoardMeeting("
-                    + "caseYear, "        //01
-                    + "caseType, "        //02
-                    + "caseMonth, "       //03
-                    + "caseNumber, "      //04
-                    + "boardMeetingDate, "//05
-                    + "agendaItemNumber, "//06
-                    + "recommendation, "  //07
-                    + "memoDate "         //08
-                    + ") VALUES (";
-                    for(int i=0; i<7; i++){
-                        sql += "?, ";   //01-07
-                    }
-                     sql += "?)"; //08
-            ps = conn.prepareStatement(sql);
-            ps.setString   (1, StringUtils.left(item.getCaseYear(), 4));
-            ps.setString   (2, StringUtils.left(item.getCaseType(), 3));
-            ps.setString   (3, StringUtils.left(item.getCaseMonth(), 2));
-            ps.setString   (4, StringUtils.left(item.getCaseNumber(), 4));
-            ps.setTimestamp(5, item.getBoardMeetingDate());
-            ps.setString   (6, StringUtils.left(item.getAgendaItemNumber(), 4));
-            ps.setString   (7, item.getRecommendation());
-            ps.setTimestamp(8, item.getMemoDate());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
     public static void batchAddBoardMeeting(List<boardMeetingModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;

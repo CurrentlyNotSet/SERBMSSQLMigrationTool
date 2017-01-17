@@ -5,7 +5,6 @@
  */
 package com.sql;
 
-import com.model.caseTypeModel;
 import com.model.hearingRoomModel;
 import com.model.hearingTypeModel;
 import com.util.DBCInfo;
@@ -82,7 +81,7 @@ public class sqlHearingsInfo {
         return list;
     }
         
-    public static void addHearingRoom(List<hearingRoomModel> list) {
+    public static void batchAddHearingRoom(List<hearingRoomModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -122,7 +121,7 @@ public class sqlHearingsInfo {
         }
     }    
     
-    public static void addHearingType(List<hearingTypeModel> list) {
+    public static void batchAddHearingType(List<hearingTypeModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

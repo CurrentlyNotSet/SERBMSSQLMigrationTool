@@ -52,32 +52,6 @@ public class sqlBoardActionType {
         }
         return list;
     }
-        
-    public static void addREPBoardActionType(boardAcionTypeModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO REPBoardActionType ("
-                    + "Active, "          //01
-                    + "shortDescription, "//02
-                    + "longDescription "  //03
-                    + ") VALUES ("
-                    + "?,"  //01
-                    + "?,"  //02
-                    + "?)"; //03
-            ps = conn.prepareStatement(sql);
-            ps.setInt   ( 1, item.getActive());
-            ps.setString( 2, StringUtils.left(item.getShort(), 50));
-            ps.setString( 3, StringUtils.left(item.getMeaning(), 255));
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
     
     public static void batchAddREPBoardActionType(List<boardAcionTypeModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;

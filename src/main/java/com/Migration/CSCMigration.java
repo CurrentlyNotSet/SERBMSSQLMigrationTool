@@ -6,7 +6,6 @@
 package com.Migration;
 
 import com.model.CSCCaseModel;
-import com.model.activityModel;
 import com.model.casePartyModel;
 import com.model.oldCSCHistoryModel;
 import com.model.oldCivilServiceCommissionModel;
@@ -18,7 +17,6 @@ import com.sql.sqlMigrationStatus;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;

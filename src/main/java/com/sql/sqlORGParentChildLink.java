@@ -52,33 +52,7 @@ public class sqlORGParentChildLink {
         }
         return list;
     }
-    
-    public static void importOrgParentChildLinks(ORGParentChildLinkModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "INSERT INTO ORGParentChildLink ("
-                    + "active, "
-                    + "parentOrgNumber, "
-                    + "childOrgNumber "
-                    + ") VALUES ("
-                    + "?, "
-                    + "?, "
-                    + "?)";
-            ps = conn.prepareStatement(sql);
-            ps.setBoolean( 1, item.isActive());
-            ps.setString ( 2, StringUtils.left(item.getParentOrgNumber(), 10));
-            ps.setString ( 3, StringUtils.left(item.getChildOrgNumber(), 10));
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
+        
     public static void batchAddOrgParentChildLinks(List<ORGParentChildLinkModel> list) {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -115,6 +89,5 @@ public class sqlORGParentChildLink {
             DbUtils.closeQuietly(conn);
         }
     }
-    
-    
+        
 }

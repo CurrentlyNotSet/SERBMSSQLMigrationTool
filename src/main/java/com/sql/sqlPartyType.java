@@ -8,7 +8,6 @@ package com.sql;
 import com.model.partyTypeModel;
 import com.util.DBCInfo;
 import com.util.Global;
-import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -59,31 +58,6 @@ public class sqlPartyType {
 
         //Return party Type List
         return list;
-    }
-
-    public static void addPartyType(partyTypeModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO PartyType ("
-                    + "Active, " //
-                    + "section, " //01
-                    + "type" //02
-                    + ") VALUES ("
-                    + "1," //
-                    + "?," //01
-                    + "?)"; //02
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, item.getSection());
-            ps.setString(2, item.getSection());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
     }
 
     public static void batchAddPartyType(List<partyTypeModel> list) {

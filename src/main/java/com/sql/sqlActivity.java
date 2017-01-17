@@ -428,219 +428,6 @@ public class sqlActivity {
         }
     }
     
-    public static void batchAddULPActivity(List<oldULPHistoryModel> ULPCaseHistory, caseNumberModel caseNumber) {
-        int count = 0;
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO Activity ("
-                    + "caseYear, "        //01
-                    + "caseType, "        //02
-                    + "caseMonth, "       //03
-                    + "caseNumber, "      //04
-                    + "userID, "          //05
-                    + "date, "            //06
-                    + "action, "          //07
-                    + "fileName, "        //08
-                    + "[from], "          //09
-                    + "[to], "            //10
-                    + "type, "            //11
-                    + "comment, "         //12
-                    + "redacted, "        //13
-                    + "awaitingTimeStamp "//14
-                    + ") VALUES (";
-                    for(int i=0; i<13; i++){
-                        sql += "?, ";   //01-13
-                    }
-                     sql += "?)"; //14
-            ps = conn.prepareStatement(sql);
-            conn.setAutoCommit(false);
-            
-            for (oldULPHistoryModel old : ULPCaseHistory){
-                int userID = StringUtilities.convertUserToID(old.getUserInitials());
-
-                ps.setString   ( 1, StringUtils.left(caseNumber.getCaseYear(), 4));
-                ps.setString   ( 2, StringUtils.left(caseNumber.getCaseType(), 3));
-                ps.setString   ( 3, StringUtils.left(caseNumber.getCaseMonth(), 2));
-                ps.setString   ( 4, StringUtils.left(caseNumber.getCaseNumber(), 8));
-                if (userID != 0){
-                    ps.setInt  ( 5, userID);
-                } else {
-                    ps.setNull ( 5, java.sql.Types.INTEGER);
-                }
-                ps.setTimestamp( 6, old.getDate());
-                ps.setString   ( 7, !"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
-                ps.setString   ( 8, !"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
-                ps.setString   ( 9, !"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
-                ps.setString   (10, !"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
-                ps.setString   (11, null);
-                ps.setString   (12, null);
-                ps.setInt      (13, 0);
-                ps.setInt      (14, 0);
-                ps.addBatch();
-                if (++count % Global.getBATCH_SIZE() == 0) {
-                    ps.executeBatch();
-                }
-            }
-            
-            ps.executeBatch();
-            conn.commit();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException ex1) {
-                ex1.printStackTrace();
-            }
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
-    public static void batchAddMEDActivity(List<oldMEDHistoryModel> oldMEDCaseList, caseNumberModel caseNumber) {
-        int count = 0;
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO Activity ("
-                    + "caseYear, "        //01
-                    + "caseType, "        //02
-                    + "caseMonth, "       //03
-                    + "caseNumber, "      //04
-                    + "userID, "          //05
-                    + "date, "            //06
-                    + "action, "          //07
-                    + "fileName, "        //08
-                    + "[from], "          //09
-                    + "[to], "            //10
-                    + "type, "            //11
-                    + "comment, "         //12
-                    + "redacted, "        //13
-                    + "awaitingTimeStamp "//14
-                    + ") VALUES (";
-                    for(int i=0; i<13; i++){
-                        sql += "?, ";   //01-13
-                    }
-                     sql += "?)"; //14
-            ps = conn.prepareStatement(sql);
-            conn.setAutoCommit(false);
-            
-            for (oldMEDHistoryModel old : oldMEDCaseList){
-                int userID = StringUtilities.convertUserToID(old.getUserInitals());
-
-                ps.setString   ( 1, StringUtils.left(caseNumber.getCaseYear(), 4));
-                ps.setString   ( 2, StringUtils.left(caseNumber.getCaseType(), 3));
-                ps.setString   ( 3, StringUtils.left(caseNumber.getCaseMonth(), 2));
-                ps.setString   ( 4, StringUtils.left(caseNumber.getCaseNumber(), 8));
-                if (userID != 0){
-                    ps.setInt  ( 5, userID);
-                } else {
-                    ps.setNull ( 5, java.sql.Types.INTEGER);
-                }
-                ps.setTimestamp( 6, old.getDate());
-                ps.setString   ( 7, !"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
-                ps.setString   ( 8, !"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
-                ps.setString   ( 9, !"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
-                ps.setString   (10, !"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
-                ps.setString   (11, null);
-                ps.setString   (12, null);
-                ps.setInt      (13, 0);
-                ps.setInt      (14, 0);
-                ps.addBatch();
-                if (++count % Global.getBATCH_SIZE() == 0) {
-                    ps.executeBatch();
-                }
-            }
-            
-            ps.executeBatch();
-            conn.commit();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException ex1) {
-                ex1.printStackTrace();
-            }
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
-    public static void batchAddREPActivity(List<oldREPHistoryModel> REPCaseHistory, caseNumberModel caseNumber) {
-        int count = 0;
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO Activity ("
-                    + "caseYear, "        //01
-                    + "caseType, "        //02
-                    + "caseMonth, "       //03
-                    + "caseNumber, "      //04
-                    + "userID, "          //05
-                    + "date, "            //06
-                    + "action, "          //07
-                    + "fileName, "        //08
-                    + "[from], "          //09
-                    + "[to], "            //10
-                    + "type, "            //11
-                    + "comment, "         //12
-                    + "redacted, "        //13
-                    + "awaitingTimeStamp "//14
-                    + ") VALUES (";
-                    for(int i=0; i<13; i++){
-                        sql += "?, ";   //01-13
-                    }
-                     sql += "?)"; //14
-            ps = conn.prepareStatement(sql);
-            conn.setAutoCommit(false);
-            
-            for (oldREPHistoryModel old : REPCaseHistory){
-                int userID = StringUtilities.convertUserToID(old.getUserInitals());
-
-                ps.setString   ( 1, StringUtils.left(caseNumber.getCaseYear(), 4));
-                ps.setString   ( 2, StringUtils.left(caseNumber.getCaseType(), 3));
-                ps.setString   ( 3, StringUtils.left(caseNumber.getCaseMonth(), 2));
-                ps.setString   ( 4, StringUtils.left(caseNumber.getCaseNumber(), 8));
-                if (userID != 0){
-                    ps.setInt  ( 5, userID);
-                } else {
-                    ps.setNull ( 5, java.sql.Types.INTEGER);
-                }
-                ps.setTimestamp( 6, old.getDate());
-                ps.setString   ( 7, !"".equals(old.getAction().trim()) ? old.getAction().trim() : null);
-                ps.setString   ( 8, !"".equals(old.getFileName().trim()) ? old.getFileName().trim() : null);
-                ps.setString   ( 9, !"".equals(old.getEmailFrom().trim()) ? old.getEmailFrom().trim() : null);
-                ps.setString   (10, !"".equals(old.getEmailTo().trim()) ? old.getEmailTo().trim() : null);
-                ps.setString   (11, null);
-                ps.setString   (12, null);
-                ps.setInt      (13, "Y".equals(old.getRedacted().trim()) ? 1 : 0);
-                ps.setInt      (14, 0);
-                ps.addBatch();
-                if (++count % Global.getBATCH_SIZE() == 0) {
-                    ps.executeBatch();
-                }
-            }
-            
-            ps.executeBatch();
-            conn.commit();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException ex1) {
-                ex1.printStackTrace();
-            }
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
     public static void batchAddCMDSActivity(List<oldCMDSHistoryModel> CMDSCaseHistory, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
@@ -717,36 +504,37 @@ public class sqlActivity {
             DbUtils.closeQuietly(conn);
         }
     }
-    
-    public static List<oldULPHistoryModel> getULPHistoryByCase(String caseNumber) {
-        List<oldULPHistoryModel> list = new ArrayList();
+        
+    public static List<activityModel> getULPHistory() {
+        List<activityModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT *, cast(date as datetime) as Date2 FROM ULPHistory WHERE caseNumber = ?";
+            String sql = "SELECT *, CAST(date AS datetime) AS Date2 FROM ULPHistory WHERE LEN(CaseNumber) = 16";
             ps = conn.prepareStatement(sql);
-            ps.setString( 1, caseNumber);
             rs = ps.executeQuery();
             while (rs.next()) {
-                oldULPHistoryModel item = new oldULPHistoryModel();
-                item.setHistoryID(rs.getInt("HistoryID"));
-                item.setActive(rs.getInt("Active"));
-                item.setUserInitials(rs.getString("UserInitals"));
-                item.setDate(rs.getTimestamp("Date2"));
-                item.setAction(rs.getString("Action"));
-                item.setCaseNumber(rs.getString("CaseNumber"));
-                item.setFileName(rs.getString("FileName"));
-                item.setParseDate(rs.getString("ParseDate"));
-                item.setEmailTo(rs.getString("EmailTo"));
-                item.setEmailFrom(rs.getString("EmailFrom"));
-                item.setMailLogDate(rs.getString("MailLogDate"));
-                item.setApproved(rs.getString("Approved"));
-                item.setRequested(rs.getString("Requested"));
-                item.setRedacted(rs.getString("Redacted"));
-                item.setRedactedHistoryID(rs.getString("RedactedHistoryID"));
-                list.add(item);
+                activityModel item = new activityModel();
+                caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(rs.getString("CaseNumber").trim());
+                if (caseNumber != null){
+                    item.setCaseYear(caseNumber.getCaseYear());
+                    item.setCaseType(caseNumber.getCaseType());
+                    item.setCaseMonth(caseNumber.getCaseMonth());
+                    item.setCaseNumber(caseNumber.getCaseNumber());
+                    item.setUserID(StringUtilities.convertUserToID(rs.getString("UserInitals")));
+                    item.setDate(rs.getTimestamp("Date2"));
+                    item.setAction(rs.getString("Action").trim().equals("") ? null : rs.getString("Action").trim());
+                    item.setFileName(rs.getString("FileName").trim().equals("") ? null : rs.getString("FileName").trim());
+                    item.setFrom(rs.getString("EmailFrom").trim().equals("") ? null : rs.getString("EmailFrom").trim());
+                    item.setTo(rs.getString("EmailTo").trim().equals("") ? null : rs.getString("EmailTo").trim());
+                    item.setType(null);
+                    item.setComment(null);
+                    item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
+                    item.setAwaitingTimeStamp(0);
+                    list.add(item);
+                }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -758,14 +546,14 @@ public class sqlActivity {
         return list;
     }
     
-    public static List<activityModel> getULPHistory() {
+    public static List<activityModel> getMEDHistory() {
         List<activityModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT *, CAST(date AS datetime) AS Date2 FROM ULPHistory WHERE LEN(CaseNumber) = 16";
+            String sql = "SELECT *, CAST(date AS datetime) AS Date2 FROM medhistory WHERE LEN(CaseNumber) = 16";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -829,87 +617,6 @@ public class sqlActivity {
                     item.setAwaitingTimeStamp(0);
                     list.add(item);
                 }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(conn);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(rs);
-        }
-        return list;
-    }
-    
-    public static List<oldREPHistoryModel> getREPHistoryByCase(String caseNumber) {
-        List<oldREPHistoryModel> list = new ArrayList();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT *, cast(date as datetime) as Date2 FROM REPHistory WHERE caseNumber = ?";
-            ps = conn.prepareStatement(sql);
-            ps.setString( 1, caseNumber);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                oldREPHistoryModel item = new oldREPHistoryModel();
-                item.setHistoryID(rs.getInt("HistoryID"));
-                item.setActive(rs.getInt("Active"));
-                item.setUserInitals(rs.getString("UserInitals"));
-                item.setDate(rs.getTimestamp("Date2"));
-                item.setAction(rs.getString("Action"));
-                item.setCaseNumber(rs.getString("CaseNumber"));
-                item.setFileName(rs.getString("FileName"));
-                item.setParseDate(rs.getString("ParseDate"));
-                item.setEmailTo(rs.getString("EmailTo"));
-                item.setEmailFrom(rs.getString("EmailFrom"));
-                item.setMailLogDate(rs.getString("MailLogDate"));
-                item.setApproved(rs.getString("Approved"));
-                item.setRequested(rs.getString("Requested"));
-                item.setRedacted(rs.getString("Redacted"));
-                item.setRedactedHistoryID(rs.getString("RedactedHistoryID"));
-                item.setNote(rs.getString("Note"));
-                list.add(item);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(conn);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(rs);
-        }
-        return list;
-    }
-    
-    public static List<oldMEDHistoryModel> getMEDHistoryByCase(String caseNumber) {
-        List<oldMEDHistoryModel> list = new ArrayList();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT *, cast(date as datetime) as Date2 FROM medhistory WHERE caseNumber = ?";
-            ps = conn.prepareStatement(sql);
-            ps.setString( 1, caseNumber);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                oldMEDHistoryModel item = new oldMEDHistoryModel();
-                item.setHistoryID(rs.getInt("HistoryID"));
-                item.setActive(rs.getInt("Active"));
-                item.setUserInitals(rs.getString("UserInitals"));
-                item.setDate(rs.getTimestamp("Date2"));
-                item.setAction(rs.getString("Action"));
-                item.setCaseNumber(rs.getString("CaseNumber"));
-                item.setFileName(rs.getString("FileName"));
-                item.setParseDate(rs.getString("ParseDate"));
-                item.setEmailTo(rs.getString("EmailTo"));
-                item.setEmailFrom(rs.getString("EmailFrom"));
-                item.setMailLogDate(rs.getString("MailLogDate"));
-                item.setApproved(rs.getString("Approved"));
-                item.setRequested(rs.getString("Requested"));
-                item.setRedacted(rs.getString("Redacted"));
-                item.setRedactedHistoryID(rs.getString("RedactedHistoryID"));
-                list.add(item);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -1059,7 +766,7 @@ public class sqlActivity {
         return list;
     }
     
-    public static List<oldSMDSHistoryModel> getSMDSHistory() {
+    public static List<oldSMDSHistoryModel> getSMDSHearingHistory() {
         List<oldSMDSHistoryModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;

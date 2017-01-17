@@ -82,28 +82,28 @@ public class SystemDefaultsMigration {
         sqlDeptInState.batchAddDeptInState(deptInStateList);
         currentRecord = SceneUpdater.listItemFinished(control, deptInStateList.size() + currentRecord, totalRecordCount, "Dept In State Finished");
         
-        sqlSystemEmail.addSystemEmail(systemEmailList);
+        sqlSystemEmail.batchAddSystemEmail(systemEmailList);
         currentRecord = SceneUpdater.listItemFinished(control, systemEmailList.size() + currentRecord, totalRecordCount, "System Email Finished");
         
         sqlPreFix.addNamePrefix(Global.getNamePrefixList());
         currentRecord = SceneUpdater.listItemFinished(control, Global.getNamePrefixList().size() + currentRecord, totalRecordCount, "PreFixes Finished");
         
-        sqlActivityType.addActivtyType(activityTypeList);
+        sqlActivityType.batchAddActivtyType(activityTypeList);
         currentRecord = SceneUpdater.listItemFinished(control, activityTypeList.size() + currentRecord, totalRecordCount, "Activity Types Finished");
         
-        sqlCaseType.addCaseType(caseTypeList);
+        sqlCaseType.batchAddCaseType(caseTypeList);
         currentRecord = SceneUpdater.listItemFinished(control, caseTypeList.size() + currentRecord, totalRecordCount, "Case Types Finished");
         
-        sqlHearingsInfo.addHearingRoom(hearingRoomList);
+        sqlHearingsInfo.batchAddHearingRoom(hearingRoomList);
         currentRecord = SceneUpdater.listItemFinished(control, hearingRoomList.size() + currentRecord, totalRecordCount, "Hearing Rooms Finished");
         
-        sqlHearingsInfo.addHearingType(hearingTypeList);
+        sqlHearingsInfo.batchAddHearingType(hearingTypeList);
         currentRecord = SceneUpdater.listItemFinished(control, hearingTypeList.size() + currentRecord, totalRecordCount, "Hearing Types Finished");
         
-        sqlSystemExecutive.addExecutive(execList);
+        sqlSystemExecutive.batchAddExecutive(execList);
         currentRecord = SceneUpdater.listItemFinished(control, execList.size() + currentRecord, totalRecordCount, "Execs Finished");
         
-        sqlAdministrationInformation.addInfo(systemInfoList);
+        sqlAdministrationInformation.batchAddAdminInfo(systemInfoList);
         currentRecord = SceneUpdater.listItemFinished(control, systemInfoList.size() + currentRecord, totalRecordCount, "Admin Finished");
                
         long lEndTime = System.currentTimeMillis();
@@ -140,7 +140,7 @@ public class SystemDefaultsMigration {
         item.setPhone("".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""));
         item.setEmail("".equals(item.getEmail()) ? null : item.getEmail());
                 
-//        sqlSystemExecutive.addExecutive(item);
+//        sqlSystemExecutive.batchAddExecutive(item);
     }
     
     private static void migrateAdministrationInformation(administrationInformationModel item) {
@@ -157,7 +157,7 @@ public class SystemDefaultsMigration {
         item.setFax("".equals(item.getFax().replaceAll("[^0-9]", "")) ? null : item.getFax().replaceAll("[^0-9]", ""));
         item.setFooter("".equals(item.getFooter()) ? null : item.getFooter());
         
-//        sqlAdministrationInformation.addInfo(item);
+//        sqlAdministrationInformation.batchAddAdminInfo(item);
     }
     
 }

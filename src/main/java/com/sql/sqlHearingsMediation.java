@@ -5,7 +5,6 @@
  */
 package com.sql;
 
-import com.model.HearingsMediationModel;
 import com.model.caseNumberModel;
 import com.model.oldHearingsMediationModel;
 import com.util.DBCInfo;
@@ -56,53 +55,7 @@ public class sqlHearingsMediation {
         }
         return list;
     }
-        
-    public static void importOldHearingsMediation(HearingsMediationModel item) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "INSERT INTO HearingsMediation ("
-                    + "active, "        //01
-                    + "caseYear, "      //02
-                    + "caseType, "      //03
-                    + "caseMonth, "     //04
-                    + "caseNumber, "    //05
-                    + "PCPreD, "        //06
-                    + "mediator, "      //07
-                    + "DateAssigned, "  //08
-                    + "MediationDate, " //09
-                    + "Outcome "        //10
-                    + ") VALUES (";
-                    for(int i=0; i<9; i++){
-                        sql += "?, ";   //01-00
-                    }
-                     sql += "?)";   //10
-            ps = conn.prepareStatement(sql);
-            ps.setBoolean( 1, item.isActive());
-            ps.setString ( 2, item.getCaseYear());
-            ps.setString ( 3, item.getCaseType());
-            ps.setString ( 4, item.getCaseMonth());
-            ps.setString ( 5, item.getCaseNumber());
-            ps.setString ( 6, item.getPCPreD());
-            if (item.getMediator() != 0){
-                ps.setInt  ( 7, item.getMediator());
-            } else {
-                ps.setNull ( 7, java.sql.Types.INTEGER);
-            }
-            ps.setDate   ( 8, item.getDateAssigned());
-            ps.setDate   ( 9, item.getMediationDate());
-            ps.setString (10, item.getOutcome());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-    }
-    
-    
+                
     public static void batchAddOldHearingsMediation(List<oldHearingsMediationModel> list) {
         int count = 0;
         Connection conn = null;

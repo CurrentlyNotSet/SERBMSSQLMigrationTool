@@ -53,9 +53,8 @@ public class sqlCaseType {
         }
         return list;
     }
-    
-    
-    public static void addCaseType(List<caseTypeModel> list) {
+        
+    public static void batchAddCaseType(List<caseTypeModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

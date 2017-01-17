@@ -52,8 +52,7 @@ public class sqlActivityType {
         return list;
     }
     
-    
-    public static void addActivtyType(List<historyTypeModel> list) {
+    public static void batchAddActivtyType(List<historyTypeModel> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
