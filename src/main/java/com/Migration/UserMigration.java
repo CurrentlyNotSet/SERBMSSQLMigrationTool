@@ -59,21 +59,24 @@ public class UserMigration {
 
         totalRecordCount = oldUserList.size() + userList.size() + roleList.size() + oldALJList.size();
 
-        sqlRole.addUserRole(roleList);
+        sqlRole.batchAddUserRole(roleList);
         currentRecord = SceneUpdater.listItemFinished(control, roleList.size() + currentRecord, totalRecordCount, "Roles Finished");
 
         //Insert ULPData Data
-        oldUserList.stream().forEach(item -> executor.submit(() -> migrateOldUsers(item)));
-        oldALJList.stream().forEach(item -> executor.submit(() -> migrateALJ(item)));
+        oldUserList.stream().forEach(item -> executor.submit(() -> cleanOLDUser(item)));
+        oldALJList.stream().forEach(item -> executor.submit(() -> cleanALJ(item)));
 
         executor.shutdown();
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
 
+        currentRecord = 0;
         sqlUsers.batchAddUserInformation(userList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, userList.size() + currentRecord, totalRecordCount, "Users Finished");
 
+        userList.clear();
+        
         sqlUsers.getNewDBUsers();
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Users: "
@@ -84,7 +87,7 @@ public class UserMigration {
         }
     }
 
-    private static void migrateOldUsers(userModel item) {
+    private static void cleanOLDUser(userModel item) {
         boolean missingEntry = true;
         for (userModel newUsers : userList) {
             if (newUsers.getUserName().trim() == null ? item.getUserName().trim() == null
@@ -98,7 +101,7 @@ public class UserMigration {
         }
     }
 
-    private static void migrateALJ(oldALJModel item) {
+    private static void cleanALJ(oldALJModel item) {
         boolean missingEntry = true;
         for (userModel newUsers : userList) {
             if (newUsers.getUserName().trim() == null ? item.getUsername().trim() == null

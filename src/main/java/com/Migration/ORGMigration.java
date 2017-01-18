@@ -50,7 +50,7 @@ public class ORGMigration {
         orgThread.start();
     }
 
-    private static void orgThread(MainWindowSceneController controlPassed) {
+    public static void orgThread(MainWindowSceneController controlPassed) {
         long lStartTime = System.currentTimeMillis();
         control = controlPassed;
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -89,6 +89,9 @@ public class ORGMigration {
 
         sqlORGParentChildLink.batchAddOrgParentChildLinks(ORGParentChildLinkList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, ORGParentChildLinkList.size(), totalRecordCount, "Parent/Child Link Finished");
+        
+        casePartyList.clear();
+        orgCaseList.clear();
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ORG Cases: "

@@ -46,7 +46,7 @@ public class sqlSystemEmail {
                 item.setIncomingURL(rs.getString("URL").trim());
                 item.setIncomingProtocol(rs.getString("Protocol").trim());
                 item.setIncomingPort(143);
-                item.setIncomingFolder(rs.getString("Folder").trim());
+                item.setIncomingFolder(rs.getString("Folder").trim().equals("") ? null : rs.getString("Folder").trim());
                 item.setOutgoingURL("soccemsmtp.em.ohio.gov");
                 item.setOutgoingProtocol("smtp");
                 item.setOutgoingPort(25);

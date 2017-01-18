@@ -78,7 +78,7 @@ public class REPMigration {
         repThread.start();
     }
 
-    private static void repThread(MainWindowSceneController controlPassed) {
+    public static void repThread(MainWindowSceneController controlPassed) {
         long lStartTime = System.currentTimeMillis();
         control = controlPassed;
         control.setProgressBarIndeterminate("REP Case Migration");
@@ -171,6 +171,16 @@ public class REPMigration {
                 
         sqlREPData.batchAddREPCase(REPCaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseList.size() - 1, totalRecordCount, "REP Case Finished");
+        
+        REPCaseList.clear(); 
+        REPCaseSearchList.clear();
+        EmployerSearchList.clear();
+        electionSiteInfoList.clear(); 
+        multiCaseElectionsList.clear(); 
+        mediationsList.clear(); 
+        relatedCaseList.clear();
+        boardMeetingList.clear(); 
+        CasePartyList.clear();
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating REP Cases: "

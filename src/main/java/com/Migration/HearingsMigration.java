@@ -25,6 +25,7 @@ import com.sql.sqlMigrationStatus;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,6 +39,8 @@ public class HearingsMigration {
     private static int totalRecordCount = 0;
     private static int currentRecord = 0;
     private static MainWindowSceneController control;
+    private static final List<HearingsCaseModel> HearingsCaseList = new ArrayList<>();
+    private static final List<HearingsCaseSearchModel> HearingsCaseSearchList = new ArrayList<>();
     
     public static void migrateHearingsData(final MainWindowSceneController control){
         Thread hearingThread = new Thread() {
@@ -49,7 +52,7 @@ public class HearingsMigration {
         hearingThread.start();        
     }
     
-    private static void hearingsThread(MainWindowSceneController controlPassed){
+    public static void hearingsThread(MainWindowSceneController controlPassed){
         long lStartTime = System.currentTimeMillis();
         control = controlPassed;
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -61,9 +64,30 @@ public class HearingsMigration {
         List<activityModel> oldHearingsHistoryList = sqlActivity.getHearingsHistory();
         List<oldHearingsMediationModel> oldHearingsMediationList = sqlHearingsMediation.getHearingsMediations();
         List<HearingOutcomeModel> oldHearingOutcomeList = sqlHearingOutcome.getOutcomeList();
+                
+        //Clean ULP Case Data
+        control.setProgressBarIndeterminateCleaning("Hearing Case");
+        totalRecordCount = oldHearingCaseList.size();
+        oldHearingCaseList.stream().forEach(item -> 
+                executor.submit(() -> 
+                        migrateCase(item)));
         
-        totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size() + oldHearingsMediationList.size() + oldHearingOutcomeList.size();
-        
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
+        }
+                
+        currentRecord = 0;
+        totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size() 
+                + oldHearingsMediationList.size() + oldHearingOutcomeList.size() 
+                + HearingsCaseSearchList.size() + HearingsCaseList.size();
+                        
+        sqlHearingsCase.batchAddHearingsCase(HearingsCaseList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, HearingsCaseList.size() + currentRecord, totalRecordCount, "Hearing Cases Finished");        
+                
+        sqlHearingsCaseSearch.importHearingCaseSearch(HearingsCaseSearchList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, HearingsCaseSearchList.size() + currentRecord, totalRecordCount, "Hearing Case Search Finished");        
+                        
         sqlHearingOutcome.batchAddOutcome(oldHearingOutcomeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldHearingOutcomeList.size() + currentRecord, totalRecordCount, "Hearing Outcomes Finished");
         
@@ -73,15 +97,9 @@ public class HearingsMigration {
         sqlHearingsMediation.batchAddOldHearingsMediation(oldHearingsMediationList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldHearingsMediationList.size() + currentRecord, totalRecordCount, "Hearing Mediations Finished");
         
-        oldHearingCaseList.stream().forEach(item -> 
-                executor.submit(() -> 
-                        migrateCase(item)));
+        HearingsCaseSearchList.clear();
+        HearingsCaseList.clear();
         
-        executor.shutdown();
-        // Wait until all threads are finish
-        while (!executor.isTerminated()) {
-        }
-             
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Hearings Cases: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -98,7 +116,7 @@ public class HearingsMigration {
             migrateCaseData(item, caseNumber);
             migrateSearchData(item, caseNumber);
         }
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCaseNumber());
+        currentRecord = SceneUpdater.listItemCleaned(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
     }
 
     private static void migrateCaseData(oldSMDSCaseTrackingModel old, caseNumberModel caseNumber) {
@@ -174,7 +192,7 @@ public class HearingsMigration {
         item.setCompanionCases(companionCase.trim().equals("") ? null : companionCase.trim());
         item.setCaseStatusNotes(null);
 
-        sqlHearingsCase.importOldHearingsCase(item);
+        HearingsCaseList.add(item);
     }
     
     private static void migrateSearchData(oldSMDSCaseTrackingModel old, caseNumberModel caseNumber) {
@@ -221,7 +239,7 @@ public class HearingsMigration {
         item.setHearingALJ(ALJName.trim().equals("") ? null : ALJName.trim());
         item.setHearingBoardActionDate(old.getBoardActionDate().equals("") ? null : (StringUtilities.convertStringSQLDate(old.getBoardActionDate())));
 
-        sqlHearingsCaseSearch.importHearingCaseSearch(item);
+        HearingsCaseSearchList.add(item);
     }
 
 }

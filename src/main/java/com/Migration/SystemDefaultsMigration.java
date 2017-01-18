@@ -5,6 +5,7 @@
  */
 package com.Migration;
 
+import com.model.NextCaseNumberModel;
 import com.model.administrationInformationModel;
 import com.model.caseTypeModel;
 import com.model.systemEmailModel;
@@ -22,6 +23,7 @@ import com.sql.sqlCaseType;
 import com.sql.sqlDeptInState;
 import com.sql.sqlHearingsInfo;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlNextCaseNumber;
 import com.sql.sqlPartyType;
 import com.sql.sqlPreFix;
 import com.sql.sqlSystemData;
@@ -56,6 +58,7 @@ public class SystemDefaultsMigration {
         control.setProgressBarIndeterminate("System Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
+        List<NextCaseNumberModel> oldNextNumber = sqlNextCaseNumber.getOldCaseNextNumber();
         List<oldCountyModel> oldCountiesList = sqlSystemData.getCounties();
         List<deptInStateModel> deptInStateList = sqlDeptInState.getOldDeptInState();
         List<systemEmailModel> systemEmailList = sqlSystemEmail.getOldSystemEmail();
@@ -70,9 +73,12 @@ public class SystemDefaultsMigration {
         totalRecordCount = oldCountiesList.size() + deptInStateList.size() + systemEmailList.size() 
                 + Global.getNamePrefixList().size() + partyTypesList.size() + activityTypeList.size()
                 + caseTypeList.size() + execList.size() + systemInfoList.size() + hearingRoomList.size()
-                + hearingTypeList.size();
+                + hearingTypeList.size() + oldNextNumber.size();
         
         //import
+        sqlNextCaseNumber.batchAddNextCaseNumber(oldNextNumber, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, oldNextNumber.size() + currentRecord, totalRecordCount, "Next Numbers Finished");
+        
         sqlSystemData.batchAddCounty(oldCountiesList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldCountiesList.size() + currentRecord, totalRecordCount, "Counties Finished");
         

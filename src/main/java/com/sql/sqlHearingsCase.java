@@ -7,7 +7,10 @@ package com.sql;
 
 import com.model.HearingsCaseModel;
 import com.model.oldSMDSCaseTrackingModel;
+import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
+import com.util.Global;
+import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -85,7 +88,8 @@ public class sqlHearingsCase {
         return list;
     }
         
-    public static void importOldHearingsCase(HearingsCaseModel item) {
+    public static void batchAddHearingsCase(List<HearingsCaseModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -123,39 +127,54 @@ public class sqlHearingsCase {
                     }
                      sql += "?)";   //26
             ps = conn.prepareStatement(sql);
-            ps.setString ( 1, StringUtils.left(item.getCaseYear(), 4));
-            ps.setString ( 2, StringUtils.left(item.getCaseType(), 3));
-            ps.setString ( 3, StringUtils.left(item.getCaseMonth(), 2));
-            ps.setString ( 4, StringUtils.left(item.getCaseNumber(), 4));
-            ps.setString ( 5, StringUtils.left(item.getOpenClose(), 10));
-            ps.setBoolean( 6, item.isExpedited());
-            ps.setDate   ( 7, item.getBoardActionPCDate());
-            ps.setDate   ( 8, item.getBoardActionPreDDate());
-            ps.setDate   ( 9, item.getDirectiveIssueDate());
-            ps.setDate   (10, item.getComplaintDueDate());
-            ps.setDate   (11, item.getDraftComplaintToHearingDate());
-            ps.setDate   (12, item.getPreHearingDate());
-            ps.setDate   (13, item.getProposedRecDueDate());
-            ps.setDate   (14, item.getExceptionFilingDate());
-            ps.setDate   (15, item.getBoardActionDate());
-            ps.setString (16, item.getOtherAction());
-            if (item.getAljID() != 0){
-                ps.setInt  (17, item.getAljID());
-            } else {
-                ps.setNull (17, java.sql.Types.INTEGER);
+            conn.setAutoCommit(false);
+            
+            for (HearingsCaseModel item : list) {
+                ps.setString ( 1, StringUtils.left(item.getCaseYear(), 4));
+                ps.setString ( 2, StringUtils.left(item.getCaseType(), 3));
+                ps.setString ( 3, StringUtils.left(item.getCaseMonth(), 2));
+                ps.setString ( 4, StringUtils.left(item.getCaseNumber(), 4));
+                ps.setString ( 5, StringUtils.left(item.getOpenClose(), 10));
+                ps.setBoolean( 6, item.isExpedited());
+                ps.setDate   ( 7, item.getBoardActionPCDate());
+                ps.setDate   ( 8, item.getBoardActionPreDDate());
+                ps.setDate   ( 9, item.getDirectiveIssueDate());
+                ps.setDate   (10, item.getComplaintDueDate());
+                ps.setDate   (11, item.getDraftComplaintToHearingDate());
+                ps.setDate   (12, item.getPreHearingDate());
+                ps.setDate   (13, item.getProposedRecDueDate());
+                ps.setDate   (14, item.getExceptionFilingDate());
+                ps.setDate   (15, item.getBoardActionDate());
+                ps.setString (16, item.getOtherAction());
+                if (item.getAljID() != 0){
+                    ps.setInt  (17, item.getAljID());
+                } else {
+                    ps.setNull (17, java.sql.Types.INTEGER);
+                }
+                ps.setDate   (18, item.getComplaintIssuedDate());
+                ps.setDate   (19, item.getHearingDate());
+                ps.setDate   (20, item.getProposedRecIssuedDate());
+                ps.setDate   (21, item.getResponseFilingDate());
+                ps.setDate   (22, item.getIssuanceOfOptionOrDirectiveDate());
+                ps.setString (23, item.getFinalResult());
+                ps.setDate   (24, item.getOpinion());
+                ps.setString (25, item.getCompanionCases());
+                ps.setString (26, item.getCaseStatusNotes());
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
             }
-            ps.setDate   (18, item.getComplaintIssuedDate());
-            ps.setDate   (19, item.getHearingDate());
-            ps.setDate   (20, item.getProposedRecIssuedDate());
-            ps.setDate   (21, item.getResponseFilingDate());
-            ps.setDate   (22, item.getIssuanceOfOptionOrDirectiveDate());
-            ps.setString (23, item.getFinalResult());
-            ps.setDate   (24, item.getOpinion());
-            ps.setString (25, item.getCompanionCases());
-            ps.setString (26, item.getCaseStatusNotes());
-            ps.executeUpdate();
+            ps.executeBatch();
+            conn.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                ex1.printStackTrace();
+            }
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);

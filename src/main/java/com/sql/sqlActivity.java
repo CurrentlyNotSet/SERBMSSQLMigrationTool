@@ -319,6 +319,10 @@ public class sqlActivity {
                         Comment += System.lineSeparator() + System.lineSeparator() + "Notes: " + rs.getString("Notes");
                     }
 
+                    item.setCaseYear(caseNumber.getCaseYear());
+                    item.setCaseType(caseNumber.getCaseType());
+                    item.setCaseMonth(caseNumber.getCaseMonth());
+                    item.setCaseNumber(caseNumber.getCaseNumber());
                     item.setDate(date);
                     item.setAction(!"".equals(rs.getString("DocumentName").trim()) ? rs.getString("DocumentName").trim() : null);
                     item.setFileName(!"".equals(rs.getString("DocumentFileName").trim()) ? FilenameUtils.getName(rs.getString("DocumentFileName").trim()) : null);

@@ -26,7 +26,8 @@ public class sqlMigrationStatus {
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "SELECT * FROM migrationStatus WHERE id = 1";
+            String sql = "SELECT * FROM migrationStatus WHERE "
+                    + "id = (SELECT TOP 1 id FROM migrationStatus)";
             ps = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             rs = ps.executeQuery();
             if(rs.first()){
@@ -62,7 +63,8 @@ public class sqlMigrationStatus {
         PreparedStatement ps = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "UPDATE migrationStatus SET " + column + " = GETDATE() WHERE id = 1";
+            String sql = "UPDATE migrationStatus SET " + column + " = GETDATE() "
+                    + "WHERE id = (SELECT TOP 1 id FROM migrationStatus)";
             ps = conn.prepareStatement(sql);
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -70,6 +72,46 @@ public class sqlMigrationStatus {
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    public static void verifyBlankRow() {
+        long count = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "SELECT COUNT(*) AS row FROM migrationStatus";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            rs.next();
+            count = rs.getLong("row");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(rs);
+        }
+        if (count == 0){
+            insertBlankRow();
+        }
+    }
+    
+    private static void insertBlankRow() {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "INSERT INTO migrationStatus DEFAULT VALUES";
+            ps = conn.prepareStatement(sql);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(ps);
         }
     }
     

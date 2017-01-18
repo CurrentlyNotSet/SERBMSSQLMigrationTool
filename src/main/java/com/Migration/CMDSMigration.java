@@ -63,7 +63,7 @@ public class CMDSMigration {
         cmdsThread.start();        
     }
     
-    private static void cmdsThread(MainWindowSceneController controlPassed){
+    public static void cmdsThread(MainWindowSceneController controlPassed){
         long lStartTime = System.currentTimeMillis();
         control = controlPassed;
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -86,12 +86,8 @@ public class CMDSMigration {
         List<CMDSHistoryDescriptionModel> historyDescriptionList = sqlCMDSHistoryDescription.getOldCMDSHistoryDescription();
         List<appealCourtModel> appealCourtList = sqlAppealCourt.getOldCMDSHistoryDescription();
                 
-        totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size() 
-                + oldCMDSHearingList.size() + oldCMDSHistoryList.size() + cmdsResultList.size()
-                + cmdsStatusTypeList.size() + directorList.size() + reclassCodeList.size()
-                + historyCategoryList.size() + historyDescriptionList.size() + appealCourtList.size();
-        
         control.setProgressBarIndeterminateCleaning("CMDS Case");
+        totalRecordCount = oldCMDScaseList.size();
         //Insert CMDS Case Data
         oldCMDScaseList.stream().forEach(item -> 
                 executor.submit(() -> 
@@ -101,6 +97,12 @@ public class CMDSMigration {
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
+        
+        currentRecord = 0;
+        totalRecordCount = oldCMDScasePartyList.size() + oldCMDScaseList.size() + CMDSCaseSearchList.size() 
+                + oldCMDSHearingList.size() + oldCMDSHistoryList.size() + cmdsResultList.size()
+                + cmdsStatusTypeList.size() + directorList.size() + reclassCodeList.size()
+                + historyCategoryList.size() + historyDescriptionList.size() + appealCourtList.size();
         
         sqlCMDSCaseSearch.batchAddCaseSearch(CMDSCaseSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + CMDSCaseSearchList.size(), totalRecordCount, "CMDS Case Search Finished");
@@ -139,6 +141,8 @@ public class CMDSMigration {
         
         sqlCMDSCase.batchAddCase(oldCMDScaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Case Finished");
+        
+        CMDSCaseSearchList.clear();
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating CMDS Cases: " 

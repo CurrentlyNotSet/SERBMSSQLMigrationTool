@@ -187,9 +187,7 @@ public class sqlUsers {
             conn.setAutoCommit(false);
 
             for (userModel item : list) {
-                if ("".equals(item.getFirstName().trim()) && "".equals(item.getMiddleInitial().trim())){
-                    item = seperateName(item);
-                }
+                item = seperateName(item);
                 
                 ps.setInt      ( 1, item.getActive());
                 ps.setString   ( 2, StringUtils.left(item.getFirstName(), 25));

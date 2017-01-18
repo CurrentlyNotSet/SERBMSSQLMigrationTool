@@ -8,6 +8,7 @@ package com.sceneControllers;
 import com.Migration.*;
 import com.model.migrationStatusModel;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlServerEmailControl;
 import com.sql.sqlUsers;
 import com.util.Global;
 import com.util.StringUtilities;
@@ -122,6 +123,8 @@ public class MainWindowSceneController implements Initializable {
     public void setDefaults(Stage stage, MainWindowSceneController controller) {
         mainstage = stage;
         control = controller;
+        sqlServerEmailControl.verifyBlankRow();
+        sqlMigrationStatus.verifyBlankRow();
         checkButtonStatus();
         sqlUsers.getNewDBUsers();
     }
@@ -145,6 +148,47 @@ public class MainWindowSceneController implements Initializable {
                 PublicRecordsMigration.publicRecordsThread(control);
                 long lEndTime = System.currentTimeMillis();
                 String finishedText = "Finished Phase 1 Migration in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+                System.out.println(finishedText);
+                control.setProgressBarDisable(finishedText);
+            }
+        };
+        phase1Thread.start();
+    }
+    
+    @FXML
+    private void BatchPhaseTwoMenuButton() {
+        Thread phase1Thread = new Thread() {
+            @Override
+            public void run() {
+                long lStartTime = System.currentTimeMillis();
+                CSCMigration.cscThread(control);
+                HearingsMigration.hearingsThread(control);
+                ORGMigration.orgThread(control);
+                CMDSMigration.cmdsThread(control);
+                ULPMigration.ulpThread(control);
+                REPMigration.repThread(control);
+                MEDMigration.medThread(control);
+                long lEndTime = System.currentTimeMillis();
+                String finishedText = "Finished Phase 2 Migration in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+                System.out.println(finishedText);
+                control.setProgressBarDisable(finishedText);
+            }
+        };
+        phase1Thread.start();
+    }
+    
+    @FXML
+    private void BatchPhaseTwoPartialMenuButton() {
+        Thread phase1Thread = new Thread() {
+            @Override
+            public void run() {
+                long lStartTime = System.currentTimeMillis();
+                CSCMigration.cscThread(control);
+                HearingsMigration.hearingsThread(control);
+                ORGMigration.orgThread(control);
+                CMDSMigration.cmdsThread(control);
+                long lEndTime = System.currentTimeMillis();
+                String finishedText = "Finished ORG, CMDS, CSC, HRG Migration in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
                 System.out.println(finishedText);
                 control.setProgressBarDisable(finishedText);
             }

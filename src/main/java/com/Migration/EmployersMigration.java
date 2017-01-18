@@ -87,6 +87,8 @@ public class EmployersMigration {
         sqlBarginingUnit.batchAddBarginingUnit(BUList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + BUList.size(), totalRecordCount, "Bargining Units Finished");
         
+        BUList.clear();
+        
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Employers: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -161,9 +163,6 @@ public class EmployersMigration {
             } else {
                 item.setCaseRefSequence(caseNumber[3]);
             }
-        }
-        if (Global.isDebug()){
-            System.out.println("Cleaned BU: " + item.getBUEmployerName());
         }
         BUList.add(item);
         currentRecord = SceneUpdater.listItemCleaned(control, currentRecord, totalRecordCount, item.getBUEmployerName().trim());

@@ -64,7 +64,7 @@ public class MEDMigration {
         medThread.start();
     }
 
-    private static void medThread(MainWindowSceneController controlPassed) {
+    public static void medThread(MainWindowSceneController controlPassed) {
         long lStartTime = System.currentTimeMillis();
         control = controlPassed;
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -141,6 +141,12 @@ public class MEDMigration {
         
         sqlMEDCaseSearch.batchAddMEDCaseSearchCase(caseSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "MED Case Search Finished");
+        
+        relatedCaseList.clear();
+            caseSearchList.clear();
+            EmployerSearchList.clear() ;
+            caseList.clear();
+            casePartyList.clear();
         
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating MED Cases: "

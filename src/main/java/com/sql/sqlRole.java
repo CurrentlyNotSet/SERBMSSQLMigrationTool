@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class sqlRole {
     
-    public static void addUserRole(List<String> list) {
+    public static void batchAddUserRole(List<String> list) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;

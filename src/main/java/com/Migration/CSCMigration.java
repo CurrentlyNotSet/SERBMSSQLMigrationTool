@@ -44,7 +44,7 @@ public class CSCMigration {
         cscThread.start();        
     }
     
-    private static void cscThread(MainWindowSceneController controlPassed){
+    public static void cscThread(MainWindowSceneController controlPassed){
         long lStartTime = System.currentTimeMillis();
         control = controlPassed;
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -67,7 +67,8 @@ public class CSCMigration {
         while (!executor.isTerminated()) {
         }
         
-        totalRecordCount = cscCaseList.size() + oldCSCHistoryList.size();
+        currentRecord = 0;
+        totalRecordCount = cscCaseList.size() + oldCSCHistoryList.size() + casePartyList.size();
         
         sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "CSC Parties Finished");
@@ -77,7 +78,10 @@ public class CSCMigration {
         
         sqlCSCCase.BatchAddCSCCase(cscCaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldCSCHistoryList.size(), totalRecordCount, "CSC Case Finished");
-                
+        
+        casePartyList.clear();
+        cscCaseList.clear();
+        
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating CSC Cases: " 
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -91,7 +95,7 @@ public class CSCMigration {
         migrateRepresentative(item);
         migrateOfficers(item);
         migrateCaseData(item);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord, totalRecordCount, item.getCSCNumber()+ ": " + item.getCSCName());
+        currentRecord = SceneUpdater.listItemCleaned(control, currentRecord, totalRecordCount, item.getCSCNumber()+ ": " + item.getCSCName());
     }
 
     private static void migrateRepresentative(oldCivilServiceCommissionModel item) {
@@ -212,7 +216,7 @@ public class CSCMigration {
                 ? StringUtilities.convertStringSQLDate(item.getPreviousFileDate()) : null);
         org.setDueDate(StringUtilities.monthName(item.getDueDate()));
         org.setFiled(!item.getFiled().trim().equals("null") ? StringUtilities.convertStringSQLDate(item.getFiled()) : null);
-        org.setValid(!item.getValid().trim().equals("Y"));
+        org.setValid(item.getValid().trim().equals("Y"));
         org.setNote(!item.getDescription2().trim().equals("") ? item.getDescription2().trim() : null);
         org.setAlsoknownas(!item.getDescription1().trim().equals("") ? item.getDescription1().trim() : null);
         

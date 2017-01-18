@@ -62,7 +62,7 @@ public class ULPMigration {
         ulpThread.start();
     }
 
-    private static void ulpThread(MainWindowSceneController controlPassed) {
+    public static void ulpThread(MainWindowSceneController controlPassed) {
         control = controlPassed;
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("ULP Case Migration");
@@ -116,6 +116,13 @@ public class ULPMigration {
         sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "ULP Employer Search Finished");
 
+        casePartyList.clear();
+        ULPCaseList.clear();
+        boardMeetingList.clear();
+        relatedCaseList.clear(); 
+        caseSearchList.clear();
+        EmployerSearchList.clear();
+        
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ULP Cases: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);

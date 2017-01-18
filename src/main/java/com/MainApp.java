@@ -14,6 +14,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        System.setProperty("java.net.preferIPv4Stack" , "true");
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/MainWindowScene.fxml"));
         Parent root = (Parent) fxmlLoader.load();
         MainWindowSceneController controller = fxmlLoader.<MainWindowSceneController>getController();

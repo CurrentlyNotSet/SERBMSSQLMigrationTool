@@ -53,7 +53,7 @@ public class sqlULPRecommendations {
         return list;
     }
         
-    public static void batchAddULPRecommendation(List<ULPRecommendationsModel> oldULPRecsList, MainWindowSceneController control, int currentCount, int totalCount) {
+    public static void batchAddULPRecommendation(List<ULPRecommendationsModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -71,7 +71,7 @@ public class sqlULPRecommendations {
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
             
-            for (ULPRecommendationsModel item : oldULPRecsList) {
+            for (ULPRecommendationsModel item : list) {
                 ps.setInt   (1, item.getActive());
                 ps.setString(2, StringUtils.left(item.getCode(), 50));
                 ps.setString(3, item.getDescription());

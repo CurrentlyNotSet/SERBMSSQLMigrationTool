@@ -27,10 +27,16 @@
                     <menus>
                         <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#BatchPhaseOneMenuButton" text="Phase 1 Migration" />
                         <MenuItem mnemonicParsing="false" onAction="#MenuExit" text="Close" />
                             </items>
                         </Menu>
+                  <Menu fx:id="fileMenu1" mnemonicParsing="false" text="Batch">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#BatchPhaseOneMenuButton" text="Phase 1 Migration" />
+                        <MenuItem mnemonicParsing="false" onAction="#BatchPhaseTwoMenuButton" text="Phase 2 Migration" />
+                        <MenuItem mnemonicParsing="false" onAction="#BatchPhaseTwoPartialMenuButton" text="Phase 2: ORG, CSC, HRG, CMDS" />
+                     </items>
+                  </Menu>
                     </menus>
                 </MenuBar>
             </top>

@@ -5,7 +5,7 @@
  */
 package com.sql;
 
-import com.model.caseTypeModel;
+import com.model.NextCaseNumberModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;
@@ -23,28 +23,25 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author User
  */
-public class sqlCaseType {
-        
-    public static List<caseTypeModel> getOldCaseType() {
-        List<caseTypeModel> list = new ArrayList();
+public class sqlNextCaseNumber {
+    
+    public static List<NextCaseNumberModel> getOldCaseNextNumber() {
+        List<NextCaseNumberModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT caseTypeid AS id, active AS active, "
-                    + "section AS section, casetype AS type, NULL AS description "
-                    + "FROM casetype UNION ALL SELECT caseTypesid AS id, "
-                    + "active AS active, 'CMDS' AS section, type AS type, "
-                    + "description AS description FROM casetypes";
+            String sql = "SELECT * FROM Nextnumber ORDER BY NextnumberYear ASC, NextnumberType ASC";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                caseTypeModel item = new caseTypeModel();
-                item.setId(rs.getInt("id"));
-                item.setSection(rs.getString("section"));
-                item.setCaseType(rs.getString("type"));
-                item.setDescription(rs.getString("description"));
+                NextCaseNumberModel item = new NextCaseNumberModel();
+                item.setId(rs.getInt("Nextnumberid"));
+                item.setActive(rs.getInt("active") == 1);
+                item.setCaseType(rs.getString("NextnumberType"));
+                item.setCaseYear(rs.getString("NextnumberYear"));
+                item.setNextCaseNumber(String.valueOf(rs.getInt("Nextnumber")));
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -57,29 +54,27 @@ public class sqlCaseType {
         return list;
     }
         
-    public static void batchAddCaseType(List<caseTypeModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+    public static void batchAddNextCaseNumber(List<NextCaseNumberModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try { 
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "Insert INTO CaseType ("
-                    + "section, "    //01
-                    + "caseType, "   //02
-                    + "description, "//03
-                    + "active "      //04
+            String sql = "Insert INTO CaseNumber ("
+                    + "year, "     //01
+                    + "caseType, " //02
+                    + "caseNumber "//03
                     + ") VALUES ("
                     + "?, " //01
                     + "?, " //02
-                    + "?, " //03
-                    + "1)"; 
+                    + "?)"; //03
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
 
-            for (caseTypeModel item : list) {
-                ps.setString(1, StringUtils.left(item.getSection(), 10));
-                ps.setString(2, StringUtils.left(item.getCaseType(), 3));
-                ps.setString(3, StringUtils.left(item.getDescription(), 100));
+            for (NextCaseNumberModel item : list) {
+                ps.setString(1, StringUtils.left(item.getCaseYear(), 4));
+                ps.setString(2, StringUtils.left(item.getCaseType(), 4));
+                ps.setString(3, StringUtils.left(item.getNextCaseNumber(), 4));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
@@ -100,4 +95,5 @@ public class sqlCaseType {
             DbUtils.closeQuietly(conn);
         }
     }
+    
 }
