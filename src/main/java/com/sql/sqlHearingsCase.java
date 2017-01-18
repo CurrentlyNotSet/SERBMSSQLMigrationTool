@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -122,11 +123,11 @@ public class sqlHearingsCase {
                     }
                      sql += "?)";   //26
             ps = conn.prepareStatement(sql);
-            ps.setString ( 1, item.getCaseYear());
-            ps.setString ( 2, item.getCaseType());
-            ps.setString ( 3, item.getCaseMonth());
-            ps.setString ( 4, item.getCaseNumber());
-            ps.setString ( 5, item.getOpenClose());
+            ps.setString ( 1, StringUtils.left(item.getCaseYear(), 4));
+            ps.setString ( 2, StringUtils.left(item.getCaseType(), 3));
+            ps.setString ( 3, StringUtils.left(item.getCaseMonth(), 2));
+            ps.setString ( 4, StringUtils.left(item.getCaseNumber(), 4));
+            ps.setString ( 5, StringUtils.left(item.getOpenClose(), 10));
             ps.setBoolean( 6, item.isExpedited());
             ps.setDate   ( 7, item.getBoardActionPCDate());
             ps.setDate   ( 8, item.getBoardActionPreDDate());

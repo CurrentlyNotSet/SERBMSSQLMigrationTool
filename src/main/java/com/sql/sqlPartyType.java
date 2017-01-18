@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -80,8 +81,8 @@ public class sqlPartyType {
             conn.setAutoCommit(false);
 
             for (partyTypeModel item : list) {
-                ps.setString(1, item.getSection());
-                ps.setString(2, item.getName());
+                ps.setString(1, StringUtils.left(item.getSection(), 4));
+                ps.setString(2, StringUtils.left(item.getName(), 75));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");

@@ -6,7 +6,6 @@
 package com.sql;
 
 import com.model.casePartyModel;
-import com.model.oldCMDSCasePartyModel;
 import com.util.DBCInfo;
 import com.util.StringUtilities;
 import java.sql.Connection;
@@ -83,8 +82,8 @@ public class sqlCMDSCaseParty {
         return list;
     }
     
-    public static List<oldCMDSCasePartyModel> getPartyByCase(String year, String sequenceNumber) {
-        List<oldCMDSCasePartyModel> list = new ArrayList();
+    public static List<casePartyModel> getPartyByCase(String year, String sequenceNumber) {
+        List<casePartyModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -103,10 +102,10 @@ public class sqlCMDSCaseParty {
             ps.setString(2, sequenceNumber);
             rs = ps.executeQuery();
             while (rs.next()) {
-                oldCMDSCasePartyModel item = new oldCMDSCasePartyModel();
-                item.setYear(rs.getString("Year"));
-                item.setCaseSeqNumber(rs.getString("CaseSeqNumber"));
-                item.setParticipantType(rs.getString("ParticipantType"));
+                casePartyModel item = new casePartyModel();
+                item.setCaseYear(rs.getString("Year"));
+                item.setCaseNumber(rs.getString("CaseSeqNumber"));
+                item.setCaseRelation(rs.getString("ParticipantType"));
                 item.setLastName(rs.getString("LastName"));
                 item.setMiddleInitial(rs.getString("MiddleInitial"));        
                 item.setFirstName(rs.getString("FirstName"));                        

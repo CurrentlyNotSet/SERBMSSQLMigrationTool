@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -75,9 +76,9 @@ public class sqlActivityType {
 
             for (historyTypeModel item : list) {
                 ps.setInt   (1, item.getActive());
-                ps.setString(2, item.getSection());
-                ps.setString(3, item.getFileAttrib());
-                ps.setString(4, item.getHistoryDescription());
+                ps.setString(2, StringUtils.left(item.getSection(), 4));
+                ps.setString(3, StringUtils.left(item.getFileAttrib(), 50));
+                ps.setString(4, StringUtils.left(item.getHistoryDescription(), 255));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

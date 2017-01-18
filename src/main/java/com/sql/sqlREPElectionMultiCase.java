@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -47,11 +48,11 @@ public class sqlREPElectionMultiCase {
             
             for (REPElectionMultiCaseModel item : list) {
                 ps.setInt   (1, item.getActive());
-                ps.setString(2, item.getCaseYear());
-                ps.setString(3, item.getCaseType());
-                ps.setString(4, item.getCaseMonth());
-                ps.setString(5, item.getCaseNumber());
-                ps.setString(6, item.getMultiCase());
+                ps.setString(2, StringUtils.left(item.getCaseYear(), 4));
+                ps.setString(3, StringUtils.left(item.getCaseType(), 3));
+                ps.setString(4, StringUtils.left(item.getCaseMonth(), 2));
+                ps.setString(5, StringUtils.left(item.getCaseNumber(), 4));
+                ps.setString(6, StringUtils.left(item.getMultiCase(), 20));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -93,11 +94,11 @@ public class sqlHearingsMediation {
                     int mediatorID = StringUtilities.convertUserInitialToID(item.getMediatorInitials());
                                         
                     ps.setBoolean( 1, item.getActive() == 1);
-                    ps.setString ( 2, caseNumber.getCaseYear());
-                    ps.setString ( 3, caseNumber.getCaseType());
-                    ps.setString ( 4, caseNumber.getCaseMonth());
-                    ps.setString ( 5, caseNumber.getCaseNumber());
-                    ps.setString ( 6, item.getPCPreD().trim().equals("") ? null : item.getPCPreD().trim());
+                    ps.setString ( 2, StringUtils.left(caseNumber.getCaseYear(), 4));
+                    ps.setString ( 3, StringUtils.left(caseNumber.getCaseType(), 10));
+                    ps.setString ( 4, StringUtils.left(caseNumber.getCaseMonth(), 2));
+                    ps.setString ( 5, StringUtils.left(caseNumber.getCaseNumber(), 4));
+                    ps.setString ( 6, StringUtils.left(item.getPCPreD().trim().equals("") ? null : item.getPCPreD().trim(), 5));
                     if (mediatorID != 0){
                         ps.setInt  ( 7, mediatorID);
                     } else {
@@ -105,7 +106,7 @@ public class sqlHearingsMediation {
                     }
                     ps.setDate   ( 8, StringUtilities.convertStringSQLDate(item.getDateAssigned()));
                     ps.setDate   ( 9, StringUtilities.convertStringSQLDate(item.getMedDate()));
-                    ps.setString (10, item.getOutcome().equals("") ? null : item.getOutcome().trim());
+                    ps.setString (10, StringUtils.left(item.getOutcome().equals("") ? null : item.getOutcome().trim(), 100));
                     ps.addBatch();
                     if (++count % Global.getBATCH_SIZE() == 0) {
                         ps.executeBatch();

@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -102,17 +103,17 @@ public class sqlAdministrationInformation {
                 String[] cityStateZipSplit = item.getCity().replaceAll("  ", " ").split(" ");
                 
                 ps.setInt   ( 1, item.getActive());
-                ps.setString( 2, item.getDepartment());
-                ps.setString( 3, "".equals(item.getGovernorName()) ? null : item.getGovernorName());
-                ps.setString( 4, "".equals(item.getLtGovernorName()) ? null : item.getLtGovernorName());
-                ps.setString( 5, "".equals(item.getAddress1()) ? null : item.getAddress1());
-                ps.setString( 6, item.getAddress2());
-                ps.setString( 7, "".equals(cityStateZipSplit[0]) ? null : cityStateZipSplit[0].trim());
-                ps.setString( 8, "".equals(cityStateZipSplit[1]) ? null : cityStateZipSplit[1].trim());
-                ps.setString( 9, "".equals(cityStateZipSplit[2]) ? null : cityStateZipSplit[2].trim());
-                ps.setString(10, "".equals(item.getUrl()) ? null : item.getUrl());
-                ps.setString(11, "".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""));
-                ps.setString(12, "".equals(item.getFax().replaceAll("[^0-9]", "")) ? null : item.getFax().replaceAll("[^0-9]", ""));
+                ps.setString( 2, StringUtils.left(item.getDepartment(), 5));
+                ps.setString( 3, StringUtils.left("".equals(item.getGovernorName()) ? null : item.getGovernorName(), 200));
+                ps.setString( 4, StringUtils.left("".equals(item.getLtGovernorName()) ? null : item.getLtGovernorName(), 200));
+                ps.setString( 5, StringUtils.left("".equals(item.getAddress1()) ? null : item.getAddress1(), 200));
+                ps.setString( 6, StringUtils.left(item.getAddress2(), 200));
+                ps.setString( 7, StringUtils.left("".equals(cityStateZipSplit[0]) ? null : cityStateZipSplit[0].trim(), 100));
+                ps.setString( 8, StringUtils.left("".equals(cityStateZipSplit[1]) ? null : cityStateZipSplit[1].trim(), 50));
+                ps.setString( 9, StringUtils.left("".equals(cityStateZipSplit[2]) ? null : cityStateZipSplit[2].trim(), 10));
+                ps.setString(10, StringUtils.left("".equals(item.getUrl()) ? null : item.getUrl(), 255));
+                ps.setString(11, StringUtils.left("".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""), 15));
+                ps.setString(12, StringUtils.left("".equals(item.getFax().replaceAll("[^0-9]", "")) ? null : item.getFax().replaceAll("[^0-9]", ""), 15));
                 ps.setString(13, "".equals(item.getFooter()) ? null : item.getFooter());
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {

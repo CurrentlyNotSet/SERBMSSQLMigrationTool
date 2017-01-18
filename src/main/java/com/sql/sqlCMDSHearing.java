@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -96,14 +97,14 @@ public class sqlCMDSHearing {
 
             for (CMDSHearingModel item : list) {
                 ps.setBoolean  (1, item.isActive());
-                ps.setString   (2, item.getCaseYear());
-                ps.setString   (3, item.getCaseType());
-                ps.setString   (4, item.getCaseMonth());
-                ps.setString   (5, item.getCaseNumber());
+                ps.setString   (2, StringUtils.left(item.getCaseYear(), 4));
+                ps.setString   (3, StringUtils.left(item.getCaseType(), 4));
+                ps.setString   (4, StringUtils.left(item.getCaseMonth(), 2));
+                ps.setString   (5, StringUtils.left(item.getCaseNumber(), 4));
                 ps.setDate     (6, item.getEntryDate());
                 ps.setTimestamp(7, item.getHearingDateTime());
-                ps.setString   (8, item.getHearingType());
-                ps.setString   (9, item.getRoom());
+                ps.setString   (8, StringUtils.left(item.getHearingType(), 255));
+                ps.setString   (9, StringUtils.left(item.getRoom(), 255));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

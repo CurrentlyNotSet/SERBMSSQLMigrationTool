@@ -13,7 +13,6 @@ import com.model.CMDSHistoryDescriptionModel;
 import com.model.CMDSResultModel;
 import com.model.CMDSStatusTypeModel;
 import com.model.casePartyModel;
-import com.model.oldCMDSCasePartyModel;
 import com.model.DirectorsModel;
 import com.model.ReClassCodeModel;
 import com.model.activityModel;
@@ -151,20 +150,20 @@ public class CMDSMigration {
     }
     
     private static void migrateSearch(CMDSCaseModel item) {
-        int aljID = StringUtilities.convertUserToID(item.getAljID().trim() == null ? "" : item.getAljID());
+        int aljID = StringUtilities.convertUserToID(item.getAljID());
         String appellant = "";
         String appellee = "";
         String ALJName = "";
-        List<oldCMDSCasePartyModel> partyList = sqlCMDSCaseParty.getPartyByCase(item.getCaseYear(), item.getCaseNumber());
+        List<casePartyModel> partyList = sqlCMDSCaseParty.getPartyByCase(item.getCaseYear(), item.getCaseNumber());
         
-        for (oldCMDSCasePartyModel person : partyList){
-            if (person.getParticipantType().contains("Appellee")){
+        for (casePartyModel person : partyList){
+            if (person.getCaseRelation().contains("Appellee")){
                 if (!appellee.trim().equals("")){
                     appellee += ", ";
                 }
                 appellee += StringUtilities.buildFullName(person.getFirstName(), person.getMiddleInitial(), person.getLastName());
                 
-            } else if (person.getParticipantType().contains("Appellant")) {
+            } else if (person.getCaseRelation().contains("Appellant")) {
                 if (!appellant.trim().equals("")){
                    appellant += ", ";
                 }

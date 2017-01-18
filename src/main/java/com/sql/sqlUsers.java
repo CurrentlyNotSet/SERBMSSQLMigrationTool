@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -191,25 +192,25 @@ public class sqlUsers {
                 }
                 
                 ps.setInt      ( 1, item.getActive());
-                ps.setString   ( 2, item.getFirstName());
-                ps.setString   ( 3, item.getMiddleInitial());
-                ps.setString   ( 4, item.getLastName());
-                ps.setString   ( 5, item.getUserName());
-                ps.setString   ( 6, item.getEmail());
-                ps.setString   ( 7, item.getWorkPhone());
+                ps.setString   ( 2, StringUtils.left(item.getFirstName(), 25));
+                ps.setString   ( 3, StringUtils.left(item.getMiddleInitial(), 1));
+                ps.setString   ( 4, StringUtils.left(item.getLastName(), 50));
+                ps.setString   ( 5, StringUtils.left(item.getUserName(), 100));
+                ps.setString   ( 6, StringUtils.left(item.getEmail(), 100));
+                ps.setString   ( 7, StringUtils.left(item.getWorkPhone(), 10));
                 ps.setInt      ( 8, item.getPasswordSalt());
-                ps.setString   ( 9, item.getPassword());
+                ps.setString   ( 9, StringUtils.left(item.getPassword(), 100));
                 ps.setTimestamp(10, item.getLastLoginDateTime());
-                ps.setString   (11, item.getLastLoginPCName());
+                ps.setString   (11, StringUtils.left(item.getLastLoginPCName(), 100));
                 ps.setBoolean  (12, item.isActiveLogin());
                 ps.setBoolean  (13, item.isPasswordReset());
-                ps.setString   (14, item.getApplicationVersion());
-                ps.setString   (15, item.getDefaultSection());
+                ps.setString   (14, StringUtils.left(item.getApplicationVersion(), 5));
+                ps.setString   (15, StringUtils.left(item.getDefaultSection(), 20));
                 ps.setBoolean  (16, item.isULPCaseWorker());
                 ps.setBoolean  (17, item.isULPDocketing());
                 ps.setBoolean  (18, item.isREPDocketing());
-                ps.setString   (19, item.getInitials());
-                ps.setString   (20, item.getJobTitle());
+                ps.setString   (19, StringUtils.left(item.getInitials(), 3));
+                ps.setString   (20, StringUtils.left(item.getJobTitle(), 250));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -163,10 +164,10 @@ public class sqlCMDSDocuments {
                      sql += "?)";   //51
             ps = conn.prepareStatement(sql);
             ps.setBoolean( 1, item.isActive());
-            ps.setString ( 2, item.getMainCategory());
-            ps.setString ( 3, item.getSubCategory());
-            ps.setString ( 4, item.getLetterName());
-            ps.setString ( 5, item.getLocation());
+            ps.setString ( 2, StringUtils.left(item.getMainCategory(), 100));
+            ps.setString ( 3, StringUtils.left(item.getSubCategory(), 100));
+            ps.setString ( 4, StringUtils.left(item.getLetterName(), 100));
+            ps.setString ( 5, StringUtils.left(item.getLocation(), 255));
             ps.setBoolean( 6, item.isMultiplePrint());
             ps.setBoolean( 7, item.isResponseDue());
             ps.setBoolean( 8, item.isActionAppealed());

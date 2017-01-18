@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -74,9 +75,9 @@ public class sqlCaseType {
             conn.setAutoCommit(false);
 
             for (caseTypeModel item : list) {
-                ps.setString(1, item.getSection());
-                ps.setString(2, item.getCaseType());
-                ps.setString(3, item.getDescription());
+                ps.setString(1, StringUtils.left(item.getSection(), 10));
+                ps.setString(2, StringUtils.left(item.getCaseType(), 3));
+                ps.setString(3, StringUtils.left(item.getDescription(), 100));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

@@ -44,7 +44,7 @@ public class ContactsMigration {
         totalRecordCount = masterContactList.size();
         
         sqlContactList.batchAddPartyInformation(masterContactList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, masterContactList.size(), totalRecordCount, "Contacts Finished");
+        SceneUpdater.listItemFinished(control, masterContactList.size(), totalRecordCount, "Contacts Finished");
                 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Contacts: " 

@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -72,8 +73,8 @@ public class sqlCMDSHistoryDescription {
 
             for (CMDSHistoryDescriptionModel item : list) {
             ps.setBoolean(1, item.isActive());
-            ps.setString (2, item.getCategory());
-            ps.setString (3, item.getDescription());
+            ps.setString (2, StringUtils.left(item.getCategory(), 1));
+            ps.setString (3, StringUtils.left(item.getDescription(), 200));
             ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
@@ -115,8 +116,8 @@ public class sqlCMDSHistoryDescription {
 
             for (CMDSHistoryDescriptionModel item : list) {
             ps.setBoolean(1, item.isActive());
-            ps.setString (2, item.getCategory());
-            ps.setString (3, item.getDescription());
+            ps.setString (2, StringUtils.left(item.getCategory(), 1));
+            ps.setString (3, StringUtils.left(item.getDescription(), 200));
             ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

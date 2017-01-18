@@ -469,6 +469,5 @@ public class sqlActivity {
         }
         return list;
     }
-    
-    
+        
 }

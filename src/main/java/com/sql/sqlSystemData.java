@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -77,10 +78,10 @@ public class sqlSystemData {
 
             for (oldCountyModel item : list) {
                 ps.setInt(1, "OH".equals(item.getStateCode().trim()) ? 1 : 0);
-                ps.setString(2, item.getStateCode());
-                ps.setString(3, item.getRegionCode());
-                ps.setString(4, item.getCountyCode());
-                ps.setString(5, item.getName());
+                ps.setString(2, StringUtils.left(item.getStateCode(), 4));
+                ps.setString(3, StringUtils.left(item.getRegionCode(), 4));
+                ps.setString(4, StringUtils.left(item.getCountyCode(), 4));
+                ps.setString(5, StringUtils.left(item.getName(), 200));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");

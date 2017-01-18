@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -46,10 +47,10 @@ public class sqlCMDSCaseSearch {
             conn.setAutoCommit(false);
             
             for (CMDSCaseSearchModel item : list){
-            ps.setString(1, item.getCaseYear());
-            ps.setString(2, item.getCaseType());
-            ps.setString(3, item.getCaseMonth());
-            ps.setString(4, item.getCaseNumber());
+            ps.setString(1, StringUtils.left(item.getCaseYear(), 4));
+            ps.setString(2, StringUtils.left(item.getCaseType(), 4));
+            ps.setString(3, StringUtils.left(item.getCaseMonth(), 2));
+            ps.setString(4, StringUtils.left(item.getCaseNumber(), 4));
             ps.setString(5, item.getAppellant());
             ps.setString(6, item.getAppellee());
             ps.setString(7, item.getAlj());

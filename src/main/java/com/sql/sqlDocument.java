@@ -12,57 +12,16 @@ import com.util.Global;
 import com.util.SceneUpdater;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
  * @author User
  */
 public class sqlDocument {
-
-    public static List<SMDSDocumentsModel> getNewDocuments() {
-        List<SMDSDocumentsModel> list = new ArrayList();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
-            String sql = "SELECT * FROM SMDSDocuments";
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                SMDSDocumentsModel item = new SMDSDocumentsModel();
-                item.setId(rs.getInt("id"));
-                item.setActive(rs.getBoolean("Active"));
-                item.setType(rs.getString("Type") == null ? null : rs.getString("Type").trim());
-                item.setSection(rs.getString("Section") == null ? null : rs.getString("Section").trim());
-                item.setDescription(rs.getString("Description") == null ? null : rs.getString("Description").trim());
-                item.setFileName(rs.getString("FileName") == null ? null : rs.getString("FileName").trim());
-                item.setDueDate(rs.getInt("dueDate"));
-                item.setGroup(rs.getString("group") == null ? null : rs.getString("group").trim());
-                item.setHistoryFileName(rs.getString("historyFileName") == null ? null : rs.getString("historyFileName").trim());
-                item.setHistoryDescription(rs.getString("historyDescription") == null ? null : rs.getString("historyDescription").trim());
-                item.setCHDCHG(rs.getString("CHDCHG") == null ? null : rs.getString("CHDCHG").trim());
-                item.setQuestionsFileName(rs.getString("questionsFileName") == null ? null : rs.getString("questionsFileName").trim());
-                item.setEmailSubject(rs.getString("emailSubject") == null ? null : rs.getString("emailSubject").trim());
-                item.setParameters(rs.getString("parameters") == null ? null : rs.getString("parameters").trim());
-                item.setEmailBody(rs.getString("emailBody") == null ? null : rs.getString("emailBody").trim());
-                item.setSortOrder(rs.getDouble("sortOrder"));
-                list.add(item);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            DbUtils.closeQuietly(conn);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(rs);
-        }
-        return list;
-    }
 
     public static void batchAddSMDSDocument(List<SMDSDocumentsModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
@@ -95,8 +54,8 @@ public class sqlDocument {
             conn.setAutoCommit(false);
             
             for (SMDSDocumentsModel item : list){
-                ps.setString(1, item.getSection());
-                ps.setString(2, item.getType());
+                ps.setString(1, StringUtils.left(item.getSection(), 10));
+                ps.setString(2, StringUtils.left(item.getType(), 25));
                 ps.setString(3, item.getDescription());
                 ps.setString(4, item.getFileName());
                 ps.setBoolean(5, item.isActive());
@@ -105,11 +64,11 @@ public class sqlDocument {
                 } else {
                     ps.setNull(6, java.sql.Types.INTEGER);
                 }
-                ps.setString(7, item.getGroup());
-                ps.setString(8, item.getHistoryFileName());
+                ps.setString(7, StringUtils.left(item.getGroup(), 100));
+                ps.setString(8, StringUtils.left(item.getHistoryFileName(), 255));
                 ps.setString(9, item.getHistoryDescription());
-                ps.setString(10, item.getCHDCHG());
-                ps.setString(11, item.getQuestionsFileName());
+                ps.setString(10, StringUtils.left(item.getCHDCHG(), 3));
+                ps.setString(11, StringUtils.left(item.getQuestionsFileName(), 255));
                 ps.setString(12, item.getEmailSubject());
                 ps.setString(13, item.getParameters());
                 ps.setString(14, item.getEmailBody());

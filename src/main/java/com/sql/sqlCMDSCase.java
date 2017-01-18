@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -220,23 +221,23 @@ public class sqlCMDSCase {
 
             for (CMDSCaseModel item : list) {
             ps.setBoolean( 1, item.isActive());
-            ps.setString ( 2, item.getCaseYear());
-            ps.setString ( 3, item.getCaseType());
-            ps.setString ( 4, item.getCaseMonth());
-            ps.setString ( 5, item.getCaseNumber());
+            ps.setString ( 2, StringUtils.left(item.getCaseYear(), 4));
+            ps.setString ( 3, StringUtils.left(item.getCaseType(), 3));
+            ps.setString ( 4, StringUtils.left(item.getCaseMonth(), 2));
+            ps.setString ( 5, StringUtils.left(item.getCaseNumber(), 4));
             ps.setString ( 6, item.getNote().trim().equals("") ? null : item.getNote());
             ps.setDate   ( 7, item.getOpenDate());
-            ps.setString ( 8, item.getGroupNumber());
-            ps.setString ( 9, item.getAljID().equals("0") ? null : item.getAljID());
+            ps.setString ( 8, StringUtils.left(item.getGroupNumber(), 15));
+            ps.setString ( 9, StringUtils.left(item.getAljID().equals("0") ? null : item.getAljID(), 5));
             ps.setDate   (10, item.getCloseDate());
             ps.setString (11, item.getInventoryStatusLine());
             ps.setDate   (12, item.getInventoryStatusDate());
-            ps.setString (13, item.getCaseStatus());
-            ps.setString (14, item.getResult());
-            ps.setString (15, item.getMediatorID().equals("0") ? null : item.getMediatorID());
-            ps.setString (16, item.getPbrBox());
-            ps.setString (17, item.getGroupType());
-            ps.setString (18, item.getReclassCode());
+            ps.setString (13, StringUtils.left(item.getCaseStatus(), 50));
+            ps.setString (14, StringUtils.left(item.getResult(), 50));
+            ps.setString (15, StringUtils.left(item.getMediatorID().equals("0") ? null : item.getMediatorID(), 10));
+            ps.setString (16, StringUtils.left(item.getPbrBox(), 10));
+            ps.setString (17, StringUtils.left(item.getGroupType(), 10));
+            ps.setString (18, StringUtils.left(item.getReclassCode(), 50));
             ps.setDate   (19, item.getMailedRR());
             ps.setDate   (20, item.getMailedBO());
             ps.setDate   (21, item.getMailedPO1());

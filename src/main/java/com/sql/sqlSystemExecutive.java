@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -102,14 +103,14 @@ public class sqlSystemExecutive {
                         break;
                 }
 
-                ps.setInt(1, item.getActive());
-                ps.setString(2, item.getDepartment());
-                ps.setString(3, "".equals(item.getPosition()) ? null : item.getPosition());
-                ps.setString(4, item.getFirstName());
-                ps.setString(5, item.getMiddleName());
-                ps.setString(6, item.getLastName());
-                ps.setString(7, "".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""));
-                ps.setString(8, "".equals(item.getEmail()) ? null : item.getEmail());
+                ps.setInt   (1, item.getActive());
+                ps.setString(2, StringUtils.left(item.getDepartment(), 4));
+                ps.setString(3, StringUtils.left("".equals(item.getPosition()) ? null : item.getPosition(), 200));
+                ps.setString(4, StringUtils.left(item.getFirstName(), 100));
+                ps.setString(5, StringUtils.left(item.getMiddleName(), 100));
+                ps.setString(6, StringUtils.left(item.getLastName(), 100));
+                ps.setString(7, StringUtils.left("".equals(item.getPhone().replaceAll("[^0-9]", "")) ? null : item.getPhone().replaceAll("[^0-9]", ""), 20));
+                ps.setString(8, StringUtils.left("".equals(item.getEmail()) ? null : item.getEmail(), 200));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

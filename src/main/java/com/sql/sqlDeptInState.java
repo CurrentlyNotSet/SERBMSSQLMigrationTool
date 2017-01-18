@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -71,7 +72,7 @@ public class sqlDeptInState {
 
             for (deptInStateModel item : list) {
                 ps.setInt(1, item.getActive());
-                ps.setString(2, item.getStateCode());
+                ps.setString(2, StringUtils.left(item.getStateCode(), 5));
                 ps.setString(3, item.getDescription());
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {

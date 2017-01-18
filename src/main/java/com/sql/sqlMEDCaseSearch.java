@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -47,15 +48,15 @@ public class sqlMEDCaseSearch {
             conn.setAutoCommit(false);
 
             for (MEDCaseSearchModel item : list) {
-                ps.setString(1, item.getCaseYear());
-                ps.setString(2, item.getCaseType());
-                ps.setString(3, item.getCaseMonth());
-                ps.setString(4, item.getCaseNumber());
+                ps.setString(1, StringUtils.left(item.getCaseYear(), 4));
+                ps.setString(2, StringUtils.left(item.getCaseType(), 3));
+                ps.setString(3, StringUtils.left(item.getCaseMonth(), 2));
+                ps.setString(4, StringUtils.left(item.getCaseNumber(), 4));
                 ps.setString(5, item.getEmployerName());
                 ps.setString(6, item.getUnionName());
-                ps.setString(7, item.getCounty());
-                ps.setString(8, item.getEmployerID());
-                ps.setString(9, item.getBunNumber());
+                ps.setString(7, StringUtils.left(item.getCounty(), 75));
+                ps.setString(8, StringUtils.left(item.getEmployerID(), 4));
+                ps.setString(9, StringUtils.left(item.getBunNumber(), 8));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

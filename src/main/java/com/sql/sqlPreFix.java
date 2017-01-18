@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -32,7 +33,7 @@ public class sqlPreFix {
             conn.setAutoCommit(false);
 
             for (String item : list) {
-                ps.setString(1, item);
+                ps.setString(1, StringUtils.left(item, 20));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

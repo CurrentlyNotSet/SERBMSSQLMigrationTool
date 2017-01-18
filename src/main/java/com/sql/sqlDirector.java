@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -74,9 +75,9 @@ public class sqlDirector {
 
             for (DirectorsModel item : list) {
             ps.setBoolean(1, item.isActive());             
-            ps.setString (2, item.getAgency());       
-            ps.setString (3, item.getTitle());       
-            ps.setString (4, item.getName());             
+            ps.setString (2, StringUtils.left(item.getAgency(), 100));       
+            ps.setString (3, StringUtils.left(item.getTitle(), 100));       
+            ps.setString (4, StringUtils.left(item.getName(), 150));             
             ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

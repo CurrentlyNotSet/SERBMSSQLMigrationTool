@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -101,22 +102,22 @@ public class sqlBarginingUnit {
             
             for (barginingUnitModel item : list) {
                 ps.setInt   ( 1, item.getActive());
-                ps.setString( 2, item.getEmployerNumber());
-                ps.setString( 3, item.getUnitNumber());
-                ps.setString( 4, item.getCert());
-                ps.setString( 5, item.getBUEmployerName());
-                ps.setString( 6, item.getJurisdiction());
-                ps.setString( 7, item.getCounty());
-                ps.setString( 8, item.getLUnion());
-                ps.setString( 9, item.getLocal());
+                ps.setString( 2, StringUtils.left(item.getEmployerNumber(), 4));
+                ps.setString( 3, StringUtils.left(item.getUnitNumber(), 2));
+                ps.setString( 4, StringUtils.left(item.getCert(), 1));
+                ps.setString( 5, StringUtils.left(item.getBUEmployerName(), 150));
+                ps.setString( 6, StringUtils.left(item.getJurisdiction(), 10));
+                ps.setString( 7, StringUtils.left(item.getCounty(), 50));
+                ps.setString( 8, StringUtils.left(item.getLUnion(), 100));
+                ps.setString( 9, StringUtils.left(item.getLocal(), 25));
                 ps.setInt   (10, item.getStrike());
-                ps.setString(11, item.getLGroup());
+                ps.setString(11, StringUtils.left(item.getLGroup(), 2));
                 ps.setDate  (12, item.getCertDate());
                 ps.setInt   (13, item.getEnabled());
-                ps.setString(14, item.getCaseRefYear());
-                ps.setString(15, item.getCaseRefSection());
-                ps.setString(16, item.getCaseRefMonth());
-                ps.setString(17, item.getCaseRefSequence());
+                ps.setString(14, StringUtils.left(item.getCaseRefYear(), 4));
+                ps.setString(15, StringUtils.left(item.getCaseRefSection(), 4));
+                ps.setString(16, StringUtils.left(item.getCaseRefMonth(), 2));
+                ps.setString(17, StringUtils.left(item.getCaseRefSequence(), 4));
                 ps.setString(18, item.getUnitDescription());
                 ps.setString(19, item.getNotes());
                 ps.addBatch();

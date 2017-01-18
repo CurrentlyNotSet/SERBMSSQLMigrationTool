@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -38,7 +39,7 @@ public class sqlEmployers {
             conn.setAutoCommit(false);
 
             for (String item : list) {
-                ps.setString(1, item);
+                ps.setString(1, StringUtils.left(item, 50));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
@@ -107,34 +108,34 @@ public class sqlEmployers {
             for (employersModel item : list) {
                 ps.setInt   ( 1, item.getActive());             
                 ps.setInt   ( 2, item.getEmployerType());       
-                ps.setString( 3, item.getEmployerName());       
-                ps.setString( 4, item.getPrefix());             
-                ps.setString( 5, item.getFirstName());          
-                ps.setString( 6, item.getMiddleInitial());      
-                ps.setString( 7, item.getLastName());           
-                ps.setString( 8, item.getSuffix());             
-                ps.setString( 9, item.getTitle());              
-                ps.setString(10, item.getAddress1());           
-                ps.setString(11, item.getAddress2());           
-                ps.setString(12, item.getAddress3());           
-                ps.setString(13, item.getCity());               
-                ps.setString(14, item.getState());              
-                ps.setString(15, item.getZipCode());            
-                ps.setString(16, item.getPhone1());             
-                ps.setString(17, item.getPhone2());             
-                ps.setString(18, item.getFax());                
-                ps.setString(19, item.getEmailAddress());       
-                ps.setString(20, item.getEmployerIDNumber());   
-                ps.setString(21, item.getEmployerTypeCode());   
-                ps.setString(22, item.getJurisdiction());       
-                ps.setString(23, item.getRegion());         
-                ps.setString(24, item.getAssistantFirstName());
-                ps.setString(25, item.getAssistantMiddleInitial());
-                ps.setString(26, item.getAssistantLastName());
-                ps.setString(27, item.getAssistantEmail());
-                ps.setString(28, item.getCounty());
-                ps.setString(29, item.getPopulation());
-                ps.setString(30, item.getEmployerIRN());
+                ps.setString( 3, StringUtils.left(item.getEmployerName(), 255));       
+                ps.setString( 4, StringUtils.left(item.getPrefix(), 25));             
+                ps.setString( 5, StringUtils.left(item.getFirstName(), 100));          
+                ps.setString( 6, StringUtils.left(item.getMiddleInitial(), 1));      
+                ps.setString( 7, StringUtils.left(item.getLastName(), 100));           
+                ps.setString( 8, StringUtils.left(item.getSuffix(), 50));             
+                ps.setString( 9, StringUtils.left(item.getTitle(), 255));              
+                ps.setString(10, StringUtils.left(item.getAddress1(), 255));           
+                ps.setString(11, StringUtils.left(item.getAddress2(), 255));           
+                ps.setString(12, StringUtils.left(item.getAddress3(), 255));           
+                ps.setString(13, StringUtils.left(item.getCity(), 255));               
+                ps.setString(14, StringUtils.left(item.getState(), 2));              
+                ps.setString(15, StringUtils.left(item.getZipCode(), 15));            
+                ps.setString(16, StringUtils.left(item.getPhone1(), 25));             
+                ps.setString(17, StringUtils.left(item.getPhone2(), 25));             
+                ps.setString(18, StringUtils.left(item.getFax(), 25));                
+                ps.setString(19, StringUtils.left(item.getEmailAddress(), 200));       
+                ps.setString(20, StringUtils.left(item.getEmployerIDNumber(), 4));   
+                ps.setString(21, StringUtils.left(item.getEmployerTypeCode(), 2));   
+                ps.setString(22, StringUtils.left(item.getJurisdiction(), 2));       
+                ps.setString(23, StringUtils.left(item.getRegion(), 2));         
+                ps.setString(24, StringUtils.left(item.getAssistantFirstName(), 100));
+                ps.setString(25, StringUtils.left(item.getAssistantMiddleInitial(), 1));
+                ps.setString(26, StringUtils.left(item.getAssistantLastName(), 100));
+                ps.setString(27, StringUtils.left(item.getAssistantEmail(), 255));
+                ps.setString(28, StringUtils.left(item.getCounty(), 100));
+                ps.setString(29, StringUtils.left(item.getPopulation(), 50));
+                ps.setString(30, StringUtils.left(item.getEmployerIRN(), 10));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

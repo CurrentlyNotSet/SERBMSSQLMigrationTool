@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -91,19 +92,19 @@ public class sqlSystemEmail {
             conn.setAutoCommit(false);
 
             for (systemEmailModel item : list) {
-                ps.setInt(1, item.getActive());
-                ps.setString(2, item.getSection());
-                ps.setString(3, item.getEmailAddress());
-                ps.setString(4, item.getUsername());
-                ps.setString(5, item.getPassword());
-                ps.setString(6, item.getIncomingURL());
-                ps.setString(7, item.getIncomingProtocol());
-                ps.setInt(8, item.getIncomingPort());
-                ps.setString(9, item.getIncomingFolder());
-                ps.setString(10, item.getOutgoingURL());
-                ps.setString(11, item.getOutgoingProtocol());
-                ps.setInt(12, item.getOutgoingPort());
-                ps.setString(13, item.getOutgoingFolder());
+                ps.setInt   ( 1, item.getActive());
+                ps.setString( 2, StringUtils.left(item.getSection(), 8));
+                ps.setString( 3, StringUtils.left(item.getEmailAddress(), 150));
+                ps.setString( 4, StringUtils.left(item.getUsername(), 150));
+                ps.setString( 5, StringUtils.left(item.getPassword(), 32));
+                ps.setString( 6, StringUtils.left(item.getIncomingURL(), 150));
+                ps.setString( 7, StringUtils.left(item.getIncomingProtocol(), 25));
+                ps.setInt   ( 8, item.getIncomingPort());
+                ps.setString( 9, StringUtils.left(item.getIncomingFolder(), 64));
+                ps.setString(10, StringUtils.left(item.getOutgoingURL(), 150));
+                ps.setString(11, StringUtils.left(item.getOutgoingProtocol(), 25));
+                ps.setInt   (12, item.getOutgoingPort());
+                ps.setString(13, StringUtils.left(item.getOutgoingFolder(), 64));
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");

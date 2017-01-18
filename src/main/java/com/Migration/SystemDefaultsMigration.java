@@ -104,7 +104,7 @@ public class SystemDefaultsMigration {
         currentRecord = SceneUpdater.listItemFinished(control, execList.size() + currentRecord, totalRecordCount, "Execs Finished");
         
         sqlAdministrationInformation.batchAddAdminInfo(systemInfoList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, systemInfoList.size() + currentRecord, totalRecordCount, "Admin Finished");
+        SceneUpdater.listItemFinished(control, systemInfoList.size() + currentRecord, totalRecordCount, "Admin Finished");
                
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating System Defaults: " 

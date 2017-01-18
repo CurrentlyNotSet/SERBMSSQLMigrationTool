@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -100,9 +101,9 @@ public class sqlHearingsInfo {
 
             for (hearingRoomModel item : list) {
             ps.setBoolean(1, item.isActive());
-            ps.setString (2, item.getRoomAbbreviation());
-            ps.setString (3, item.getRoomName());
-            ps.setString (4, item.getRoomEmail());
+            ps.setString (2, StringUtils.left(item.getRoomAbbreviation(), 10));
+            ps.setString (3, StringUtils.left(item.getRoomName(), 100));
+            ps.setString (4, StringUtils.left(item.getRoomEmail(), 100));
             ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
@@ -141,9 +142,9 @@ public class sqlHearingsInfo {
 
             for (hearingTypeModel item : list) {
             ps.setBoolean(1, item.isActive());
-            ps.setString (2, item.getSection());
-            ps.setString (3, item.getHearingType());
-            ps.setString (4, item.getHearingDescription());
+            ps.setString (2, StringUtils.left(item.getSection(), 10));
+            ps.setString (3, StringUtils.left(item.getHearingType(), 10));
+            ps.setString (4, StringUtils.left(item.getHearingDescription(), 100));
             ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
