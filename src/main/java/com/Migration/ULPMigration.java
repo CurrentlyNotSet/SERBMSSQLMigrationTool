@@ -35,8 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -65,93 +63,77 @@ public class ULPMigration {
     }
 
     public static void ulpThread(MainWindowSceneController controlPassed) {
-        try {
-            control = controlPassed;
-            long lStartTime = System.currentTimeMillis();
-            control.setProgressBarIndeterminate("ULP Case Migration");
-            
-            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-            
-            List<ULPRecommendationsModel> oldULPRecsList = sqlULPRecommendations.getOLDULPRecommendations();
-            if (Global.isDebug()){
-                System.out.println("Gathered ULP Recommendations");
-            }
-            List<activityModel> ULPCaseHistoryList = sqlActivity.getULPHistory();
-            if (Global.isDebug()){
-                System.out.println("Gathered ULP Case History");
-            }
-            List<oldULPDataModel> oldULPDataList = sqlULPData.getCases();
-            if (Global.isDebug()){
-                System.out.println("Gathered ULP Case Data");
-            }
-            
-            //Clean ULP Case Data
-            control.setProgressBarIndeterminateCleaning("ULP Case");
-            totalRecordCount = oldULPDataList.size();
-            oldULPDataList.stream().forEach(item
-                    -> executor.submit(()
-                            -> migrateCase(item)));
-            
-            executor.shutdown();
-            // Wait until all threads are finish
-            while (!executor.isTerminated()) {
-            }
-            
-            currentRecord = 0;
-            totalRecordCount = oldULPRecsList.size() + casePartyList.size()
-                    + ULPCaseList.size() + boardMeetingList.size()
-                    + relatedCaseList.size() + caseSearchList.size()
-                    + EmployerSearchList.size() + ULPCaseHistoryList.size();
-            
-            //Insert ULP Recommendations
-            sqlULPRecommendations.batchAddULPRecommendation(oldULPRecsList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldULPRecsList.size() - 1, totalRecordCount, "ULP Recommendations Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlActivity.batchAddActivity(ULPCaseHistoryList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + ULPCaseHistoryList.size() - 1, totalRecordCount, "ULP Activities Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + casePartyList.size() - 1, totalRecordCount, "ULP Case Parties Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlULPData.batchImportULPCase(ULPCaseList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + ULPCaseList.size() - 1, totalRecordCount, "ULP Case Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlBoardMeeting.batchAddBoardMeeting(boardMeetingList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + boardMeetingList.size() - 1, totalRecordCount, "ULP Board Meetings Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "ULP Related Cases Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlULPCaseSearch.batchAddULPCaseSearchCase(caseSearchList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + caseSearchList.size() - 1, totalRecordCount, "ULP Case Search Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "ULP Employer Search Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            casePartyList.clear();
-            ULPCaseList.clear();
-            boardMeetingList.clear();
-            relatedCaseList.clear();
-            caseSearchList.clear();
-            EmployerSearchList.clear();
-            
-            long lEndTime = System.currentTimeMillis();
-            String finishedText = "Finished Migrating ULP Cases: "
-                    + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
-            control.setProgressBarDisable(finishedText);
-            if (Global.isDebug() == false) {
-                sqlMigrationStatus.updateTimeCompleted("MigrateULPCases");
-            }
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ULPMigration.class.getName()).log(Level.SEVERE, null, ex);
+        control = controlPassed;
+        long lStartTime = System.currentTimeMillis();
+        control.setProgressBarIndeterminate("ULP Case Migration");
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        List<ULPRecommendationsModel> oldULPRecsList = sqlULPRecommendations.getOLDULPRecommendations();
+        if (Global.isDebug()){
+            System.out.println("Gathered ULP Recommendations");
+        }
+        List<activityModel> ULPCaseHistoryList = sqlActivity.getULPHistory();
+        if (Global.isDebug()){
+            System.out.println("Gathered ULP Case History");
+        }
+        List<oldULPDataModel> oldULPDataList = sqlULPData.getCases();
+        if (Global.isDebug()){
+            System.out.println("Gathered ULP Case Data");
+        }
+        
+        //Clean ULP Case Data
+        control.setProgressBarIndeterminateCleaning("ULP Case");
+        totalRecordCount = oldULPDataList.size();
+        oldULPDataList.stream().forEach(item
+                -> executor.submit(()
+                        -> migrateCase(item)));
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
+        }
+        
+        currentRecord = 0;
+        totalRecordCount = oldULPRecsList.size() + casePartyList.size()
+                + ULPCaseList.size() + boardMeetingList.size()
+                + relatedCaseList.size() + caseSearchList.size()
+                + EmployerSearchList.size() + ULPCaseHistoryList.size();
+                
+        sqlULPRecommendations.batchAddULPRecommendation(oldULPRecsList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldULPRecsList.size() - 1, totalRecordCount, "ULP Recommendations Finished");
+        
+        sqlActivity.batchAddActivity(ULPCaseHistoryList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + ULPCaseHistoryList.size() - 1, totalRecordCount, "ULP Activities Finished");
+        
+        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + casePartyList.size() - 1, totalRecordCount, "ULP Case Parties Finished");
+        
+        sqlULPData.batchImportULPCase(ULPCaseList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + ULPCaseList.size() - 1, totalRecordCount, "ULP Case Finished");
+        
+        sqlBoardMeeting.batchAddBoardMeeting(boardMeetingList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + boardMeetingList.size() - 1, totalRecordCount, "ULP Board Meetings Finished");
+        
+        sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "ULP Related Cases Finished");
+        
+        sqlULPCaseSearch.batchAddULPCaseSearchCase(caseSearchList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + caseSearchList.size() - 1, totalRecordCount, "ULP Case Search Finished");
+        
+        sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "ULP Employer Search Finished");
+        
+        casePartyList.clear();
+        ULPCaseList.clear();
+        boardMeetingList.clear();
+        relatedCaseList.clear();
+        caseSearchList.clear();
+        EmployerSearchList.clear();
+        
+        long lEndTime = System.currentTimeMillis();
+        String finishedText = "Finished Migrating ULP Cases: "
+                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+        control.setProgressBarDisable(finishedText);
+        if (Global.isDebug() == false) {
+            sqlMigrationStatus.updateTimeCompleted("MigrateULPCases");
         }
     }
 

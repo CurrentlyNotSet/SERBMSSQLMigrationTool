@@ -48,8 +48,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -81,133 +79,113 @@ public class REPMigration {
     }
 
     public static void repThread(MainWindowSceneController controlPassed) {
-        try {
-            long lStartTime = System.currentTimeMillis();
-            control = controlPassed;
-            control.setProgressBarIndeterminate("REP Case Migration");
-            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-            totalRecordCount = 0;
-            currentRecord = 0;
-            
-            List<oldREPDataModel> oldREPDataList = sqlREPData.getCases();
-            if (Global.isDebug()){
-                System.out.println("Gathered REP Data");
-            }
-            List<boardAcionTypeModel> REPBoardActionList = sqlBoardActionType.getOldBoardActionType();
-            if (Global.isDebug()){
-                System.out.println("Gathered REP Board actions");
-            }
-            List<REPCaseTypeModel> REPCaseTypeList = sqlREPCaseType.getOldREPCaseType();
-            if (Global.isDebug()){
-                System.out.println("Gathered REP Case Types");
-            }
-            List<REPRecommendationModel> REPrecList = sqlREPRecommendation.getOldREPRecommendation();
-            if (Global.isDebug()){
-                System.out.println("Gathered REP Recommendations");
-            }
-            List<REPCaseStatusModel> REPCaseStatusList = sqlREPCaseStatus.getOldREPCaseStatus();
-            if (Global.isDebug()){
-                System.out.println("Gathered REP Case Status");
-            }
-            List<activityModel> REPCaseHistoryList = sqlActivity.getREPHistory();
-            if (Global.isDebug()){
-                System.out.println("Gathered REP History");
-            }
-            
-            //Clean REP Case Data
-            control.setProgressBarIndeterminateCleaning("REP Case");
-            totalRecordCount = oldREPDataList.size();
-            oldREPDataList.stream().forEach(item ->
-                    executor.submit(() ->
-                            migrateCase(item)));
-            
-            executor.shutdown();
-            // Wait until all threads are finish
-            while (!executor.isTerminated()) {
-            }
-            
-            currentRecord = 0;
-            totalRecordCount = oldREPDataList.size() + REPBoardActionList.size()
-                    + REPCaseTypeList.size() + REPCaseStatusList.size() + REPrecList.size()
-                    + REPCaseHistoryList.size() + REPCaseList.size() + REPCaseSearchList.size()
-                    + EmployerSearchList.size() + electionSiteInfoList.size() + multiCaseElectionsList.size()
-                    + mediationsList.size() + relatedCaseList.size() + boardMeetingList.size() + CasePartyList.size();
-            
-            sqlREPRecommendation.batchAddREPRecommendation(REPrecList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPrecList.size() - 1, totalRecordCount, "REP Recommendations Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlREPCaseType.batchAddREPCaseType(REPCaseTypeList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseTypeList.size() - 1, totalRecordCount, "REP Case Types Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlREPCaseStatus.batchAddREPCaseStatus(REPCaseStatusList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseStatusList.size() - 1, totalRecordCount, "REP Case Status Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlBoardActionType.batchAddREPBoardActionType(REPBoardActionList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPBoardActionList.size() - 1, totalRecordCount, "REP Board Actions Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlActivity.batchAddActivity(REPCaseHistoryList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseHistoryList.size() - 1, totalRecordCount, "REP Activities Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "REP Related Cases Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlBoardMeeting.batchAddBoardMeeting(boardMeetingList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + boardMeetingList.size() - 1, totalRecordCount, "REP Board Meeting Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlREPMediation.batchAddREPMediation(mediationsList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + mediationsList.size() - 1, totalRecordCount, "REP Mediations Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlREPElectionMultiCase.batchAddMultiCaseElection(multiCaseElectionsList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + multiCaseElectionsList.size() - 1, totalRecordCount, "REP Multi Case Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlREPElectionSiteInformation.batchAddElectionSite(electionSiteInfoList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + electionSiteInfoList.size() - 1, totalRecordCount, "REP Election Sites Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlCaseParty.batchAddPartyInformation(CasePartyList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + CasePartyList.size() - 1, totalRecordCount, "REP Case Parties Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "REP Employer Search Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlREPCaseSearch.addREPCaseSearchCase(REPCaseSearchList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseSearchList.size() - 1, totalRecordCount, "REP Case Search Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlREPData.batchAddREPCase(REPCaseList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseList.size() - 1, totalRecordCount, "REP Case Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            REPCaseList.clear();
-            REPCaseSearchList.clear();
-            EmployerSearchList.clear();
-            electionSiteInfoList.clear();
-            multiCaseElectionsList.clear();
-            mediationsList.clear();
-            relatedCaseList.clear();
-            boardMeetingList.clear();
-            CasePartyList.clear();
-            
-            long lEndTime = System.currentTimeMillis();
-            String finishedText = "Finished Migrating REP Cases: "
-                    + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
-            control.setProgressBarDisable(finishedText);
-            if (Global.isDebug() == false) {
-                sqlMigrationStatus.updateTimeCompleted("MigrateREPCases");
-            }
-        } catch (InterruptedException ex) {
-            Logger.getLogger(REPMigration.class.getName()).log(Level.SEVERE, null, ex);
+        long lStartTime = System.currentTimeMillis();
+        control = controlPassed;
+        control.setProgressBarIndeterminate("REP Case Migration");
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        totalRecordCount = 0;
+        currentRecord = 0;
+        List<oldREPDataModel> oldREPDataList = sqlREPData.getCases();
+        if (Global.isDebug()){
+            System.out.println("Gathered REP Data");
+        }
+        List<boardAcionTypeModel> REPBoardActionList = sqlBoardActionType.getOldBoardActionType();
+        if (Global.isDebug()){
+            System.out.println("Gathered REP Board actions");
+        }
+        List<REPCaseTypeModel> REPCaseTypeList = sqlREPCaseType.getOldREPCaseType();
+        if (Global.isDebug()){
+            System.out.println("Gathered REP Case Types");
+        }
+        List<REPRecommendationModel> REPrecList = sqlREPRecommendation.getOldREPRecommendation();
+        if (Global.isDebug()){
+            System.out.println("Gathered REP Recommendations");
+        }
+        List<REPCaseStatusModel> REPCaseStatusList = sqlREPCaseStatus.getOldREPCaseStatus();
+        if (Global.isDebug()){
+            System.out.println("Gathered REP Case Status");
+        }
+        List<activityModel> REPCaseHistoryList = sqlActivity.getREPHistory();
+        if (Global.isDebug()){
+            System.out.println("Gathered REP History");
+        }
+        
+        //Clean REP Case Data
+        control.setProgressBarIndeterminateCleaning("REP Case");
+        totalRecordCount = oldREPDataList.size();
+        oldREPDataList.stream().forEach(item ->
+                executor.submit(() ->
+                        migrateCase(item)));
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
+        }
+        
+        currentRecord = 0;
+        totalRecordCount = oldREPDataList.size() + REPBoardActionList.size()
+                + REPCaseTypeList.size() + REPCaseStatusList.size() + REPrecList.size()
+                + REPCaseHistoryList.size() + REPCaseList.size() + REPCaseSearchList.size()
+                + EmployerSearchList.size() + electionSiteInfoList.size() + multiCaseElectionsList.size()
+                + mediationsList.size() + relatedCaseList.size() + boardMeetingList.size() + CasePartyList.size();
+        
+        sqlREPRecommendation.batchAddREPRecommendation(REPrecList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPrecList.size() - 1, totalRecordCount, "REP Recommendations Finished");
+        
+        sqlREPCaseType.batchAddREPCaseType(REPCaseTypeList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseTypeList.size() - 1, totalRecordCount, "REP Case Types Finished");
+        
+        sqlREPCaseStatus.batchAddREPCaseStatus(REPCaseStatusList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseStatusList.size() - 1, totalRecordCount, "REP Case Status Finished");
+        
+        sqlBoardActionType.batchAddREPBoardActionType(REPBoardActionList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPBoardActionList.size() - 1, totalRecordCount, "REP Board Actions Finished");
+        
+        sqlActivity.batchAddActivity(REPCaseHistoryList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseHistoryList.size() - 1, totalRecordCount, "REP Activities Finished");
+        
+        sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "REP Related Cases Finished");
+        
+        sqlBoardMeeting.batchAddBoardMeeting(boardMeetingList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + boardMeetingList.size() - 1, totalRecordCount, "REP Board Meeting Finished");
+        
+        sqlREPMediation.batchAddREPMediation(mediationsList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + mediationsList.size() - 1, totalRecordCount, "REP Mediations Finished");
+        
+        sqlREPElectionMultiCase.batchAddMultiCaseElection(multiCaseElectionsList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + multiCaseElectionsList.size() - 1, totalRecordCount, "REP Multi Case Finished");
+        
+        sqlREPElectionSiteInformation.batchAddElectionSite(electionSiteInfoList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + electionSiteInfoList.size() - 1, totalRecordCount, "REP Election Sites Finished");
+        
+        sqlCaseParty.batchAddPartyInformation(CasePartyList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + CasePartyList.size() - 1, totalRecordCount, "REP Case Parties Finished");
+        
+        sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "REP Employer Search Finished");
+        
+        sqlREPCaseSearch.addREPCaseSearchCase(REPCaseSearchList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseSearchList.size() - 1, totalRecordCount, "REP Case Search Finished");
+        
+        sqlREPData.batchAddREPCase(REPCaseList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseList.size() - 1, totalRecordCount, "REP Case Finished");
+        
+        REPCaseList.clear();
+        REPCaseSearchList.clear();
+        EmployerSearchList.clear();
+        electionSiteInfoList.clear();
+        multiCaseElectionsList.clear();
+        mediationsList.clear();
+        relatedCaseList.clear();
+        boardMeetingList.clear();
+        CasePartyList.clear();
+        
+        long lEndTime = System.currentTimeMillis();
+        String finishedText = "Finished Migrating REP Cases: "
+                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+        control.setProgressBarDisable(finishedText);
+        if (Global.isDebug() == false) {
+            sqlMigrationStatus.updateTimeCompleted("MigrateREPCases");
         }
     }
 

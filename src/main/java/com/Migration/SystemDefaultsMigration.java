@@ -33,8 +33,6 @@ import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -56,119 +54,102 @@ public class SystemDefaultsMigration {
     }
     
     public static void sysThread(MainWindowSceneController control){
-        try {
-            long lStartTime = System.currentTimeMillis();
-            control.setProgressBarIndeterminate("System Migration");
-            int totalRecordCount = 0;
-            int currentRecord = 0;
-            List<NextCaseNumberModel> oldNextNumber = sqlNextCaseNumber.getOldCaseNextNumber();
-            if (Global.isDebug()){
-                System.out.println("Gathered CaseNumbers");
-            }
-            List<oldCountyModel> oldCountiesList = sqlSystemData.getCounties();
-            if (Global.isDebug()){
-                System.out.println("Gathered Counties");
-            }
-            List<deptInStateModel> deptInStateList = sqlDeptInState.getOldDeptInState();
-            if (Global.isDebug()){
-                System.out.println("Gathered Dept In State");
-            }
-            List<systemEmailModel> systemEmailList = sqlSystemEmail.getOldSystemEmail();
-            if (Global.isDebug()){
-                System.out.println("Gathered System Emails");
-            }
-            List<partyTypeModel> partyTypesList = sqlPartyType.getPartyTypeList();
-            if (Global.isDebug()){
-                System.out.println("Gathered Party Types");
-            }
-            List<historyTypeModel> activityTypeList = sqlActivityType.getOldActivityType();
-            if (Global.isDebug()){
-                System.out.println("Gathered Activity Types");
-            }
-            List<caseTypeModel> caseTypeList = sqlCaseType.getOldCaseType();
-            if (Global.isDebug()){
-                System.out.println("Gathered Case Types");
-            }
-            List<systemExecutiveModel> execList = sqlSystemExecutive.getOldExecutives();
-            if (Global.isDebug()){
-                System.out.println("Gathered Executives");
-            }
-            List<administrationInformationModel> systemInfoList = sqlAdministrationInformation.getOldInfo();
-            if (Global.isDebug()){
-                System.out.println("Gathered System Info");
-            }
-            List<hearingRoomModel> hearingRoomList = sqlHearingsInfo.getOldHearingRoom();
-            if (Global.isDebug()){
-                System.out.println("Gathered Hearing Rooms");
-            }
-            List<hearingTypeModel> hearingTypeList = sqlHearingsInfo.getOldHearingType();
-            if (Global.isDebug()){
-                System.out.println("Gathered Hearing Types");
-            }
-            
-            totalRecordCount = oldCountiesList.size() + deptInStateList.size() + systemEmailList.size()
-                    + Global.getNamePrefixList().size() + partyTypesList.size() + activityTypeList.size()
-                    + caseTypeList.size() + execList.size() + systemInfoList.size() + hearingRoomList.size()
-                    + hearingTypeList.size() + oldNextNumber.size();
-            
-            //import
-            sqlNextCaseNumber.batchAddNextCaseNumber(oldNextNumber, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, oldNextNumber.size() + currentRecord, totalRecordCount, "Next Numbers Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlSystemData.batchAddCounty(oldCountiesList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, oldCountiesList.size() + currentRecord, totalRecordCount, "Counties Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlPartyType.batchAddPartyType(partyTypesList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, partyTypesList.size() + currentRecord, totalRecordCount, "Party Type Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlDeptInState.batchAddDeptInState(deptInStateList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, deptInStateList.size() + currentRecord, totalRecordCount, "Dept In State Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlSystemEmail.batchAddSystemEmail(systemEmailList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, systemEmailList.size() + currentRecord, totalRecordCount, "System Email Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlPreFix.batchAddNamePrefix(Global.getNamePrefixList(), control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, Global.getNamePrefixList().size() + currentRecord, totalRecordCount, "PreFixes Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlActivityType.batchAddActivtyType(activityTypeList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, activityTypeList.size() + currentRecord, totalRecordCount, "Activity Types Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlCaseType.batchAddCaseType(caseTypeList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, caseTypeList.size() + currentRecord, totalRecordCount, "Case Types Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlHearingsInfo.batchAddHearingRoom(hearingRoomList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, hearingRoomList.size() + currentRecord, totalRecordCount, "Hearing Rooms Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlHearingsInfo.batchAddHearingType(hearingTypeList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, hearingTypeList.size() + currentRecord, totalRecordCount, "Hearing Types Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlSystemExecutive.batchAddExecutive(execList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, execList.size() + currentRecord, totalRecordCount, "Execs Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            sqlAdministrationInformation.batchAddAdminInfo(systemInfoList, control, currentRecord, totalRecordCount);
-            SceneUpdater.listItemFinished(control, systemInfoList.size() + currentRecord, totalRecordCount, "Admin Finished");
-            Thread.sleep(Global.getSLEEP());
-            
-            long lEndTime = System.currentTimeMillis();
-            String finishedText = "Finished Migrating System Defaults: "
-                    + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
-            control.setProgressBarDisable(finishedText);
-            if (Global.isDebug() == false){
-                sqlMigrationStatus.updateTimeCompleted("MigrateSystemDefaults");
-            }
-        } catch (InterruptedException ex) {
-            Logger.getLogger(SystemDefaultsMigration.class.getName()).log(Level.SEVERE, null, ex);
+        long lStartTime = System.currentTimeMillis();
+        control.setProgressBarIndeterminate("System Migration");
+        int totalRecordCount = 0;
+        int currentRecord = 0;
+        List<NextCaseNumberModel> oldNextNumber = sqlNextCaseNumber.getOldCaseNextNumber();
+        if (Global.isDebug()){
+            System.out.println("Gathered CaseNumbers");
+        }
+        List<oldCountyModel> oldCountiesList = sqlSystemData.getCounties();
+        if (Global.isDebug()){
+            System.out.println("Gathered Counties");
+        }
+        List<deptInStateModel> deptInStateList = sqlDeptInState.getOldDeptInState();
+        if (Global.isDebug()){
+            System.out.println("Gathered Dept In State");
+        }
+        List<systemEmailModel> systemEmailList = sqlSystemEmail.getOldSystemEmail();
+        if (Global.isDebug()){
+            System.out.println("Gathered System Emails");
+        }
+        List<partyTypeModel> partyTypesList = sqlPartyType.getPartyTypeList();
+        if (Global.isDebug()){
+            System.out.println("Gathered Party Types");
+        }
+        List<historyTypeModel> activityTypeList = sqlActivityType.getOldActivityType();
+        if (Global.isDebug()){
+            System.out.println("Gathered Activity Types");
+        }
+        List<caseTypeModel> caseTypeList = sqlCaseType.getOldCaseType();
+        if (Global.isDebug()){
+            System.out.println("Gathered Case Types");
+        }
+        List<systemExecutiveModel> execList = sqlSystemExecutive.getOldExecutives();
+        if (Global.isDebug()){
+            System.out.println("Gathered Executives");
+        }
+        List<administrationInformationModel> systemInfoList = sqlAdministrationInformation.getOldInfo();
+        if (Global.isDebug()){
+            System.out.println("Gathered System Info");
+        }
+        List<hearingRoomModel> hearingRoomList = sqlHearingsInfo.getOldHearingRoom();
+        if (Global.isDebug()){
+            System.out.println("Gathered Hearing Rooms");
+        }
+        List<hearingTypeModel> hearingTypeList = sqlHearingsInfo.getOldHearingType();
+        if (Global.isDebug()){
+            System.out.println("Gathered Hearing Types");
+        }
+        totalRecordCount = oldCountiesList.size() + deptInStateList.size() + systemEmailList.size()
+                + Global.getNamePrefixList().size() + partyTypesList.size() + activityTypeList.size()
+                + caseTypeList.size() + execList.size() + systemInfoList.size() + hearingRoomList.size()
+                + hearingTypeList.size() + oldNextNumber.size();
+        
+        //import
+        sqlNextCaseNumber.batchAddNextCaseNumber(oldNextNumber, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, oldNextNumber.size() + currentRecord, totalRecordCount, "Next Numbers Finished");
+        
+        sqlSystemData.batchAddCounty(oldCountiesList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, oldCountiesList.size() + currentRecord, totalRecordCount, "Counties Finished");
+        
+        sqlPartyType.batchAddPartyType(partyTypesList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, partyTypesList.size() + currentRecord, totalRecordCount, "Party Type Finished");
+        
+        sqlDeptInState.batchAddDeptInState(deptInStateList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, deptInStateList.size() + currentRecord, totalRecordCount, "Dept In State Finished");
+        
+        sqlSystemEmail.batchAddSystemEmail(systemEmailList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, systemEmailList.size() + currentRecord, totalRecordCount, "System Email Finished");
+        
+        sqlPreFix.batchAddNamePrefix(Global.getNamePrefixList(), control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, Global.getNamePrefixList().size() + currentRecord, totalRecordCount, "PreFixes Finished");
+        
+        sqlActivityType.batchAddActivtyType(activityTypeList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, activityTypeList.size() + currentRecord, totalRecordCount, "Activity Types Finished");
+        
+        sqlCaseType.batchAddCaseType(caseTypeList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, caseTypeList.size() + currentRecord, totalRecordCount, "Case Types Finished");
+        
+        sqlHearingsInfo.batchAddHearingRoom(hearingRoomList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, hearingRoomList.size() + currentRecord, totalRecordCount, "Hearing Rooms Finished");
+        
+        sqlHearingsInfo.batchAddHearingType(hearingTypeList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, hearingTypeList.size() + currentRecord, totalRecordCount, "Hearing Types Finished");
+        
+        sqlSystemExecutive.batchAddExecutive(execList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, execList.size() + currentRecord, totalRecordCount, "Execs Finished");
+        
+        sqlAdministrationInformation.batchAddAdminInfo(systemInfoList, control, currentRecord, totalRecordCount);
+        SceneUpdater.listItemFinished(control, systemInfoList.size() + currentRecord, totalRecordCount, "Admin Finished");
+        
+        long lEndTime = System.currentTimeMillis();
+        String finishedText = "Finished Migrating System Defaults: "
+                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+        control.setProgressBarDisable(finishedText);
+        if (Global.isDebug() == false){
+            sqlMigrationStatus.updateTimeCompleted("MigrateSystemDefaults");
         }
     }
     

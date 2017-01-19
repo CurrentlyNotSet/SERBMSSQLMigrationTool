@@ -25,8 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -50,68 +48,59 @@ public class EmployersMigration {
     }
 
     public static void employersThread(MainWindowSceneController controlPassed) {
-        try {
-            long lStartTime = System.currentTimeMillis();
-            control = controlPassed;
-            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-            control.setProgressBarIndeterminate("Employers Migration");
-            totalRecordCount = 0;
-            currentRecord = 0;
-            
-            //Add in EmployerTypes
-            List<String> employerTypeList = Arrays.asList(
-                    "Attorney", "Employer", "FCMS Mediator", "Individual",
-                    "Rep", "State Mediator", "Union"
-            );
-            sqlEmployers.batchAddEmployerType(employerTypeList);
-            
-            //Get Lists
-            List<employerTypeModel> types = sqlEmployers.getEmployerType();
-            if (Global.isDebug()){
-                System.out.println("Gathered Employer Types");
-            }
-            List<employersModel> employersList = sqlEmployers.getOldEmployers(types);
-            if (Global.isDebug()){
-                System.out.println("Gathered Employers");
-            }
-            List<oldBarginingUnitNewModel> unionList = sqlBarginingUnit.getOldBarginingUnits();
-            if (Global.isDebug()){
-                System.out.println("Gathered Bargining Units");
-            }
-            
-            control.setProgressBarIndeterminateCleaning("Bargining Units");
-            totalRecordCount = unionList.size();
-            unionList.stream().forEach(item ->
-                    executor.submit(() ->
-                            batchMigrateBarginingUnitUnions(item)));
-            
-            executor.shutdown();
-            // Wait until all threads are finish
-            while (!executor.isTerminated()) {
-            }
-            
-            currentRecord = 0;
-            totalRecordCount = employersList.size() + unionList.size();
-            
-            sqlEmployers.batchAddEmployer(employersList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + employerTypeList.size(), totalRecordCount, "Employers Finished");
-            Thread.sleep(1000);
-            
-            sqlBarginingUnit.batchAddBarginingUnit(BUList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + BUList.size(), totalRecordCount, "Bargining Units Finished");
-            Thread.sleep(1000);
-            
-            BUList.clear();
-            
-            long lEndTime = System.currentTimeMillis();
-            String finishedText = "Finished Migrating Employers: "
-                    + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
-            control.setProgressBarDisable(finishedText);
-            if (Global.isDebug() == false){
-                sqlMigrationStatus.updateTimeCompleted("MigrateEmployers");
-            }
-        } catch (InterruptedException ex) {
-            Logger.getLogger(EmployersMigration.class.getName()).log(Level.SEVERE, null, ex);
+        long lStartTime = System.currentTimeMillis();
+        control = controlPassed;
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        control.setProgressBarIndeterminate("Employers Migration");
+        totalRecordCount = 0;
+        currentRecord = 0;
+        //Add in EmployerTypes
+        List<String> employerTypeList = Arrays.asList(
+                "Attorney", "Employer", "FCMS Mediator", "Individual",
+                "Rep", "State Mediator", "Union"
+        );
+        sqlEmployers.batchAddEmployerType(employerTypeList);
+        //Get Lists
+        List<employerTypeModel> types = sqlEmployers.getEmployerType();
+        if (Global.isDebug()){
+            System.out.println("Gathered Employer Types");
+        }
+        List<employersModel> employersList = sqlEmployers.getOldEmployers(types);
+        if (Global.isDebug()){
+            System.out.println("Gathered Employers");
+        }
+        List<oldBarginingUnitNewModel> unionList = sqlBarginingUnit.getOldBarginingUnits();
+        if (Global.isDebug()){
+            System.out.println("Gathered Bargining Units");
+        }
+        
+        control.setProgressBarIndeterminateCleaning("Bargining Units");
+        totalRecordCount = unionList.size();
+        unionList.stream().forEach(item ->
+                executor.submit(() ->
+                        batchMigrateBarginingUnitUnions(item)));
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
+        }
+        
+        currentRecord = 0;
+        totalRecordCount = employersList.size() + unionList.size();
+        
+        sqlEmployers.batchAddEmployer(employersList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + employerTypeList.size(), totalRecordCount, "Employers Finished");
+        
+        sqlBarginingUnit.batchAddBarginingUnit(BUList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + BUList.size(), totalRecordCount, "Bargining Units Finished");
+        
+        BUList.clear();
+        
+        long lEndTime = System.currentTimeMillis();
+        String finishedText = "Finished Migrating Employers: "
+                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+        control.setProgressBarDisable(finishedText);
+        if (Global.isDebug() == false){
+            sqlMigrationStatus.updateTimeCompleted("MigrateEmployers");
         }
     }
         
