@@ -174,19 +174,19 @@ public class CMDSMigration {
             Thread.sleep(1000);
             
             sqlCaseParty.batchAddPartyInformation(oldCMDScasePartyList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Case Parties Finished");
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldCMDScasePartyList.size(), totalRecordCount, "CMDS Case Parties Finished");
             Thread.sleep(1000);
             
             sqlCMDSHearing.batchAddHearings(oldCMDSHearingList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Hearings Finished");
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldCMDSHearingList.size(), totalRecordCount, "CMDS Hearings Finished");
             Thread.sleep(1000);
             
             sqlActivity.batchAddActivity(oldCMDSHistoryList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Activity Finished");
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldCMDSHistoryList.size(), totalRecordCount, "CMDS Activity Finished");
             Thread.sleep(1000);
             
             sqlCMDSCase.batchAddCase(oldCMDScaseList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord - 1, totalRecordCount, "CMDS Case Finished");
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldCMDScaseList.size(), totalRecordCount, "CMDS Case Finished");
             Thread.sleep(1000);
             
             CMDSCaseSearchList.clear();

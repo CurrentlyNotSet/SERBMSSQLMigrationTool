@@ -150,7 +150,7 @@ public class REPMigration {
             Thread.sleep(Global.getSLEEP());
             
             sqlActivity.batchAddActivity(REPCaseHistoryList, control, currentRecord, totalRecordCount);
-            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseHistoryList.size() - 1, totalRecordCount, "ULP Activities Finished");
+            currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseHistoryList.size() - 1, totalRecordCount, "REP Activities Finished");
             Thread.sleep(Global.getSLEEP());
             
             sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
