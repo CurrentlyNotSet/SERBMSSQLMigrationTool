@@ -19,6 +19,8 @@ public class Global {
     private static final boolean debug = true;
     
     private static final int BATCH_SIZE = 1000;
+    
+    private static final int SLEEP = 2500;
 
     private static final SimpleDateFormat mmddyyyyhhmmssa = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
     
@@ -192,6 +194,10 @@ public class Global {
 
     public static int getBATCH_SIZE() {
         return BATCH_SIZE;
+    }
+
+    public static int getSLEEP() {
+        return SLEEP;
     }
     
 }

@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class sqlAppealCourt {
     
-    public static List<appealCourtModel> getOldCMDSHistoryDescription() {
+    public static List<appealCourtModel> getAppealCourts() {
         List<appealCourtModel> list = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;

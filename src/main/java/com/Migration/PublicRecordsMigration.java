@@ -13,6 +13,8 @@ import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,20 +33,28 @@ public class PublicRecordsMigration {
     }
     
     public static void publicRecordsThread(MainWindowSceneController control){
-        long lStartTime = System.currentTimeMillis();
-        control.setProgressBarIndeterminate("Public Records Migration");
-        
-        List<activityModel> oldPublicRecords = sqlActivity.getPublicRecords();
-                   
-        sqlActivity.batchAddActivity(oldPublicRecords, control, 0, oldPublicRecords.size());
-        SceneUpdater.listItemFinished(control, oldPublicRecords.size(), oldPublicRecords.size(), "Public Records Finished");
-   
-        long lEndTime = System.currentTimeMillis();
-        String finishedText = "Finished Migrating Public Records: " 
-                + oldPublicRecords.size() + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
-        control.setProgressBarDisable(finishedText);
-        if (Global.isDebug() == false){
-            sqlMigrationStatus.updateTimeCompleted("MigratePublicRecords");
+        try {
+            long lStartTime = System.currentTimeMillis();
+            control.setProgressBarIndeterminate("Public Records Migration");
+            
+            List<activityModel> oldPublicRecords = sqlActivity.getPublicRecords();
+            if (Global.isDebug()){
+                System.out.println("Gathered Public Records");
+            }
+            
+            sqlActivity.batchAddActivity(oldPublicRecords, control, 0, oldPublicRecords.size());
+            SceneUpdater.listItemFinished(control, oldPublicRecords.size(), oldPublicRecords.size(), "Public Records Finished");
+            Thread.sleep(Global.getSLEEP());
+            
+            long lEndTime = System.currentTimeMillis();
+            String finishedText = "Finished Migrating Public Records: "
+                    + oldPublicRecords.size() + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+            control.setProgressBarDisable(finishedText);
+            if (Global.isDebug() == false){
+                sqlMigrationStatus.updateTimeCompleted("MigratePublicRecords");
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(PublicRecordsMigration.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

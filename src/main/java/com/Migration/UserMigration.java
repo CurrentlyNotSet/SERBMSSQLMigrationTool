@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -43,47 +45,59 @@ public class UserMigration {
     }
 
     public static void userThread(MainWindowSceneController controlPassed) {
-        long lStartTime = System.currentTimeMillis();
-        control = controlPassed;
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        control.setProgressBarIndeterminate("Users Migration");
-        totalRecordCount = 0;
-        currentRecord = 0;
-        userList = sqlUsers.getSecUsers();
-        List<userModel> oldUserList = sqlUsers.getUsers();
-        List<oldALJModel> oldALJList = sqlALJ.getOldALJList();
-
-        List<String> roleList = Arrays.asList(
-                "Admin", "Docketing", "REP", "ULP", "ORG", "MED", "Employer Search", "Civil Service Commission", "CMDS"
-        );
-
-        totalRecordCount = oldUserList.size() + userList.size() + roleList.size() + oldALJList.size();
-
-        sqlRole.batchAddUserRole(roleList);
-        currentRecord = SceneUpdater.listItemFinished(control, roleList.size() + currentRecord, totalRecordCount, "Roles Finished");
-
-        //Insert ULPData Data
-        oldUserList.stream().forEach(item -> executor.submit(() -> cleanOLDUser(item)));
-        oldALJList.stream().forEach(item -> executor.submit(() -> cleanALJ(item)));
-
-        executor.shutdown();
-        // Wait until all threads are finish
-        while (!executor.isTerminated()) {
-        }
-
-        currentRecord = 0;
-        sqlUsers.batchAddUserInformation(userList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, userList.size() + currentRecord, totalRecordCount, "Users Finished");
-
-        userList.clear();
-        
-        sqlUsers.getNewDBUsers();
-        long lEndTime = System.currentTimeMillis();
-        String finishedText = "Finished Migrating Users: "
-                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
-        control.setProgressBarDisable(finishedText);
-        if (Global.isDebug() == false) {
-            sqlMigrationStatus.updateTimeCompleted("MigrateUsers");
+        try {
+            long lStartTime = System.currentTimeMillis();
+            control = controlPassed;
+            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            control.setProgressBarIndeterminate("Users Migration");
+            totalRecordCount = 0;
+            currentRecord = 0;
+            userList = sqlUsers.getSecUsers();
+            List<userModel> oldUserList = sqlUsers.getUsers();
+            if (Global.isDebug()){
+                System.out.println("Gathered Users");
+            }
+            List<oldALJModel> oldALJList = sqlALJ.getOldALJList();
+            if (Global.isDebug()){
+                System.out.println("Gathered ALJs");
+            }
+            
+            List<String> roleList = Arrays.asList(
+                    "Admin", "Docketing", "REP", "ULP", "ORG", "MED", "Employer Search", "Civil Service Commission", "CMDS", "Hearings"
+            );
+            
+            totalRecordCount = oldUserList.size() + userList.size() + roleList.size() + oldALJList.size();
+            
+            sqlRole.batchAddUserRole(roleList);
+            currentRecord = SceneUpdater.listItemFinished(control, roleList.size() + currentRecord, totalRecordCount, "Roles Finished");
+            Thread.sleep(Global.getSLEEP());
+            
+            //Clean User Data
+            oldUserList.stream().forEach(item -> executor.submit(() -> cleanOLDUser(item)));
+            oldALJList.stream().forEach(item -> executor.submit(() -> cleanALJ(item)));
+            
+            executor.shutdown();
+            // Wait until all threads are finish
+            while (!executor.isTerminated()) {
+            }
+            
+            currentRecord = 0;
+            sqlUsers.batchAddUserInformation(userList, control, currentRecord, totalRecordCount);
+            currentRecord = SceneUpdater.listItemFinished(control, userList.size() + currentRecord, totalRecordCount, "Users Finished");
+            Thread.sleep(Global.getSLEEP());
+            
+            userList.clear();
+            
+            sqlUsers.getNewDBUsers();
+            long lEndTime = System.currentTimeMillis();
+            String finishedText = "Finished Migrating Users: "
+                    + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+            control.setProgressBarDisable(finishedText);
+            if (Global.isDebug() == false) {
+                sqlMigrationStatus.updateTimeCompleted("MigrateUsers");
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(UserMigration.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -53,59 +55,80 @@ public class HearingsMigration {
     }
     
     public static void hearingsThread(MainWindowSceneController controlPassed){
-        long lStartTime = System.currentTimeMillis();
-        control = controlPassed;
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        control.setProgressBarIndeterminate("Hearings Case Migration");
-        totalRecordCount = 0;
-        currentRecord = 0;
-        
-        List<oldSMDSCaseTrackingModel> oldHearingCaseList = sqlHearingsCase.getCases();
-        List<activityModel> oldHearingsHistoryList = sqlActivity.getHearingsHistory();
-        List<oldHearingsMediationModel> oldHearingsMediationList = sqlHearingsMediation.getHearingsMediations();
-        List<HearingOutcomeModel> oldHearingOutcomeList = sqlHearingOutcome.getOutcomeList();
-                
-        //Clean ULP Case Data
-        control.setProgressBarIndeterminateCleaning("Hearing Case");
-        totalRecordCount = oldHearingCaseList.size();
-        oldHearingCaseList.stream().forEach(item -> 
-                executor.submit(() -> 
-                        migrateCase(item)));
-        
-        executor.shutdown();
-        // Wait until all threads are finish
-        while (!executor.isTerminated()) {
-        }
-                
-        currentRecord = 0;
-        totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size() 
-                + oldHearingsMediationList.size() + oldHearingOutcomeList.size() 
-                + HearingsCaseSearchList.size() + HearingsCaseList.size();
-                        
-        sqlHearingsCase.batchAddHearingsCase(HearingsCaseList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, HearingsCaseList.size() + currentRecord, totalRecordCount, "Hearing Cases Finished");        
-                
-        sqlHearingsCaseSearch.importHearingCaseSearch(HearingsCaseSearchList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, HearingsCaseSearchList.size() + currentRecord, totalRecordCount, "Hearing Case Search Finished");        
-                        
-        sqlHearingOutcome.batchAddOutcome(oldHearingOutcomeList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, oldHearingOutcomeList.size() + currentRecord, totalRecordCount, "Hearing Outcomes Finished");
-        
-        sqlActivity.batchAddActivity(oldHearingsHistoryList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, oldHearingsHistoryList.size() + currentRecord, totalRecordCount, "Hearing Activities Finished");
-        
-        sqlHearingsMediation.batchAddOldHearingsMediation(oldHearingsMediationList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, oldHearingsMediationList.size() + currentRecord, totalRecordCount, "Hearing Mediations Finished");
-        
-        HearingsCaseSearchList.clear();
-        HearingsCaseList.clear();
-        
-        long lEndTime = System.currentTimeMillis();
-        String finishedText = "Finished Migrating Hearings Cases: " 
-                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
-        control.setProgressBarDisable(finishedText);
-        if (Global.isDebug() == false){
-            sqlMigrationStatus.updateTimeCompleted("MigrateHearingsCases");
+        try {
+            long lStartTime = System.currentTimeMillis();
+            control = controlPassed;
+            ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+            control.setProgressBarIndeterminate("Hearings Case Migration");
+            totalRecordCount = 0;
+            currentRecord = 0;
+            
+            List<oldSMDSCaseTrackingModel> oldHearingCaseList = sqlHearingsCase.getCases();
+            if (Global.isDebug()){
+                System.out.println("Gathered Hearing Cases");
+            }
+            List<activityModel> oldHearingsHistoryList = sqlActivity.getHearingsHistory();
+            if (Global.isDebug()){
+                System.out.println("Gathered Hearing History");
+            }
+            List<oldHearingsMediationModel> oldHearingsMediationList = sqlHearingsMediation.getHearingsMediations();
+            if (Global.isDebug()){
+                System.out.println("Gathered Hearing Mediations");
+            }
+            List<HearingOutcomeModel> oldHearingOutcomeList = sqlHearingOutcome.getOutcomeList();
+            if (Global.isDebug()){
+                System.out.println("Gathered Hearing Outcomes");
+            }
+            
+            //Clean ULP Case Data
+            control.setProgressBarIndeterminateCleaning("Hearing Case");
+            totalRecordCount = oldHearingCaseList.size();
+            oldHearingCaseList.stream().forEach(item ->
+                    executor.submit(() ->
+                            migrateCase(item)));
+            
+            executor.shutdown();
+            // Wait until all threads are finish
+            while (!executor.isTerminated()) {
+            }
+            
+            currentRecord = 0;
+            totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size()
+                    + oldHearingsMediationList.size() + oldHearingOutcomeList.size()
+                    + HearingsCaseSearchList.size() + HearingsCaseList.size();
+            
+            sqlHearingsCase.batchAddHearingsCase(HearingsCaseList, control, currentRecord, totalRecordCount);
+            currentRecord = SceneUpdater.listItemFinished(control, HearingsCaseList.size() + currentRecord, totalRecordCount, "Hearing Cases Finished");
+            Thread.sleep(1000);
+            
+            sqlHearingsCaseSearch.importHearingCaseSearch(HearingsCaseSearchList, control, currentRecord, totalRecordCount);
+            currentRecord = SceneUpdater.listItemFinished(control, HearingsCaseSearchList.size() + currentRecord, totalRecordCount, "Hearing Case Search Finished");
+            Thread.sleep(1000);
+            
+            sqlHearingOutcome.batchAddOutcome(oldHearingOutcomeList, control, currentRecord, totalRecordCount);
+            currentRecord = SceneUpdater.listItemFinished(control, oldHearingOutcomeList.size() + currentRecord, totalRecordCount, "Hearing Outcomes Finished");
+            Thread.sleep(1000);
+            
+            sqlActivity.batchAddActivity(oldHearingsHistoryList, control, currentRecord, totalRecordCount);
+            currentRecord = SceneUpdater.listItemFinished(control, oldHearingsHistoryList.size() + currentRecord, totalRecordCount, "Hearing Activities Finished");
+            Thread.sleep(1000);
+            
+            sqlHearingsMediation.batchAddOldHearingsMediation(oldHearingsMediationList, control, currentRecord, totalRecordCount);
+            currentRecord = SceneUpdater.listItemFinished(control, oldHearingsMediationList.size() + currentRecord, totalRecordCount, "Hearing Mediations Finished");
+            Thread.sleep(1000);
+            
+            HearingsCaseSearchList.clear();
+            HearingsCaseList.clear();
+            
+            long lEndTime = System.currentTimeMillis();
+            String finishedText = "Finished Migrating Hearings Cases: "
+                    + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+            control.setProgressBarDisable(finishedText);
+            if (Global.isDebug() == false){
+                sqlMigrationStatus.updateTimeCompleted("MigrateHearingsCases");
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(HearingsMigration.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
         

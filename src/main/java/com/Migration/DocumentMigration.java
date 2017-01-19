@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -43,48 +45,58 @@ public class DocumentMigration {
     }
 
     public static void docThread(MainWindowSceneController control) {
-        long lStartTime = System.currentTimeMillis();
-        control.setProgressBarIndeterminate("Documents Migration");
-        int totalRecordCount = 0;
-        int currentRecord = 0;
-        ArrayList SMDSDocXLS = read("SMDSDocuments.xlsx");
-        ArrayList CMDSReportXLS = read("CMDSReports.xlsx");
-
-        List<CMDSDocumentModel> oldCMDSDocumentList = sqlCMDSDocuments.getOldCMDSDocuments();
-        List<SMDSDocumentsModel> cleanedSMDSDocsList = new ArrayList<>();
-        List<CMDSReport> cleanedCMDSReport = new ArrayList<>();
-
-        totalRecordCount = SMDSDocXLS.size() + CMDSReportXLS.size() + oldCMDSDocumentList.size();
-
-        for (Iterator iterator = SMDSDocXLS.iterator(); iterator.hasNext();) {
-            List list = (List) iterator.next();
-            if (list.size() == 15) {
-                cleanedSMDSDocsList.add(sanitizeSMDSDocumentsFromExcel(list));
+        try {
+            long lStartTime = System.currentTimeMillis();
+            control.setProgressBarIndeterminate("Documents Migration");
+            int totalRecordCount = 0;
+            int currentRecord = 0;
+            ArrayList SMDSDocXLS = read("SMDSDocuments.xlsx");
+            ArrayList CMDSReportXLS = read("CMDSReports.xlsx");
+            
+            List<CMDSDocumentModel> oldCMDSDocumentList = sqlCMDSDocuments.getOldCMDSDocuments();
+            if (Global.isDebug()){
+                System.out.println("Gathered Documents");
+            }            
+            List<SMDSDocumentsModel> cleanedSMDSDocsList = new ArrayList<>();
+            List<CMDSReport> cleanedCMDSReport = new ArrayList<>();
+            
+            totalRecordCount = SMDSDocXLS.size() + CMDSReportXLS.size() + oldCMDSDocumentList.size();
+            
+            for (Iterator iterator = SMDSDocXLS.iterator(); iterator.hasNext();) {
+                List list = (List) iterator.next();
+                if (list.size() == 15) {
+                    cleanedSMDSDocsList.add(sanitizeSMDSDocumentsFromExcel(list));
+                }
             }
-        }
-
-        for (Iterator iterator = CMDSReportXLS.iterator(); iterator.hasNext();) {
-            List list = (List) iterator.next();
-            if (list.size() == 4) {
-                cleanedCMDSReport.add(sanitizeCMDSReportsFromExcel(list));
+            
+            for (Iterator iterator = CMDSReportXLS.iterator(); iterator.hasNext();) {
+                List list = (List) iterator.next();
+                if (list.size() == 4) {
+                    cleanedCMDSReport.add(sanitizeCMDSReportsFromExcel(list));
+                }
             }
-        }
-
-        sqlDocument.batchAddSMDSDocument(cleanedSMDSDocsList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, cleanedSMDSDocsList.size() + currentRecord, totalRecordCount, "SMDSDocuments Added");
-
-        sqlCMDSReport.batchAddCMDSReport(cleanedCMDSReport, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, cleanedCMDSReport.size() + currentRecord, totalRecordCount, "CMDSReport Added");
-
-        sqlCMDSDocuments.batchAddCMDSDocuments(oldCMDSDocumentList, control, currentRecord, totalRecordCount);
-        SceneUpdater.listItemFinished(control, oldCMDSDocumentList.size() + currentRecord, totalRecordCount, "CMDSDocuments Added");
-
-        long lEndTime = System.currentTimeMillis();
-        String finishedText = "Finished Migrating Documents: "
-                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
-        control.setProgressBarDisable(finishedText);
-        if (Global.isDebug() == false) {
-            sqlMigrationStatus.updateTimeCompleted("MigrateDocuments");
+            
+            sqlDocument.batchAddSMDSDocument(cleanedSMDSDocsList, control, currentRecord, totalRecordCount);
+            currentRecord = SceneUpdater.listItemFinished(control, cleanedSMDSDocsList.size() + currentRecord, totalRecordCount, "SMDSDocuments Added");
+            Thread.sleep(1000);
+            
+            sqlCMDSReport.batchAddCMDSReport(cleanedCMDSReport, control, currentRecord, totalRecordCount);
+            currentRecord = SceneUpdater.listItemFinished(control, cleanedCMDSReport.size() + currentRecord, totalRecordCount, "CMDSReport Added");
+            Thread.sleep(1000);
+            
+            sqlCMDSDocuments.batchAddCMDSDocuments(oldCMDSDocumentList, control, currentRecord, totalRecordCount);
+            SceneUpdater.listItemFinished(control, oldCMDSDocumentList.size() + currentRecord, totalRecordCount, "CMDSDocuments Added");
+            Thread.sleep(1000);
+            
+            long lEndTime = System.currentTimeMillis();
+            String finishedText = "Finished Migrating Documents: "
+                    + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+            control.setProgressBarDisable(finishedText);
+            if (Global.isDebug() == false) {
+                sqlMigrationStatus.updateTimeCompleted("MigrateDocuments");
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(DocumentMigration.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -14,6 +14,8 @@ import com.util.SceneUpdater;
 import com.util.StringUtilities;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -32,26 +34,40 @@ public class ContactsMigration {
     }
     
     public static void contactsThread(MainWindowSceneController control){
-        long lStartTime = System.currentTimeMillis();
-        control.setProgressBarIndeterminate("Contact Migration");
-        int totalRecordCount = 0;
-        int currentRecord = 0;
-        
-        List<casePartyModel> masterContactList = new ArrayList<>();
-        masterContactList.addAll(sqlContactList.getSERBMasterList());
-        masterContactList.addAll(sqlContactList.getPBRMasterList());
-        masterContactList.addAll(sqlContactList.getRepresentativeList());
-        totalRecordCount = masterContactList.size();
-        
-        sqlContactList.batchAddPartyInformation(masterContactList, control, currentRecord, totalRecordCount);
-        SceneUpdater.listItemFinished(control, masterContactList.size(), totalRecordCount, "Contacts Finished");
-                
-        long lEndTime = System.currentTimeMillis();
-        String finishedText = "Finished Migrating Contacts: " 
-                + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
-        control.setProgressBarDisable(finishedText);
-        if (Global.isDebug() == false){
-            sqlMigrationStatus.updateTimeCompleted("MigrateContacts");
+        try {
+            long lStartTime = System.currentTimeMillis();
+            control.setProgressBarIndeterminate("Contact Migration");
+            int totalRecordCount = 0;
+            int currentRecord = 0;
+            
+            List<casePartyModel> masterContactList = new ArrayList<>();
+            masterContactList.addAll(sqlContactList.getSERBMasterList());
+            if (Global.isDebug()){
+                System.out.println("Gathered SERB Contact List");
+            }  
+            masterContactList.addAll(sqlContactList.getPBRMasterList());
+            if (Global.isDebug()){
+                System.out.println("Gathered PBR Contact List");
+            }  
+            masterContactList.addAll(sqlContactList.getRepresentativeList());
+            if (Global.isDebug()){
+                System.out.println("Gathered Representatives");
+            }  
+            totalRecordCount = masterContactList.size();
+            
+            sqlContactList.batchAddPartyInformation(masterContactList, control, currentRecord, totalRecordCount);
+            SceneUpdater.listItemFinished(control, masterContactList.size(), totalRecordCount, "Contacts Finished");
+            Thread.sleep(1000);
+            
+            long lEndTime = System.currentTimeMillis();
+            String finishedText = "Finished Migrating Contacts: "
+                    + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
+            control.setProgressBarDisable(finishedText);
+            if (Global.isDebug() == false){
+                sqlMigrationStatus.updateTimeCompleted("MigrateContacts");
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ContactsMigration.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
