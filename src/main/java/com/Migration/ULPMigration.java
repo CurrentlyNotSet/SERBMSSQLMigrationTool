@@ -30,6 +30,7 @@ import com.sql.sqlULPData;
 import com.sql.sqlULPRecommendations;
 import com.util.Global;
 import com.util.SceneUpdater;
+import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +136,7 @@ public class ULPMigration {
         if (Global.isDebug() == false) {
             sqlMigrationStatus.updateTimeCompleted("MigrateULPCases");
         }
+        SlackNotification.sendNotification(finishedText);
     }
 
     private static void migrateCase(oldULPDataModel item) {

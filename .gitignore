@@ -1,6 +1,7 @@
 *.class
 *.jar
 DBCInfo.java
+SlackInfo.java
 /target/**
 
 # Mobile Tools for Java (J2ME)
@@ -14,3 +15,4 @@ DBCInfo.java
 hs_err_pid*
 target/classes/.netbeans_automatic_build
 target/test-classes/.netbeans_automatic_build
+SlackInfo.java

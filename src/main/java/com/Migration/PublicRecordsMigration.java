@@ -11,6 +11,7 @@ import com.sql.sqlActivity;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
 import com.util.SceneUpdater;
+import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.util.List;
 
@@ -49,5 +50,6 @@ public class PublicRecordsMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigratePublicRecords");
         }
+        SlackNotification.sendNotification(finishedText);
     }
 }

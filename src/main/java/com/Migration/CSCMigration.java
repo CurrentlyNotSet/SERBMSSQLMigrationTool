@@ -16,6 +16,7 @@ import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
 import com.util.SceneUpdater;
+import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +95,7 @@ public class CSCMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateCSCCases");
         }
+        SlackNotification.sendNotification(finishedText);
     }
         
     private static void migrateCase(oldCivilServiceCommissionModel item) {

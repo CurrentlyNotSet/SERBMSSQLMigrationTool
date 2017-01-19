@@ -31,6 +31,7 @@ import com.sql.sqlSystemEmail;
 import com.sql.sqlSystemExecutive;
 import com.util.Global;
 import com.util.SceneUpdater;
+import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.util.List;
 
@@ -151,6 +152,7 @@ public class SystemDefaultsMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateSystemDefaults");
         }
+        SlackNotification.sendNotification(finishedText);
     }
     
 }

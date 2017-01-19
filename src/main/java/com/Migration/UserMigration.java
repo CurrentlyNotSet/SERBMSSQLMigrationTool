@@ -14,6 +14,7 @@ import com.sql.sqlRole;
 import com.sql.sqlUsers;
 import com.util.Global;
 import com.util.SceneUpdater;
+import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,6 +95,7 @@ public class UserMigration {
         if (Global.isDebug() == false) {
             sqlMigrationStatus.updateTimeCompleted("MigrateUsers");
         }
+        SlackNotification.sendNotification(finishedText);
     }
 
     private static void cleanOLDUser(userModel item) {

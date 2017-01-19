@@ -17,6 +17,7 @@ import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
 import com.util.SceneUpdater;
+import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -102,6 +103,7 @@ public class EmployersMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateEmployers");
         }
+        SlackNotification.sendNotification(finishedText);
     }
         
     private static void batchMigrateBarginingUnitUnions(oldBarginingUnitNewModel old) {

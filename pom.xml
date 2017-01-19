@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+                <groupId>in.ashwanthkumar</groupId>
+                <artifactId>slack-java-webhook</artifactId>
+                <version>0.0.4</version>
+        </dependency>
+        <dependency>
             <groupId>commons-dbutils</groupId>
             <artifactId>commons-dbutils</artifactId>
             <version>1.6</version>

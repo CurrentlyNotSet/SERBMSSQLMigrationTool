@@ -36,6 +36,7 @@ import com.sql.sqlReClassCode;
 import com.sql.sqlUsers;
 import com.util.Global;
 import com.util.SceneUpdater;
+import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.util.ArrayList;
 import java.util.List;
@@ -180,6 +181,7 @@ public class CMDSMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateCMDSCases");
         }
+        SlackNotification.sendNotification(finishedText);
     }
     
     private static void migrateSearch(CMDSCaseModel item) {
