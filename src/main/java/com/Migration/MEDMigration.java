@@ -30,11 +30,13 @@ import com.sql.sqlMEDData;
 import com.sql.sqlMediator;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlRelatedCase;
+import com.util.ExcelIterator;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -93,12 +95,25 @@ public class MEDMigration {
         if (Global.isDebug()){
             System.out.println("Gathered MED History");
         }
+        List<factFinderModel> cleanedBiosList = new ArrayList<>();
+        ArrayList FactFinderBioXLS = ExcelIterator.read("FactFinderBios.xlsx");
+        
+        for (Iterator iterator = FactFinderBioXLS.iterator(); iterator.hasNext();) {
+            List list = (List) iterator.next();
+            if (list.size() == 4) {
+                cleanedBiosList.add(sanitizeCMDSReportsFromExcel(list));
+            }
+        }
+        if (Global.isDebug()){
+            System.out.println("Gathered Fact Finder Bios List");
+        }
         
         totalRecordCount = oldMediatorsList.size();
         
         sqlMediator.batchAddMediator(oldMediatorsList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldMediatorsList.size(), totalRecordCount, "Mediators Finished");
         newMediatorsList = sqlMediator.getNewMediator();
+        
         
         //Clean MED Case Data
         currentRecord = 0;
@@ -121,9 +136,9 @@ public class MEDMigration {
         sqlActivity.batchAddActivity(MEDCaseHistoryList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + MEDCaseHistoryList.size() - 1, totalRecordCount, "MED Activities Finished");
         
-        sqlFactFinder.batchAddFactFinder(oldFactFindersList, control, currentRecord, totalRecordCount);
+        sqlFactFinder.batchAddFactFinder(oldFactFindersList, cleanedBiosList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldFactFindersList.size(), totalRecordCount, "Fact Finders Finished");
-        
+                
         sqlJurisdiction.batchAddJurisdiction(oldjurisdictionList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldjurisdictionList.size(), totalRecordCount, "Jurisdictions Finished");
         
@@ -561,4 +576,15 @@ public class MEDMigration {
             EmployerSearchList.add(search);
         }
     }
+    
+    private static factFinderModel sanitizeCMDSReportsFromExcel(List list) {
+        factFinderModel item = new factFinderModel();
+        item.setFirstName(list.get(0).toString().trim().equals("NULL") ? "" : list.get(0).toString().trim());
+        item.setMiddleName(list.get(1).toString().trim().equals("NULL") ? "" : list.get(1).toString().trim());
+        item.setLastName(list.get(2).toString().trim().equals("NULL") ? "" : list.get(2).toString().trim());
+        item.setBioFileName(list.get(3).toString().trim().equals("NULL") ? "" : list.get(3).toString().trim());
+        
+        return item;
+    }
+    
 }

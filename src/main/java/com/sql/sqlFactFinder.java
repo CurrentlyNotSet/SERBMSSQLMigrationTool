@@ -64,7 +64,7 @@ public class sqlFactFinder {
         return list;
     }
     
-    public static void batchAddFactFinder(List<factFinderModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+    public static void batchAddFactFinder(List<factFinderModel> list, List<factFinderModel> BiosList, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
         PreparedStatement ps = null;
@@ -83,12 +83,13 @@ public class sqlFactFinder {
                     + "state, "     //10
                     + "zip, "       //11
                     + "email, "     //12
-                    + "phone "      //13
+                    + "phone, "     //13
+                    + "bioFileName "//14
                     + ") VALUES (";
-                    for(int i=0; i<12; i++){
-                        sql += "?, ";   //01-12
+                    for(int i=0; i<13; i++){
+                        sql += "?, ";   //01-13
                     }
-                     sql += "?)";   //13
+                     sql += "?)";   //14
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
             
@@ -129,6 +130,15 @@ public class sqlFactFinder {
                     item.setState("KY");
                 }                
                 
+                for (factFinderModel bio : BiosList){
+                    if (bio.getFirstName().equals(item.getFirstName() == null ? "" : item.getFirstName()) 
+                            && bio.getMiddleName().equals(item.getMiddleName() == null ? "" : item.getMiddleName())
+                            && bio.getLastName().equals(item.getLastName() == null ? "" : item.getLastName())){
+                        item.setBioFileName(bio.getBioFileName());
+                        break;
+                    }
+                }                
+                
                 ps.setInt   ( 1, item.getActive());
                 ps.setString( 2, StringUtils.left(item.getStatus(), 1));
                 ps.setString( 3, StringUtils.left(item.getFirstName(), 100));
@@ -141,7 +151,8 @@ public class sqlFactFinder {
                 ps.setString(10, StringUtils.left(item.getState(), 2));
                 ps.setString(11, StringUtils.left(item.getZip(), 15));
                 ps.setString(12, StringUtils.left(item.getEmail(), 200));
-                ps.setString(13, StringUtils.left(item.getPhoneNumber(), 255));
+                ps.setString(13, StringUtils.left(item.getPhoneNumber(), 20));
+                ps.setString(14, StringUtils.left(item.getBioFileName(), 255));
                 ps.addBatch();
                     if (++count % Global.getBATCH_SIZE() == 0) {
                         ps.executeBatch();

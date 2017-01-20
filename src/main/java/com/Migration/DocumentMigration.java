@@ -13,6 +13,7 @@ import com.sql.sqlCMDSDocuments;
 import com.sql.sqlCMDSReport;
 import com.sql.sqlDocument;
 import com.sql.sqlMigrationStatus;
+import com.util.ExcelIterator;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.SlackNotification;
@@ -48,8 +49,8 @@ public class DocumentMigration {
         control.setProgressBarIndeterminate("Documents Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
-        ArrayList SMDSDocXLS = read("SMDSDocuments.xlsx");
-        ArrayList CMDSReportXLS = read("CMDSReports.xlsx");
+        ArrayList SMDSDocXLS = ExcelIterator.read("SMDSDocuments.xlsx");
+        ArrayList CMDSReportXLS = ExcelIterator.read("CMDSReports.xlsx");
         List<CMDSDocumentModel> oldCMDSDocumentList = sqlCMDSDocuments.getOldCMDSDocuments();
         if (Global.isDebug()){
             System.out.println("Gathered Documents");
@@ -90,29 +91,6 @@ public class DocumentMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateDocuments");
         }
         SlackNotification.sendNotification(finishedText);
-    }
-
-    public static ArrayList read(String fileName) {
-        ArrayList cellVectorHolder = new ArrayList();
-        try {
-            FileInputStream myInput = new FileInputStream(fileName);
-            XSSFWorkbook myWorkBook = new XSSFWorkbook(myInput);
-            XSSFSheet mySheet = myWorkBook.getSheetAt(0);
-            Iterator rowIter = mySheet.rowIterator();
-            while (rowIter.hasNext()) {
-                XSSFRow myRow = (XSSFRow) rowIter.next();
-                Iterator cellIter = myRow.cellIterator();
-                List list = new ArrayList();
-                while (cellIter.hasNext()) {
-                    XSSFCell myCell = (XSSFCell) cellIter.next();
-                    list.add(myCell);
-                }
-                cellVectorHolder.add(list);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return cellVectorHolder;
     }
 
     private static SMDSDocumentsModel sanitizeSMDSDocumentsFromExcel(List list) {

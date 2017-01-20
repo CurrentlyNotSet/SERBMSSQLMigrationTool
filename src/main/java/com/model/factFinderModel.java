@@ -25,6 +25,7 @@ public class factFinderModel {
     private String Zip;
     private String Email;
     private String PhoneNumber;
+    private String bioFileName;
 
     public int getId() {
         return id;
@@ -136,6 +137,14 @@ public class factFinderModel {
 
     public void setPhoneNumber(String PhoneNumber) {
         this.PhoneNumber = PhoneNumber;
+    }
+
+    public String getBioFileName() {
+        return bioFileName;
+    }
+
+    public void setBioFileName(String bioFileName) {
+        this.bioFileName = bioFileName;
     }
     
     
