@@ -5,12 +5,12 @@
  */
 package com.Migration;
 
+import com.model.HearingOutcomeModel;
 import com.model.HearingsCaseModel;
 import com.model.HearingsCaseSearchModel;
+import com.model.activityModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
-import com.model.HearingOutcomeModel;
-import com.model.activityModel;
 import com.model.oldHearingsMediationModel;
 import com.model.oldSMDSCaseTrackingModel;
 import com.model.userModel;
@@ -118,7 +118,7 @@ public class HearingsMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateHearingsCases");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
         
     private static void migrateCase(oldSMDSCaseTrackingModel item) {

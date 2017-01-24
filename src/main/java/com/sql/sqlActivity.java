@@ -11,6 +11,7 @@ import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
 import com.util.Global;
 import com.util.SceneUpdater;
+import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -86,11 +87,11 @@ public class sqlActivity {
             ps.executeBatch();
             conn.commit();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
             try {
                 conn.rollback();
             } catch (SQLException ex1) {
-                ex1.printStackTrace();
+                SlackNotification.sendNotification(ex1);
             }
         } finally {
             DbUtils.closeQuietly(ps);
@@ -130,7 +131,7 @@ public class sqlActivity {
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);
@@ -171,7 +172,7 @@ public class sqlActivity {
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);
@@ -212,7 +213,7 @@ public class sqlActivity {
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);
@@ -257,7 +258,7 @@ public class sqlActivity {
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);
@@ -332,7 +333,7 @@ public class sqlActivity {
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);
@@ -370,7 +371,7 @@ public class sqlActivity {
                 list.add(item);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);
@@ -415,7 +416,7 @@ public class sqlActivity {
                 list.add(item);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);
@@ -465,7 +466,7 @@ public class sqlActivity {
                 list.add(item);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);

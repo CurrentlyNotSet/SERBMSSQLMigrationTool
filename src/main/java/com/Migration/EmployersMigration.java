@@ -103,7 +103,7 @@ public class EmployersMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateEmployers");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
         
     private static void batchMigrateBarginingUnitUnions(oldBarginingUnitNewModel old) {

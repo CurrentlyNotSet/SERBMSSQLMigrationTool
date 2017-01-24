@@ -18,8 +18,8 @@ import com.sql.sqlBlobFile;
 import com.sql.sqlCaseParty;
 import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
-import com.sql.sqlORGParentChildLink;
 import com.sql.sqlORGCase;
+import com.sql.sqlORGParentChildLink;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.SlackNotification;
@@ -113,7 +113,7 @@ public class ORGMigration {
         if (Global.isDebug() == false) {
             sqlMigrationStatus.updateTimeCompleted("MigrateORGCases");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
 
     private static void migrateCase(oldEmployeeOrgModel item, List<employersModel> employerReference) {

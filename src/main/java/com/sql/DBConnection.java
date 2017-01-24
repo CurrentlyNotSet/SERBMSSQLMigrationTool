@@ -7,6 +7,7 @@ package com.sql;
 
 import com.util.AlertDialog;
 import com.util.DBCInfo;
+import com.util.SlackNotification;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -27,7 +28,7 @@ public class DBConnection {
                 break;
             } catch (ClassNotFoundException | SQLException e) {
                 nbAttempts++;
-                System.out.println(e.getMessage());
+                SlackNotification.sendNotification(e);
                 if (nbAttempts == 2) {
                     AlertDialog.StaticAlert(3, "Warning", "Database Connection Error",
                             "Unable to connect to server. Please verify network connection "
@@ -36,7 +37,7 @@ public class DBConnection {
                 try {
                     Thread.sleep(3000);
                 } catch (Exception exi) {
-                    System.err.println(exi.getMessage());
+                    SlackNotification.sendNotification(exi);
                 }
                 if (nbAttempts == 3) {
                     AlertDialog.StaticAlert(4, "Error", "Database Connection Error",

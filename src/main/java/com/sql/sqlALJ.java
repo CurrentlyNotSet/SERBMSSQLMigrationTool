@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.oldALJModel;
 import com.util.DBCInfo;
+import com.util.SlackNotification;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -51,7 +52,7 @@ public class sqlALJ {
                 list.add(item);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);

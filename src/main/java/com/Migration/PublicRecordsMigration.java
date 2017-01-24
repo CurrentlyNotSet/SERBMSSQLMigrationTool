@@ -50,6 +50,6 @@ public class PublicRecordsMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigratePublicRecords");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
 }

@@ -5,15 +5,16 @@
  */
 package com.Migration;
 
-import com.model.boardAcionTypeModel;
+import com.model.REPCaseModel;
+import com.model.REPCaseSearchModel;
 import com.model.REPCaseStatusModel;
 import com.model.REPCaseTypeModel;
 import com.model.REPElectionMultiCaseModel;
 import com.model.REPElectionSiteInformationModel;
 import com.model.REPMediationModel;
 import com.model.REPRecommendationModel;
-import com.model.REPCaseModel;
 import com.model.activityModel;
+import com.model.boardAcionTypeModel;
 import com.model.boardMeetingModel;
 import com.model.caseNumberModel;
 import com.model.casePartyModel;
@@ -21,7 +22,6 @@ import com.model.employerCaseSearchModel;
 import com.model.oldBlobFileModel;
 import com.model.oldREPDataModel;
 import com.model.relatedCaseModel;
-import com.model.REPCaseSearchModel;
 import com.model.startTimeEndTimeModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
@@ -188,7 +188,7 @@ public class REPMigration {
         if (Global.isDebug() == false) {
             sqlMigrationStatus.updateTimeCompleted("MigrateREPCases");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
 
     private static void migrateCase(oldREPDataModel item) {

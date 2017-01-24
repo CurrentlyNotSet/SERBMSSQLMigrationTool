@@ -95,7 +95,7 @@ public class CSCMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateCSCCases");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
         
     private static void migrateCase(oldCivilServiceCommissionModel item) {

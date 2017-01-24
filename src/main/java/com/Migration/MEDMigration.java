@@ -170,7 +170,7 @@ public class MEDMigration {
         if (Global.isDebug() == false) {
             sqlMigrationStatus.updateTimeCompleted("MigrateMEDCases");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
     
     private static void migrateCase(oldMEDCaseModel item) {

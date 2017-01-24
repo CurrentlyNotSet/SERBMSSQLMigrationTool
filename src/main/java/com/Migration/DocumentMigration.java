@@ -18,15 +18,9 @@ import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.SlackNotification;
 import com.util.StringUtilities;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -90,7 +84,7 @@ public class DocumentMigration {
         if (Global.isDebug() == false) {
             sqlMigrationStatus.updateTimeCompleted("MigrateDocuments");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
 
     private static SMDSDocumentsModel sanitizeSMDSDocumentsFromExcel(List list) {

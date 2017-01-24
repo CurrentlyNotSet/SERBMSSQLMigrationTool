@@ -95,7 +95,7 @@ public class UserMigration {
         if (Global.isDebug() == false) {
             sqlMigrationStatus.updateTimeCompleted("MigrateUsers");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
 
     private static void cleanOLDUser(userModel item) {

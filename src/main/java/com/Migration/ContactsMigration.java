@@ -63,7 +63,7 @@ public class ContactsMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateContacts");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
     
 }

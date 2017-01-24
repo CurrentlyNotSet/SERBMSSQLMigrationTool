@@ -12,11 +12,11 @@ import com.model.CMDSHistoryCategoryModel;
 import com.model.CMDSHistoryDescriptionModel;
 import com.model.CMDSResultModel;
 import com.model.CMDSStatusTypeModel;
-import com.model.casePartyModel;
 import com.model.DirectorsModel;
 import com.model.ReClassCodeModel;
 import com.model.activityModel;
 import com.model.appealCourtModel;
+import com.model.casePartyModel;
 import com.model.userModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
@@ -181,7 +181,7 @@ public class CMDSMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateCMDSCases");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
     
     private static void migrateSearch(CMDSCaseModel item) {

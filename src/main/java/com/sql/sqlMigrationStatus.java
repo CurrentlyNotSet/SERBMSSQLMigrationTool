@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.migrationStatusModel;
 import com.util.DBCInfo;
+import com.util.SlackNotification;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -49,7 +50,7 @@ public class sqlMigrationStatus {
                 item = null;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);
@@ -68,7 +69,7 @@ public class sqlMigrationStatus {
             ps = conn.prepareStatement(sql);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);
@@ -88,7 +89,7 @@ public class sqlMigrationStatus {
             rs.next();
             count = rs.getLong("row");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);
@@ -108,7 +109,7 @@ public class sqlMigrationStatus {
             ps = conn.prepareStatement(sql);
             ps.executeUpdate();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);

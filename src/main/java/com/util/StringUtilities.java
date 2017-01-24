@@ -19,8 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -62,7 +60,7 @@ public class StringUtilities {
                     return blobString.trim();
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                SlackNotification.sendNotification(ex);
                 return null;
             }
         }
@@ -88,7 +86,7 @@ public class StringUtilities {
                     Date parsedDate = dateFormat.parse(date.getYear() + "-" + date.getMonth() + "-" + date.getDay());
                     return new Timestamp(parsedDate.getTime());
                 } catch (ParseException ex) {
-                    Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                    SlackNotification.sendNotification(ex);
                     return null;
                 }
             }
@@ -115,7 +113,7 @@ public class StringUtilities {
                     Date parsedDate = dateFormat.parse(date.getYear() + "-" + date.getMonth() + "-" + date.getDay());
                     return new java.sql.Date(parsedDate.getTime());
                 } catch (ParseException ex) {
-                    Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                    SlackNotification.sendNotification(ex);
                     return null;
                 }
             }

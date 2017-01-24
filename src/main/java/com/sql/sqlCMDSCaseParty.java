@@ -7,6 +7,7 @@ package com.sql;
 
 import com.model.casePartyModel;
 import com.util.DBCInfo;
+import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -73,7 +74,7 @@ public class sqlCMDSCaseParty {
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);
@@ -112,7 +113,7 @@ public class sqlCMDSCaseParty {
                 list.add(item);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(ps);

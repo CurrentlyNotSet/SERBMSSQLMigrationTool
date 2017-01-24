@@ -39,7 +39,7 @@ public class ExcelIterator {
                 cellVectorHolder.add(list);
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            SlackNotification.sendNotification(ex);
         }
         return cellVectorHolder;
     }

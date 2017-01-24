@@ -136,7 +136,7 @@ public class ULPMigration {
         if (Global.isDebug() == false) {
             sqlMigrationStatus.updateTimeCompleted("MigrateULPCases");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
 
     private static void migrateCase(oldULPDataModel item) {

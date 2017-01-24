@@ -8,13 +8,13 @@ package com.Migration;
 import com.model.NextCaseNumberModel;
 import com.model.administrationInformationModel;
 import com.model.caseTypeModel;
-import com.model.systemEmailModel;
 import com.model.deptInStateModel;
 import com.model.hearingRoomModel;
 import com.model.hearingTypeModel;
 import com.model.historyTypeModel;
 import com.model.oldCountyModel;
 import com.model.partyTypeModel;
+import com.model.systemEmailModel;
 import com.model.systemExecutiveModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivityType;
@@ -152,7 +152,7 @@ public class SystemDefaultsMigration {
         if (Global.isDebug() == false){
             sqlMigrationStatus.updateTimeCompleted("MigrateSystemDefaults");
         }
-        SlackNotification.sendNotification(finishedText);
+        SlackNotification.sendBasicNotification(finishedText);
     }
     
 }
