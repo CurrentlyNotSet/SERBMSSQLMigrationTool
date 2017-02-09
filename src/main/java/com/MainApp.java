@@ -6,6 +6,7 @@ import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -21,6 +22,8 @@ public class MainApp extends Application {
         controller.setDefaults(stage, controller);
 
         Scene scene = new Scene(root);
+        stage.setTitle("Database Migration Tool");
+        stage.getIcons().add(new Image("/image/database-5-xxl.png"));
         stage.setScene(scene);
         stage.setResizable(false);
         stage.initStyle(StageStyle.DECORATED);
