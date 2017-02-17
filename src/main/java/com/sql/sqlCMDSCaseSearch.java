@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author User
  */
 public class sqlCMDSCaseSearch {
-    
+
     public static void batchAddCaseSearch(List<CMDSCaseSearchModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
@@ -40,23 +40,23 @@ public class sqlCMDSCaseSearch {
                     + "alj, "       //07
                     + "dateOpened " //08
                     + ") VALUES (";
-                    for(int i=0; i<7; i++){
-                        sql += "?, ";   //01-07
-                    }
-                     sql += "?)"; //08
+            for (int i = 0; i < 7; i++) {
+                sql += "?, ";   //01-07
+            }
+            sql += "?)"; //08
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
-            
-            for (CMDSCaseSearchModel item : list){
-            ps.setString(1, StringUtils.left(item.getCaseYear(), 4));
-            ps.setString(2, StringUtils.left(item.getCaseType(), 4));
-            ps.setString(3, StringUtils.left(item.getCaseMonth(), 2));
-            ps.setString(4, StringUtils.left(item.getCaseNumber(), 4));
-            ps.setString(5, item.getAppellant());
-            ps.setString(6, item.getAppellee());
-            ps.setString(7, item.getAlj());
-            ps.setDate  (8, item.getDateOpened());
-            ps.addBatch();
+            for (CMDSCaseSearchModel item : list) {
+
+                ps.setString(1, StringUtils.left(item.getCaseYear(), 4));
+                ps.setString(2, StringUtils.left(item.getCaseType(), 4));
+                ps.setString(3, StringUtils.left(item.getCaseMonth(), 2));
+                ps.setString(4, StringUtils.left(item.getCaseNumber(), 4));
+                ps.setString(5, item.getAppellant());
+                ps.setString(6, item.getAppellee());
+                ps.setString(7, item.getAlj());
+                ps.setDate(8, item.getDateOpened());
+                ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
                     currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");

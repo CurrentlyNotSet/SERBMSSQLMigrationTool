@@ -27,6 +27,8 @@ public class activityModel {
     private String comment;
     private int redacted;
     private int awaitingTimeStamp;
+    private boolean active;
+    private boolean mailLog;
 
     public int getId() {
         return id;
@@ -146,6 +148,22 @@ public class activityModel {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isMailLog() {
+        return mailLog;
+    }
+
+    public void setMailLog(boolean mailLog) {
+        this.mailLog = mailLog;
     }
     
 }

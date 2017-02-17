@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author Andrew
  */
 public class sqlActivity {
-        
+
     public static void batchAddActivity(List<activityModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
@@ -37,28 +37,30 @@ public class sqlActivity {
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
             String sql = "Insert INTO Activity ("
-                    + "caseYear, "        //01
-                    + "caseType, "        //02
-                    + "caseMonth, "       //03
-                    + "caseNumber, "      //04
-                    + "userID, "          //05
-                    + "date, "            //06
-                    + "action, "          //07
-                    + "fileName, "        //08
-                    + "[from], "          //09
-                    + "[to], "            //10
-                    + "type, "            //11
-                    + "comment, "         //12
-                    + "redacted, "        //13
-                    + "awaitingTimeStamp "//14
+                    + "caseYear, "         //01
+                    + "caseType, "         //02
+                    + "caseMonth, "        //03
+                    + "caseNumber, "       //04
+                    + "userID, "           //05
+                    + "date, "             //06
+                    + "action, "           //07
+                    + "fileName, "         //08
+                    + "[from], "           //09
+                    + "[to], "             //10
+                    + "type, "             //11
+                    + "comment, "          //12
+                    + "redacted, "         //13
+                    + "awaitingTimeStamp, "//14
+                    + "active, "           //15
+                    + "mailLog "           //16
                     + ") VALUES (";
-                    for(int i=0; i<13; i++){
-                        sql += "?, ";   //01-13
+                    for(int i=0; i<15; i++){
+                        sql += "?, ";   //01-15
                     }
-                     sql += "?)"; //14
+                     sql += "?)"; //16
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
-            
+
             for (activityModel item : list){
                 ps.setString   ( 1, StringUtils.left(item.getCaseYear(), 4));
                 ps.setString   ( 2, StringUtils.left(item.getCaseType(), 3));
@@ -78,6 +80,8 @@ public class sqlActivity {
                 ps.setString   (12, item.getComment());
                 ps.setInt      (13, item.getRedacted());
                 ps.setInt      (14, item.getAwaitingTimeStamp());
+                ps.setBoolean  (15, item.isActive());
+                ps.setBoolean  (16, item.isMailLog());
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
@@ -98,7 +102,7 @@ public class sqlActivity {
             DbUtils.closeQuietly(conn);
         }
     }
-                            
+
     public static List<activityModel> getULPHistory() {
         List<activityModel> list = new ArrayList();
         Connection conn = null;
@@ -127,6 +131,8 @@ public class sqlActivity {
                     item.setComment(null);
                     item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
                     item.setAwaitingTimeStamp(0);
+                    item.setActive(rs.getInt("Active") == 1);
+                    item.setMailLog(rs.getString("MailLogDate") == null ? false : !rs.getString("MailLogDate").equals(""));
                     list.add(item);
                 }
             }
@@ -139,7 +145,7 @@ public class sqlActivity {
         }
         return list;
     }
-    
+
     public static List<activityModel> getMEDHistory() {
         List<activityModel> list = new ArrayList();
         Connection conn = null;
@@ -168,6 +174,8 @@ public class sqlActivity {
                     item.setComment(null);
                     item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
                     item.setAwaitingTimeStamp(0);
+                    item.setActive(rs.getInt("Active") == 1);
+                    item.setMailLog(rs.getString("MailLogDate") == null ? false : !rs.getString("MailLogDate").equals(""));
                     list.add(item);
                 }
             }
@@ -180,7 +188,7 @@ public class sqlActivity {
         }
         return list;
     }
-    
+
     public static List<activityModel> getREPHistory() {
         List<activityModel> list = new ArrayList();
         Connection conn = null;
@@ -209,6 +217,8 @@ public class sqlActivity {
                     item.setComment(null);
                     item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
                     item.setAwaitingTimeStamp(0);
+                    item.setActive(rs.getInt("Active") == 1);
+                    item.setMailLog(rs.getString("MailLogDate") == null ? false : !rs.getString("MailLogDate").equals(""));
                     list.add(item);
                 }
             }
@@ -221,7 +231,7 @@ public class sqlActivity {
         }
         return list;
     }
-    
+
     public static List<activityModel> getHearingsHistory() {
         List<activityModel> list = new ArrayList();
         Connection conn = null;
@@ -254,6 +264,8 @@ public class sqlActivity {
                     item.setComment(null);
                     item.setRedacted(0);
                     item.setAwaitingTimeStamp(0);
+                    item.setActive(rs.getInt("Active") == 1);
+                    item.setMailLog(false);
                     list.add(item);
                 }
             }
@@ -265,8 +277,8 @@ public class sqlActivity {
             DbUtils.closeQuietly(rs);
         }
         return list;
-    }    
-    
+    }
+
     public static List<activityModel> getPublicRecords() {
         List<activityModel> list = new ArrayList();
         Connection conn = null;
@@ -329,6 +341,8 @@ public class sqlActivity {
                     item.setFileName(!"".equals(rs.getString("DocumentFileName").trim()) ? FilenameUtils.getName(rs.getString("DocumentFileName").trim()) : null);
                     item.setTo(rs.getString("EmailAddress"));
                     item.setComment(Comment.trim().equals("") ? null : Comment.trim());
+                    item.setActive(rs.getInt("Active") == 1);
+                    item.setMailLog(false);
                     list.add(item);
                 }
             }
@@ -341,7 +355,7 @@ public class sqlActivity {
         }
         return list;
     }
-    
+
     public static List<activityModel> getORGHistory() {
         List<activityModel> list = new ArrayList();
         Connection conn = null;
@@ -368,6 +382,8 @@ public class sqlActivity {
                 item.setComment(rs.getString("Note").trim().equals("null") ? "" : rs.getString("Note"));
                 item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
                 item.setAwaitingTimeStamp(0);
+                item.setActive(rs.getInt("Active") == 1);
+                item.setMailLog(rs.getString("MailLogDate") == null ? false : !rs.getString("MailLogDate").equals(""));
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -379,7 +395,7 @@ public class sqlActivity {
         }
         return list;
     }
-    
+
     public static List<activityModel> getCSCHistory() {
         List<activityModel> list = new ArrayList();
         Connection conn = null;
@@ -392,13 +408,13 @@ public class sqlActivity {
             rs = ps.executeQuery();
             while (rs.next()) {
                 activityModel item = new activityModel();
-                
+
                 String comment = !rs.getString("Note").trim().equals("null") ? rs.getString("Note").trim() : "";
                 if (!comment.trim().equals("")) {
                     comment += "/n/n";
                 }
                 comment += !rs.getString("OtherComment").trim().equals("null") ? rs.getString("OtherComment").trim() : "";
-                
+
                 item.setCaseYear(null);
                 item.setCaseType("CSC");
                 item.setCaseMonth(null);
@@ -413,6 +429,8 @@ public class sqlActivity {
                 item.setComment(comment.trim().equals("") ? null : comment);
                 item.setRedacted(0);
                 item.setAwaitingTimeStamp(0);
+                item.setActive(rs.getInt("Active") == 1);
+                item.setMailLog(true);
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -424,7 +442,7 @@ public class sqlActivity {
         }
         return list;
     }
-    
+
     public static List<activityModel> getCMDSHistory() {
         List<activityModel> list = new ArrayList();
         Connection conn = null;
@@ -452,7 +470,7 @@ public class sqlActivity {
                 } else {
                     user = rs.getString("Userinitials");
                 }
-                
+
                 item.setId(rs.getInt("CaseHistoryID"));
                 item.setCaseYear(rs.getString("Year") == null ? "" : rs.getString("Year"));
                 item.setCaseType(rs.getString("Type") == null ? "" : rs.getString("Type"));
@@ -463,6 +481,8 @@ public class sqlActivity {
                 item.setType(rs.getString("EntryType"));
                 item.setDate(rs.getString("EntryDate").length() < 10 ? null : StringUtilities.convertStringTimeStamp(rs.getString("EntryDate").substring(0, 10)));
                 item.setFileName(rs.getString("DocumentLink"));
+                item.setActive(rs.getInt("active") == 1);
+                item.setMailLog(rs.getString("MailType").equals("I"));
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -474,5 +494,5 @@ public class sqlActivity {
         }
         return list;
     }
-        
+
 }

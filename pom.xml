@@ -77,7 +77,7 @@
                             <excludes>META-INF/*.DSA</excludes>
                             <excludes>META-INF/*.RSA</excludes>
                             <excludeGroupIds>junit,org.mockito,org.hamcrest</excludeGroupIds>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
