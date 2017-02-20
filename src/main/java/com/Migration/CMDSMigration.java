@@ -250,20 +250,28 @@ public class CMDSMigration {
             File[] caseDirectories = dir.listFiles(File::isDirectory);
 
             for (File subdir : caseDirectories) {
-                String folder = subdir.toString().substring(0, subdir.toString().lastIndexOf("\\"));
-                String caseNumber = sqlCMDSCase.getCaseByYearAndSequence(folder.substring(0, 3), folder.substring(4, 7));
-                if (!caseNumber.equals("")) {
-                    File oldName = subdir;
-                    File newName = new File("newDir");
-                    if (oldName.isDirectory()) {
-                        oldName.renameTo(newName);
-                    } else {
-                        oldName.mkdir();
-                        oldName.renameTo(newName);
+                String newfolder = "";
+                String oldfolder = subdir.toString().substring(subdir.toString().lastIndexOf(File.separator), subdir.toString().length());
+                if (subdir.length() == 9){
+                    String caseNumber = sqlCMDSCase.getCaseByYearAndSequence(oldfolder.substring(1, 5), oldfolder.substring(5, 9));
+
+                    newfolder = subdir.toString().substring(0, subdir.toString().lastIndexOf(File.separator));
+
+                    if (!caseNumber.equals("")) {
+                        File oldName = subdir;
+                        File newName = new File(newfolder + File.separator + caseNumber);
+                        if (oldName.isDirectory()) {
+                            oldName.renameTo(newName);
+                        } else {
+                            oldName.mkdir();
+                            oldName.renameTo(newName);
+                        }
                     }
+                    System.out.println("Converted: " + oldfolder  + " to " + newfolder);
                 }
             }
         }
+        System.out.println("Finished Converting Case Number Folders For CMDS");
     }
 
 }
