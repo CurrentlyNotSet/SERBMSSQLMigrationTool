@@ -49,12 +49,12 @@ public class DocumentMigration {
         if (Global.isDebug()){
             System.out.println("Gathered Documents");
         }
-        
+
         List<SMDSDocumentsModel> cleanedSMDSDocsList = new ArrayList<>();
         List<CMDSReport> cleanedCMDSReport = new ArrayList<>();
-        
+
         totalRecordCount = SMDSDocXLS.size() + CMDSReportXLS.size() + oldCMDSDocumentList.size();
-        
+
         for (Iterator iterator = SMDSDocXLS.iterator(); iterator.hasNext();) {
             List list = (List) iterator.next();
             if (list.size() == 15) {
@@ -67,16 +67,20 @@ public class DocumentMigration {
                 cleanedCMDSReport.add(sanitizeCMDSReportsFromExcel(list));
             }
         }
-        
+
         sqlDocument.batchAddSMDSDocument(cleanedSMDSDocsList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, cleanedSMDSDocsList.size() + currentRecord, totalRecordCount, "SMDSDocuments Added");
-        
+
         sqlCMDSReport.batchAddCMDSReport(cleanedCMDSReport, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, cleanedCMDSReport.size() + currentRecord, totalRecordCount, "CMDSReport Added");
-        
+
         sqlCMDSDocuments.batchAddCMDSDocuments(oldCMDSDocumentList, control, currentRecord, totalRecordCount);
         SceneUpdater.listItemFinished(control, oldCMDSDocumentList.size() + currentRecord, totalRecordCount, "CMDSDocuments Added");
-        
+
+        SMDSDocXLS = null;
+        CMDSReportXLS = null;
+        oldCMDSDocumentList = null;
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Documents: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -85,11 +89,12 @@ public class DocumentMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateDocuments");
         }
         SlackNotification.sendBasicNotification(finishedText);
+        System.gc();
     }
 
     private static SMDSDocumentsModel sanitizeSMDSDocumentsFromExcel(List list) {
         SMDSDocumentsModel item = new SMDSDocumentsModel();
-        
+
         item.setSection(list.get(0).toString().trim().equals("NULL") ? null : list.get(0).toString().trim());
         item.setType(list.get(1).toString().trim().equals("NULL") ? null : list.get(1).toString().trim());
         item.setDescription(list.get(2).toString().trim().equals("NULL") ? null : list.get(2).toString().trim());
@@ -105,7 +110,7 @@ public class DocumentMigration {
         item.setParameters(list.get(12).toString().trim().equals("NULL") ? null : list.get(12).toString().trim());
         item.setEmailBody(list.get(13).toString().trim().equals("NULL") ? null : list.get(13).toString().trim());
         item.setSortOrder(list.get(14).toString().trim().equals("NULL") ? -1 : Double.valueOf(list.get(14).toString().trim()));
-        
+
         if (item.getSection() != null) {
             if (item.getSection().trim().equalsIgnoreCase("ULP") && item.getType().trim().equalsIgnoreCase("letter")) {
                 if (item.getFileName().contains("IL") || item.getFileName().contains("ILP")) {
@@ -119,7 +124,7 @@ public class DocumentMigration {
         if(item.getType().equals("Direct")) {
             item.setType("Directive");
         }
-        
+
         switch (item.getSection()) {
             case "MED":
                 item.setEmailBody(Global.getEmailBodyMED());
@@ -134,19 +139,19 @@ public class DocumentMigration {
                 item.setEmailBody(null);
                 break;
         }
-        
+
         return item;
     }
-    
+
     private static CMDSReport sanitizeCMDSReportsFromExcel(List list) {
         CMDSReport item = new CMDSReport();
         item.setSection(list.get(0).toString().trim().equals("NULL") ? null : list.get(0).toString().trim());
         item.setDescription(list.get(1).toString().trim().equals("NULL") ? null : list.get(1).toString().trim());
         item.setFileName(list.get(2).toString().trim().equals("NULL") ? null : list.get(2).toString().trim());
         item.setParameters(list.get(3).toString().trim().equals("NULL") ? null : list.get(3).toString().trim());
-        item.setActive(true); 
+        item.setActive(true);
         item.setSortOrder(-1);
-        
+
         return item;
     }
 }

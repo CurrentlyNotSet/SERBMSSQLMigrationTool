@@ -39,10 +39,10 @@ import java.util.List;
  *
  * @author Andrew
  */
-public class SystemDefaultsMigration { 
+public class SystemDefaultsMigration {
     /**
-     * 
-     * @param control 
+     *
+     * @param control
      */
     public static void migrateSystemData(MainWindowSceneController control){
         Thread sysThread = new Thread() {
@@ -53,7 +53,7 @@ public class SystemDefaultsMigration {
         };
         sysThread.start();
     }
-    
+
     public static void sysThread(MainWindowSceneController control){
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("System Migration");
@@ -107,44 +107,56 @@ public class SystemDefaultsMigration {
                 + Global.getNamePrefixList().size() + partyTypesList.size() + activityTypeList.size()
                 + caseTypeList.size() + execList.size() + systemInfoList.size() + hearingRoomList.size()
                 + hearingTypeList.size() + oldNextNumber.size();
-        
+
         //import
         sqlNextCaseNumber.batchAddNextCaseNumber(oldNextNumber, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldNextNumber.size() + currentRecord, totalRecordCount, "Next Numbers Finished");
-        
+
         sqlSystemData.batchAddCounty(oldCountiesList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldCountiesList.size() + currentRecord, totalRecordCount, "Counties Finished");
-        
+
         sqlPartyType.batchAddPartyType(partyTypesList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, partyTypesList.size() + currentRecord, totalRecordCount, "Party Type Finished");
-        
+
         sqlDeptInState.batchAddDeptInState(deptInStateList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, deptInStateList.size() + currentRecord, totalRecordCount, "Dept In State Finished");
-        
+
         sqlSystemEmail.batchAddSystemEmail(systemEmailList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, systemEmailList.size() + currentRecord, totalRecordCount, "System Email Finished");
-        
+
         sqlPreFix.batchAddNamePrefix(Global.getNamePrefixList(), control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, Global.getNamePrefixList().size() + currentRecord, totalRecordCount, "PreFixes Finished");
-        
+
         sqlActivityType.batchAddActivtyType(activityTypeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, activityTypeList.size() + currentRecord, totalRecordCount, "Activity Types Finished");
-        
+
         sqlCaseType.batchAddCaseType(caseTypeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, caseTypeList.size() + currentRecord, totalRecordCount, "Case Types Finished");
-        
+
         sqlHearingsInfo.batchAddHearingRoom(hearingRoomList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, hearingRoomList.size() + currentRecord, totalRecordCount, "Hearing Rooms Finished");
-        
+
         sqlHearingsInfo.batchAddHearingType(hearingTypeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, hearingTypeList.size() + currentRecord, totalRecordCount, "Hearing Types Finished");
-        
+
         sqlSystemExecutive.batchAddExecutive(execList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, execList.size() + currentRecord, totalRecordCount, "Execs Finished");
-        
+
         sqlAdministrationInformation.batchAddAdminInfo(systemInfoList, control, currentRecord, totalRecordCount);
         SceneUpdater.listItemFinished(control, systemInfoList.size() + currentRecord, totalRecordCount, "Admin Finished");
-        
+
+        oldCountiesList = null;
+        deptInStateList = null;
+        systemEmailList = null;
+        partyTypesList = null;
+        activityTypeList = null;
+        caseTypeList = null;
+        execList = null;
+        systemInfoList = null;
+        hearingRoomList = null;
+        hearingTypeList = null;
+        oldNextNumber = null;
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating System Defaults: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -153,6 +165,7 @@ public class SystemDefaultsMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateSystemDefaults");
         }
         SlackNotification.sendBasicNotification(finishedText);
+        System.gc();
     }
-    
+
 }

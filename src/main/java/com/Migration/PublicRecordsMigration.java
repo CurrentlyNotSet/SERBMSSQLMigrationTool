@@ -20,7 +20,7 @@ import java.util.List;
  * @author Andrew
  */
 public class PublicRecordsMigration {
-    
+
     public static void migratePublicRecordsData(final MainWindowSceneController control){
         Thread pRecordsThread = new Thread() {
             @Override
@@ -30,19 +30,21 @@ public class PublicRecordsMigration {
         };
         pRecordsThread.start();
     }
-    
+
     public static void publicRecordsThread(MainWindowSceneController control){
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("Public Records Migration");
-        
+
         List<activityModel> oldPublicRecords = sqlActivity.getPublicRecords();
         if (Global.isDebug()){
             System.out.println("Gathered Public Records");
         }
-        
+
         sqlActivity.batchAddActivity(oldPublicRecords, control, 0, oldPublicRecords.size());
         SceneUpdater.listItemFinished(control, oldPublicRecords.size(), oldPublicRecords.size(), "Public Records Finished");
-        
+
+        oldPublicRecords = null;
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Public Records: "
                 + oldPublicRecords.size() + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -51,5 +53,6 @@ public class PublicRecordsMigration {
             sqlMigrationStatus.updateTimeCompleted("MigratePublicRecords");
         }
         SlackNotification.sendBasicNotification(finishedText);
+        System.gc();
     }
 }

@@ -131,7 +131,7 @@ public class MainWindowSceneController implements Initializable {
     private void MenuExit() {
         System.exit(0);
     }
-    
+
     @FXML
     private void BatchPhaseOneMenuButton() {
         Thread phase1Thread = new Thread() {
@@ -152,7 +152,7 @@ public class MainWindowSceneController implements Initializable {
         };
         phase1Thread.start();
     }
-    
+
     @FXML
     private void BatchPhaseTwoMenuButton() {
         Thread phase1Thread = new Thread() {
@@ -174,7 +174,7 @@ public class MainWindowSceneController implements Initializable {
         };
         phase1Thread.start();
     }
-    
+
     @FXML
     private void BatchPhaseTwoPartialMenuButton() {
         Thread phase1Thread = new Thread() {
@@ -192,6 +192,11 @@ public class MainWindowSceneController implements Initializable {
             }
         };
         phase1Thread.start();
+    }
+
+    @FXML
+    private void MenuRenameFolders(){
+        CMDSMigration.renameFolders();
     }
 
     @FXML
@@ -223,7 +228,7 @@ public class MainWindowSceneController implements Initializable {
     private void migrateHearingsButton() {
         HearingsMigration.migrateHearingsData(control);
     }
-    
+
     @FXML
     private void migrateCMDSButton() {
         CMDSMigration.migrateCMDSData(control);
@@ -238,7 +243,7 @@ public class MainWindowSceneController implements Initializable {
     private void migrateUsersButton() {
         UserMigration.migrateUserData(control);
     }
-    
+
     @FXML
     private void migratePublicRecordsButton() {
         PublicRecordsMigration.migratePublicRecordsData(control);
@@ -274,7 +279,7 @@ public class MainWindowSceneController implements Initializable {
             disableAllButtons();
         });
     }
-    
+
     public void updateProgressBarProcessing(final double currentValue, final double maxValue) {
         Platform.runLater(() -> {
             progressBarLabel.setText("Processing Record: " + (int) currentValue + "/" + (int) maxValue);
@@ -288,7 +293,7 @@ public class MainWindowSceneController implements Initializable {
             progressbar.setProgress(currentValue / maxValue);
         });
     }
-    
+
     public void setProgressBarDisable(final String text) {
         Platform.runLater(() -> {
             progressBarLabel.setText(text);
@@ -326,8 +331,8 @@ public class MainWindowSceneController implements Initializable {
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigrateHearingsCases())));
         MigratePublicRecordsTextField.setText(((item.getMigratePublicRecords()== null)
                 ? "" : Global.getMmddyyyyhhmmssa().format(item.getMigratePublicRecords())));
-        
-        
+
+
         MigrateCMDSCaseButton.setDisable(item.getMigrateCMDSCases() != null);
         MigrateContactsButton.setDisable(item.getMigrateContacts() != null);
         MigrateCSCCaseButton.setDisable(item.getMigrateCSCCases() != null);

@@ -32,11 +32,11 @@ import java.util.concurrent.Executors;
  * @author Andrew
  */
 public class EmployersMigration {
-    
+
     private static int totalRecordCount = 0;
     private static int currentRecord = 0;
     private static MainWindowSceneController control;
-    private static final List<barginingUnitModel> BUList = new ArrayList<>();
+    private static List<barginingUnitModel> BUList = new ArrayList<>();
 
     public static void migrateEmployers(final MainWindowSceneController control) {
         Thread employersThread = new Thread() {
@@ -74,7 +74,7 @@ public class EmployersMigration {
         if (Global.isDebug()){
             System.out.println("Gathered Bargining Units");
         }
-        
+
         control.setProgressBarIndeterminateCleaning("Bargining Units");
         totalRecordCount = unionList.size();
         unionList.stream().forEach(item ->
@@ -84,18 +84,21 @@ public class EmployersMigration {
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
-        
+
+        unionList = null;
+
         currentRecord = 0;
-        totalRecordCount = employersList.size() + unionList.size();
-        
+        totalRecordCount = employersList.size() + BUList.size();
+
         sqlEmployers.batchAddEmployer(employersList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + employerTypeList.size(), totalRecordCount, "Employers Finished");
-        
+
         sqlBarginingUnit.batchAddBarginingUnit(BUList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + BUList.size(), totalRecordCount, "Bargining Units Finished");
-        
-        BUList.clear();
-        
+
+        BUList = null;
+        employersList = null;
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Employers: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -104,11 +107,12 @@ public class EmployersMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateEmployers");
         }
         SlackNotification.sendBasicNotification(finishedText);
+        System.gc();
     }
-        
+
     private static void batchMigrateBarginingUnitUnions(oldBarginingUnitNewModel old) {
         barginingUnitModel item = new barginingUnitModel();
-        
+
         item.setCaseRefYear(null);
         item.setCaseRefSection(null);
         item.setCaseRefMonth(null);
@@ -125,8 +129,8 @@ public class EmployersMigration {
         item.setLUnion(!"".equals(old.getLUnion().trim()) ? old.getLUnion().trim() : null);
         item.setLocal(!"".equals(old.getLocal().trim()) ? old.getLocal().trim() : null);
         item.setStrike(("Y".equals(old.getStrike().trim())) ? 1 : 0);
-        item.setLGroup(!"".equals(old.getLGroup().trim()) ? old.getLGroup().trim() : null);        
-        
+        item.setLGroup(!"".equals(old.getLGroup().trim()) ? old.getLGroup().trim() : null);
+
         Timestamp certDateTime = StringUtilities.convertStringTimeStamp(old.getCertDate());
         Date certDate = null;
         if (certDateTime != null){
@@ -134,7 +138,7 @@ public class EmployersMigration {
         }
         item.setCertDate(certDate);
         item.setEnabled(("Y".equals(old.getEnabled().trim())) ? 1 : 0);
-        
+
         String[] bunnum = (item.getEmployerNumber()+"-"+item.getUnitNumber()).split("-");
         List<oldBlobFileModel>oldBlobFileList = sqlBlobFile.getOldBlobDataBUDectioption(bunnum);
         for (oldBlobFileModel blob : oldBlobFileList) {
@@ -149,7 +153,7 @@ public class EmployersMigration {
                     break;
             }
         }
-        
+
         //Check CaseNumber
         String[] caseNumber = old.getCaseRef().split("-");
         if (old.getCaseRef().trim().length() == 16 &&
@@ -163,7 +167,7 @@ public class EmployersMigration {
                 } else {
                     item.setCaseRefYear( "20" + caseNumber[0]);
                 }
-            }            
+            }
             item.setCaseRefSection(caseNumber[1]);
             item.setCaseRefMonth(caseNumber[2]);
             if (caseNumber[3].length() > 4){

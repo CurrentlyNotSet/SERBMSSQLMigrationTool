@@ -480,7 +480,7 @@ public class sqlActivity {
                 item.setUserID(StringUtilities.convertUserToID(user));
                 item.setType(rs.getString("EntryType"));
                 item.setDate(rs.getString("EntryDate").length() < 10 ? null : StringUtilities.convertStringTimeStamp(rs.getString("EntryDate").substring(0, 10)));
-                item.setFileName(rs.getString("DocumentLink"));
+                item.setFileName(!"".equals(rs.getString("DocumentLink").trim()) ? FilenameUtils.getName(rs.getString("DocumentLink").trim()) : null);
                 item.setActive(rs.getInt("active") == 1);
                 item.setMailLog(rs.getString("MailType").equals("I"));
                 list.add(item);

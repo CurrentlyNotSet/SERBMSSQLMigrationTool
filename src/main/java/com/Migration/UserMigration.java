@@ -51,7 +51,7 @@ public class UserMigration {
         totalRecordCount = 0;
         currentRecord = 0;
         userList = sqlUsers.getSecUsers();
-        
+
         List<userModel> oldUserList = sqlUsers.getUsers();
         if (Global.isDebug()){
             System.out.println("Gathered Users");
@@ -60,34 +60,34 @@ public class UserMigration {
         if (Global.isDebug()){
             System.out.println("Gathered ALJs");
         }
-        
+
         List<String> roleList = Arrays.asList(
                 "Admin", "Docketing", "REP", "ULP", "ORG", "MED", "Employer Search", "Civil Service Commission", "CMDS", "Hearings"
         );
-        
+
         totalRecordCount = oldUserList.size() + userList.size() + roleList.size() + oldALJList.size();
-        
+
         sqlRole.batchAddUserRole(roleList);
         currentRecord = SceneUpdater.listItemFinished(control, roleList.size() + currentRecord, totalRecordCount, "Roles Finished");
-        
+
         //Clean User Data
         oldUserList.stream().forEach(item -> executor.submit(() -> cleanOLDUser(item)));
         oldALJList.stream().forEach(item -> executor.submit(() -> cleanALJ(item)));
         executor.shutdown();
-        
+
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
-        
+
         currentRecord = 0;
-        
+
         sqlUsers.batchAddUserInformation(userList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, userList.size() + currentRecord, totalRecordCount, "Users Finished");
-        
-        userList.clear();
-        
+
+        userList = null;
+
         sqlUsers.getNewDBUsers();
-        
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Users: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -96,6 +96,7 @@ public class UserMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateUsers");
         }
         SlackNotification.sendBasicNotification(finishedText);
+        System.gc();
     }
 
     private static void cleanOLDUser(userModel item) {

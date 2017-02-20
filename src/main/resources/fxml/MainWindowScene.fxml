@@ -27,6 +27,7 @@
                     <menus>
                         <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
                             <items>
+                        <MenuItem mnemonicParsing="false" onAction="#MenuRenameFolders" text="ReName CMDS Folders" />
                         <MenuItem mnemonicParsing="false" onAction="#MenuExit" text="Close" />
                             </items>
                         </Menu>

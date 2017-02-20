@@ -21,7 +21,7 @@ import java.util.List;
  * @author Andrew
  */
 public class ContactsMigration {
-    
+
     public static void migrateContacts(final MainWindowSceneController control){
         Thread contactsThread = new Thread() {
             @Override
@@ -31,13 +31,13 @@ public class ContactsMigration {
         };
         contactsThread.start();
     }
-    
+
     public static void contactsThread(MainWindowSceneController control){
         long lStartTime = System.currentTimeMillis();
         control.setProgressBarIndeterminate("Contact Migration");
         int totalRecordCount = 0;
         int currentRecord = 0;
-        
+
         List<casePartyModel> masterContactList = new ArrayList<>();
         masterContactList.addAll(sqlContactList.getSERBMasterList());
         if (Global.isDebug()){
@@ -52,10 +52,12 @@ public class ContactsMigration {
             System.out.println("Gathered Representatives");
         }
         totalRecordCount = masterContactList.size();
-        
+
         sqlContactList.batchAddPartyInformation(masterContactList, control, currentRecord, totalRecordCount);
         SceneUpdater.listItemFinished(control, masterContactList.size(), totalRecordCount, "Contacts Finished");
-        
+
+        masterContactList = null;
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Contacts: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -64,6 +66,7 @@ public class ContactsMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateContacts");
         }
         SlackNotification.sendBasicNotification(finishedText);
+        System.gc();
     }
-    
+
 }

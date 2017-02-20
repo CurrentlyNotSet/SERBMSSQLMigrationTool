@@ -36,13 +36,13 @@ import java.util.concurrent.Executors;
  * @author Andrew
  */
 public class HearingsMigration {
-    
+
     private static int totalRecordCount = 0;
     private static int currentRecord = 0;
     private static MainWindowSceneController control;
-    private static final List<HearingsCaseModel> HearingsCaseList = new ArrayList<>();
-    private static final List<HearingsCaseSearchModel> HearingsCaseSearchList = new ArrayList<>();
-    
+    private static List<HearingsCaseModel> HearingsCaseList = new ArrayList<>();
+    private static List<HearingsCaseSearchModel> HearingsCaseSearchList = new ArrayList<>();
+
     public static void migrateHearingsData(final MainWindowSceneController control){
         Thread hearingThread = new Thread() {
             @Override
@@ -50,9 +50,9 @@ public class HearingsMigration {
                 hearingsThread(control);
             }
         };
-        hearingThread.start();        
+        hearingThread.start();
     }
-    
+
     public static void hearingsThread(MainWindowSceneController controlPassed){
         long lStartTime = System.currentTimeMillis();
         control = controlPassed;
@@ -76,7 +76,7 @@ public class HearingsMigration {
         if (Global.isDebug()){
             System.out.println("Gathered Hearing Outcomes");
         }
-        
+
         //Clean ULP Case Data
         control.setProgressBarIndeterminateCleaning("Hearing Case");
         totalRecordCount = oldHearingCaseList.size();
@@ -87,30 +87,35 @@ public class HearingsMigration {
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
-        
+
+        oldHearingCaseList = null;
+
         currentRecord = 0;
         totalRecordCount = oldHearingCaseList.size() + oldHearingsHistoryList.size()
                 + oldHearingsMediationList.size() + oldHearingOutcomeList.size()
                 + HearingsCaseSearchList.size() + HearingsCaseList.size();
-        
+
         sqlHearingsCase.batchAddHearingsCase(HearingsCaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, HearingsCaseList.size() + currentRecord, totalRecordCount, "Hearing Cases Finished");
-        
+
         sqlHearingsCaseSearch.importHearingCaseSearch(HearingsCaseSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, HearingsCaseSearchList.size() + currentRecord, totalRecordCount, "Hearing Case Search Finished");
-        
+
         sqlHearingOutcome.batchAddOutcome(oldHearingOutcomeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldHearingOutcomeList.size() + currentRecord, totalRecordCount, "Hearing Outcomes Finished");
-        
+
         sqlActivity.batchAddActivity(oldHearingsHistoryList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldHearingsHistoryList.size() + currentRecord, totalRecordCount, "Hearing Activities Finished");
-        
+
         sqlHearingsMediation.batchAddOldHearingsMediation(oldHearingsMediationList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldHearingsMediationList.size() + currentRecord, totalRecordCount, "Hearing Mediations Finished");
-        
-        HearingsCaseSearchList.clear();
-        HearingsCaseList.clear();
-        
+
+        HearingsCaseSearchList = null;
+        HearingsCaseList = null;
+        oldHearingsHistoryList = null;
+        oldHearingsMediationList = null;
+        oldHearingOutcomeList = null;
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating Hearings Cases: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -119,8 +124,9 @@ public class HearingsMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateHearingsCases");
         }
         SlackNotification.sendBasicNotification(finishedText);
+        System.gc();
     }
-        
+
     private static void migrateCase(oldSMDSCaseTrackingModel item) {
         caseNumberModel caseNumber = null;
         if (item.getCaseNumber().trim().length() == 16) {
@@ -206,20 +212,20 @@ public class HearingsMigration {
 
         HearingsCaseList.add(item);
     }
-    
+
     private static void migrateSearchData(oldSMDSCaseTrackingModel old, caseNumberModel caseNumber) {
         HearingsCaseSearchModel item = new HearingsCaseSearchModel();
         List<casePartyModel> partyList = sqlCaseParty.getCasePartyFromParties(
                 caseNumber.getCaseYear(), caseNumber.getCaseType(), caseNumber.getCaseMonth(), caseNumber.getCaseNumber());
         String partyNames = "";
         String ALJName = "";
-        
+
         if (!old.getALJInitials().trim().equals("")) {
             for (userModel user : Global.getUserList()) {
                 if (user.getLastName().equalsIgnoreCase(old.getALJInitials()) || user.getInitials().equalsIgnoreCase(old.getALJInitials())) {
                     ALJName = StringUtilities.buildFullName(
-                            user.getFirstName() == null ? "" : user.getFirstName(), 
-                            user.getMiddleInitial() == null ? "" : user.getMiddleInitial(), 
+                            user.getFirstName() == null ? "" : user.getFirstName(),
+                            user.getMiddleInitial() == null ? "" : user.getMiddleInitial(),
                             user.getLastName() == null ? "" : user.getLastName()
                     );
                     break;
@@ -229,18 +235,18 @@ public class HearingsMigration {
 
         for (casePartyModel party : partyList) {
             String partyName = StringUtilities.buildFullName(
-                    party.getFirstName() == null ? "" : party.getFirstName(), 
-                    party.getMiddleInitial() == null ? "" : party.getMiddleInitial(), 
+                    party.getFirstName() == null ? "" : party.getFirstName(),
+                    party.getMiddleInitial() == null ? "" : party.getMiddleInitial(),
                     party.getLastName() == null ? "" : party.getLastName());
             String companyName = party.getCompanyName();
-            
+
             if (!partyNames.trim().equals("") && (!partyName.trim().equals("") || !companyName.trim().equals(""))){
                 partyNames += ", ";
             }
-            
+
             partyNames +=  partyName.trim().equals("") ? companyName.trim() : partyName.trim();
         }
-        
+
         item.setCaseYear(caseNumber.getCaseYear());
         item.setCaseType(caseNumber.getCaseType());
         item.setCaseMonth(caseNumber.getCaseMonth());

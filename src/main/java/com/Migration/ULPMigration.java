@@ -46,12 +46,12 @@ public class ULPMigration {
     private static int totalRecordCount = 0;
     private static int currentRecord = 0;
     private static MainWindowSceneController control;
-    private static final List<casePartyModel> casePartyList = new ArrayList<>();
-    private static final List<ULPCaseModel> ULPCaseList = new ArrayList<>();
-    private static final List<boardMeetingModel> boardMeetingList = new ArrayList<>();
-    private static final List<relatedCaseModel> relatedCaseList = new ArrayList<>();
-    private static final List<ULPCaseSearchModel> caseSearchList = new ArrayList<>();
-    private static final List<employerCaseSearchModel> EmployerSearchList = new ArrayList<>();
+    private static List<casePartyModel> casePartyList = new ArrayList<>();
+    private static List<ULPCaseModel> ULPCaseList = new ArrayList<>();
+    private static List<boardMeetingModel> boardMeetingList = new ArrayList<>();
+    private static List<relatedCaseModel> relatedCaseList = new ArrayList<>();
+    private static List<ULPCaseSearchModel> caseSearchList = new ArrayList<>();
+    private static List<employerCaseSearchModel> EmployerSearchList = new ArrayList<>();
 
     public static void migrateULPData(MainWindowSceneController control) {
         Thread ulpThread = new Thread() {
@@ -80,7 +80,7 @@ public class ULPMigration {
         if (Global.isDebug()){
             System.out.println("Gathered ULP Case Data");
         }
-        
+
         //Clean ULP Case Data
         control.setProgressBarIndeterminateCleaning("ULP Case");
         totalRecordCount = oldULPDataList.size();
@@ -91,44 +91,48 @@ public class ULPMigration {
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
-        
+
+        oldULPDataList = null;
+
         currentRecord = 0;
         totalRecordCount = oldULPRecsList.size() + casePartyList.size()
                 + ULPCaseList.size() + boardMeetingList.size()
                 + relatedCaseList.size() + caseSearchList.size()
                 + EmployerSearchList.size() + ULPCaseHistoryList.size();
-                
+
         sqlULPRecommendations.batchAddULPRecommendation(oldULPRecsList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldULPRecsList.size() - 1, totalRecordCount, "ULP Recommendations Finished");
-        
+
         sqlActivity.batchAddActivity(ULPCaseHistoryList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + ULPCaseHistoryList.size() - 1, totalRecordCount, "ULP Activities Finished");
-        
+
         sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + casePartyList.size() - 1, totalRecordCount, "ULP Case Parties Finished");
-        
+
         sqlULPData.batchImportULPCase(ULPCaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + ULPCaseList.size() - 1, totalRecordCount, "ULP Case Finished");
-        
+
         sqlBoardMeeting.batchAddBoardMeeting(boardMeetingList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + boardMeetingList.size() - 1, totalRecordCount, "ULP Board Meetings Finished");
-        
+
         sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "ULP Related Cases Finished");
-        
+
         sqlULPCaseSearch.batchAddULPCaseSearchCase(caseSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + caseSearchList.size() - 1, totalRecordCount, "ULP Case Search Finished");
-        
+
         sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "ULP Employer Search Finished");
-        
-        casePartyList.clear();
-        ULPCaseList.clear();
-        boardMeetingList.clear();
-        relatedCaseList.clear();
-        caseSearchList.clear();
-        EmployerSearchList.clear();
-        
+
+        casePartyList = null;
+        ULPCaseList = null;
+        boardMeetingList = null;
+        relatedCaseList = null;
+        caseSearchList = null;
+        EmployerSearchList = null;
+        oldULPRecsList = null;
+        ULPCaseHistoryList = null;
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ULP Cases: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -137,6 +141,7 @@ public class ULPMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateULPCases");
         }
         SlackNotification.sendBasicNotification(finishedText);
+        System.gc();
     }
 
     private static void migrateCase(oldULPDataModel item) {

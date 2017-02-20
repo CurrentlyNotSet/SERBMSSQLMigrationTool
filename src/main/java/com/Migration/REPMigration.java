@@ -59,16 +59,16 @@ public class REPMigration {
     private static int totalRecordCount = 0;
     private static int currentRecord = 0;
     private static MainWindowSceneController control;
-    private static final List<casePartyModel> CasePartyList = new ArrayList<>();
-    private static final List<relatedCaseModel> relatedCaseList = new ArrayList<>();
-    private static final List<boardMeetingModel> boardMeetingList = new ArrayList<>();
-    private static final List<REPMediationModel> mediationsList = new ArrayList<>();
-    private static final List<REPElectionMultiCaseModel> multiCaseElectionsList = new ArrayList<>();
-    private static final List<REPElectionSiteInformationModel> electionSiteInfoList = new ArrayList<>();
-    private static final List<employerCaseSearchModel> EmployerSearchList = new ArrayList<>();
-    private static final List<REPCaseSearchModel> REPCaseSearchList = new ArrayList<>();
-    private static final List<REPCaseModel> REPCaseList = new ArrayList<>();
-    
+    private static List<casePartyModel> CasePartyList = new ArrayList<>();
+    private static List<relatedCaseModel> relatedCaseList = new ArrayList<>();
+    private static List<boardMeetingModel> boardMeetingList = new ArrayList<>();
+    private static List<REPMediationModel> mediationsList = new ArrayList<>();
+    private static List<REPElectionMultiCaseModel> multiCaseElectionsList = new ArrayList<>();
+    private static List<REPElectionSiteInformationModel> electionSiteInfoList = new ArrayList<>();
+    private static List<employerCaseSearchModel> EmployerSearchList = new ArrayList<>();
+    private static List<REPCaseSearchModel> REPCaseSearchList = new ArrayList<>();
+    private static List<REPCaseModel> REPCaseList = new ArrayList<>();
+
     public static void migrateREPData(final MainWindowSceneController control) {
         Thread repThread = new Thread() {
             @Override
@@ -110,7 +110,7 @@ public class REPMigration {
         if (Global.isDebug()){
             System.out.println("Gathered REP History");
         }
-        
+
         //Clean REP Case Data
         control.setProgressBarIndeterminateCleaning("REP Case");
         totalRecordCount = oldREPDataList.size();
@@ -121,66 +121,73 @@ public class REPMigration {
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
-        
+
+        oldREPDataList = null;
+
         currentRecord = 0;
-        totalRecordCount = oldREPDataList.size() + REPBoardActionList.size()
+        totalRecordCount = REPBoardActionList.size()
                 + REPCaseTypeList.size() + REPCaseStatusList.size() + REPrecList.size()
                 + REPCaseHistoryList.size() + REPCaseList.size() + REPCaseSearchList.size()
                 + EmployerSearchList.size() + electionSiteInfoList.size() + multiCaseElectionsList.size()
                 + mediationsList.size() + relatedCaseList.size() + boardMeetingList.size() + CasePartyList.size();
-        
+
         sqlREPRecommendation.batchAddREPRecommendation(REPrecList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPrecList.size() - 1, totalRecordCount, "REP Recommendations Finished");
-        
+
         sqlREPCaseType.batchAddREPCaseType(REPCaseTypeList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseTypeList.size() - 1, totalRecordCount, "REP Case Types Finished");
-        
+
         sqlREPCaseStatus.batchAddREPCaseStatus(REPCaseStatusList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseStatusList.size() - 1, totalRecordCount, "REP Case Status Finished");
-        
+
         sqlBoardActionType.batchAddREPBoardActionType(REPBoardActionList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPBoardActionList.size() - 1, totalRecordCount, "REP Board Actions Finished");
-        
+
         sqlActivity.batchAddActivity(REPCaseHistoryList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseHistoryList.size() - 1, totalRecordCount, "REP Activities Finished");
-        
+
         sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "REP Related Cases Finished");
-        
+
         sqlBoardMeeting.batchAddBoardMeeting(boardMeetingList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + boardMeetingList.size() - 1, totalRecordCount, "REP Board Meeting Finished");
-        
+
         sqlREPMediation.batchAddREPMediation(mediationsList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + mediationsList.size() - 1, totalRecordCount, "REP Mediations Finished");
-        
+
         sqlREPElectionMultiCase.batchAddMultiCaseElection(multiCaseElectionsList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + multiCaseElectionsList.size() - 1, totalRecordCount, "REP Multi Case Finished");
-        
+
         sqlREPElectionSiteInformation.batchAddElectionSite(electionSiteInfoList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + electionSiteInfoList.size() - 1, totalRecordCount, "REP Election Sites Finished");
-        
+
         sqlCaseParty.batchAddPartyInformation(CasePartyList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + CasePartyList.size() - 1, totalRecordCount, "REP Case Parties Finished");
-        
+
         sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "REP Employer Search Finished");
-        
+
         sqlREPCaseSearch.addREPCaseSearchCase(REPCaseSearchList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseSearchList.size() - 1, totalRecordCount, "REP Case Search Finished");
-        
+
         sqlREPData.batchAddREPCase(REPCaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseList.size() - 1, totalRecordCount, "REP Case Finished");
-        
-        REPCaseList.clear();
-        REPCaseSearchList.clear();
-        EmployerSearchList.clear();
-        electionSiteInfoList.clear();
-        multiCaseElectionsList.clear();
-        mediationsList.clear();
-        relatedCaseList.clear();
-        boardMeetingList.clear();
-        CasePartyList.clear();
-        
+
+        REPCaseList = null;
+        REPCaseSearchList = null;
+        EmployerSearchList = null;
+        electionSiteInfoList = null;
+        multiCaseElectionsList = null;
+        mediationsList = null;
+        relatedCaseList = null;
+        boardMeetingList = null;
+        CasePartyList = null;
+        REPBoardActionList = null;
+        REPCaseTypeList = null;
+        REPCaseStatusList = null;
+        REPrecList = null;
+        REPCaseHistoryList = null;
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating REP Cases: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -189,11 +196,12 @@ public class REPMigration {
             sqlMigrationStatus.updateTimeCompleted("MigrateREPCases");
         }
         SlackNotification.sendBasicNotification(finishedText);
+        System.gc();
     }
 
     private static void migrateCase(oldREPDataModel item) {
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
-        
+
         List<casePartyModel> list = migratePartyInformation(item, caseNumber);
         migrateCaseData(item, caseNumber, list);
         migrateBoardMeetings(item, caseNumber);
@@ -202,13 +210,13 @@ public class REPMigration {
         migrateMediations(item, caseNumber);
         migrateCaseSearch(item, caseNumber);
         migrateEmployerCaseSearch(item, caseNumber);
-        
+
         currentRecord = SceneUpdater.listItemCleaned(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
     }
 
-    private static List<casePartyModel> migratePartyInformation(oldREPDataModel item, caseNumberModel caseNumber){        
+    private static List<casePartyModel> migratePartyInformation(oldREPDataModel item, caseNumberModel caseNumber){
         List<casePartyModel> list = new ArrayList<>();
-        
+
         list = migratePetitioner(item, caseNumber, list);
         list = migratePetitionerRep(item, caseNumber, list);
         list = migrateEmployer(item, caseNumber, list);
@@ -227,10 +235,10 @@ public class REPMigration {
         list = migrateIntervenerRep(item, caseNumber, list);
         list = migrateConversionSchool(item, caseNumber, list);
         list = migrateConversionSchoolRep(item, caseNumber, list);
-        
+
         return list;
     }
-    
+
     private static List<casePartyModel> migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
@@ -464,7 +472,7 @@ public class REPMigration {
                 party.setEmailAddress(!"".equals(item.getREOAsstEmail().trim()) ? item.getREOAsstEmail().trim() : null);
                 list.add(party);
                 CasePartyList.add(party);
-                
+
             }
         }
         return list;
@@ -601,7 +609,7 @@ public class REPMigration {
                 party.setEmailAddress(!"".equals(item.getREO3AsstEmail().trim()) ? item.getREO3AsstEmail().trim() : null);
                 list.add(party);
                 CasePartyList.add(party);
-                
+
             }
         }
         return list;
@@ -797,7 +805,7 @@ public class REPMigration {
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
             list.add(party);
             CasePartyList.add(party);
-            
+
             String asstName = ((item.getCSAsstName() == null) ? "" : item.getCSAsstName().trim());
             if (!"".equals(asstName)) {
                 party.setCaseRelation("Conversion School Assistant");
@@ -847,9 +855,9 @@ public class REPMigration {
 
     private static void migrateCaseData(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> casePartyList) {
         List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(StringUtilities.generateFullCaseNumber(caseNumber));
-        
+
         REPCaseModel rep = new REPCaseModel();
-        
+
         rep.setActive(item.getActive());
         rep.setCaseYear(caseNumber.getCaseYear());
         rep.setCaseType(caseNumber.getCaseType());
@@ -866,14 +874,14 @@ public class REPMigration {
         rep.setBoardCertified("1".equals(item.getBoardCertified().trim()) ? 1 : 0);
         rep.setDeemedCertified("1".equals(item.getDeemedCertified().trim()) ? 1 : 0);
         rep.setCertificationRevoked("1".equals(item.getCertRevoked().trim()) ? 1 : 0);
-        rep.setFileDate(!"".equals(item.getFileDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getFileDate())) : null);    
+        rep.setFileDate(!"".equals(item.getFileDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getFileDate())) : null);
         rep.setAmendedFilingDate(!"".equals(item.getAmendedFilingDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getAmendedFilingDate())) : null);
-        rep.setFinalBoardDate(!"".equals(item.getFinalBoardDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getFinalBoardDate())) : null);      
-        rep.setRegistrationLetterSent(!"".equals(item.getRegLetterSentDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getRegLetterSentDate())) : null);      
-        rep.setDateOfAppeal(!"".equals(item.getDateOfAppeal().trim()) ? (StringUtilities.convertStringSQLDate(item.getDateOfAppeal())) : null);        
-        rep.setCourtClosedDate(!"".equals(item.getCourtClosedDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getCourtClosedDate())) : null);     
-        rep.setReturnSOIDueDate(!"".equals(item.getReturnSOIDueDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getReturnSOIDueDate())) : null);    
-        rep.setActualSOIReturnDate(!"".equals(item.getActualSOIReturnDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getActualSOIReturnDate())) : null);     
+        rep.setFinalBoardDate(!"".equals(item.getFinalBoardDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getFinalBoardDate())) : null);
+        rep.setRegistrationLetterSent(!"".equals(item.getRegLetterSentDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getRegLetterSentDate())) : null);
+        rep.setDateOfAppeal(!"".equals(item.getDateOfAppeal().trim()) ? (StringUtilities.convertStringSQLDate(item.getDateOfAppeal())) : null);
+        rep.setCourtClosedDate(!"".equals(item.getCourtClosedDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getCourtClosedDate())) : null);
+        rep.setReturnSOIDueDate(!"".equals(item.getReturnSOIDueDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getReturnSOIDueDate())) : null);
+        rep.setActualSOIReturnDate(!"".equals(item.getActualSOIReturnDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getActualSOIReturnDate())) : null);
         rep.setSOIReturnIntials(StringUtilities.convertUserToID(item.getSOIReturnInitials1()));
         rep.setREPClosedCaseDueDate(!"".equals(item.getREPClosedCaseDueDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getREPClosedCaseDueDate())) : null);
         rep.setActualREPClosedDate(!"".equals(item.getActualREPClosedDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getActualREPClosedDate())) : null);
@@ -970,7 +978,7 @@ public class REPMigration {
         rep.setProfessionalWhoPrevailed(-1);
         rep.setNonprofessionalWhoPrevailed(-1);
         rep.setCombinedWhoPrevailed(-1);
-                
+
         for (casePartyModel party : casePartyList){
             if (item.getResultsWhoPrevailed().trim().equalsIgnoreCase(StringUtilities.joinNameTogether(party))){
                 rep.setResultWhoPrevailed(party.getId());
@@ -985,7 +993,7 @@ public class REPMigration {
                 rep.setCombinedWhoPrevailed(party.getId());
             }
         }
-        
+
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
                 case "Notes":
@@ -1019,7 +1027,7 @@ public class REPMigration {
                     break;
                 case "BoardNotes":
                     rep.setBoardStatusNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;    
+                    break;
                 case "Blurb":
                     rep.setBoardStatusBlurb(StringUtilities.convertBlobFileToString(blob.getBlobData()));
                     break;
@@ -1051,15 +1059,15 @@ public class REPMigration {
             }
         }
     }
-    
+
     private static void migrateMediations(oldREPDataModel item, caseNumberModel caseNumber) {
         REPMediationModel mediation = new REPMediationModel();
-        
+
         mediation.setCaseYear(caseNumber.getCaseYear());
         mediation.setCaseType(caseNumber.getCaseType());
         mediation.setCaseMonth(caseNumber.getCaseMonth());
         mediation.setCaseNumber(caseNumber.getCaseNumber());
-        
+
         //Internal Mediation
         if(!"".equals(item.getInternalMediationDate()) || !"".equals(item.getInternalMediationTime()) ||
             !"".equals(item.getInternalMediator()) || !"".equals(item.getInternaResult())) {
@@ -1071,13 +1079,13 @@ public class REPMigration {
             mediation.setMediationType("Internal Mediation");
             mediation.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getInternalMediator())));
             mediation.setMediationOutcome(!"".equals(item.getInternaResult().trim()) ? item.getInternaResult().trim() : null);
-            
+
             mediationsList.add(mediation);
         }
 
         //30 Day Mediation
         if (!"".equals(item.getBoardDirMedDate()) || !"".equals(item.getBoardDirMedMeetingDate()) || !"".equals(item.getBoardDirMedMeetingTime())
-                || !"".equals(item.getBoardDirectedMedResult()) || !"".equals(item.getBoardDirectedMediatior())) {                        
+                || !"".equals(item.getBoardDirectedMedResult()) || !"".equals(item.getBoardDirectedMediatior())) {
             mediation.setMediationDate(null);
             mediation.setMediationEntryDate(!"".equals(item.getBoardDirMedDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getBoardDirMedDate())) : null);
             if (!"".equals(item.getBoardDirMedMeetingDate().trim())){
@@ -1086,14 +1094,14 @@ public class REPMigration {
             mediation.setMediationType("30 Day Mediation");
             mediation.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getBoardDirectedMediatior())));
             mediation.setMediationOutcome(!"".equals(item.getBoardDirectedMedResult().trim()) ? item.getBoardDirectedMedResult().trim() : null);
-            
+
             mediationsList.add(mediation);
         }
 
         //Post-Directive Mediation
         if (!"".equals(item.getPostDirMedDate()) || !"".equals(item.getPostDirMedMeetingDate()) || !"".equals(item.getPostDirMedMeetingTime())
                 || !"".equals(item.getPostDirMedResult()) || !"".equals(item.getPostDirMediatior())) {
-            
+
             mediation.setMediationDate(null);
             if (!"".equals(item.getPostDirMedMeetingDate().trim())){
                 mediation.setMediationDate(StringUtilities.convertStringDateAndTime(item.getPostDirMedMeetingDate(), item.getPostDirMedMeetingTime()));
@@ -1102,19 +1110,19 @@ public class REPMigration {
             mediation.setMediationType("Post-Directive Mediation");
             mediation.setMediatorID(String.valueOf(StringUtilities.convertUserToID(item.getPostDirMediatior())));
             mediation.setMediationOutcome(!"".equals(item.getPostDirMedResult().trim()) ? item.getPostDirMedResult().trim() : null);
-            
+
             mediationsList.add(mediation);
         }
     }
 
     private static void migrateBoardMeetings(oldREPDataModel item, caseNumberModel caseNumber) {
         boardMeetingModel meeting = new boardMeetingModel();
-        
+
         meeting.setCaseYear(caseNumber.getCaseYear());
         meeting.setCaseType(caseNumber.getCaseType());
         meeting.setCaseMonth(caseNumber.getCaseMonth());
         meeting.setCaseNumber(caseNumber.getCaseNumber());
-        
+
         if (!"".equals(item.getBoardMeetingDate1().trim()) || !"".equals(item.getAgendaItem1().trim()) || !"".equals(item.getRecommendation1().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem1().trim()) ? item.getAgendaItem1().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate1()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate1()) : null);
@@ -1122,7 +1130,7 @@ public class REPMigration {
             meeting.setMemoDate(!"".equals(item.getMemoDate1()) ? StringUtilities.convertStringTimeStamp(item.getMemoDate1()) : null);
             boardMeetingList.add(meeting);
         }
-        
+
         if (!"".equals(item.getBoardMeetingDate2().trim()) || !"".equals(item.getAgendaItem2().trim()) || !"".equals(item.getRecommendation2().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem2().trim()) ? item.getAgendaItem2().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate2()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate2()) : null);
@@ -1130,7 +1138,7 @@ public class REPMigration {
             meeting.setMemoDate(!"".equals(item.getMemoDate2()) ? StringUtilities.convertStringTimeStamp(item.getMemoDate2()) : null);
             boardMeetingList.add(meeting);
         }
-        
+
         if (!"".equals(item.getBoardMeetingDate3().trim()) || !"".equals(item.getAgendaItem3().trim()) || !"".equals(item.getRecommendation3().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem3().trim()) ? item.getAgendaItem3().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate3()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate3()) : null);
@@ -1138,7 +1146,7 @@ public class REPMigration {
             meeting.setMemoDate(!"".equals(item.getMemoDate3()) ? StringUtilities.convertStringTimeStamp(item.getMemoDate3()) : null);
             boardMeetingList.add(meeting);
         }
-        
+
         if (!"".equals(item.getBoardMeetingDate4().trim()) || !"".equals(item.getAgendaItem4().trim()) || !"".equals(item.getRecommendation4().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem4().trim()) ? item.getAgendaItem4().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate4()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate4()) : null);
@@ -1146,25 +1154,25 @@ public class REPMigration {
             meeting.setMemoDate(!"".equals(item.getMemoDate4()) ? StringUtilities.convertStringTimeStamp(item.getMemoDate4()) : null);
             boardMeetingList.add(meeting);
         }
-        
+
         if (!"".equals(item.getBoardMeetingDate5().trim()) || !"".equals(item.getAgendaItem5().trim()) || !"".equals(item.getRecommendation5().trim())) {
             meeting.setAgendaItemNumber(!"".equals(item.getAgendaItem5().trim()) ? item.getAgendaItem5().trim() : null);
             meeting.setBoardMeetingDate(!"".equals(item.getBoardMeetingDate5()) ? StringUtilities.convertStringTimeStamp(item.getBoardMeetingDate5()) : null);
             meeting.setRecommendation(!"".equals(item.getRecommendation5().trim()) ? item.getRecommendation5().trim() : null);
             meeting.setMemoDate(!"".equals(item.getMemoDate5()) ? StringUtilities.convertStringTimeStamp(item.getMemoDate5()) : null);
             boardMeetingList.add(meeting);
-        }            
+        }
     }
-    
+
     private static void migrateMultiCaseElections(oldREPDataModel item, caseNumberModel caseNumber) {
         REPElectionMultiCaseModel multi = new REPElectionMultiCaseModel();
-        
+
         multi.setActive(item.getActive());
         multi.setCaseYear(caseNumber.getCaseYear());
         multi.setCaseType(caseNumber.getCaseType());
         multi.setCaseMonth(caseNumber.getCaseMonth());
         multi.setCaseNumber(caseNumber.getCaseNumber());
-        
+
         if (!"".equals(item.getElectionCaseNumber1().trim())){
             multi.setMultiCase(item.getElectionCaseNumber1().trim());
             multiCaseElectionsList.add(multi);
@@ -1190,22 +1198,22 @@ public class REPMigration {
             multiCaseElectionsList.add(multi);
         }
     }
-    
+
     private static void migrateElectionSiteInfo(oldREPDataModel item, caseNumberModel caseNumber) {
         REPElectionSiteInformationModel site = new REPElectionSiteInformationModel();
-        
+
         site.setActive(item.getActive());
         site.setCaseYear(caseNumber.getCaseYear());
         site.setCaseType(caseNumber.getCaseType());
         site.setCaseMonth(caseNumber.getCaseMonth());
         site.setCaseNumber(caseNumber.getCaseNumber());
-                
+
         if (!"".equals(item.getSite1Location().trim()) || !"".equals(item.getSite1Place().trim()) || !"".equals(item.getSite1Date().trim())){
             startTimeEndTimeModel time = StringUtilities.splitTime(item.getSite1Time());
             site.setSiteDate(null);
             site.setSiteStartTime(time.getStartTime());
             site.setSiteEndTime(time.getEndTime());
-            site.setSitePlace(!"".equals(item.getSite1Place().trim()) ? item.getSite1Place().trim() : null); 
+            site.setSitePlace(!"".equals(item.getSite1Place().trim()) ? item.getSite1Place().trim() : null);
             site.setSiteAddress1(!"".equals(item.getSite1Address1().trim()) ? item.getSite1Address1().trim() : null);
             site.setSiteAddress2(!"".equals(item.getSite1Address2().trim()) ? item.getSite1Address2().trim() : null);
             site.setSiteLocation(!"".equals(item.getSite1Location().trim()) ? item.getSite1Location().trim() : null);
@@ -1213,11 +1221,11 @@ public class REPMigration {
         }
         if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())){
             startTimeEndTimeModel time = StringUtilities.splitTime(item.getSite2Time());
-            
+
             site.setSiteDate(null);
             site.setSiteStartTime(time.getStartTime());
             site.setSiteEndTime(time.getEndTime());
-            site.setSitePlace(!"".equals(item.getSite2Place().trim()) ? item.getSite2Place().trim() : null); 
+            site.setSitePlace(!"".equals(item.getSite2Place().trim()) ? item.getSite2Place().trim() : null);
             site.setSiteAddress1(!"".equals(item.getSite2Address1().trim()) ? item.getSite2Address1().trim() : null);
             site.setSiteAddress2(!"".equals(item.getSite2Address2().trim()) ? item.getSite2Address2().trim() : null);
             site.setSiteLocation(!"".equals(item.getSite2Location().trim()) ? item.getSite2Location().trim() : null);
@@ -1228,19 +1236,19 @@ public class REPMigration {
             site.setSiteDate(null);
             site.setSiteStartTime(time.getStartTime());
             site.setSiteEndTime(time.getEndTime());
-            site.setSitePlace(!"".equals(item.getSite2Place().trim()) ? item.getSite2Place().trim() : null); 
+            site.setSitePlace(!"".equals(item.getSite2Place().trim()) ? item.getSite2Place().trim() : null);
             site.setSiteAddress1(!"".equals(item.getSite2Address1().trim()) ? item.getSite2Address1().trim() : null);
             site.setSiteAddress2(!"".equals(item.getSite2Address2().trim()) ? item.getSite2Address2().trim() : null);
             site.setSiteLocation(!"".equals(item.getSite2Location().trim()) ? item.getSite2Location().trim() : null);
             electionSiteInfoList.add(site);
         }
     }
-        
+
     private static void migrateCaseSearch(oldREPDataModel item, caseNumberModel caseNumber) {
         String[] bunnum = item.getBargainingUnitNum().trim().split("-");
-        
+
         List<oldBlobFileModel>oldBlobFileList = sqlBlobFile.getOldBlobDataBUDectioption(bunnum);
-        
+
         REPCaseSearchModel search = new REPCaseSearchModel();
         search.setCaseYear(caseNumber.getCaseYear());
         search.setCaseType(caseNumber.getCaseType());
@@ -1252,7 +1260,7 @@ public class REPMigration {
         search.setEmployeeOrg(!"".equals(item.getEOName().trim()) ? item.getEOName().trim() : null);
         search.setIncumbent(!"".equals(item.getIEOName().trim()) ? item.getIEOName().trim() : null);
         search.setDescription(null);
-        
+
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
                 case "UnitDesc":
@@ -1262,7 +1270,7 @@ public class REPMigration {
                     break;
             }
         }
-        
+
         if (item.getBoardCertified().equals("1")) {
             search.setBoardDeemed("Board");
         } else if (item.getDeemedCertified().equals("1")) {
@@ -1274,7 +1282,7 @@ public class REPMigration {
         }
         REPCaseSearchList.add(search);
     }
-    
+
     private static void migrateEmployerCaseSearch(oldREPDataModel item, caseNumberModel caseNumber) {
         if (!"".equals(item.getEmployerIDNum().trim())) {
             employerCaseSearchModel search = new employerCaseSearchModel();
@@ -1284,7 +1292,7 @@ public class REPMigration {
             search.setCaseMonth(caseNumber.getCaseMonth());
             search.setCaseNumber(caseNumber.getCaseNumber());
             search.setCaseStatus(!"".equals(item.getStatus1().trim()) ? item.getStatus1().trim() : null);
-            search.setFileDate(!"".equals(item.getFileDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getFileDate())) : null); 
+            search.setFileDate(!"".equals(item.getFileDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getFileDate())) : null);
             search.setEmployer(sqlEmployers.getEmployerName(item.getEmployerIDNum().trim()));
             search.setEmployerID(item.getEmployerIDNum().trim());
 
