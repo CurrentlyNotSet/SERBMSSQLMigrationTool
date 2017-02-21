@@ -252,7 +252,7 @@ public class CMDSMigration {
             for (File subdir : caseDirectories) {
                 String newfolder = "";
                 String oldfolder = subdir.toString().substring(subdir.toString().lastIndexOf(File.separator), subdir.toString().length());
-                if (subdir.length() == 9){
+                if (oldfolder.length() == 9){
                     String caseNumber = sqlCMDSCase.getCaseByYearAndSequence(oldfolder.substring(1, 5), oldfolder.substring(5, 9));
 
                     newfolder = subdir.toString().substring(0, subdir.toString().lastIndexOf(File.separator));
@@ -267,7 +267,7 @@ public class CMDSMigration {
                             oldName.renameTo(newName);
                         }
                     }
-                    System.out.println("Converted: " + oldfolder  + " to " + newfolder);
+                    System.out.println("Converted: " + oldfolder  + " to " + caseNumber);
                 }
             }
         }
