@@ -57,6 +57,7 @@ public class CMDSCaseModel {
     private Date pullDatePO4;
     private Date hearingCompletedDate;
     private Date postHearingDriefsDue;
+    private String ALJUserName;
 
     public int getId() {
         return id;
@@ -417,5 +418,13 @@ public class CMDSCaseModel {
     public void setPostHearingDriefsDue(Date postHearingDriefsDue) {
         this.postHearingDriefsDue = postHearingDriefsDue;
     }
-    
+
+    public String getALJUserName() {
+        return ALJUserName;
+    }
+
+    public void setALJUserName(String ALJUserName) {
+        this.ALJUserName = ALJUserName;
+    }
+
 }

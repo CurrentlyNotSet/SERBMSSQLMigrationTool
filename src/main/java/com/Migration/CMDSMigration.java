@@ -201,30 +201,61 @@ public class CMDSMigration {
     }
 
     private static void migrateSearch(CMDSCaseModel item) {
-        int aljID = StringUtilities.convertUserToID(item.getAljID());
         String appellant = "";
+        String appellantRep = "";
         String appellee = "";
+        String appelleeRep = "";
         String ALJName = "";
         List<casePartyModel> partyList = sqlCMDSCaseParty.getPartyByCase(item.getCaseYear(), item.getCaseNumber());
 
         for (casePartyModel person : partyList){
-            if (person.getCaseRelation().contains("Appellee")){
-                if (!appellee.trim().equals("")){
-                    appellee += ", ";
-                }
-                appellee += StringUtilities.buildFullName(person.getFirstName(), person.getMiddleInitial(), person.getLastName());
-
-            } else if (person.getCaseRelation().contains("Appellant")) {
-                if (!appellant.trim().equals("")){
-                   appellant += ", ";
-                }
-                appellant += StringUtilities.buildFullName(person.getFirstName(), person.getMiddleInitial(), person.getLastName());
+            switch (person.getCaseRelation().trim().toLowerCase()) {
+                case "appellee rep":
+                case "appellee rep 1":
+                case "appellee rep 2":
+                case "appellee 2 rep":
+                case "appellee 2 rep 1":
+                case "appellee 2 rep 2":
+                    if (!appelleeRep.trim().equals("")){
+                        appelleeRep += ", ";
+                    }
+                    appelleeRep += StringUtilities.buildFullName(person.getFirstName(), person.getMiddleInitial(), person.getLastName());
+                    break;
+                case "appellant rep":
+                case "appellant rep 1":
+                case "appellant rep 2":
+                    if (!appellantRep.trim().equals("")){
+                        appellantRep += ", ";
+                    }
+                    appellantRep += StringUtilities.buildFullName(person.getFirstName(), person.getMiddleInitial(), person.getLastName());
+                    break;
+                case "appellee":
+                case "appellee 1":
+                case "appellee 2":
+                    if (!appellee.trim().equals("")){
+                        appellee += ", ";
+                    }
+                    appellee += StringUtilities.buildFullName(person.getFirstName(), person.getMiddleInitial(), person.getLastName());
+                    break;
+                case "appellant":
+                case "appellant 1":
+                case "appellant 2":
+                    if (!appellant.trim().equals("")){
+                        appellant += ", ";
+                    }
+                    appellant += StringUtilities.buildFullName(person.getFirstName(), person.getMiddleInitial(), person.getLastName());
+                    break;
+                default:
+                    break;
             }
         }
 
-        for (userModel user : Global.getUserList()){
-            if (user.getId() == aljID){
-                ALJName = StringUtilities.buildFullName(user.getFirstName(), user.getMiddleInitial(), user.getLastName());
+        if (!item.getALJUserName().trim().equals("")){
+            for (userModel user : Global.getUserList()) {
+                if (user.getUserName().equals(item.getALJUserName())) {
+                    ALJName = StringUtilities.buildFullName(user.getFirstName(), user.getMiddleInitial(), user.getLastName());
+                    break;
+                }
             }
         }
 
@@ -235,7 +266,9 @@ public class CMDSMigration {
         search.setCaseMonth(item.getCaseMonth() == null ? "" : item.getCaseMonth());
         search.setCaseNumber(item.getCaseNumber() == null ? "" : item.getCaseNumber());
         search.setAppellant(appellant.trim().equals("") ? null : appellant);
+        search.setAppellantRep(appellantRep.trim().equals("") ? null : appellantRep);
         search.setAppellee(appellee.trim().equals("") ? null : appellee);
+        search.setAppelleeRep(appelleeRep.trim().equals("") ? null : appelleeRep);
         search.setAlj(ALJName.trim().equals("") ? null : ALJName);
         search.setDateOpened(item.getOpenDate() == null ? null : item.getOpenDate());
 

@@ -31,23 +31,24 @@ public class sqlCMDSCaseSearch {
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
             String sql = "Insert INTO CMDSCaseSearch ("
-                    + "caseYear, "  //01
-                    + "caseType, "  //02
-                    + "caseMonth, " //03
-                    + "caseNumber, "//04
-                    + "appellant, " //05
-                    + "appellee, "  //06
-                    + "alj, "       //07
-                    + "dateOpened " //08
+                    + "caseYear, "    //01
+                    + "caseType, "    //02
+                    + "caseMonth, "   //03
+                    + "caseNumber, "  //04
+                    + "appellant, "   //05
+                    + "appellee, "    //06
+                    + "alj, "         //07
+                    + "dateOpened, "  //08
+                    + "appelleeREP, " //09
+                    + "appellantREP " //10
                     + ") VALUES (";
-            for (int i = 0; i < 7; i++) {
-                sql += "?, ";   //01-07
+            for (int i = 0; i < 9; i++) {
+                sql += "?, ";   //01-09
             }
-            sql += "?)"; //08
+            sql += "?)"; //10
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
             for (CMDSCaseSearchModel item : list) {
-
                 ps.setString(1, StringUtils.left(item.getCaseYear(), 4));
                 ps.setString(2, StringUtils.left(item.getCaseType(), 4));
                 ps.setString(3, StringUtils.left(item.getCaseMonth(), 2));
@@ -55,7 +56,9 @@ public class sqlCMDSCaseSearch {
                 ps.setString(5, item.getAppellant());
                 ps.setString(6, item.getAppellee());
                 ps.setString(7, item.getAlj());
-                ps.setDate(8, item.getDateOpened());
+                ps.setDate  (8, item.getDateOpened());
+                ps.setString(9, item.getAppelleeRep());
+                ps.setString(10, item.getAppellantRep());
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();

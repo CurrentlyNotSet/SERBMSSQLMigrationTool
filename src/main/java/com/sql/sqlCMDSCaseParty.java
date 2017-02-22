@@ -22,7 +22,7 @@ import org.apache.commons.dbutils.DbUtils;
  * @author User
  */
 public class sqlCMDSCaseParty {
-    
+
     public static List<casePartyModel> getPartyList() {
         List<casePartyModel> list = new ArrayList();
         Connection conn = null;
@@ -65,11 +65,11 @@ public class sqlCMDSCaseParty {
                     } else if (item.getPhoneTwo() == null && !rs.getString("Pager").equals("")){
                         item.setPhoneTwo(!rs.getString("Pager").trim().equals("") ? StringUtilities.convertPhoneNumberToString(rs.getString("Pager").trim()) : null);
                     }
-                    
+
                     item.setPhoneOne(!item.getPhoneOne().trim().equals("") ? StringUtilities.convertPhoneNumberToString(item.getPhoneOne().trim()) : null);
                     item.setPhoneTwo(!item.getPhoneTwo().trim().equals("") ? StringUtilities.convertPhoneNumberToString(item.getPhoneTwo().trim()) : null);
                     item.setFax(!item.getFax().trim().equals("") ? StringUtilities.convertPhoneNumberToString(item.getFax().trim()) : null);
-                                        
+
                     list.add(item);
                 }
             }
@@ -82,7 +82,7 @@ public class sqlCMDSCaseParty {
         }
         return list;
     }
-    
+
     public static List<casePartyModel> getPartyByCase(String year, String sequenceNumber) {
         List<casePartyModel> list = new ArrayList();
         Connection conn = null;
@@ -94,7 +94,7 @@ public class sqlCMDSCaseParty {
                     + "caseparticipants.participantType, caseparticipants.firstName, "
                     + "caseparticipants.middleinitial, caseparticipants.lastname "
                     + "FROM caseparticipants "
-                    + "WHERE CaseParticipants.ParticipantType NOT LIKE '%Rep%' AND "
+                    + "WHERE "
                     + "caseparticipants.active = 1 "
                     + "AND caseparticipants.[year] = ? "
                     + "AND caseparticipants.caseseqnumber = ?";
@@ -108,8 +108,8 @@ public class sqlCMDSCaseParty {
                 item.setCaseNumber(rs.getString("CaseSeqNumber"));
                 item.setCaseRelation(rs.getString("ParticipantType"));
                 item.setLastName(rs.getString("LastName"));
-                item.setMiddleInitial(rs.getString("MiddleInitial"));        
-                item.setFirstName(rs.getString("FirstName"));                        
+                item.setMiddleInitial(rs.getString("MiddleInitial"));
+                item.setFirstName(rs.getString("FirstName"));
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -121,5 +121,5 @@ public class sqlCMDSCaseParty {
         }
         return list;
     }
-    
+
 }

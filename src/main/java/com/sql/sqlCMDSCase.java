@@ -136,8 +136,10 @@ public class sqlCMDSCase {
                 String ALJID = "";
                 String MediatorID = "";
 
+                cmds.setALJUserName("");
                 if (rs.getString("ALJUser") != null){
                     ALJID = rs.getString("ALJUser").equals("") ? rs.getString("ALJ") : rs.getString("ALJUser");
+                    cmds.setALJUserName(rs.getString("ALJUser"));
                 } else {
                     ALJID = rs.getString("ALJ");
                 }

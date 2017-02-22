@@ -18,7 +18,9 @@ public class CMDSCaseSearchModel {
     private String caseMonth;
     private String caseNumber;
     private String appellant;
+    private String appellantRep;
     private String appellee;
+    private String appelleeRep;
     private String alj;
     private Date dateOpened;
 
@@ -93,5 +95,21 @@ public class CMDSCaseSearchModel {
     public void setDateOpened(Date dateOpened) {
         this.dateOpened = dateOpened;
     }
-        
+
+    public String getAppellantRep() {
+        return appellantRep;
+    }
+
+    public void setAppellantRep(String appellantRep) {
+        this.appellantRep = appellantRep;
+    }
+
+    public String getAppelleeRep() {
+        return appelleeRep;
+    }
+
+    public void setAppelleeRep(String appelleeRep) {
+        this.appelleeRep = appelleeRep;
+    }
+    
 }
