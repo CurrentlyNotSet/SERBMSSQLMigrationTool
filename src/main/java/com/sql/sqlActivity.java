@@ -363,7 +363,7 @@ public class sqlActivity {
         ResultSet rs = null;
         try {
             conn = DBConnection.connectToDB(DBCInfo.getDBnameOLD());
-            String sql = "SELECT * FROM orghistory where note != 'null'";
+            String sql = "SELECT * FROM orghistory where";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
