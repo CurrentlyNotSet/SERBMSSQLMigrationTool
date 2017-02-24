@@ -61,19 +61,19 @@ public class ORGMigration {
         currentRecord = 0;
 
         List<oldEmployeeOrgModel> oldORGCaseList = sqlORGCase.getCases();
-        if (Global.isDebug()){
+        if (Global.isDebug()) {
             System.out.println("Gathered ORG Cases");
         }
         List<activityModel> oldORGHistoryList = sqlActivity.getORGHistory();
-        if (Global.isDebug()){
+        if (Global.isDebug()) {
             System.out.println("Gathered ORG History");
         }
         List<ORGParentChildLinkModel> ORGParentChildLinkList = sqlORGParentChildLink.getOldLink();
-        if (Global.isDebug()){
+        if (Global.isDebug()) {
             System.out.println("Gathered Parent/Child Links");
         }
         List<employersModel> employerReference = sqlEmployers.getEmployersForReference();
-        if (Global.isDebug()){
+        if (Global.isDebug()) {
             System.out.println("Gathered Employers (Reference)");
         }
 
@@ -89,12 +89,6 @@ public class ORGMigration {
         }
 
         oldORGCaseList = null;
-
-        currentRecord = 0;
-        totalRecordCount = orgCaseList.size() + oldORGHistoryList.size() + ORGParentChildLinkList.size() + casePartyList.size();
-
-        sqlORGCase.batchAddEmployeeOrgCase(orgCaseList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Cases Finished");
 
         sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Parties Finished");
@@ -129,7 +123,7 @@ public class ORGMigration {
     }
 
     private static void migrateRepresentative(oldEmployeeOrgModel item) {
-        casePartyModel party = new  casePartyModel();
+        casePartyModel party = new casePartyModel();
         party.setCaseYear(null);
         party.setCaseType("ORG");
         party.setCaseMonth(null);
@@ -149,36 +143,35 @@ public class ORGMigration {
                 ? StringUtilities.convertPhoneNumberToString(item.getRepPhone2().trim()) : null);
         party.setFax((!item.getRepFax().trim().equals("null") || !item.getRepFax().trim().equals(""))
                 ? StringUtilities.convertPhoneNumberToString(item.getRepFax().trim()) : null);
-        if (party.getPhoneTwo().equals("")){
+        if (party.getPhoneTwo().equals("")) {
             party.setPhoneTwo(null);
         }
-        if (party.getFax().equals("")){
+        if (party.getFax().equals("")) {
             party.setFax(null);
         }
         party.setEmailAddress(item.getRepEMail().trim().equals("") ? null : item.getRepEMail().trim());
 
-        if (!item.getRepLastName().trim().equals("")){
+        if (!item.getRepLastName().trim().equals("")) {
             casePartyList.add(party);
         }
     }
 
     private static void migrateOfficers(oldEmployeeOrgModel item) {
-        casePartyModel party = new  casePartyModel();
-        party.setCaseYear(null);
-        party.setCaseType("ORG");
-        party.setCaseMonth(null);
-        party.setCaseNumber(item.getOrgNumber());
-        party.setCaseRelation("Officer");
-        party.setAddress1(null);
-        party.setAddress2(null);
-        party.setCity(null);
-        party.setState(null);
-        party.setZip(null);
-        party.setPhoneOne(null);
-        party.setPhoneTwo(null);
-        party.setEmailAddress(null);
-
-        if (!item.getOfficer1().trim().equals("")){
+        if (!item.getOfficer1().trim().equals("")) {
+            casePartyModel party = new casePartyModel();
+            party.setCaseYear(null);
+            party.setCaseType("ORG");
+            party.setCaseMonth(null);
+            party.setCaseNumber(item.getOrgNumber());
+            party.setCaseRelation("Officer");
+            party.setAddress1(null);
+            party.setAddress2(null);
+            party.setCity(null);
+            party.setState(null);
+            party.setZip(null);
+            party.setPhoneOne(null);
+            party.setPhoneTwo(null);
+            party.setEmailAddress(null);
             party.setLastName(null);
             party.setJobTitle(null);
             party.setLastName(item.getOfficer1().trim().equals("") ? null : item.getOfficer1().trim());
@@ -187,7 +180,21 @@ public class ORGMigration {
             casePartyList.add(party);
         }
 
-        if (!item.getOfficer2().trim().equals("")){
+        if (!item.getOfficer2().trim().equals("")) {
+            casePartyModel party = new casePartyModel();
+            party.setCaseYear(null);
+            party.setCaseType("ORG");
+            party.setCaseMonth(null);
+            party.setCaseNumber(item.getOrgNumber());
+            party.setCaseRelation("Officer");
+            party.setAddress1(null);
+            party.setAddress2(null);
+            party.setCity(null);
+            party.setState(null);
+            party.setZip(null);
+            party.setPhoneOne(null);
+            party.setPhoneTwo(null);
+            party.setEmailAddress(null);
             party.setLastName(null);
             party.setJobTitle(null);
             party.setLastName(item.getOfficer2().trim().equals("") ? null : item.getOfficer2().trim());
@@ -196,7 +203,21 @@ public class ORGMigration {
             casePartyList.add(party);
         }
 
-        if (!item.getOfficer3().trim().equals("")){
+        if (!item.getOfficer3().trim().equals("")) {
+            casePartyModel party = new casePartyModel();
+            party.setCaseYear(null);
+            party.setCaseType("ORG");
+            party.setCaseMonth(null);
+            party.setCaseNumber(item.getOrgNumber());
+            party.setCaseRelation("Officer");
+            party.setAddress1(null);
+            party.setAddress2(null);
+            party.setCity(null);
+            party.setState(null);
+            party.setZip(null);
+            party.setPhoneOne(null);
+            party.setPhoneTwo(null);
+            party.setEmailAddress(null);
             party.setLastName(null);
             party.setJobTitle(null);
             party.setLastName(item.getOfficer3().trim().equals("") ? null : item.getOfficer3().trim());
@@ -205,7 +226,21 @@ public class ORGMigration {
             casePartyList.add(party);
         }
 
-        if (!item.getOfficer4().trim().equals("")){
+        if (!item.getOfficer4().trim().equals("")) {
+            casePartyModel party = new casePartyModel();
+            party.setCaseYear(null);
+            party.setCaseType("ORG");
+            party.setCaseMonth(null);
+            party.setCaseNumber(item.getOrgNumber());
+            party.setCaseRelation("Officer");
+            party.setAddress1(null);
+            party.setAddress2(null);
+            party.setCity(null);
+            party.setState(null);
+            party.setZip(null);
+            party.setPhoneOne(null);
+            party.setPhoneTwo(null);
+            party.setEmailAddress(null);
             party.setLastName(null);
             party.setJobTitle(null);
             party.setLastName(item.getOfficer4().trim().equals("") ? null : item.getOfficer4().trim());
@@ -277,7 +312,6 @@ public class ORGMigration {
         org.setExtensionDate(!item.getExtensionDate().trim().equals("null")
                 ? (StringUtilities.convertStringSQLDate(item.getExtensionDate())) : null);
 
-
         for (oldBlobFileModel blob : oldBlobFileList) {
             if (null != blob.getSelectorA().trim()) {
                 switch (blob.getSelectorA().trim()) {
@@ -303,7 +337,7 @@ public class ORGMigration {
         org.setNote(note.trim().equals("") ? null : note);
 
         org.setEmployerID("");
-        if(item.getOrgEmployerid() != null){
+        if (item.getOrgEmployerid() != null) {
             String id = item.getOrgEmployerid().replaceAll("[^0-9]", "").trim();
 
             switch (id.length()) {
@@ -325,7 +359,7 @@ public class ORGMigration {
 
         if (!org.getEmployerID().equals("")) {
             for (employersModel emp : employerReference) {
-                if (org.getEmployerID().equals(emp.getId())){
+                if (org.getEmployerID().equals(emp.getId())) {
                     org.setEmployerID(emp.getEmployerIDNumber());
                     break;
                 }
