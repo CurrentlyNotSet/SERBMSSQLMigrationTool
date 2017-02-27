@@ -522,30 +522,56 @@ public class MEDMigration {
     }
 
     private static void migrateRelatedCases(oldMEDCaseModel item, caseNumberModel caseNumber) {
-        relatedCaseModel relatedCase = new relatedCaseModel();
-
-        relatedCase.setCaseYear(caseNumber.getCaseYear());
-        relatedCase.setCaseType(caseNumber.getCaseType());
-        relatedCase.setCaseMonth(caseNumber.getCaseMonth());
-        relatedCase.setCaseNumber(caseNumber.getCaseNumber());
-
         if (!item.getCaseNumber2().trim().equals("")) {
+            relatedCaseModel relatedCase = new relatedCaseModel();
+
+            relatedCase.setCaseYear(caseNumber.getCaseYear());
+            relatedCase.setCaseType(caseNumber.getCaseType());
+            relatedCase.setCaseMonth(caseNumber.getCaseMonth());
+            relatedCase.setCaseNumber(caseNumber.getCaseNumber());
+
             relatedCase.setRelatedCaseNumber(item.getCaseNumber2().trim());
             relatedCaseList.add(relatedCase);
         }
         if (!item.getCaseNumber3().trim().equals("")) {
+            relatedCaseModel relatedCase = new relatedCaseModel();
+
+            relatedCase.setCaseYear(caseNumber.getCaseYear());
+            relatedCase.setCaseType(caseNumber.getCaseType());
+            relatedCase.setCaseMonth(caseNumber.getCaseMonth());
+            relatedCase.setCaseNumber(caseNumber.getCaseNumber());
+
             relatedCase.setRelatedCaseNumber(item.getCaseNumber3().trim());
             relatedCaseList.add(relatedCase);
         }
         if (!item.getCaseNumber4().trim().equals("")) {
+            relatedCaseModel relatedCase = new relatedCaseModel();
+
+            relatedCase.setCaseYear(caseNumber.getCaseYear());
+            relatedCase.setCaseType(caseNumber.getCaseType());
+            relatedCase.setCaseMonth(caseNumber.getCaseMonth());
+            relatedCase.setCaseNumber(caseNumber.getCaseNumber());
+
             relatedCase.setRelatedCaseNumber(item.getCaseNumber4().trim());
             relatedCaseList.add(relatedCase);
         }
         if (!item.getCaseNumber5().trim().equals("")) {
+            relatedCaseModel relatedCase = new relatedCaseModel();
+
+            relatedCase.setCaseYear(caseNumber.getCaseYear());
+            relatedCase.setCaseType(caseNumber.getCaseType());
+            relatedCase.setCaseMonth(caseNumber.getCaseMonth());
+            relatedCase.setCaseNumber(caseNumber.getCaseNumber());
             relatedCase.setRelatedCaseNumber(item.getCaseNumber5().trim());
             relatedCaseList.add(relatedCase);
         }
         if (!item.getCaseNumber6().trim().equals("")) {
+            relatedCaseModel relatedCase = new relatedCaseModel();
+
+            relatedCase.setCaseYear(caseNumber.getCaseYear());
+            relatedCase.setCaseType(caseNumber.getCaseType());
+            relatedCase.setCaseMonth(caseNumber.getCaseMonth());
+            relatedCase.setCaseNumber(caseNumber.getCaseNumber());
             relatedCase.setRelatedCaseNumber(item.getCaseNumber6().trim());
             relatedCaseList.add(relatedCase);
         }

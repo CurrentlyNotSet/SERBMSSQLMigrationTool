@@ -348,17 +348,18 @@ public class ULPMigration {
 
     private static void migrateRelatedCases(oldULPDataModel item, caseNumberModel caseNumber) {
         if (item.getRelatedCases() != null) {
-            relatedCaseModel relatedCase = new relatedCaseModel();
-
-            relatedCase.setCaseYear(caseNumber.getCaseYear());
-            relatedCase.setCaseType(caseNumber.getCaseType());
-            relatedCase.setCaseMonth(caseNumber.getCaseMonth());
-            relatedCase.setCaseNumber(caseNumber.getCaseNumber());
 
             String[] caseNumberArray = item.getRelatedCases().split("[" + System.lineSeparator() + "\\,]");
 
             for (String casenumber : caseNumberArray) {
                 if (!"".equals(casenumber.trim())) {
+                    relatedCaseModel relatedCase = new relatedCaseModel();
+
+                    relatedCase.setCaseYear(caseNumber.getCaseYear());
+                    relatedCase.setCaseType(caseNumber.getCaseType());
+                    relatedCase.setCaseMonth(caseNumber.getCaseMonth());
+                    relatedCase.setCaseNumber(caseNumber.getCaseNumber());
+
                     relatedCase.setRelatedCaseNumber(casenumber.trim());
                     relatedCaseList.add(relatedCase);
                 }
