@@ -81,7 +81,7 @@ public class sqlActivity {
                 ps.setInt      (13, item.getRedacted());
                 ps.setInt      (14, item.getAwaitingTimeStamp());
                 ps.setBoolean  (15, item.isActive());
-                ps.setBoolean  (16, item.isMailLog());
+                ps.setDate     (16, item.isMailLog());
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
@@ -132,7 +132,9 @@ public class sqlActivity {
                     item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
                     item.setAwaitingTimeStamp(0);
                     item.setActive(rs.getInt("Active") == 1);
-                    item.setMailLog(rs.getString("MailLogDate") == null ? false : !rs.getString("MailLogDate").equals(""));
+                    item.setMailLog(rs.getString("MailLogDate") == null ? null 
+                            : (rs.getString("MailLogDate").equals("") ? null 
+                                    : StringUtilities.convertStringSQLDate(rs.getString("MailLogDate"))));
                     list.add(item);
                 }
             }
@@ -175,7 +177,9 @@ public class sqlActivity {
                     item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
                     item.setAwaitingTimeStamp(0);
                     item.setActive(rs.getInt("Active") == 1);
-                    item.setMailLog(rs.getString("MailLogDate") == null ? false : !rs.getString("MailLogDate").equals(""));
+                    item.setMailLog(rs.getString("MailLogDate") == null ? null 
+                            : (rs.getString("MailLogDate").equals("") ? null 
+                                    : StringUtilities.convertStringSQLDate(rs.getString("MailLogDate"))));
                     list.add(item);
                 }
             }
@@ -218,7 +222,9 @@ public class sqlActivity {
                     item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
                     item.setAwaitingTimeStamp(0);
                     item.setActive(rs.getInt("Active") == 1);
-                    item.setMailLog(rs.getString("MailLogDate") == null ? false : !rs.getString("MailLogDate").equals(""));
+                    item.setMailLog(rs.getString("MailLogDate") == null ? null 
+                            : (rs.getString("MailLogDate").equals("") ? null 
+                                    : StringUtilities.convertStringSQLDate(rs.getString("MailLogDate"))));
                     list.add(item);
                 }
             }
@@ -265,7 +271,7 @@ public class sqlActivity {
                     item.setRedacted(0);
                     item.setAwaitingTimeStamp(0);
                     item.setActive(rs.getInt("Active") == 1);
-                    item.setMailLog(false);
+                    item.setMailLog(null);
                     list.add(item);
                 }
             }
@@ -342,7 +348,7 @@ public class sqlActivity {
                     item.setTo(rs.getString("EmailAddress"));
                     item.setComment(Comment.trim().equals("") ? null : Comment.trim());
                     item.setActive(rs.getInt("Active") == 1);
-                    item.setMailLog(false);
+                    item.setMailLog(null);
                     list.add(item);
                 }
             }
@@ -383,7 +389,9 @@ public class sqlActivity {
                 item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
                 item.setAwaitingTimeStamp(0);
                 item.setActive(rs.getInt("Active") == 1);
-                item.setMailLog(rs.getString("MailLogDate") == null ? false : !rs.getString("MailLogDate").equals(""));
+                item.setMailLog(rs.getString("MailLogDate") == null ? null 
+                            : (rs.getString("MailLogDate").equals("") ? null 
+                                    : StringUtilities.convertStringSQLDate(rs.getString("MailLogDate"))));
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -430,7 +438,15 @@ public class sqlActivity {
                 item.setRedacted(0);
                 item.setAwaitingTimeStamp(0);
                 item.setActive(rs.getInt("Active") == 1);
-                item.setMailLog(true);
+                if (rs.getString("Description").trim().equals("I")){
+                    item.setMailLog(rs.getString("Date") == null ? null 
+                            : (rs.getString("Date").equals("") ? null 
+                                    : StringUtilities.convertStringSQLDate(rs.getString("Date"))));
+                } else {
+                    item.setMailLog(null);
+                }
+                
+                
                 list.add(item);
             }
         } catch (SQLException ex) {
@@ -482,7 +498,12 @@ public class sqlActivity {
                 item.setDate(rs.getString("EntryDate").length() < 10 ? null : StringUtilities.convertStringTimeStamp(rs.getString("EntryDate").substring(0, 10)));
                 item.setFileName(!"".equals(rs.getString("DocumentLink").trim()) ? FilenameUtils.getName(rs.getString("DocumentLink").trim()) : null);
                 item.setActive(rs.getInt("active") == 1);
-                item.setMailLog(rs.getString("MailType").equals("I"));
+                if (rs.getString("MailType").equals("I")){
+                    item.setMailLog(rs.getString("EntryDate").length() < 10 ? null 
+                            : StringUtilities.convertStringSQLDate(rs.getString("EntryDate").substring(0, 10)));
+                } else {
+                    item.setMailLog(null);
+                }
                 list.add(item);
             }
         } catch (SQLException ex) {

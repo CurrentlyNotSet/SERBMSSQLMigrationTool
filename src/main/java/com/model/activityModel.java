@@ -5,6 +5,7 @@
  */
 package com.model;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 /**
@@ -28,7 +29,7 @@ public class activityModel {
     private int redacted;
     private int awaitingTimeStamp;
     private boolean active;
-    private boolean mailLog;
+    private Date mailLog;
 
     public int getId() {
         return id;
@@ -158,11 +159,11 @@ public class activityModel {
         this.active = active;
     }
 
-    public boolean isMailLog() {
+    public Date isMailLog() {
         return mailLog;
     }
 
-    public void setMailLog(boolean mailLog) {
+    public void setMailLog(Date mailLog) {
         this.mailLog = mailLog;
     }
     
