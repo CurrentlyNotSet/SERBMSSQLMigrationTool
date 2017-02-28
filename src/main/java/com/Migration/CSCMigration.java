@@ -11,8 +11,6 @@ import com.model.casePartyModel;
 import com.model.oldCivilServiceCommissionModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
-import com.sql.sqlCSCCase;
-import com.sql.sqlCaseParty;
 import com.sql.sqlMigrationStatus;
 import com.util.Global;
 import com.util.SceneUpdater;
@@ -53,42 +51,42 @@ public class CSCMigration {
         totalRecordCount = 0;
         currentRecord = 0;
 
-        List<oldCivilServiceCommissionModel> oldCSCCaseList = sqlCSCCase.getCases();
-        if (Global.isDebug()){
-            System.out.println("Gathered CSC Cases");
-        }
+//        List<oldCivilServiceCommissionModel> oldCSCCaseList = sqlCSCCase.getCases();
+//        if (Global.isDebug()){
+//            System.out.println("Gathered CSC Cases");
+//        }
         List<activityModel> oldCSCHistoryList = sqlActivity.getCSCHistory();
         if (Global.isDebug()){
             System.out.println("Gathered CSC History");
         }
-
-        //Insert CSC Case Data
-        control.setProgressBarIndeterminateCleaning("CSC Case");
-        totalRecordCount = oldCSCCaseList.size();
-        oldCSCCaseList.stream().forEach(item ->
-                executor.submit(() ->
-                        migrateCase(item)));
-        executor.shutdown();
-        // Wait until all threads are finish
-        while (!executor.isTerminated()) {
-        }
-
-        oldCSCCaseList = null;
-        currentRecord = 0;
-        totalRecordCount = cscCaseList.size() + oldCSCHistoryList.size() + casePartyList.size();
-
-        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "CSC Parties Finished");
+//
+//        //Insert CSC Case Data
+//        control.setProgressBarIndeterminateCleaning("CSC Case");
+//        totalRecordCount = oldCSCCaseList.size();
+//        oldCSCCaseList.stream().forEach(item ->
+//                executor.submit(() ->
+//                        migrateCase(item)));
+//        executor.shutdown();
+//        // Wait until all threads are finish
+//        while (!executor.isTerminated()) {
+//        }
+//
+//        oldCSCCaseList = null;
+//        currentRecord = 0;
+//        totalRecordCount = cscCaseList.size() + oldCSCHistoryList.size() + casePartyList.size();
+//
+//        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "CSC Parties Finished");
 
         sqlActivity.batchAddActivity(oldCSCHistoryList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldCSCHistoryList.size(), totalRecordCount, "History Finished");
-
-        sqlCSCCase.BatchAddCSCCase(cscCaseList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, oldCSCHistoryList.size(), totalRecordCount, "CSC Case Finished");
-
-        casePartyList = null;
-        cscCaseList = null;
-        oldCSCHistoryList = null;
+//
+//        sqlCSCCase.BatchAddCSCCase(cscCaseList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, oldCSCHistoryList.size(), totalRecordCount, "CSC Case Finished");
+//
+//        casePartyList = null;
+//        cscCaseList = null;
+//        oldCSCHistoryList = null;
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating CSC Cases: "

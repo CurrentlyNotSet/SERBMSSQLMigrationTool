@@ -12,7 +12,6 @@ import com.model.caseNumberModel;
 import com.model.casePartyModel;
 import com.model.employerCaseSearchModel;
 import com.model.factFinderModel;
-import com.model.jurisdictionModel;
 import com.model.mediatorsModel;
 import com.model.oldBlobFileModel;
 import com.model.oldMEDCaseModel;
@@ -20,23 +19,13 @@ import com.model.relatedCaseModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
-import com.sql.sqlCaseParty;
-import com.sql.sqlEmployerCaseSearchData;
 import com.sql.sqlEmployers;
-import com.sql.sqlFactFinder;
-import com.sql.sqlJurisdiction;
-import com.sql.sqlMEDCaseSearch;
-import com.sql.sqlMEDData;
-import com.sql.sqlMediator;
 import com.sql.sqlMigrationStatus;
-import com.sql.sqlRelatedCase;
-import com.util.ExcelIterator;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.SlackNotification;
 import com.util.StringUtilities;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,99 +64,99 @@ public class MEDMigration {
         totalRecordCount = 0;
         currentRecord = 0;
 
-        List<oldMEDCaseModel> oldMEDCaseList = sqlMEDData.getCases();
-        if (Global.isDebug()){
-            System.out.println("Gathered MED Cases");
-        }
-        List<factFinderModel> oldFactFindersList = sqlFactFinder.getOldFactFinders();
-        if (Global.isDebug()){
-            System.out.println("Gathered Fact Finders");
-        }
-        List<mediatorsModel> oldMediatorsList = sqlMediator.getOldMediator();
-        if (Global.isDebug()){
-            System.out.println("Gathered Mediators");
-        }
-        List<jurisdictionModel> oldjurisdictionList = sqlJurisdiction.getOldJurisdiction();
-        if (Global.isDebug()){
-            System.out.println("Gathered Jurisdiction");
-        }
+//        List<oldMEDCaseModel> oldMEDCaseList = sqlMEDData.getCases();
+//        if (Global.isDebug()){
+//            System.out.println("Gathered MED Cases");
+//        }
+//        List<factFinderModel> oldFactFindersList = sqlFactFinder.getOldFactFinders();
+//        if (Global.isDebug()){
+//            System.out.println("Gathered Fact Finders");
+//        }
+//        List<mediatorsModel> oldMediatorsList = sqlMediator.getOldMediator();
+//        if (Global.isDebug()){
+//            System.out.println("Gathered Mediators");
+//        }
+//        List<jurisdictionModel> oldjurisdictionList = sqlJurisdiction.getOldJurisdiction();
+//        if (Global.isDebug()){
+//            System.out.println("Gathered Jurisdiction");
+//        }
         List<activityModel> MEDCaseHistoryList = sqlActivity.getMEDHistory();
         if (Global.isDebug()){
             System.out.println("Gathered MED History");
         }
-        List<factFinderModel> cleanedBiosList = new ArrayList<>();
-        ArrayList FactFinderBioXLS = ExcelIterator.read("FactFinderBios.xlsx");
-
-        for (Iterator iterator = FactFinderBioXLS.iterator(); iterator.hasNext();) {
-            List list = (List) iterator.next();
-            if (list.size() == 4) {
-                cleanedBiosList.add(sanitizeCMDSReportsFromExcel(list));
-            }
-        }
-        if (Global.isDebug()){
-            System.out.println("Gathered Fact Finder Bios List");
-        }
-
-        totalRecordCount = oldMediatorsList.size();
-
-        sqlMediator.batchAddMediator(oldMediatorsList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldMediatorsList.size(), totalRecordCount, "Mediators Finished");
-        oldMediatorsList = null;
-        newMediatorsList = sqlMediator.getNewMediator();
-        
-        //Clean MED Case Data
-        currentRecord = 0;
-        totalRecordCount = oldMEDCaseList.size();
-        control.setProgressBarIndeterminateCleaning("MED Case");
-        oldMEDCaseList.stream().forEach(item ->
-                executor.submit(() ->
-                        migrateCase(item)));
-        executor.shutdown();
-        // Wait until all threads are finish
-        while (!executor.isTerminated()) {
-        }
-
-        oldMEDCaseList = null;
-
-        currentRecord = 0;
-        totalRecordCount = oldFactFindersList.size() + oldMediatorsList.size()
-                + oldjurisdictionList.size() + MEDCaseHistoryList.size()
-                + relatedCaseList.size() + caseSearchList.size() + EmployerSearchList.size()
-                + caseList.size() + casePartyList.size();
+//        List<factFinderModel> cleanedBiosList = new ArrayList<>();
+//        ArrayList FactFinderBioXLS = ExcelIterator.read("FactFinderBios.xlsx");
+//
+//        for (Iterator iterator = FactFinderBioXLS.iterator(); iterator.hasNext();) {
+//            List list = (List) iterator.next();
+//            if (list.size() == 4) {
+//                cleanedBiosList.add(sanitizeCMDSReportsFromExcel(list));
+//            }
+//        }
+//        if (Global.isDebug()){
+//            System.out.println("Gathered Fact Finder Bios List");
+//        }
+//
+//        totalRecordCount = oldMediatorsList.size();
+//
+//        sqlMediator.batchAddMediator(oldMediatorsList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldMediatorsList.size(), totalRecordCount, "Mediators Finished");
+//        oldMediatorsList = null;
+//        newMediatorsList = sqlMediator.getNewMediator();
+//
+//        //Clean MED Case Data
+//        currentRecord = 0;
+//        totalRecordCount = oldMEDCaseList.size();
+//        control.setProgressBarIndeterminateCleaning("MED Case");
+//        oldMEDCaseList.stream().forEach(item ->
+//                executor.submit(() ->
+//                        migrateCase(item)));
+//        executor.shutdown();
+//        // Wait until all threads are finish
+//        while (!executor.isTerminated()) {
+//        }
+//
+//        oldMEDCaseList = null;
+//
+//        currentRecord = 0;
+//        totalRecordCount = oldFactFindersList.size() + oldMediatorsList.size()
+//                + oldjurisdictionList.size() + MEDCaseHistoryList.size()
+//                + relatedCaseList.size() + caseSearchList.size() + EmployerSearchList.size()
+//                + caseList.size() + casePartyList.size();
 
         sqlActivity.batchAddActivity(MEDCaseHistoryList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + MEDCaseHistoryList.size() - 1, totalRecordCount, "MED Activities Finished");
-
-        sqlFactFinder.batchAddFactFinder(oldFactFindersList, cleanedBiosList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldFactFindersList.size(), totalRecordCount, "Fact Finders Finished");
-
-        sqlJurisdiction.batchAddJurisdiction(oldjurisdictionList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldjurisdictionList.size(), totalRecordCount, "Jurisdictions Finished");
-
-        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + casePartyList.size() - 1, totalRecordCount, "MED Case Parties Finished");
-
-        sqlMEDData.batchAddMEDCase(caseList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + caseList.size() - 1, totalRecordCount, "MED Case Finished");
-
-        sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "MED Related Cases Finished");
-
-        sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "MED Employer Search Finished");
-
-        sqlMEDCaseSearch.batchAddMEDCaseSearchCase(caseSearchList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "MED Case Search Finished");
-
-        relatedCaseList = null;
-        caseSearchList = null;
-        EmployerSearchList = null ;
-        caseList = null;
-        casePartyList = null;
-        oldFactFindersList = null;
-        oldMediatorsList = null;
-        oldjurisdictionList = null;
-        MEDCaseHistoryList = null;
+//
+//        sqlFactFinder.batchAddFactFinder(oldFactFindersList, cleanedBiosList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldFactFindersList.size(), totalRecordCount, "Fact Finders Finished");
+//
+//        sqlJurisdiction.batchAddJurisdiction(oldjurisdictionList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + oldjurisdictionList.size(), totalRecordCount, "Jurisdictions Finished");
+//
+//        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + casePartyList.size() - 1, totalRecordCount, "MED Case Parties Finished");
+//
+//        sqlMEDData.batchAddMEDCase(caseList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + caseList.size() - 1, totalRecordCount, "MED Case Finished");
+//
+//        sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "MED Related Cases Finished");
+//
+//        sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "MED Employer Search Finished");
+//
+//        sqlMEDCaseSearch.batchAddMEDCaseSearchCase(caseSearchList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "MED Case Search Finished");
+//
+//        relatedCaseList = null;
+//        caseSearchList = null;
+//        EmployerSearchList = null ;
+//        caseList = null;
+//        casePartyList = null;
+//        oldFactFindersList = null;
+//        oldMediatorsList = null;
+//        oldjurisdictionList = null;
+//        MEDCaseHistoryList = null;
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating MED Cases: "
