@@ -373,6 +373,12 @@ public class sqlActivity {
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
+                String comment = "";
+                comment = rs.getString("Note").trim().equals("null") ? "" : rs.getString("Note");
+                if (!rs.getString("otherComment").trim().equals("")){
+                    comment += System.lineSeparator() + System.lineSeparator() + rs.getString("otherComment");
+                }
+
                 activityModel item = new activityModel();
                 item.setCaseYear(null);
                 item.setCaseType("ORG");
@@ -385,7 +391,7 @@ public class sqlActivity {
                 item.setFrom(rs.getString("Src").trim().equals("null") ? "" : rs.getString("Src"));
                 item.setTo(rs.getString("Dest").trim().equals("null") ? "" : rs.getString("Dest"));
                 item.setType(rs.getString("FileAttrib").trim().equals("null") ? "" : rs.getString("FileAttrib"));
-                item.setComment(rs.getString("Note").trim().equals("null") ? "" : rs.getString("Note"));
+                item.setComment(comment.trim());
                 item.setRedacted(rs.getString("Redacted").equals("Y") ? 1 : 0);
                 item.setAwaitingTimeStamp(0);
                 item.setActive(rs.getInt("Active") == 1);
