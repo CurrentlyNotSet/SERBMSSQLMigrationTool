@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author User
  */
 public class sqlORGCase {
-    
+
     public static List<oldEmployeeOrgModel> getCases() {
         List<oldEmployeeOrgModel> list = new ArrayList();
         Connection conn = null;
@@ -109,7 +109,7 @@ public class sqlORGCase {
         }
         return list;
     }
-        
+
     public static void batchAddEmployeeOrgCase(List<ORGCaseModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
@@ -158,7 +158,7 @@ public class sqlORGCase {
                      sql += "?)";   //34
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
-            
+
             for (ORGCaseModel item : list) {
                 ps.setInt    ( 1, item.getActive());
                 ps.setString ( 2, StringUtils.left(item.getOrgName(), 500));
@@ -193,7 +193,7 @@ public class sqlORGCase {
                 ps.setString (31, StringUtils.left(item.getOutsideCase().trim().equals("") ? null : item.getOutsideCase(), 100));
                 ps.setDate   (32, item.getDateFiled());
                 ps.setDate   (33, item.getRegistrationLetterSent());
-                ps.setDate   (34, item.getExtensionDate());            
+                ps.setDate   (34, item.getExtensionDate());
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
@@ -214,5 +214,5 @@ public class sqlORGCase {
             DbUtils.closeQuietly(conn);
         }
     }
-    
+
 }

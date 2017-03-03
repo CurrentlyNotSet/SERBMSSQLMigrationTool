@@ -6,6 +6,7 @@
 package com.Migration;
 
 import com.model.ORGCaseModel;
+import com.model.ORGParentChildLinkModel;
 import com.model.activityModel;
 import com.model.casePartyModel;
 import com.model.employersModel;
@@ -14,7 +15,11 @@ import com.model.oldEmployeeOrgModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
+import com.sql.sqlCaseParty;
+import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
+import com.sql.sqlORGCase;
+import com.sql.sqlORGParentChildLink;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.SlackNotification;
@@ -55,49 +60,52 @@ public class ORGMigration {
         totalRecordCount = 0;
         currentRecord = 0;
 
-//        List<oldEmployeeOrgModel> oldORGCaseList = sqlORGCase.getCases();
-//        if (Global.isDebug()) {
-//            System.out.println("Gathered ORG Cases");
-//        }
+        List<oldEmployeeOrgModel> oldORGCaseList = sqlORGCase.getCases();
+        if (Global.isDebug()) {
+            System.out.println("Gathered ORG Cases");
+        }
         List<activityModel> oldORGHistoryList = sqlActivity.getORGHistory();
         if (Global.isDebug()) {
             System.out.println("Gathered ORG History");
         }
-//        List<ORGParentChildLinkModel> ORGParentChildLinkList = sqlORGParentChildLink.getOldLink();
-//        if (Global.isDebug()) {
-//            System.out.println("Gathered Parent/Child Links");
-//        }
-//        List<employersModel> employerReference = sqlEmployers.getEmployersForReference();
-//        if (Global.isDebug()) {
-//            System.out.println("Gathered Employers (Reference)");
-//        }
-//
-//        //Clean ORG Case Data
-//        control.setProgressBarIndeterminateCleaning("ORG Case");
-//        totalRecordCount = oldORGCaseList.size();
-//        oldORGCaseList.stream().forEach(item
-//                -> executor.submit(()
-//                        -> migrateCase(item, employerReference)));
-//        executor.shutdown();
-//        // Wait until all threads are finish
-//        while (!executor.isTerminated()) {
-//        }
-//
-//        oldORGCaseList = null;
-//
-//        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
-//        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Parties Finished");
+        List<ORGParentChildLinkModel> ORGParentChildLinkList = sqlORGParentChildLink.getOldLink();
+        if (Global.isDebug()) {
+            System.out.println("Gathered Parent/Child Links");
+        }
+        List<employersModel> employerReference = sqlEmployers.getEmployersForReference();
+        if (Global.isDebug()) {
+            System.out.println("Gathered Employers (Reference)");
+        }
+
+        //Clean ORG Case Data
+        control.setProgressBarIndeterminateCleaning("ORG Case");
+        totalRecordCount = oldORGCaseList.size();
+        oldORGCaseList.stream().forEach(item
+                -> executor.submit(()
+                        -> migrateCase(item, employerReference)));
+        executor.shutdown();
+        // Wait until all threads are finish
+        while (!executor.isTerminated()) {
+        }
+
+        oldORGCaseList = null;
+
+        sqlORGCase.batchAddEmployeeOrgCase(orgCaseList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Cases Finished");
+
+        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Parties Finished");
 
         sqlActivity.batchAddActivity(oldORGHistoryList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldORGHistoryList.size(), totalRecordCount, "History Finished");
 
-//        sqlORGParentChildLink.batchAddOrgParentChildLinks(ORGParentChildLinkList, control, currentRecord, totalRecordCount);
-//        currentRecord = SceneUpdater.listItemFinished(control, ORGParentChildLinkList.size(), totalRecordCount, "Parent/Child Link Finished");
-//
-//        casePartyList = null;
-//        orgCaseList = null;
-//        oldORGHistoryList = null;
-//        ORGParentChildLinkList = null;
+        sqlORGParentChildLink.batchAddOrgParentChildLinks(ORGParentChildLinkList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, ORGParentChildLinkList.size(), totalRecordCount, "Parent/Child Link Finished");
+
+        casePartyList = null;
+        orgCaseList = null;
+        oldORGHistoryList = null;
+        ORGParentChildLinkList = null;
 
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating ORG Cases: "
