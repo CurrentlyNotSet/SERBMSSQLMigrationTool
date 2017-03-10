@@ -15,7 +15,6 @@ import com.model.oldEmployeeOrgModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
-import com.sql.sqlCaseParty;
 import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
 import com.sql.sqlORGCase;
@@ -90,17 +89,17 @@ public class ORGMigration {
 
         oldORGCaseList = null;
 
-        sqlORGCase.batchAddEmployeeOrgCase(orgCaseList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Cases Finished");
-
-        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Parties Finished");
+//        sqlORGCase.batchAddEmployeeOrgCase(orgCaseList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Cases Finished");
+//
+//        sqlCaseParty.batchAddPartyInformation(casePartyList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, casePartyList.size(), totalRecordCount, "ORG Parties Finished");
 
         sqlActivity.batchAddActivity(oldORGHistoryList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, oldORGHistoryList.size(), totalRecordCount, "History Finished");
 
-        sqlORGParentChildLink.batchAddOrgParentChildLinks(ORGParentChildLinkList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, ORGParentChildLinkList.size(), totalRecordCount, "Parent/Child Link Finished");
+//        sqlORGParentChildLink.batchAddOrgParentChildLinks(ORGParentChildLinkList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, ORGParentChildLinkList.size(), totalRecordCount, "Parent/Child Link Finished");
 
         casePartyList = null;
         orgCaseList = null;

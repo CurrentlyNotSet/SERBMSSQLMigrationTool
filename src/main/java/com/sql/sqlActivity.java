@@ -385,7 +385,7 @@ public class sqlActivity {
                 item.setCaseMonth(null);
                 item.setCaseNumber(rs.getString("OrgNum").trim().equals("null") ? "" : rs.getString("OrgNum"));
                 item.setUserID(StringUtilities.convertUserToID(rs.getString("UserInitials")));
-                item.setDate(new Timestamp(rs.getLong("DateTimeMillis")));
+                item.setDate(StringUtilities.convertStringDateAndTime(rs.getString("Date"), rs.getString("Time").replaceAll("-", ":")));
                 item.setAction(rs.getString("Description").trim().equals("null") ? "" : rs.getString("Description"));
                 item.setFileName(rs.getString("FileName").trim().equals("null") ? "" : rs.getString("FileName"));
                 item.setFrom(rs.getString("Src").trim().equals("null") ? "" : rs.getString("Src"));
