@@ -19,6 +19,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -184,39 +186,14 @@ public class StringUtilities {
     }
 
     public static Timestamp convertStringDateAndTimeORG(String oldDate, String oldTime) {
-        Pattern p = Pattern.compile("[a-zA-Z]");
 
-        oldDate = oldDate.trim();
-        if (oldDate != null && !"".equals(oldDate) && p.matcher(oldDate).find() == false) {
-            String[] date = oldDate.split("-");
+        SimpleDateFormat mmddyyyyhhmmssa = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSS");
 
-            String[] time = oldTime.replaceAll("\\.", "").split(";|:| ");
-
-            Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.YEAR, Integer.valueOf(date[0]));
-            cal.set(Calendar.MONTH, Integer.valueOf(date[1]));
-            cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(date[2]));
-
-            if (!"".equals(oldTime.trim()) && time.length > 1) {
-
-                int hour = Integer.valueOf(time[0].replaceAll("\\D+", ""));
-                if (7 <= hour && hour <= 12) {
-                    cal.set(Calendar.HOUR_OF_DAY, hour);
-                } else {
-                    cal.set(Calendar.HOUR_OF_DAY, hour + 12);
-                }
-                cal.set(Calendar.MINUTE, Integer.valueOf(time[1].replaceAll("\\D+", "")));
-            } else {
-                cal.set(Calendar.HOUR_OF_DAY, 0);
-                cal.set(Calendar.MINUTE, 0);
-            }
-
-            String[] timesecond = time[2].split(".");
-            cal.set(Calendar.SECOND, Integer.valueOf(timesecond[0]));
-            cal.set(Calendar.MILLISECOND, Integer.valueOf(timesecond[1]));
-
-            cal.getTimeInMillis();
-            return new Timestamp(cal.getTimeInMillis());
+        try {
+            Date dt = mmddyyyyhhmmssa.parse(oldDate + " " + oldTime);
+            return new Timestamp(dt.getTime());
+        } catch (ParseException ex) {
+            Logger.getLogger(StringUtilities.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
