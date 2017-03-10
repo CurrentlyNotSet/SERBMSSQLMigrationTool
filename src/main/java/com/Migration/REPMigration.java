@@ -917,7 +917,7 @@ public class REPMigration {
         rep.setPollingEndDate(StringUtilities.convertStringTimeStamp(item.getPollingEndDate()) != null  ? (StringUtilities.convertStringSQLDate(item.getPollingEndDate())) : null);
         rep.setBallotsCountDay(!"".equals(item.getBallotsCountDay().trim()) ? item.getBallotsCountDay().trim() : null);
         rep.setBallotsCountDate(StringUtilities.convertStringTimeStamp(item.getBallotsCountDate()) != null  ? (StringUtilities.convertStringSQLDate(item.getBallotsCountDate())) : null);
-        rep.setBallotsCountTime(!"".equals(item.getBallotsCountTime().trim()) ? StringUtilities.convertStringTimeStamp(item.getBallotsCountTime()) : null);
+        rep.setBallotsCountTime(!"".equals(item.getBallotsCountTime().trim()) ? StringUtilities.convertStringSQLTime(item.getBallotsCountTime()) : null);
         rep.setEligibilityListDate(StringUtilities.convertStringTimeStamp(item.getEligibilityListDate()) != null  ? (StringUtilities.convertStringSQLDate(item.getEligibilityListDate())) : null);
         rep.setPreElectionConfDate(StringUtilities.convertStringTimeStamp(item.getPreElectionConfDate()) != null ? (StringUtilities.convertStringSQLDate(item.getPreElectionConfDate())) : null);
         rep.setSelfReleasing(!"".equals(item.getSelfReleasing().trim()) ? item.getSelfReleasing().trim() : null);

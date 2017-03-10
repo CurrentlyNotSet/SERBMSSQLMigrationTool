@@ -94,6 +94,32 @@ public class StringUtilities {
         return null;
     }
 
+    public static java.sql.Time convertStringSQLTime(String oldTime) {
+        if (oldTime != null && !"".equals(oldTime)) {
+            String[] splitOldTime = oldTime.split(":");
+            int hour = Integer.valueOf(splitOldTime[0].replaceAll("\\D+", ""));
+            int minute = Integer.valueOf(splitOldTime[1].replaceAll("\\D+", ""));
+            String AMPM = "";
+
+            if (hour <= 12 && minute <= 60) {
+                if (7 <= hour && hour <= 12) {
+                    AMPM = "AM";
+                } else {
+                    AMPM = "PM";
+                }
+                try {
+                    SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss a");
+                    Date parsedDate = (Date)formatter.parse(hour + ":" + minute + ":00 " + AMPM);
+                    return new java.sql.Time(parsedDate.getTime());
+                } catch (ParseException ex) {
+                    SlackNotification.sendNotification(ex);
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
     public static java.sql.Date convertStringSQLDate(String oldDate) {
         Pattern p = Pattern.compile("[a-zA-Z]");
 
@@ -120,7 +146,7 @@ public class StringUtilities {
         }
         return null;
     }
-    
+
     public static Timestamp convertStringDateAndTime(String oldDate, String oldTime) {
         Pattern p = Pattern.compile("[a-zA-Z]");
 
@@ -136,7 +162,7 @@ public class StringUtilities {
             cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(date.getDay()));
 
             if (!"".equals(oldTime.trim()) && time.length > 1) {
-                
+
                 int hour = Integer.valueOf(time[0].replaceAll("\\D+", ""));
                 if (7 <= hour && hour <= 12) {
                     cal.set(Calendar.HOUR_OF_DAY, hour);
@@ -212,7 +238,7 @@ public class StringUtilities {
             if (Integer.parseInt(date.getYear()) > 1752 && Integer.parseInt(date.getYear()) < 9999){
                 return date;
             }
-            
+
         }
         return null;
     }
@@ -259,7 +285,7 @@ public class StringUtilities {
         }
         return duration.trim();
     }
-    
+
     public static int convertUserToID(String userEntry) {
         if (!"".equals(userEntry.trim())) {
             for (userModel usr : Global.getUserList()) {
@@ -298,7 +324,7 @@ public class StringUtilities {
         }
         return false;
     }
-    
+
     public static String monthNumber(String month){
         if (month != null){
             if (       month.startsWith("Jan")){
@@ -329,7 +355,7 @@ public class StringUtilities {
         }
         return null;
     }
-    
+
     public static String monthName(String month){
         if (month != null){
             if (       month.startsWith("01")){
@@ -360,10 +386,10 @@ public class StringUtilities {
         }
         return null;
     }
-    
+
     public static startTimeEndTimeModel splitTime(String time){
         startTimeEndTimeModel sTeT = new startTimeEndTimeModel();
-        
+
         String[] timeSplit = time.split("-");
         if (timeSplit.length == 2){
             sTeT.setStartTime(convertToSQLTime(timeSplit[0]));
@@ -371,28 +397,28 @@ public class StringUtilities {
         }
         return sTeT;
     }
-    
-    private static Time convertToSQLTime(String time){
+
+    public static Time convertToSQLTime(String time){
         String numbers = TimeNumbers(time);
         String ampm = AMPM(time);
         String hour = "";
-        
-        
+
+
         if (numbers != null && ampm != null) {
             String[] numbersSplit = numbers.split(":");
-            
+
             int hourBlock = Integer.valueOf(numbersSplit[0]);
             if (hourBlock < 12){
                 hour = String.valueOf(ampm.equalsIgnoreCase("AM") ? hourBlock : hourBlock + 12);
             } else {
                 hour = String.valueOf(hourBlock);
             }
-            
+
             return java.sql.Time.valueOf(hour + ":" + numbersSplit[1] + ":00");
         }
         return null;
     }
-    
+
     private static String TimeNumbers(String time) {
         time = time.replaceAll("[^0-9]", "").trim();
         if (time.length() == 3){
@@ -403,10 +429,10 @@ public class StringUtilities {
         }
         return null;
     }
-    
+
     private static String AMPM(String time) {
         time = time.replaceAll("[^a-zA-Z]", "").trim();
-        
+
         if(time.toUpperCase().startsWith("A")){
             return "AM";
         } else if (time.toUpperCase().startsWith("P") || time.toUpperCase().startsWith("N")){
@@ -414,7 +440,7 @@ public class StringUtilities {
         }
         return null;
     }
-    
+
     public static int parseStringtoInt(String number) {
         String numberCheck = number.replaceAll("[0-9]", "").trim();
         if ("".equals(numberCheck.trim())) {
@@ -425,8 +451,8 @@ public class StringUtilities {
 
     public static String joinNameTogether(casePartyModel party){
         String name = "";
-        
-        
+
+
         if(party.getPrefix() != null){
             name += party.getPrefix().trim() + " ";
         }
@@ -453,7 +479,7 @@ public class StringUtilities {
         }
         return name.trim();
     }
-        
+
     public static String buildFullName(String first, String middle, String last) {
         String fullName = "";
         if (!first.equals("")) {
@@ -467,5 +493,5 @@ public class StringUtilities {
         }
         return fullName.trim();
     }
-    
+
 }

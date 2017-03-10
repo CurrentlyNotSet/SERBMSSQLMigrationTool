@@ -416,7 +416,7 @@ public class sqlREPData {
         }
         return list;
     }
-    
+
     public static void batchAddREPCase(List<REPCaseModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
         int count = 0;
         Connection conn = null;
@@ -560,7 +560,7 @@ public class sqlREPData {
                      sql += "?)";   //129
             ps = conn.prepareStatement(sql);
             conn.setAutoCommit(false);
-            
+
             for (REPCaseModel item : list){
                 ps.setInt      ( 1, item.getActive());
                 ps.setString   ( 2, StringUtils.left(item.getCaseYear(), 4));
@@ -654,7 +654,7 @@ public class sqlREPData {
                 ps.setDate     (66, item.getPollingEndDate());
                 ps.setString   (67, StringUtils.left(item.getBallotsCountDay(), 25));
                 ps.setDate     (68, item.getBallotsCountDate());
-                ps.setTimestamp(69, item.getBallotsCountTime());
+                ps.setTime     (69, item.getBallotsCountTime());
                 ps.setDate     (70, item.getEligibilityListDate());
                 ps.setDate     (71, item.getPreElectionConfDate());
                 ps.setString   (72, item.getSelfReleasing());
@@ -951,5 +951,5 @@ public class sqlREPData {
             DbUtils.closeQuietly(conn);
         }
     }
-    
+
 }

@@ -6,7 +6,7 @@
 package com.model;
 
 import java.sql.Date;
-import java.sql.Timestamp;
+import java.sql.Time;
 
 /**
  *
@@ -83,7 +83,7 @@ public class REPCaseModel {
     private Date pollingEndDate;
     private String ballotsCountDay;
     private Date ballotsCountDate;
-    private Timestamp ballotsCountTime;
+    private Time ballotsCountTime;
     private Date eligibilityListDate;
     private Date preElectionConfDate;
     private String selfReleasing;
@@ -144,7 +144,7 @@ public class REPCaseModel {
     private int combinedVotesCastForRivalEEO1;
     private int combinedVotesCastForRivalEEO2;
     private int combinedVotesCastForRivalEEO3;
-    
+
     public int getId() {
         return id;
     }
@@ -697,11 +697,11 @@ public class REPCaseModel {
         this.ballotsCountDate = ballotsCountDate;
     }
 
-    public Timestamp getBallotsCountTime() {
+    public Time getBallotsCountTime() {
         return ballotsCountTime;
     }
 
-    public void setBallotsCountTime(Timestamp ballotsCountTime) {
+    public void setBallotsCountTime(Time ballotsCountTime) {
         this.ballotsCountTime = ballotsCountTime;
     }
 
@@ -936,7 +936,7 @@ public class REPCaseModel {
     public void setProfessionalVotesCastForRivalEEO2(int professionalVotesCastForRivalEEO2) {
         this.professionalVotesCastForRivalEEO2 = professionalVotesCastForRivalEEO2;
     }
-    
+
     public int getProfessionalVotesCastForRivalEEO3() {
         return professionalVotesCastForRivalEEO3;
     }
