@@ -12,6 +12,7 @@ import com.model.REPCaseTypeModel;
 import com.model.REPElectionMultiCaseModel;
 import com.model.REPElectionSiteInformationModel;
 import com.model.REPMediationModel;
+import com.model.REPPrevailedUpdateModel;
 import com.model.REPRecommendationModel;
 import com.model.activityModel;
 import com.model.boardAcionTypeModel;
@@ -27,20 +28,13 @@ import com.sceneControllers.MainWindowSceneController;
 import com.sql.sqlActivity;
 import com.sql.sqlBlobFile;
 import com.sql.sqlBoardActionType;
-import com.sql.sqlBoardMeeting;
 import com.sql.sqlCaseParty;
-import com.sql.sqlEmployerCaseSearchData;
 import com.sql.sqlEmployers;
 import com.sql.sqlMigrationStatus;
-import com.sql.sqlREPCaseSearch;
 import com.sql.sqlREPCaseStatus;
 import com.sql.sqlREPCaseType;
 import com.sql.sqlREPData;
-import com.sql.sqlREPElectionMultiCase;
-import com.sql.sqlREPElectionSiteInformation;
-import com.sql.sqlREPMediation;
 import com.sql.sqlREPRecommendation;
-import com.sql.sqlRelatedCase;
 import com.util.Global;
 import com.util.SceneUpdater;
 import com.util.SlackNotification;
@@ -68,6 +62,7 @@ public class REPMigration {
     private static List<employerCaseSearchModel> EmployerSearchList = new ArrayList<>();
     private static List<REPCaseSearchModel> REPCaseSearchList = new ArrayList<>();
     private static List<REPCaseModel> REPCaseList = new ArrayList<>();
+    private static List<REPPrevailedUpdateModel> REPPrevailedList = new ArrayList<>();
 
     public static void migrateREPData(final MainWindowSceneController control) {
         Thread repThread = new Thread() {
@@ -87,42 +82,40 @@ public class REPMigration {
         totalRecordCount = 0;
         currentRecord = 0;
         List<oldREPDataModel> oldREPDataList = sqlREPData.getCases();
-        if (Global.isDebug()){
+        if (Global.isDebug()) {
             System.out.println("Gathered REP Data");
         }
         List<boardAcionTypeModel> REPBoardActionList = sqlBoardActionType.getOldBoardActionType();
-        if (Global.isDebug()){
+        if (Global.isDebug()) {
             System.out.println("Gathered REP Board actions");
         }
         List<REPCaseTypeModel> REPCaseTypeList = sqlREPCaseType.getOldREPCaseType();
-        if (Global.isDebug()){
+        if (Global.isDebug()) {
             System.out.println("Gathered REP Case Types");
         }
         List<REPRecommendationModel> REPrecList = sqlREPRecommendation.getOldREPRecommendation();
-        if (Global.isDebug()){
+        if (Global.isDebug()) {
             System.out.println("Gathered REP Recommendations");
         }
         List<REPCaseStatusModel> REPCaseStatusList = sqlREPCaseStatus.getOldREPCaseStatus();
-        if (Global.isDebug()){
+        if (Global.isDebug()) {
             System.out.println("Gathered REP Case Status");
         }
         List<activityModel> REPCaseHistoryList = sqlActivity.getREPHistory();
-        if (Global.isDebug()){
+        if (Global.isDebug()) {
             System.out.println("Gathered REP History");
         }
 
         //Clean REP Case Data
         control.setProgressBarIndeterminateCleaning("REP Case");
         totalRecordCount = oldREPDataList.size();
-        oldREPDataList.stream().forEach(item ->
-                executor.submit(() ->
-                        migrateCase(item)));
+        oldREPDataList.stream().forEach(item
+                -> executor.submit(()
+                        -> migrateCase(item)));
         executor.shutdown();
         // Wait until all threads are finish
         while (!executor.isTerminated()) {
         }
-
-        oldREPDataList = null;
 
         currentRecord = 0;
         totalRecordCount = REPBoardActionList.size()
@@ -131,44 +124,44 @@ public class REPMigration {
                 + EmployerSearchList.size() + electionSiteInfoList.size() + multiCaseElectionsList.size()
                 + mediationsList.size() + relatedCaseList.size() + boardMeetingList.size() + CasePartyList.size();
 
-        sqlREPRecommendation.batchAddREPRecommendation(REPrecList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPrecList.size() - 1, totalRecordCount, "REP Recommendations Finished");
-
-        sqlREPCaseType.batchAddREPCaseType(REPCaseTypeList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseTypeList.size() - 1, totalRecordCount, "REP Case Types Finished");
-
-        sqlREPCaseStatus.batchAddREPCaseStatus(REPCaseStatusList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseStatusList.size() - 1, totalRecordCount, "REP Case Status Finished");
-
-        sqlBoardActionType.batchAddREPBoardActionType(REPBoardActionList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPBoardActionList.size() - 1, totalRecordCount, "REP Board Actions Finished");
-
-        sqlActivity.batchAddActivity(REPCaseHistoryList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseHistoryList.size() - 1, totalRecordCount, "REP Activities Finished");
-
-        sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "REP Related Cases Finished");
-
-        sqlBoardMeeting.batchAddBoardMeeting(boardMeetingList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + boardMeetingList.size() - 1, totalRecordCount, "REP Board Meeting Finished");
-
-        sqlREPMediation.batchAddREPMediation(mediationsList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + mediationsList.size() - 1, totalRecordCount, "REP Mediations Finished");
-
-        sqlREPElectionMultiCase.batchAddMultiCaseElection(multiCaseElectionsList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + multiCaseElectionsList.size() - 1, totalRecordCount, "REP Multi Case Finished");
-
-        sqlREPElectionSiteInformation.batchAddElectionSite(electionSiteInfoList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + electionSiteInfoList.size() - 1, totalRecordCount, "REP Election Sites Finished");
+//        sqlREPRecommendation.batchAddREPRecommendation(REPrecList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPrecList.size() - 1, totalRecordCount, "REP Recommendations Finished");
+//
+//        sqlREPCaseType.batchAddREPCaseType(REPCaseTypeList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseTypeList.size() - 1, totalRecordCount, "REP Case Types Finished");
+//
+//        sqlREPCaseStatus.batchAddREPCaseStatus(REPCaseStatusList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseStatusList.size() - 1, totalRecordCount, "REP Case Status Finished");
+//
+//        sqlBoardActionType.batchAddREPBoardActionType(REPBoardActionList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPBoardActionList.size() - 1, totalRecordCount, "REP Board Actions Finished");
+//
+//        sqlActivity.batchAddActivity(REPCaseHistoryList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseHistoryList.size() - 1, totalRecordCount, "REP Activities Finished");
+//
+//        sqlRelatedCase.batchAddRelatedCase(relatedCaseList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + relatedCaseList.size() - 1, totalRecordCount, "REP Related Cases Finished");
+//
+//        sqlBoardMeeting.batchAddBoardMeeting(boardMeetingList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + boardMeetingList.size() - 1, totalRecordCount, "REP Board Meeting Finished");
+//
+//        sqlREPMediation.batchAddREPMediation(mediationsList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + mediationsList.size() - 1, totalRecordCount, "REP Mediations Finished");
+//
+//        sqlREPElectionMultiCase.batchAddMultiCaseElection(multiCaseElectionsList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + multiCaseElectionsList.size() - 1, totalRecordCount, "REP Multi Case Finished");
+//
+//        sqlREPElectionSiteInformation.batchAddElectionSite(electionSiteInfoList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + electionSiteInfoList.size() - 1, totalRecordCount, "REP Election Sites Finished");
 
         sqlCaseParty.batchAddPartyInformation(CasePartyList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + CasePartyList.size() - 1, totalRecordCount, "REP Case Parties Finished");
 
-        sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "REP Employer Search Finished");
-
-        sqlREPCaseSearch.addREPCaseSearchCase(REPCaseSearchList, control, currentRecord, totalRecordCount);
-        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseSearchList.size() - 1, totalRecordCount, "REP Case Search Finished");
+//        sqlEmployerCaseSearchData.batchAddEmployerSearch(EmployerSearchList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + EmployerSearchList.size() - 1, totalRecordCount, "REP Employer Search Finished");
+//
+//        sqlREPCaseSearch.addREPCaseSearchCase(REPCaseSearchList, control, currentRecord, totalRecordCount);
+//        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseSearchList.size() - 1, totalRecordCount, "REP Case Search Finished");
 
         sqlREPData.batchAddREPCase(REPCaseList, control, currentRecord, totalRecordCount);
         currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPCaseList.size() - 1, totalRecordCount, "REP Case Finished");
@@ -188,6 +181,25 @@ public class REPMigration {
         REPrecList = null;
         REPCaseHistoryList = null;
 
+        //Clean REP Case Data
+        currentRecord = 0;
+        control.setProgressBarIndeterminateCleaning("REP Case Who Prevailed");
+        totalRecordCount = oldREPDataList.size();
+        ExecutorService executor2 = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        oldREPDataList.stream().forEach(item
+                -> executor2.submit(()
+                        -> cleanWhoPrevailed(item)));
+        executor2.shutdown();
+        // Wait until all threads are finish
+        while (!executor2.isTerminated()) {
+        }
+
+        sqlREPData.batchUpdateREPCaseWhoPrevailed(REPPrevailedList, control, currentRecord, totalRecordCount);
+        currentRecord = SceneUpdater.listItemFinished(control, currentRecord + REPPrevailedList.size(), REPPrevailedList.size(), "REP Case Finished");
+
+        oldREPDataList = null;
+        REPPrevailedList = null;
+
         long lEndTime = System.currentTimeMillis();
         String finishedText = "Finished Migrating REP Cases: "
                 + totalRecordCount + " records in " + StringUtilities.convertLongToTime(lEndTime - lStartTime);
@@ -202,8 +214,8 @@ public class REPMigration {
     private static void migrateCase(oldREPDataModel item) {
         caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(item.getCaseNumber().trim());
 
-        List<casePartyModel> list = migratePartyInformation(item, caseNumber);
-        migrateCaseData(item, caseNumber, list);
+        migratePartyInformation(item, caseNumber);
+        migrateCaseData(item, caseNumber);
         migrateBoardMeetings(item, caseNumber);
         migrateMultiCaseElections(item, caseNumber);
         migrateElectionSiteInfo(item, caseNumber);
@@ -214,32 +226,89 @@ public class REPMigration {
         currentRecord = SceneUpdater.listItemCleaned(control, currentRecord, totalRecordCount, item.getCaseNumber().trim());
     }
 
-    private static List<casePartyModel> migratePartyInformation(oldREPDataModel item, caseNumberModel caseNumber){
-        List<casePartyModel> list = new ArrayList<>();
+    private static void cleanWhoPrevailed(oldREPDataModel REPCase) {
+        REPPrevailedUpdateModel update = new REPPrevailedUpdateModel();
+        caseNumberModel caseNumber = StringUtilities.parseFullCaseNumber(REPCase.getCaseNumber().trim());
+        List<casePartyModel> casePartyList = sqlCaseParty.getCasePartyFromParties(
+                caseNumber.getCaseYear(), caseNumber.getCaseType(), caseNumber.getCaseMonth(), caseNumber.getCaseNumber());
 
-        list = migratePetitioner(item, caseNumber, list);
-        list = migratePetitionerRep(item, caseNumber, list);
-        list = migrateEmployer(item, caseNumber, list);
-        list = migrateEmployerRep(item, caseNumber, list);
-        list = migrateEmployeeOrg(item, caseNumber, list);
-        list = migrateEmployeeOrgRep(item, caseNumber, list);
-        list = migrateRivalEmployeeOrg(item, caseNumber, list);
-        list = migrateRivalEmployeeOrgRep(item, caseNumber, list);
-        list = migrateRivalEmployeeOrg2(item, caseNumber, list);
-        list = migrateRivalEmployeeOrg2Rep(item, caseNumber, list);
-        list = migrateRivalEmployeeOrg3(item, caseNumber, list);
-        list = migrateRivalEmployeeOrg3Rep(item, caseNumber, list);
-        list = migrateIncumbentEmployeeOrg(item, caseNumber, list);
-        list = migrateIncumbentEmployeeOrgRep(item, caseNumber, list);
-        list = migrateIntervener(item, caseNumber, list);
-        list = migrateIntervenerRep(item, caseNumber, list);
-        list = migrateConversionSchool(item, caseNumber, list);
-        list = migrateConversionSchoolRep(item, caseNumber, list);
+        update.setCaseYear(caseNumber.getCaseYear());
+        update.setCaseType(caseNumber.getCaseType());
+        update.setCaseMonth(caseNumber.getCaseMonth());
+        update.setCaseNumber(caseNumber.getCaseNumber());
+        update.setResultWhoPrevailed(-1);
+        update.setProfessionalWhoPrevailed(-1);
+        update.setNonprofessionalWhoPrevailed(-1);
+        update.setCombinedWhoPrevailed(-1);
 
-        return list;
+
+
+        for (casePartyModel party : casePartyList) {
+            if (REPCase.getResultsWhoPrevailed().trim().toLowerCase().startsWith(StringUtilities.joinNameTogether(party).toLowerCase())) {
+                update.setResultWhoPrevailed(party.getId());
+            }
+            if (REPCase.getPWhoPrevailed().trim().toLowerCase().startsWith(StringUtilities.joinNameTogether(party).toLowerCase())) {
+                update.setProfessionalWhoPrevailed(party.getId());
+            }
+            if (REPCase.getNPWhoPrevailed().trim().toLowerCase().startsWith(StringUtilities.joinNameTogether(party).toLowerCase())) {
+                update.setNonprofessionalWhoPrevailed(party.getId());
+            }
+            if (REPCase.getCWhoPrevailed().trim().toLowerCase().startsWith(StringUtilities.joinNameTogether(party).toLowerCase())) {
+                update.setCombinedWhoPrevailed(party.getId());
+            }
+        }
+
+        if (REPCase.getResultsWhoPrevailed().trim().toLowerCase().startsWith("no rep")
+                ||REPCase.getResultsWhoPrevailed().trim().toLowerCase().startsWith("1")
+                ||REPCase.getResultsWhoPrevailed().trim().toLowerCase().startsWith("test")){
+            update.setResultWhoPrevailed(0);
+        }
+
+        if (REPCase.getPWhoPrevailed().trim().toLowerCase().startsWith("no rep")
+                ||REPCase.getPWhoPrevailed().trim().toLowerCase().startsWith("1")
+                ||REPCase.getPWhoPrevailed().trim().toLowerCase().startsWith("test")){
+            update.setProfessionalWhoPrevailed(0);
+        }
+
+        if (REPCase.getNPWhoPrevailed().trim().toLowerCase().startsWith("no rep")
+                ||REPCase.getNPWhoPrevailed().trim().toLowerCase().startsWith("1")
+                ||REPCase.getNPWhoPrevailed().trim().toLowerCase().startsWith("test")){
+            update.setNonprofessionalWhoPrevailed(0);
+        }
+
+        if (REPCase.getCWhoPrevailed().trim().toLowerCase().startsWith("no rep")
+                ||REPCase.getCWhoPrevailed().trim().toLowerCase().startsWith("1")
+                ||REPCase.getCWhoPrevailed().trim().toLowerCase().startsWith("test")){
+            update.setCombinedWhoPrevailed(0);
+        }
+
+        REPPrevailedList.add(update);
+
+        currentRecord = SceneUpdater.listItemCleaned(control, currentRecord, totalRecordCount, REPCase.getCaseNumber().trim());
     }
 
-    private static List<casePartyModel> migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migratePartyInformation(oldREPDataModel item, caseNumberModel caseNumber) {
+        migratePetitioner(item, caseNumber);
+        migratePetitionerRep(item, caseNumber);
+        migrateEmployer(item, caseNumber);
+        migrateEmployerRep(item, caseNumber);
+        migrateEmployeeOrg(item, caseNumber);
+        migrateEmployeeOrgRep(item, caseNumber);
+        migrateRivalEmployeeOrg(item, caseNumber);
+        migrateRivalEmployeeOrgRep(item, caseNumber);
+        migrateRivalEmployeeOrg2(item, caseNumber);
+        migrateRivalEmployeeOrg2Rep(item, caseNumber);
+        migrateRivalEmployeeOrg3(item, caseNumber);
+        migrateRivalEmployeeOrg3Rep(item, caseNumber);
+        migrateIncumbentEmployeeOrg(item, caseNumber);
+        migrateIncumbentEmployeeOrgRep(item, caseNumber);
+        migrateIntervener(item, caseNumber);
+        migrateIntervenerRep(item, caseNumber);
+        migrateConversionSchool(item, caseNumber);
+        migrateConversionSchoolRep(item, caseNumber);
+    }
+
+    private static void migratePetitioner(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -257,7 +326,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getPAsstName() == null) ? "" : item.getPAsstName().trim());
@@ -266,14 +335,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getPAsstEmail().trim()) ? item.getPAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migratePetitionerRep(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migratePetitionerRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -291,7 +360,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getPREPAsstName() == null) ? "" : item.getPREPAsstName().trim());
@@ -300,14 +369,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getPREPAsstEmail().trim()) ? item.getPREPAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateEmployer(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateEmployer(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -325,7 +394,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getEAsstName() == null) ? "" : item.getEAsstName().trim());
@@ -334,14 +403,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getEAsstEmail().trim()) ? item.getEAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateEmployerRep(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateEmployerRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -359,7 +428,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getEREPAsstName() == null) ? "" : item.getEREPAsstName().trim());
@@ -368,14 +437,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getEREPAsstEmail().trim()) ? item.getEREPAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -393,7 +462,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getEOAsstName() == null) ? "" : item.getEOAsstName().trim());
@@ -402,14 +471,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getEOAsstEmail().trim()) ? item.getEOAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateEmployeeOrgRep(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateEmployeeOrgRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -427,7 +496,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getEOREPAsstName() == null) ? "" : item.getEOREPAsstName().trim());
@@ -436,14 +505,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getEOREPAsstEmail().trim()) ? item.getEOREPAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateRivalEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateRivalEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -461,7 +530,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getREOAsstName() == null) ? "" : item.getREOAsstName().trim());
@@ -470,15 +539,15 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getREOAsstEmail().trim()) ? item.getREOAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
 
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateRivalEmployeeOrgRep(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateRivalEmployeeOrgRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -496,7 +565,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getREOREPAsstName() == null) ? "" : item.getREOREPAsstName().trim());
@@ -505,14 +574,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getREOREPAsstEmail().trim()) ? item.getREOREPAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateRivalEmployeeOrg2(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateRivalEmployeeOrg2(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -530,7 +599,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getREO2AsstName() == null) ? "" : item.getREO2AsstName().trim());
@@ -539,14 +608,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getREO2AsstEmail().trim()) ? item.getREO2AsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateRivalEmployeeOrg2Rep(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateRivalEmployeeOrg2Rep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -564,7 +633,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getREO2REPAsstName() == null) ? "" : item.getREO2REPAsstName().trim());
@@ -573,14 +642,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getREO2REPAsstEmail().trim()) ? item.getREO2REPAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateRivalEmployeeOrg3(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateRivalEmployeeOrg3(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -598,7 +667,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getREO3AsstName() == null) ? "" : item.getREO3AsstName().trim());
@@ -607,15 +676,15 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getREO3AsstEmail().trim()) ? item.getREO3AsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
 
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateRivalEmployeeOrg3Rep(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateRivalEmployeeOrg3Rep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -633,7 +702,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getREO3REPAsstName() == null) ? "" : item.getREO3REPAsstName().trim());
@@ -642,14 +711,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getREO3REPAsstEmail().trim()) ? item.getREO3REPAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateIncumbentEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateIncumbentEmployeeOrg(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -667,7 +736,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getIEOAsstName() == null) ? "" : item.getIEOAsstName().trim());
@@ -676,14 +745,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getIEOAsstEmail().trim()) ? item.getIEOAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateIncumbentEmployeeOrgRep(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateIncumbentEmployeeOrgRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -701,7 +770,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getIEOREPAsstName() == null) ? "" : item.getIEOREPAsstName().trim());
@@ -710,14 +779,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getIEOREPAsstEmail().trim()) ? item.getIEOREPAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateIntervener(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateIntervener(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -735,7 +804,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getIAsstName() == null) ? "" : item.getIAsstName().trim());
@@ -744,14 +813,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getIAsstEmail().trim()) ? item.getIAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateIntervenerRep(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateIntervenerRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -769,7 +838,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getIREPAsstName() == null) ? "" : item.getIREPAsstName().trim());
@@ -778,14 +847,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getIREPAsstEmail().trim()) ? item.getIREPAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateConversionSchool(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateConversionSchool(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -803,7 +872,7 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
+
             CasePartyList.add(party);
 
             String asstName = ((item.getCSAsstName() == null) ? "" : item.getCSAsstName().trim());
@@ -812,14 +881,14 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getCSAsstEmail().trim()) ? item.getCSAsstEmail().trim() : null);
-                list.add(party);
+
                 CasePartyList.add(party);
             }
         }
-        return list;
+
     }
 
-    private static List<casePartyModel> migrateConversionSchoolRep(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> list) {
+    private static void migrateConversionSchoolRep(oldREPDataModel item, caseNumberModel caseNumber) {
         casePartyModel party = new casePartyModel();
         party.setCaseYear(caseNumber.getCaseYear());
         party.setCaseType(caseNumber.getCaseType());
@@ -837,7 +906,6 @@ public class REPMigration {
         party.setFax(null);
 
         if (party.getLastName() != null || party.getAddress1() != null || party.getEmailAddress() != null || party.getPhoneOne() != null) {
-            list.add(party);
             CasePartyList.add(party);
 
             String asstName = ((item.getCSREPAsstName() == null) ? "" : item.getCSREPAsstName().trim());
@@ -846,14 +914,12 @@ public class REPMigration {
                 party.setLastName(asstName);
                 party.setPhoneOne(null);
                 party.setEmailAddress(!"".equals(item.getCSREPAsstEmail().trim()) ? item.getCSREPAsstEmail().trim() : null);
-                list.add(party);
                 CasePartyList.add(party);
             }
         }
-        return list;
     }
 
-    private static void migrateCaseData(oldREPDataModel item, caseNumberModel caseNumber, List<casePartyModel> casePartyList) {
+    private static void migrateCaseData(oldREPDataModel item, caseNumberModel caseNumber) {
         List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobData(StringUtilities.generateFullCaseNumber(caseNumber));
 
         REPCaseModel rep = new REPCaseModel();
@@ -912,13 +978,13 @@ public class REPMigration {
         rep.setBallotTwo(!"".equals(item.getBallotTwo().trim()) ? item.getBallotTwo().trim() : null);
         rep.setBallotThree(!"".equals(item.getBallotThree().trim()) ? item.getBallotThree().trim() : null);
         rep.setBallotFour(!"".equals(item.getBallotFour().trim()) ? item.getBallotFour().trim() : null);
-        rep.setMailKitDate(StringUtilities.convertStringTimeStamp(item.getMailKitDate()) != null  ? (StringUtilities.convertStringSQLDate(item.getMailKitDate())) : null);
-        rep.setPollingStartDate(StringUtilities.convertStringTimeStamp(item.getPollingStartDate()) != null  ? (StringUtilities.convertStringSQLDate(item.getPollingStartDate())) : null);
-        rep.setPollingEndDate(StringUtilities.convertStringTimeStamp(item.getPollingEndDate()) != null  ? (StringUtilities.convertStringSQLDate(item.getPollingEndDate())) : null);
+        rep.setMailKitDate(StringUtilities.convertStringTimeStamp(item.getMailKitDate()) != null ? (StringUtilities.convertStringSQLDate(item.getMailKitDate())) : null);
+        rep.setPollingStartDate(StringUtilities.convertStringTimeStamp(item.getPollingStartDate()) != null ? (StringUtilities.convertStringSQLDate(item.getPollingStartDate())) : null);
+        rep.setPollingEndDate(StringUtilities.convertStringTimeStamp(item.getPollingEndDate()) != null ? (StringUtilities.convertStringSQLDate(item.getPollingEndDate())) : null);
         rep.setBallotsCountDay(!"".equals(item.getBallotsCountDay().trim()) ? item.getBallotsCountDay().trim() : null);
-        rep.setBallotsCountDate(StringUtilities.convertStringTimeStamp(item.getBallotsCountDate()) != null  ? (StringUtilities.convertStringSQLDate(item.getBallotsCountDate())) : null);
+        rep.setBallotsCountDate(StringUtilities.convertStringTimeStamp(item.getBallotsCountDate()) != null ? (StringUtilities.convertStringSQLDate(item.getBallotsCountDate())) : null);
         rep.setBallotsCountTime(!"".equals(item.getBallotsCountTime().trim()) ? StringUtilities.convertStringSQLTime(item.getBallotsCountTime()) : null);
-        rep.setEligibilityListDate(StringUtilities.convertStringTimeStamp(item.getEligibilityListDate()) != null  ? (StringUtilities.convertStringSQLDate(item.getEligibilityListDate())) : null);
+        rep.setEligibilityListDate(StringUtilities.convertStringTimeStamp(item.getEligibilityListDate()) != null ? (StringUtilities.convertStringSQLDate(item.getEligibilityListDate())) : null);
         rep.setPreElectionConfDate(StringUtilities.convertStringTimeStamp(item.getPreElectionConfDate()) != null ? (StringUtilities.convertStringSQLDate(item.getPreElectionConfDate())) : null);
         rep.setSelfReleasing(!"".equals(item.getSelfReleasing().trim()) ? item.getSelfReleasing().trim() : null);
         rep.setResultApproxNumberEligibleVoters(!"".equals(item.getResultsApproxNumEligible().trim()) ? StringUtilities.parseStringtoInt(item.getResultsApproxNumEligible().trim()) : -1);
@@ -979,62 +1045,49 @@ public class REPMigration {
         rep.setNonprofessionalWhoPrevailed(-1);
         rep.setCombinedWhoPrevailed(-1);
 
-        for (casePartyModel party : casePartyList){
-            if (item.getResultsWhoPrevailed().trim().equalsIgnoreCase(StringUtilities.joinNameTogether(party))){
-                rep.setResultWhoPrevailed(party.getId());
-            }
-            if (item.getPWhoPrevailed().trim().equalsIgnoreCase(StringUtilities.joinNameTogether(party))){
-                rep.setProfessionalWhoPrevailed(party.getId());
-            }
-            if (item.getNPWhoPrevailed().trim().equalsIgnoreCase(StringUtilities.joinNameTogether(party))){
-                rep.setNonprofessionalWhoPrevailed(party.getId());
-            }
-            if (item.getCWhoPrevailed().trim().equalsIgnoreCase(StringUtilities.joinNameTogether(party))){
-                rep.setCombinedWhoPrevailed(party.getId());
-            }
-        }
-
         for (oldBlobFileModel blob : oldBlobFileList) {
-            if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
-                case "Notes":
-                    String note = StringUtilities.convertBlobFileToString(blob.getBlobData());
-                    if (rep.getSOIReturnIntials() == 0 && !"".equals(item.getSOIReturnInitials1().trim()) && note != null) {
-                        rep.setNote(item.getSOIReturnInitials1() + System.lineSeparator() + System.lineSeparator() + note);
-                    } else {
-                        rep.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    }
-                    break;
-                case "BUIN":
-                    rep.setBargainingUnitIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;
-                case "BUEX":
-                    rep.setBargainingUnitExcluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;
-                case "OIN":
-                    rep.setOptInIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;
-                case "PIN":
-                    rep.setProfessionalIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;
-                case "PEX":
-                    rep.setProfessionalExcluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;
-                case "NPIN":
-                    rep.setNonProfessionalIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;
-                case "NPEX":
-                    rep.setNonProfessionalExcluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;
-                case "BoardNotes":
-                    rep.setBoardStatusNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;
-                case "Blurb":
-                    rep.setBoardStatusBlurb(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;
-                case "Related":
-                    migrateRelatedCases(caseNumber, StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                default:
-                    break;
+            if (null != blob.getSelectorA().trim()) {
+                switch (blob.getSelectorA().trim()) {
+                    case "Notes":
+                        String note = StringUtilities.convertBlobFileToString(blob.getBlobData());
+                        if (rep.getSOIReturnIntials() == 0 && !"".equals(item.getSOIReturnInitials1().trim()) && note != null) {
+                            rep.setNote(item.getSOIReturnInitials1() + System.lineSeparator() + System.lineSeparator() + note);
+                        } else {
+                            rep.setNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        }
+                        break;
+                    case "BUIN":
+                        rep.setBargainingUnitIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        break;
+                    case "BUEX":
+                        rep.setBargainingUnitExcluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        break;
+                    case "OIN":
+                        rep.setOptInIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        break;
+                    case "PIN":
+                        rep.setProfessionalIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        break;
+                    case "PEX":
+                        rep.setProfessionalExcluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        break;
+                    case "NPIN":
+                        rep.setNonProfessionalIncluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        break;
+                    case "NPEX":
+                        rep.setNonProfessionalExcluded(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        break;
+                    case "BoardNotes":
+                        rep.setBoardStatusNote(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        break;
+                    case "Blurb":
+                        rep.setBoardStatusBlurb(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        break;
+                    case "Related":
+                        migrateRelatedCases(caseNumber, StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                    default:
+                        break;
+                }
             }
         }
         REPCaseList.add(rep);
@@ -1070,11 +1123,11 @@ public class REPMigration {
         mediation.setCaseNumber(caseNumber.getCaseNumber());
 
         //Internal Mediation
-        if(!"".equals(item.getInternalMediationDate()) || !"".equals(item.getInternalMediationTime()) ||
-            !"".equals(item.getInternalMediator()) || !"".equals(item.getInternaResult())) {
+        if (!"".equals(item.getInternalMediationDate()) || !"".equals(item.getInternalMediationTime())
+                || !"".equals(item.getInternalMediator()) || !"".equals(item.getInternaResult())) {
             mediation.setMediationDate(null);
             mediation.setMediationEntryDate(null);
-            if (!"".equals(item.getInternalMediationDate().trim())){
+            if (!"".equals(item.getInternalMediationDate().trim())) {
                 mediation.setMediationDate(StringUtilities.convertStringDateAndTime(item.getInternalMediationDate(), item.getInternalMediationTime()));
             }
             mediation.setMediationType("Internal Mediation");
@@ -1089,7 +1142,7 @@ public class REPMigration {
                 || !"".equals(item.getBoardDirectedMedResult()) || !"".equals(item.getBoardDirectedMediatior())) {
             mediation.setMediationDate(null);
             mediation.setMediationEntryDate(!"".equals(item.getBoardDirMedDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getBoardDirMedDate())) : null);
-            if (!"".equals(item.getBoardDirMedMeetingDate().trim())){
+            if (!"".equals(item.getBoardDirMedMeetingDate().trim())) {
                 mediation.setMediationDate(StringUtilities.convertStringDateAndTime(item.getBoardDirMedMeetingDate(), item.getBoardDirMedMeetingTime()));
             }
             mediation.setMediationType("30 Day Mediation");
@@ -1104,7 +1157,7 @@ public class REPMigration {
                 || !"".equals(item.getPostDirMedResult()) || !"".equals(item.getPostDirMediatior())) {
 
             mediation.setMediationDate(null);
-            if (!"".equals(item.getPostDirMedMeetingDate().trim())){
+            if (!"".equals(item.getPostDirMedMeetingDate().trim())) {
                 mediation.setMediationDate(StringUtilities.convertStringDateAndTime(item.getPostDirMedMeetingDate(), item.getPostDirMedMeetingTime()));
             }
             mediation.setMediationEntryDate(!"".equals(item.getPostDirMedDate().trim()) ? (StringUtilities.convertStringSQLDate(item.getPostDirMedDate())) : null);
@@ -1174,27 +1227,27 @@ public class REPMigration {
         multi.setCaseMonth(caseNumber.getCaseMonth());
         multi.setCaseNumber(caseNumber.getCaseNumber());
 
-        if (!"".equals(item.getElectionCaseNumber1().trim())){
+        if (!"".equals(item.getElectionCaseNumber1().trim())) {
             multi.setMultiCase(item.getElectionCaseNumber1().trim());
             multiCaseElectionsList.add(multi);
         }
-        if (!"".equals(item.getElectionCaseNumber2().trim())){
+        if (!"".equals(item.getElectionCaseNumber2().trim())) {
             multi.setMultiCase(item.getElectionCaseNumber2().trim());
             multiCaseElectionsList.add(multi);
         }
-        if (!"".equals(item.getElectionCaseNumber3().trim())){
+        if (!"".equals(item.getElectionCaseNumber3().trim())) {
             multi.setMultiCase(item.getElectionCaseNumber3().trim());
             multiCaseElectionsList.add(multi);
         }
-        if (!"".equals(item.getElectionCaseNumber4().trim())){
+        if (!"".equals(item.getElectionCaseNumber4().trim())) {
             multi.setMultiCase(item.getElectionCaseNumber4().trim());
             multiCaseElectionsList.add(multi);
         }
-        if (!"".equals(item.getElectionCaseNumber5().trim())){
+        if (!"".equals(item.getElectionCaseNumber5().trim())) {
             multi.setMultiCase(item.getElectionCaseNumber5().trim());
             multiCaseElectionsList.add(multi);
         }
-        if (!"".equals(item.getElectionCaseNumber6().trim())){
+        if (!"".equals(item.getElectionCaseNumber6().trim())) {
             multi.setMultiCase(item.getElectionCaseNumber6().trim());
             multiCaseElectionsList.add(multi);
         }
@@ -1209,7 +1262,7 @@ public class REPMigration {
         site.setCaseMonth(caseNumber.getCaseMonth());
         site.setCaseNumber(caseNumber.getCaseNumber());
 
-        if (!"".equals(item.getSite1Location().trim()) || !"".equals(item.getSite1Place().trim()) || !"".equals(item.getSite1Date().trim())){
+        if (!"".equals(item.getSite1Location().trim()) || !"".equals(item.getSite1Place().trim()) || !"".equals(item.getSite1Date().trim())) {
             startTimeEndTimeModel time = StringUtilities.splitTime(item.getSite1Time());
             site.setSiteDate(null);
             site.setSiteStartTime(time.getStartTime());
@@ -1220,7 +1273,7 @@ public class REPMigration {
             site.setSiteLocation(!"".equals(item.getSite1Location().trim()) ? item.getSite1Location().trim() : null);
             electionSiteInfoList.add(site);
         }
-        if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())){
+        if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())) {
             startTimeEndTimeModel time = StringUtilities.splitTime(item.getSite2Time());
 
             site.setSiteDate(null);
@@ -1232,7 +1285,7 @@ public class REPMigration {
             site.setSiteLocation(!"".equals(item.getSite2Location().trim()) ? item.getSite2Location().trim() : null);
             electionSiteInfoList.add(site);
         }
-        if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())){
+        if (!"".equals(item.getSite2Location().trim()) || !"".equals(item.getSite2Place().trim()) || !"".equals(item.getSite2Date().trim())) {
             startTimeEndTimeModel time = StringUtilities.splitTime(item.getSite3Time());
             site.setSiteDate(null);
             site.setSiteStartTime(time.getStartTime());
@@ -1248,7 +1301,7 @@ public class REPMigration {
     private static void migrateCaseSearch(oldREPDataModel item, caseNumberModel caseNumber) {
         String[] bunnum = item.getBargainingUnitNum().trim().split("-");
 
-        List<oldBlobFileModel>oldBlobFileList = sqlBlobFile.getOldBlobDataBUDectioption(bunnum);
+        List<oldBlobFileModel> oldBlobFileList = sqlBlobFile.getOldBlobDataBUDectioption(bunnum);
 
         REPCaseSearchModel search = new REPCaseSearchModel();
         search.setCaseYear(caseNumber.getCaseYear());
@@ -1263,12 +1316,14 @@ public class REPMigration {
         search.setDescription(null);
 
         for (oldBlobFileModel blob : oldBlobFileList) {
-            if (null != blob.getSelectorA().trim()) switch (blob.getSelectorA().trim()) {
-                case "UnitDesc":
-                    search.setDescription(StringUtilities.convertBlobFileToString(blob.getBlobData()));
-                    break;
-                default:
-                    break;
+            if (null != blob.getSelectorA().trim()) {
+                switch (blob.getSelectorA().trim()) {
+                    case "UnitDesc":
+                        search.setDescription(StringUtilities.convertBlobFileToString(blob.getBlobData()));
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 

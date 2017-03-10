@@ -6,6 +6,7 @@
 package com.sql;
 
 import com.model.REPCaseModel;
+import com.model.REPPrevailedUpdateModel;
 import com.model.oldREPDataModel;
 import com.sceneControllers.MainWindowSceneController;
 import com.util.DBCInfo;
@@ -931,6 +932,72 @@ public class sqlREPData {
                 } else {
                     ps.setNull (129, java.sql.Types.INTEGER);
                 }
+                ps.addBatch();
+                if (++count % Global.getBATCH_SIZE() == 0) {
+                    ps.executeBatch();
+                    currentCount = SceneUpdater.listItemFinished(control, currentCount + Global.getBATCH_SIZE() - 1, totalCount, count + " imported");
+                }
+            }
+            ps.executeBatch();
+            conn.commit();
+        } catch (SQLException ex) {
+            SlackNotification.sendNotification(ex);
+            try {
+                conn.rollback();
+            } catch (SQLException ex1) {
+                SlackNotification.sendNotification(ex1);
+            }
+        } finally {
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+    }
+
+    public static void batchUpdateREPCaseWhoPrevailed(List<REPPrevailedUpdateModel> list, MainWindowSceneController control, int currentCount, int totalCount) {
+        int count = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DBConnection.connectToDB(DBCInfo.getDBnameNEW());
+            String sql = "UPDATE REPcase SET "
+                    + "CombinedWhoPrevailed = ?, "       //01
+                    + "NonprofessionalWhoPrevailed = ?, "//02
+                    + "ProfessionalWhoPrevailed = ?, "   //03
+                    + "ResultWhoPrevailed = ? "//04
+                    + "WHERE caseYear = ? "    //05
+                    + "AND caseType = ? "      //06
+                    + "AND caseMonth = ? "     //07
+                    + "AND caseNumber = ? ";   //08
+
+            ps = conn.prepareStatement(sql);
+            conn.setAutoCommit(false);
+
+            for (REPPrevailedUpdateModel item : list){
+                if (item.getCombinedWhoPrevailed() != -1){
+                    ps.setInt  (1, item.getCombinedWhoPrevailed());
+                } else {
+                    ps.setNull (1, java.sql.Types.INTEGER);
+                }
+                if (item.getNonprofessionalWhoPrevailed() != -1){
+                    ps.setInt  (2, item.getNonprofessionalWhoPrevailed());
+                } else {
+                    ps.setNull (2, java.sql.Types.INTEGER);
+                }
+                if (item.getProfessionalWhoPrevailed() != -1){
+                    ps.setInt  (3, item.getProfessionalWhoPrevailed());
+                } else {
+                    ps.setNull (3, java.sql.Types.INTEGER);
+                }
+                if (item.getResultWhoPrevailed() != -1){
+                    ps.setInt  (4, item.getResultWhoPrevailed());
+                } else {
+                    ps.setNull (4, java.sql.Types.INTEGER);
+                }
+                ps.setString(5, StringUtils.left(item.getCaseYear(), 4));
+                ps.setString(6, StringUtils.left(item.getCaseType(), 3));
+                ps.setString(7, StringUtils.left(item.getCaseMonth(), 2));
+                ps.setString(8, StringUtils.left(item.getCaseNumber(), 4));
+
                 ps.addBatch();
                 if (++count % Global.getBATCH_SIZE() == 0) {
                     ps.executeBatch();
