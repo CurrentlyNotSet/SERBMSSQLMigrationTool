@@ -183,6 +183,44 @@ public class StringUtilities {
         return null;
     }
 
+    public static Timestamp convertStringDateAndTimeORG(String oldDate, String oldTime) {
+        Pattern p = Pattern.compile("[a-zA-Z]");
+
+        oldDate = oldDate.trim();
+        if (oldDate != null && !"".equals(oldDate) && p.matcher(oldDate).find() == false) {
+            String[] date = oldDate.split("-");
+
+            String[] time = oldTime.replaceAll("\\.", "").split(";|:| ");
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, Integer.valueOf(date[0]));
+            cal.set(Calendar.MONTH, Integer.valueOf(date[1]));
+            cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(date[2]));
+
+            if (!"".equals(oldTime.trim()) && time.length > 1) {
+
+                int hour = Integer.valueOf(time[0].replaceAll("\\D+", ""));
+                if (7 <= hour && hour <= 12) {
+                    cal.set(Calendar.HOUR_OF_DAY, hour);
+                } else {
+                    cal.set(Calendar.HOUR_OF_DAY, hour + 12);
+                }
+                cal.set(Calendar.MINUTE, Integer.valueOf(time[1].replaceAll("\\D+", "")));
+            } else {
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MINUTE, 0);
+            }
+
+            String[] timesecond = time[2].split(".");
+            cal.set(Calendar.SECOND, Integer.valueOf(timesecond[0]));
+            cal.set(Calendar.MILLISECOND, Integer.valueOf(timesecond[1]));
+
+            cal.getTimeInMillis();
+            return new Timestamp(cal.getTimeInMillis());
+        }
+        return null;
+    }
+
     private static dateModel dateParseNumbers(String oldDate) {
         dateModel date = new dateModel();
 

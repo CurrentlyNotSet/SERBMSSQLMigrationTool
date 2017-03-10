@@ -76,16 +76,16 @@ public class ORGMigration {
             System.out.println("Gathered Employers (Reference)");
         }
 
-        //Clean ORG Case Data
-        control.setProgressBarIndeterminateCleaning("ORG Case");
-        totalRecordCount = oldORGCaseList.size();
-        oldORGCaseList.stream().forEach(item
-                -> executor.submit(()
-                        -> migrateCase(item, employerReference)));
-        executor.shutdown();
-        // Wait until all threads are finish
-        while (!executor.isTerminated()) {
-        }
+//        //Clean ORG Case Data
+//        control.setProgressBarIndeterminateCleaning("ORG Case");
+//        totalRecordCount = oldORGCaseList.size();
+//        oldORGCaseList.stream().forEach(item
+//                -> executor.submit(()
+//                        -> migrateCase(item, employerReference)));
+//        executor.shutdown();
+//        // Wait until all threads are finish
+//        while (!executor.isTerminated()) {
+//        }
 
         oldORGCaseList = null;
 
